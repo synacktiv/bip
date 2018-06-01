@@ -100,3 +100,25 @@ def copy_struct_with_size(n):
 			Warning(str(e))
 
 
+class myplugin_t(idaapi.plugin_t):
+	flags = 0
+	comment = "Provides helpers actions to deal with structs"
+	wanted_name = "Bip Struct Helpers"
+	wanted_hotkey = "Alt-F8"
+	help = "lol"
+
+	def init(self):
+		actions = [CreateStructAction()]
+		hook = ContextMenuHooks(actions)
+		hook.hook()
+		return idaapi.PLUGIN_KEEP
+
+	def run(self, arg):
+		pass
+
+	def term(self):
+		pass
+
+def PLUGIN_ENTRY():
+	return myplugin_t()
+
