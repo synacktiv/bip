@@ -19,7 +19,6 @@ def get_highlighted_identifier_as_int():
 	
 	return None
 
-
 def Ptr(ea):
 	info = get_inf_structure()
 
@@ -90,106 +89,20 @@ def get_name_by_addr(offset):
 	return name, offset
 
 
-def parse_vtable_rtti():
-	vtables = {}
+def get_struct_from_lvar(lvar):
+	"""
+	Get a struct from a hexrays local variable type
+	Returns a bip Struct or None on error
+	"""
 	
-	for e in Strings():
-		demangled = Demangle('_Z'+str(e), 0)
-		ea = e.ea
-		
-		if not demangled:
-			continue
-		
-		for x in XrefsTo(ea):			
-			if not Ptr(x.frm - get_ptr_size()/8):
-				continue
-			
-			for x2 in XrefsTo(x.frm - get_ptr_size()/8):
-				if Ptr(x2.frm -get_ptr_size()/8):
-					continue
-				
-				vtables[demangled] = x2.frm - get_ptr_size()/8
-				print "Found possible VTable of %s at 0x%x" % (demangled, x2.frm - get_ptr_size()/8)
-
-	return vtables
-
-
-def vtable2comment(struc_name, addr=None):
-	if addr is None:
-		addr = ScreenEA()
+	t = lvar.type()
 	
-	sid = GetStrucIdByName(struc_name)
-	struc = get_struc(sid)
-	
-	for offset, member_name, size in StructMembers(sid):
-		# get member
-		mid = get_member(struc, offset)
-
-		# get func name (assume qword)
-		func_name = Name(Qword(addr+offset))
-		print "setting comment %s at offset %s" % (func_name, hex(offset))
-		set_member_cmt(mid, func_name, True)
-
-
-# http://journals.ecs.soton.ac.uk/java/tutorial/native1.1/implementing/types.html
-DALVIK_TYPES_TO_NATIVE = {
-	'Z': "jboolean",
-	'B': "jbyte",
-	'S': "jshort",
-	'C': "jchar",
-	'I': "jint",
-	'J': "jlong",
-	'F': "jfloat",
-	'D': "jdouble",
-	'V': "void"
-}
-
-def parse_dalvik_type(t):
-	i = 0
-	indir_level = 0
-	if t[i] == '[':
-		while t[i+indir_level] == '[':
-			indir_level += 1
-
-	i += indir_level
-	c = t[i]
-	i += 1
-	native_type = DALVIK_TYPES_TO_NATIVE.get(c, None)
-	if c == 'L':
-		classpath = ""
-		for j in range(i, len(t)):
-			classpath += t[j]
-			i += 1
-			if t[j] == ';':
-				break
-		if classpath == "java/lang/String;":
-			native_type = "jstring"
-		elif classpath == "java/lang/Class;":
-			native_type = "jclass"
-		else:
-			native_type = "jobject"
-
-	if native_type is None:
-		print "UNKNOWN TYPE: ", c
-
-	if indir_level > 0:
-		native_type += "Array" + "*" * (indir_level - 1)
-	
-	return i, native_type
-
-def parse_smali_prototype(p):
-	types = []
-	m = match(".*\((?P<params>.*)\)(?P<rt>.*)", p)
-	d = m.groupdict()
-	rt = d['rt']
-	t = d['params']
-	i = 0
-	while i < len(t):
-		j, nt = parse_dalvik_type(t[i:])
-		i = i + j
-		types.append(nt)
-
-	_, rt = parse_dalvik_type(rt)
-	return types, rt
-
-
+	if t.is_ptr():
+		s = t.get_pointed_object()
+		if s.is_struct():
+			try:
+				struct = Struct.get(s.get_type_name())
+				return struct
+			except ValueError:
+				return None
+	return None

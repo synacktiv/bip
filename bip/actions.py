@@ -1,3 +1,4 @@
+import idaapi
 from bip.utils import *
 from bip.controllers import *
 
@@ -11,7 +12,6 @@ class BaseGuiAction(idaapi.action_handler_t, object):
 	def __init__(self):
 		idaapi.action_handler_t.__init__(self)
 		self.register()
-		print "registered"
 
 	def activate(self, ctx):
 		raise NotImplementedError("activate method should be overrided")
@@ -49,67 +49,6 @@ class BaseGuiAction(idaapi.action_handler_t, object):
 		print "[!] update method was not overriden, hardcoded AST_ENABLE_FOR_FORM"
 		return idaapi.AST_ENABLE_FOR_FORM
 
-CTX = None
-
-class CreateStructAction(BaseGuiAction):
-	action_name = "bip:createstructsize"
-	action_label = "Create struct with size..."
-	action_shortcut = "Shift+Alt+D"
-	
-	def __init__(self):
-		super(CreateStructAction, self).__init__()
-		self.attach_to_menu("Edit")
-		
-	def should_attach_to_popup(self, form, popup):
-		return idaapi.get_tform_title(form).startswith('Pseudocode')
-		
-	def activate(self, ctx):
-		size = get_highlighted_identifier_as_int()
-		create_struct_with_size(size)
-
-	def update(self, ctx):
-		#return idaapi.AST_ENABLE_FOR_FORM if ctx.form_title.startswith('Pseudocode') else idaapi.AST_DISABLE_FOR_FORM
-		# lets always enable it
-		return idaapi.AST_ENABLE_FOR_FORM
-
-class CopyStructAndFill(BaseGuiAction):
-	action_name = "bip:copystructandfill"
-	action_label = "Copy struct..."
-	action_shortcut = "Shift+Alt+E"
-
-	def __init__(self):
-		super(CopyStructAndFill, self).__init__()
-		self.attach_to_menu("Edit")
-		
-	def should_attach_to_popup(self, form, popup):
-		return True
-		
-	def activate(self, ctx):
-		size = get_highlighted_identifier_as_int()
-		copy_struct_with_size(size)
-
-	def update(self, ctx):
-		return idaapi.AST_ENABLE_FOR_FORM
-		
-class FillJNIPrototype(BaseGuiAction):
-	action_name = "bip:filljniprototype"
-	action_label = "Fill JNI Prototype..."
-	action_shortcut = "Shift+Alt+J"
-
-	def __init__(self):
-		super(FillJNIPrototype, self).__init__()
-		self.attach_to_menu("Edit")
-		
-	def should_attach_to_popup(self, form, popup):
-		idaapi.get_tform_title(form).startswith('Pseudocode')
-		
-	def activate(self, ctx):
-		ide = get_highlighted_identifier()
-		fill_jni_prototype(ide)
-
-	def update(self, ctx):
-		return idaapi.AST_ENABLE_FOR_FORM
-	
 class ContextMenuHooks(idaapi.UI_Hooks):
 	"""
 	Hook to enable on-the-fly context menu action registering

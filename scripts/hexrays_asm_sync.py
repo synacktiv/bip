@@ -1,5 +1,5 @@
 from bip.models import Struct
-
+from bip.utils import *
 from ida_hexrays import *
 from idaapi import ctree_visitor_t, CV_FAST
 from idc import *
@@ -17,19 +17,7 @@ def hexrays_propagate_comments(event, *args):
 
 	return 0
 
-def get_struct_from_lvar(lvar):
-	t = lvar.type()
 
-	if t.is_ptr():
-		s = t.get_pointed_object()
-		if s.is_struct():
-			try:
-				struct = Struct.get(s.get_type_name())
-				return struct
-			except ValueError:
-				return None
-
-	return None
 
 
 def hexrays_propagate_structs(event, *args):
