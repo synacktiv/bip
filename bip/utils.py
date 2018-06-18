@@ -50,7 +50,7 @@ def absea(offset):
 
 def get_addr_by_name(name):
 	ea = LocByName(name)
-	if ea>>31:
+	if ea == 0xffffffffffffffff:
 		return 0
 	return relea(ea)		
 
@@ -67,6 +67,9 @@ def get_name_by_addr(offset):
 	s = GetFuncOffset(absea(offset))
 	if not s:
 		nn = NearestName({k:v for k,v in Names()})
+		if nn is None:
+			return '', 0
+		
 		ea, name, _ = nn.find(absea(offset))
 		offset = absea(offset)-ea
 		if offset < 0x100:
