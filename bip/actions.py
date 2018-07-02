@@ -1,6 +1,5 @@
 import idaapi
 from bip.utils import *
-from bip.controllers import *
 
 class BaseGuiAction(idaapi.action_handler_t, object):
 	action_name = None
@@ -58,7 +57,6 @@ class ContextMenuHooks(idaapi.UI_Hooks):
 		super(ContextMenuHooks, self).__init__()
 	
 	def finish_populating_tform_popup(self, form, popup):
-		print self.actions
 		for action in self.actions:
 			if action.should_attach_to_popup(form, popup):
 				idaapi.attach_action_to_popup(form, popup, action.action_name, None)

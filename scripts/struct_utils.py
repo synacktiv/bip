@@ -1,4 +1,4 @@
-from bip.actions import BaseGuiAction
+from bip.actions import BaseGuiAction, ContextMenuHooks
 import idaapi
 
 # Actions
