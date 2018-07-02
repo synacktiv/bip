@@ -150,6 +150,7 @@ class SymbolServer():
 
 	def stop(self):
 		if not self.started:
+			print "Server not started"
 			return
 		
 		self.server.shutdown()
