@@ -1,4 +1,5 @@
 from bip.actions import *
+from bip.models import *
 import idaapi
 
 # Actions
@@ -7,14 +8,14 @@ class CreateStructAction(BaseGuiAction):
 	action_name = "bip:createstructsize"
 	action_label = "Create struct with size..."
 	action_shortcut = "Shift+Alt+D"
-	
+
 	def __init__(self):
 		super(CreateStructAction, self).__init__()
 		self.attach_to_menu("Edit")
-		
+
 	def should_attach_to_popup(self, form, popup):
 		return idaapi.get_tform_title(form).startswith('Pseudocode')
-		
+
 	def activate(self, ctx):
 		size = get_highlighted_identifier_as_int()
 		create_struct_with_size(size)
@@ -32,10 +33,10 @@ class CopyStructAndFill(BaseGuiAction):
 	def __init__(self):
 		super(CopyStructAndFill, self).__init__()
 		self.attach_to_menu("Edit")
-		
+
 	def should_attach_to_popup(self, form, popup):
 		return True
-		
+
 	def activate(self, ctx):
 		size = get_highlighted_identifier_as_int()
 		copy_struct_with_size(size)
@@ -53,7 +54,7 @@ def create_struct_with_size(n):
 <Name:T:32:16::>
 <Size:N:32:16::>
 """
-	
+
 	name = Form.StringArgument(200, value='bla')
 	num = Form.NumericArgument('N', value=n)
 
@@ -71,16 +72,16 @@ def create_struct_with_size(n):
 			break
 		except ValueError as e:
 			Warning(str(e))
-		
-	
-	
+
+
+
 def copy_struct_with_size(n):
 	s = """Create struct with size
 
 <Name:T:32:16::>
 <Size:N:32:16::>
 """
-	
+
 	name = Form.StringArgument(200, value='bla')
 	num = Form.NumericArgument('N', value=n)
 
