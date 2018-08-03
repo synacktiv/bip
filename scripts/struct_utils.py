@@ -1,5 +1,5 @@
-from bip.actions import *
-from bip.models import *
+from bip.gui import *
+from bip.base import *
 import idaapi
 
 # Actions

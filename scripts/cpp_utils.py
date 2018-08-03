@@ -1,4 +1,4 @@
-from bip.utils import *
+from bip.base import *
 import idaapi
 
 def rename_vtables(vtables=None):

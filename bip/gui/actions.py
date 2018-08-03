@@ -1,5 +1,5 @@
 import idaapi
-from bip.utils import *
+from bip.base import *
 
 class BaseGuiAction(idaapi.action_handler_t, object):
 	action_name = None

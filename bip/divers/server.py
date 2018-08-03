@@ -1,5 +1,5 @@
-from bip.utils import get_addr_by_name, get_name_by_addr, absea, relea
-from bip.models import *
+from bip.base import * #get_addr_by_name, get_name_by_addr, absea, relea
+#from bip.models import *
 
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 from SocketServer import ThreadingMixIn
