@@ -22,6 +22,40 @@ Structure API
 
     .. automethod:: __init__
 
+IDA Element
+===========
+
+.. module:: bip.base
+
+.. autoclass:: IdaElt
+    :members:
+    :member-order: bysource
+
+    .. automethod:: __init__
+
+
+
+Instruction & operand
+=====================
+
+
+.. autoclass:: Instr
+    :members:
+    :member-order: bysource
+
+    .. automethod:: __init__
+
+
+.. autoclass:: OpType
+    :members:
+    :member-order: bysource
+
+
+.. autoclass:: Operand
+    :members:
+    :member-order: bysource
+
+
 Utilities API
 =============
 
