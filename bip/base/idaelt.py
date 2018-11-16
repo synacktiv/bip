@@ -27,7 +27,7 @@ class IdaElt(object):
         """
         if not isinstance(ea, (int, long)):
             raise TypeError("IdaElt.__init__ : ea should be an integer")
-        self.ea = ea #: The address of the instruction in the IDA database
+        self.ea = ea #: The address of the element in the IDA database
 
     ################### BASE ##################
 

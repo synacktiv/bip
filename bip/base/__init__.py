@@ -5,4 +5,5 @@ from instr import *
 from operand import *
 from xref import *
 from biperror import *
+from func import *
 

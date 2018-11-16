@@ -180,3 +180,51 @@ def test_instr10():
     assert [x.ea for x in Instr(0x01800D323A).xCfNext] == [0x01800D323C, 0x01800D3242]
 
 
+###################### FUNC #########################
+
+def test_func0():
+    assert IdaFunction(0x01800D6B30).ea == IdaFunction(0x01800D6B39).ea
+
+def test_func1():
+    assert IdaFunction(0x01800D6B30).ea == 0x01800D6B30
+
+def test_func2():
+    assert IdaFunction(0x01800D6B30).name == "RtlWow64SetThreadContext"
+
+# TODO: test name setter
+
+def test_func3():
+    assert IdaFunction(0x01800D6B30).end == 0x01800D6B43
+
+def test_func4():
+    assert IdaFunction(0x01800D6B30).size == 0x13
+
+def test_func5():
+    assert IdaFunction(0x01800D6B30).ordinal == 0xb8b
+
+def test_func6():
+    assert IdaFunction(0x01800D6B30).flags == 21504
+
+# TODO: test flags setter
+
+def test_func7():
+    assert IdaFunction(0x01800D6B30).does_return
+
+def test_func8():
+    assert IdaFunction(0x01800D6B30).is_inside(0x01800D6B39)
+
+def test_func9():
+    assert IdaFunction(0x01800D6B30).is_inside(Instr(0x01800D6B39))
+
+def test_funcA():
+    assert IdaFunction(0x01800D6B30).is_inside(Instr(0x01800D6B50)) == False
+
+def test_funcB():
+    assert IdaFunction(0x01800D6B30).guesstype == "__int64 __fastcall()"
+
+# TODO: finish IdaFunction test
+
+
+
+
+

@@ -3,6 +3,8 @@
 #from idautils import *
 import idc
 import ida_ua
+import idautils
+import ida_bytes
 from idaelt import IdaElt
 from operand import Operand, OpType
 from biperror import BipError
@@ -206,5 +208,24 @@ class Instr(IdaElt):
             into account.
         """
         return [x.src for x in self.xTo if x.is_codepath] 
+
+    ###################### CLASS METHODS #############################
+
+    @classmethod
+    def iter_all(cls):
+        """
+            Class method allowing to iter on all the instructions define in
+            the IDB.
+
+            .. note::
+                Internally this function iterate on all the ``Heads`` and
+                create the object if the ``idc.is_code`` function return True.
+
+            :return: A generator of :class:`Instr` allowing to iter on all the
+                instruction define in the idb.
+        """
+        for h in idautils.Heads():
+            if idc.is_code(ida_bytes.GetFlags(h)):
+                yield cls(h)
 
 
