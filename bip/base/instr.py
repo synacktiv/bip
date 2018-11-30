@@ -4,7 +4,6 @@
 import idc
 import ida_ua
 import idautils
-import ida_bytes
 from idaelt import IdaElt
 from operand import Operand, OpType
 from biperror import BipError
@@ -225,7 +224,7 @@ class Instr(IdaElt):
                 instruction define in the idb.
         """
         for h in idautils.Heads():
-            if idc.is_code(ida_bytes.GetFlags(h)):
+            if idc.is_code(idc.GetFlags(h)):
                 yield cls(h)
 
 
