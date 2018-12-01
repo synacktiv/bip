@@ -11,6 +11,11 @@ class Struct(object):
         Class for representing and manipulating a structure in IDA.
         Static functions :func:`~Struct.create` and :func:`~Struct.get` allow
         to easilly get an instance of those object.
+
+        .. todo::
+            
+            Should make this accessible by the xref. Maybe inherit from
+            IdaElt ?
     """
     def __init__(self, sid, name):
         """
@@ -18,7 +23,7 @@ class Struct(object):
             to directly use this constructor, see functions
             :func:`~Struct.get` or :func:`~Struct.create`.
         
-            ..todo:: Should probably only take sid in param and make name a property
+            .. todo:: Should probably only take sid in param and make name a property
 
             :param int sid: The structure id from IDA such as return by
                 ``GetStrucIdByName`` .

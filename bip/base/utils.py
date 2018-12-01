@@ -1,3 +1,10 @@
+"""
+    .. todo::
+        
+        This functions should be integrated in the more general class or put
+        in their own submodule
+"""
+
 from re import match
 from idaapi import *
 from idc import *
