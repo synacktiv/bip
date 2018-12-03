@@ -6,6 +6,7 @@ import ida_name
 
 from idaelt import IdaElt, GetElt
 import instr
+from biperror import BipError
 
 class IdaFuncFlags(object):
     """
@@ -521,6 +522,28 @@ class IdaFunction(object):
         """
         for ea in idautils.Functions():
             yield cls(ea)
+
+    @classmethod
+    def create(cls, start, end=None):
+        """
+            Class method allowing to create a new function.
+
+            .. todo:: test
+
+            :param int start: Start address for the function to create.
+            :param int end: Facultative argument which indicate the end
+                address of the function. If is is not provided (None, default
+                value) it will try to create a function using the
+                auto-analysis of IDA.
+            :return: A new :class:`IdaFunction` object corresponding to the
+                function create. If this function was not able to create the
+                new function a ``BipError`` will be raised.
+        """
+        if end is None:
+            end = 0xffffffffffffffff # default IDA value meaning auto analysis
+        if not idc.MakeFunction(start, end):
+            raise BipError("Unable to create function at 0x{:X}".format(start))
+        return cls(start)
 
     ########################## STATIC METHOD ############################
 
