@@ -3,6 +3,7 @@ from idc import *
 from idautils import *
 
 from bip.base import get_ptr_size
+from biperror import BipError
 
 E_NOTFOUND = 0xFFFFFFFFFFFFFFFF
 
@@ -104,6 +105,8 @@ class Struct(object):
             raise ValueError('struct already exists')
         
         sid = AddStrucEx(-1, name, 0)
+        if sid == 0xffffffffffffffff:
+            raise BipError("Impossible to create structure with name={}".format(name))
         return Struct(sid, name)
                 
     @staticmethod
