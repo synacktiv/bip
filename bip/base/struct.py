@@ -76,7 +76,7 @@ class Struct(object):
         flag = ({8:FF_QWRD, 4:FF_DWRD, 2:FF_WORD}[ptr_sz])|FF_DATA
         
         while offset < size:
-            AddStrucMember(self.sid, prefix+hex(offset), -1, flag, -1, ptr_sz)
+            AddStrucMember(self.sid, "{}{:X}".format(prefix, offset), -1, flag, -1, ptr_sz)
             offset += ptr_sz
 
     @property
