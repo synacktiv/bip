@@ -73,6 +73,9 @@ class Instr(IdaElt):
         ida_ua.decode_insn(i, self.ea) # decode and not create for not changing the db
         return i
 
+    def __str__(self):
+        return "Instr: 0x{:X} ({})".format(self.ea, self.str)
+
     #################### OPERANDS ####################
 
     @property
