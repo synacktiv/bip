@@ -7,20 +7,20 @@ class OpType(object):
         ``ua.hpp`` file from hexrays. This is equivalent to the ``idc.o_*``
         values.
     """
-    VOID     =  0 #: No Operand.
-    REG     =  1 #: General Register (al,ax,es,ds...).
-    MEM     =  2 #: Direct Memory Reference  (DATA).
-    PHRASE     =  3 #: Memory Ref [Base Reg + Index Reg].
-    DISPL     =  4 #: Memory Reg [Base Reg + Index Reg + Displacement].
-    IMM     =  5 #: Immediate Value.
-    FAR     =  6 #: Immediate Far Address  (CODE).
-    NEAR     =  7 #: Immediate Near Address (CODE).
-    IDPSPEC0 =  8 #: processor specific type.
-    IDPSPEC1 =  9 #: processor specific type.
-    IDPSPEC2 = 10 #: processor specific type.
-    IDPSPEC3 = 11 #: processor specific type.
-    IDPSPEC4 = 12 #: processor specific type.
-    IDPSPEC5 = 13 #: processor specific type.
+    VOID        =  0 #: No Operand.
+    REG         =  1 #: General Register (al,ax,es,ds...).
+    MEM         =  2 #: Direct Memory Reference  (DATA).
+    PHRASE      =  3 #: Memory Ref [Base Reg + Index Reg].
+    DISPL       =  4 #: Memory Reg [Base Reg + Index Reg + Displacement].
+    IMM         =  5 #: Immediate Value.
+    FAR         =  6 #: Immediate Far Address  (CODE).
+    NEAR        =  7 #: Immediate Near Address (CODE).
+    IDPSPEC0    =  8 #: processor specific type.
+    IDPSPEC1    =  9 #: processor specific type.
+    IDPSPEC2    = 10 #: processor specific type.
+    IDPSPEC3    = 11 #: processor specific type.
+    IDPSPEC4    = 12 #: processor specific type.
+    IDPSPEC5    = 13 #: processor specific type.
 
 class Operand(object):
     """
@@ -101,5 +101,56 @@ class Operand(object):
             :rtype: int
         """
         return idc.GetOperandValue(self.ea, self.opnum)
+
+    ######################## TEST TYPE ##########################
+    # TODO: test those
+
+    @property
+    def is_void(self):
+        """
+            Test if this object represent the fact that there is no operand.
+            (OpType.VOID)
+        """
+        return self.type == OpType.VOID
+
+    @property
+    def is_reg(self):
+        """
+            Test if the operand represent a register. (OpType.REG)
+        """
+        return self.type == OpType.REG
+
+    @property
+    def is_memref(self):
+        """
+            Test if the operand is a memory reference (one of MEM, PHRASE or
+            DISPL in OpType)
+        """
+        t = self.type 
+        return t == OpType.MEM or t == OpType.PHRASE or t == OpType.PHRASE
+
+    @property
+    def is_imm(self):
+        """
+            Test if the operand is an immediate value which is **not** an
+            address (OpType.IMM).
+        """
+        return self.type == OpType.IMM
+
+    @property
+    def is_addr(self):
+        """
+            Test if the operand represent an address, far or near.
+            (one of FAR or NEAR in OpType).
+        """
+        t = self.type 
+        return t == OpType.FAR or t == OpType.NEAR
+
+    @property
+    def is_proc_specific(self):
+        """
+            Test if this operand is processor specific.
+        """
+        return t >= OpType.IDPSPEC0
 
 
