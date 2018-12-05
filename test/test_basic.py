@@ -179,6 +179,12 @@ def test_instrF():
 def test_instr10():
     assert [x.ea for x in Instr(0x01800D323A).xCfNext] == [0x01800D323C, 0x01800D3242]
 
+def test_instr11():
+    assert Instr(0x01800D6B33).func.ea == 0x01800D6B30
+
+def test_instr12():
+    assert Instr(0x01800D323A).block.ea == 0x01800D3227
+
 
 ###################### FUNC #########################
 
@@ -222,9 +228,118 @@ def test_funcA():
 def test_funcB():
     assert IdaFunction(0x01800D6B30).guesstype == "__int64 __fastcall()"
 
+def test_funcC():
+    assert IdaFunction(0x0180099990).nb_blocks == 3
+
+def test_funcD():
+    blck = IdaFunction(0x0180099990).blocks
+    assert blck[0].ea == 0x0180099990
+    assert blck[1].ea == 0x01800999DC
+    assert blck[2].ea == 0x01800999F0
+
+def test_funcE():
+    f = IdaFunction(0x0180099990)
+    blck = f.blocks
+    i = 0
+    for b in f.blocks_iter:
+        assert blck[i].ea == b.ea
+        assert blck[i].end == b.end
+        i += 1
+
 # TODO: finish IdaFunction test
 
+###################### BLOCK #########################
 
+def test_block0():
+    assert IdaBlock(0x0180099990).ea == IdaFunction(0x0180099990).ea
 
+def test_block1():
+    assert IdaBlock(0x0180099990).ea == IdaBlock(0x0180099992).ea
+
+def test_block2():
+    assert IdaBlock(0x0180099990).type == IdaBlockType.FCB_NORMAL
+
+def test_block3():
+    assert IdaBlock(0x0180099990).is_ret == False
+
+def test_block4():
+    assert IdaBlock(0x0180099990).is_noret == False
+
+def test_block5():
+    assert IdaBlock(0x0180099990).is_external == False
+
+def test_block6():
+    assert IdaBlock(0x01800999F0).type == IdaBlockType.FCB_NORET
+
+def test_block7():
+    assert IdaBlock(0x01800999F0).is_ret == False
+
+def test_block8():
+    assert IdaBlock(0x01800999F0).is_noret == True
+
+def test_block9():
+    assert IdaBlock(0x01800999F0).is_external == False
+
+def test_blockA():
+    assert IdaBlock(0x0180099990).end == 0x01800999DC
+
+def test_blockB():
+    assert len(IdaBlock(0x0180099990).succ) == 2
+
+def test_blockC():
+    ss = IdaBlock(0x0180099990).succ
+    assert ss[0].ea == 0x01800999DC
+    assert ss[1].ea == 0x01800999F0
+
+def test_blockD():
+    b = IdaBlock(0x0180099990)
+    ss = b.succ
+    i = 0
+    for bb in b.iter_succ:
+        assert ss[i].ea == bb.ea
+        i += 1
+
+def test_blockE():
+    assert len(IdaBlock(0x01800999E4).succ) == 1
+
+def test_blockF():
+    assert len(IdaBlock(0x01800999F0).succ) == 0
+
+def test_block10():
+    assert len(IdaBlock(0x01800999F0).pred) == 2
+
+def test_block11():
+    assert len(IdaBlock(0x0180099990).pred) == 0
+
+def test_block12():
+    b = IdaBlock(0x01800999F0)
+    ss = b.pred
+    i = 0
+    for bb in b.iter_pred:
+        assert ss[i].ea == bb.ea
+        i += 1
+
+def test_block13():
+    assert IdaBlock(0x01800999F0).func.ea == 0x0180099990
+
+def test_block14():
+    assert len(IdaBlock(0x01800999DC).items) == 4
+
+def test_block15():
+    for i in IdaBlock(0x01800999DC).items:
+        assert i.__class__ == Instr
+
+def test_block16():
+    assert len(IdaBlock(0x01800999DC).instr) == 4
+
+def test_block17():
+    for i in IdaBlock(0x01800999DC).instr:
+        assert i.__class__ == Instr
+
+def test_block18():
+    assert IdaBlock(0x01800999DC).instr[-1].ea == 0x01800999EE
+
+def test_block19():
+    assert IdaBlock(0x01800999DC).bytes == [0x48, 0x8D, 0x94, 0x24, 0xC0, 0x00, 0x00, 0x00, 0x48, 0x8D, 0x4C, 0x24, 0x20, 0xE8, 0xD2, 0xCE, 0xF6, 0xFF, 0x84, 0xDB]
 
 

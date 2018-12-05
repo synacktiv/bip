@@ -3,14 +3,19 @@ import idautils
 import idc
 import ida_funcs
 import ida_name
+import ida_gdl
 
 from idaelt import IdaElt, GetElt
 import instr
+import block
 from biperror import BipError
 
 class IdaFuncFlags(object):
     """
-        Enum for the function flags from IDA.
+        Enum for the function flags from IDA. ``FUNC_*`` flags. Documentation
+        of the flags is from the IDA documentation
+
+        .. todo:: doc sphinx complient
     """
     FUNC_NORET          = idaapi.FUNC_NORET         # function doesn't return
     FUNC_FAR            = idaapi.FUNC_FAR           # far function
@@ -42,12 +47,33 @@ class IdaFuncFlags(object):
 
     FUNCATTR_FLAGS      = idc.FUNCATTR_FLAGS
 
+class IdaFlowChartFlag(object):
+    """
+        Enum for the flag of the flow chart. ``FC_*`` constant. Documentation
+        of the flags is from the IDA documentation.
+    """
+    #: print names (used only by display_flow_chart())
+    FC_PRINT = ida_gdl.FC_PRINT
+    #: do not compute external blocks. Use this to prevent jumps leaving the
+    #:  function from appearing in the flow chart. Unless specified, the
+    #:  targets of those outgoing jumps will be present in the flow chart
+    #:  under the form of one-instruction blocks
+    FC_NOEXT = ida_gdl.FC_NOEXT
+    #: compute predecessor lists
+    FC_PREDS = ida_gdl.FC_PREDS
+    #: multirange flowchart (set by append_to_flowchart)
+    FC_APPND = ida_gdl.FC_APPND
+    #: build_qflow_chart() may be aborted by user
+    FC_CHKBREAK = ida_gdl.FC_CHKBREAK
+
 class IdaFunction(object):
     """
         Class for representing and manipulating function in IDA.
 
         .. todo:: test
-        .. todo:: Interface with blocks
+        .. todo:: provide interface for flowgraph and allow to get all basicblocks and not only the one included in the function (external block: without FC_NOEXT flag)
+        .. todo:: equality and inclusion operator
+        .. todo:: pretty printer (__str__ func)
         .. todo:: Interface with stack
         .. todo:: color
         .. todo:: hexray interface
@@ -89,6 +115,7 @@ class IdaFunction(object):
     def end(self):
         """
             Property which return the address at the end of the function.
+            This address is not included in the function.
 
             :return int: The stop address of the function. This address is 
                 not included in the function.
@@ -304,6 +331,58 @@ class IdaFunction(object):
         """
         return idc.SetFunctionCmt(self.ea, value, True)
 
+    ######################## FLOWCHART & BASICBLOCK #########################
+
+    @property
+    def _flowchart(self):
+        """
+            Return a ``FlowChart`` object as defined by IDA in ``ida_gdl.py``.
+            This is used for getting the basic block and should not be used
+            directly.
+
+            .. note::
+            
+                Internally this is compute with the flags
+                ``IdaFlowChartFlag.FC_PREDS`` and
+                ``IdaFlowChartFlag.FC_NOEXT`` .
+
+            :return: An ``idaapi.FlowChart`` object.
+        """
+        return idaapi.FlowChart(self._funct,
+                flags=(IdaFlowChartFlag.FC_PREDS|IdaFlowChartFlag.FC_NOEXT))
+
+    @property
+    def nb_blocks(self):
+        """
+            Return the number of blocks present in this function.
+        """
+        return self._flowchart.size
+
+    @property
+    def blocks(self):
+        """
+            Return a list of :class:`IdaBlock` corresponding to the
+            BasicBlocks in this function.
+
+            :return: A list of object :class:`IdaBlock`
+        """
+        fc = self._flowchart
+        return [block.IdaBlock(b) for b in fc]
+
+    
+    @property
+    def blocks_iter(self):
+        """
+            Return a generator of :class:`IdaBlock` corresponding to the
+            BasicBlocks in this function. This implementation will be just
+            a little more performant than the :meth:`blocks` property.
+
+            :return: A generator of object :class:`IdaBlock`
+        """
+        fc = self._flowchart
+        for b in fc:
+            yield block.IdaBlock(b) 
+
     ############################# INSTR & ITEMS ############################
 
     @property
@@ -333,17 +412,18 @@ class IdaFunction(object):
 
             :return: A list of object :class:`Instr`
         """
-        return [instr.Instr(h) for h in idautils.Heads(self.ea, self.end) if idc.is_code(ida_bytes.GetFlags(h))]
+        return [instr.Instr(h) for h in idautils.Heads(self.ea, self.end) if idc.is_code(ida_bytes.get_full_flags(h))]
 
     @property
     def instr_iter(self):
         """
             Return a generator of :class:`Instr` corresponding to the
-            instructions of the functions.
+            instructions of the functions. This implementation will be just
+            a little more performant than the :meth:`instr` property.
 
             .. todo:: Test
 
-            :return: A list of object :class:`Instr`
+            :return: A generator of object :class:`Instr`
         """
         for h in idautils.Heads(self.ea, self.end):
             if idc.is_code(ida_bytes.GetFlags(h)):

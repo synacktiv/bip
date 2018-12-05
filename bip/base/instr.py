@@ -7,12 +7,15 @@ import idautils
 from idaelt import IdaElt
 from operand import Operand, OpType
 from biperror import BipError
+import block
+import func
 
 class Instr(IdaElt):
     """
         Class for representing and manipulating an instruction in IDA.
 
         .. todo:: make test
+        .. todo:: equality and inclusion operator
     """
     #UA_MAXOP = idaapi.UA_MAXOP #: Maximum number of operands for one instruction
     UA_MAXOP = 8 #: Maximum number of operands for one instruction
@@ -24,16 +27,6 @@ class Instr(IdaElt):
         super(Instr, self).__init__(ea)
         if not self.is_code:
             raise BipError("No an instr at 0x{:X}".format(ea))
-
-    #@property
-    #def size(self):
-    #    """
-    #        Property which return the size of the instruction.
-
-    #        :return: The size in bytes of the instruction.
-    #        :rtype: int
-    #    """
-    #    return self._insn.size
 
 
     ####################### BASE ######################
@@ -166,7 +159,36 @@ class Instr(IdaElt):
     # TODO:
     # * flags: different type of flag and property for knowing if the instruction is 
     #   a jmp/ret/call/...
-    # * link to basic block and functions
+
+    ####################### BASIC BLOCK & FUNCTION ##########################
+
+    @property
+    def block(self):
+        """
+            Return the :class:`IdaBlock` in which this instruction is
+            included.
+            
+            This instruction will raise an exception if the instruction is
+            not included an IDA basic block. See :class:`IdaBlock` for more
+            information.
+
+            :return: An :class:`IdaBlock` object containing this instruction.
+        """
+        return block.IdaBlock(self.ea)
+
+    @property
+    def func(self):
+        """
+            Return the :class:`IdaFunction` in which this instruction is
+            included.
+
+            This will raise an exception if the instruction is not in a
+            defined function.
+
+            :return: An :class:`IdaFunction` object containing this
+                instruction.
+        """
+        return func.IdaFunction(self.ea)
 
     ########################## XREFS ##############################
 

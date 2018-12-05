@@ -6,4 +6,5 @@ from operand import OpType, Operand
 from xref import XrefTypes, IdaXref
 from biperror import BipError
 from func import IdaFuncFlags, IdaFunction
+from block import IdaBlockType, IdaBlock
 
