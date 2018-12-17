@@ -1,5 +1,6 @@
 import idc
 import idautils
+import ida_bytes
 import xref
 from biperror import BipError
 
@@ -35,12 +36,12 @@ class IdaElt(object):
     def flags(self):
         """
             Property for getting the flags of the element. Those flags are the
-            one from ida such as returned by ``idc.GetFlags``.
+            one from ida such as returned by ``ida_bytes.get_full_flags``.
 
             :return: The flags for the element
             :rtype: int
         """
-        return idc.GetFlags(self.ea)
+        return ida_bytes.get_full_flags(self.ea)
 
     @property
     def size(self):

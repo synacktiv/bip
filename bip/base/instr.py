@@ -2,6 +2,7 @@
 #from idc import *
 #from idautils import *
 import idc
+import ida_bytes
 import ida_ua
 import idautils
 from idaelt import IdaElt
@@ -152,9 +153,7 @@ class Instr(IdaElt):
 
     @classmethod
     def _is_this_elt(cls, ea):
-        if idc.isCode(idc.GetFlags(ea)):
-            return True
-        return False
+        return idc.isCode(ida_bytes.get_full_flags(ea))
 
     # TODO:
     # * flags: different type of flag and property for knowing if the instruction is 
@@ -249,7 +248,7 @@ class Instr(IdaElt):
                 instruction define in the idb.
         """
         for h in idautils.Heads():
-            if idc.is_code(idc.GetFlags(h)):
+            if idc.is_code(ida_bytes.get_full_flags(h)):
                 yield cls(h)
 
 

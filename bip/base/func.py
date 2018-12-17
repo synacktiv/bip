@@ -4,10 +4,12 @@ import idc
 import ida_funcs
 import ida_name
 import ida_gdl
+import ida_bytes
 
 from idaelt import IdaElt, GetElt
 import instr
 import block
+import xref
 from biperror import BipError
 
 class IdaFuncFlags(object):
@@ -172,6 +174,9 @@ class IdaFunction(object):
                 function.
         """
         return idaapi.get_func_num(self.ea)
+
+    def __str__(self):
+        return "Func: {} (0x{:X})".format(self.name, self.ea)
 
 
     ####################### FLAGS & INFO ############################
@@ -426,7 +431,7 @@ class IdaFunction(object):
             :return: A generator of object :class:`Instr`
         """
         for h in idautils.Heads(self.ea, self.end):
-            if idc.is_code(ida_bytes.GetFlags(h)):
+            if idc.is_code(ida_bytes.get_full_flags(h)):
                 yield instr.Instr(h)
 
     @property
@@ -554,7 +559,7 @@ class IdaFunction(object):
         return [IdaFunction(ea) for ea in set([x.src_ea for x in self.xTo if x.is_call])]
 
     @property
-    def callee(self):
+    def callees(self):
         """
             Property which return a list of the functions which are called by
             this one.
