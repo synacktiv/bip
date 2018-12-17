@@ -21,6 +21,57 @@ class OpType(object):
     IDPSPEC3    = 11 #: processor specific type.
     IDPSPEC4    = 12 #: processor specific type.
     IDPSPEC5    = 13 #: processor specific type.
+## TODO:
+## x86
+#o_trreg  =       ida_ua.o_idpspec0      # trace register
+#o_dbreg  =       ida_ua.o_idpspec1      # debug register
+#o_crreg  =       ida_ua.o_idpspec2      # control register
+#o_fpreg  =       ida_ua.o_idpspec3      # floating point register
+#o_mmxreg  =      ida_ua.o_idpspec4      # mmx register
+#o_xmmreg  =      ida_ua.o_idpspec5      # xmm register
+#
+## arm
+#o_reglist  =     ida_ua.o_idpspec1      # Register list (for LDM/STM)
+#o_creglist  =    ida_ua.o_idpspec2      # Coprocessor register list (for CDP)
+#o_creg  =        ida_ua.o_idpspec3      # Coprocessor register (for LDC/STC)
+#o_fpreglist  =   ida_ua.o_idpspec4      # Floating point register list
+#o_text  =        ida_ua.o_idpspec5      # Arbitrary text stored in the operand
+#o_cond  =        (ida_ua.o_idpspec5+1)  # ARM condition as an operand
+#
+## ppc
+#o_spr  =         ida_ua.o_idpspec0      # Special purpose register
+#o_twofpr  =      ida_ua.o_idpspec1      # Two FPRs
+#o_shmbme  =      ida_ua.o_idpspec2      # SH & MB & ME
+#o_crf  =         ida_ua.o_idpspec3      # crfield      x.reg
+#o_crb  =         ida_ua.o_idpspec4      # crbit        x.reg
+#o_dcr  =         ida_ua.o_idpspec5      # Device control register
+
+class DestOpType(object):
+    """
+        Static class representing an enum of the ``dt_*`` macro from IDA
+        indicating the type of the operand value.
+
+        Defined in ``ua.hpp`` in IDA.
+    """
+    DT_BYTE         = 0     #: 8 bit
+    DT_WORD         = 1     #: 16 bit
+    DT_DWORD        = 2     #: 32 bit
+    DT_FLOAT        = 3     #: 4 byte
+    DT_DOUBLE       = 4     #: 8 byte
+    DT_TBYTE        = 5     #: variable size
+    DT_PACKREAL     = 6     #: packed real format for mc68040
+    DT_QWORD        = 7     #: 64 bit
+    DT_BYTE16       = 8     #: 128 bit
+    DT_CODE         = 9     #: ptr to code (not used?)
+    DT_VOID         = 10    #: none
+    DT_FWORD        = 11    #: 48 bit
+    DT_BITFILD      = 12    #: bit field (mc680x0)
+    DT_STRING       = 13    #: pointer to asciiz string
+    DT_UNICODE      = 14    #: pointer to unicode string
+    DT_LDBL         = 15    #: long double (which may be different from tbyte)
+    DT_BYTE32       = 16    #: 256 bit
+    DT_BYTE64       = 17    #: 512 bit
+
 
 class Operand(object):
     """
@@ -91,16 +142,82 @@ class Operand(object):
         return idc.GetOpType(self.ea, self.opnum)
 
     @property
-    def value(self):
+    def dtype(self):
+        """
+            Property which allow to get the type of the operand value. Those
+            can be access through the :class:`DestOpType` enum.
+            This is is equivalent to accessing the ``op_t.dtype`` from IDA.
+
+            .. todo: Test
+
+            :return int: The type of the destination of the operand as defined
+                in :class:`DestOpType`.
+        """
+        return self._op_t.dtype
+
+    @property
+    def _value(self):
         """
             Property allowing to get the value of an operand. Depending of the
             type of the operand this value can means different things.
             Wrapper on ``idc.GetOperandValue`` .
 
+            .. todo::
+
+                Look at idc.get_operand_value, somethings may need
+                change here.
+
             :return: The value of the operand.
             :rtype: int
         """
         return idc.GetOperandValue(self.ea, self.opnum)
+
+    @property
+    def value(self):
+        """
+            Property allowing to get the value of an operand. Depending of the
+            type of the operand this value can means different things.
+            For an immediate the value return as a mask apply for getting only
+            the number of bytes of the asm value and not the signed extended
+            returned by IDA.
+
+            .. todo::
+
+                Look at idc.get_operand_value, somethings may need
+                change here.
+
+            .. todo::
+
+                Support the dtype for other things than immediate (such as
+                float).
+                
+            .. todo::
+                
+                Support all of the dtype for immediate
+
+            .. todo: Test
+
+            :return: The value of the operand.
+            :rtype: int
+        """
+        if self.is_imm:
+            dt = self.dtype
+            if dt == DestOpType.DT_BYTE:
+                return self._value & 0xFF
+            elif dt == DestOpType.DT_WORD:
+                return self._value & 0xFFFF
+            elif dt == DestOpType.DT_DWORD:
+                return self._value & 0xFFFFFFFF
+            elif dt == DestOpType.DT_FLOAT: # TODO
+                return self._value & 0xFFFFFFFF
+            elif dt == DestOpType.DT_DOUBLE: # TODO
+                return self._value & 0xFFFFFFFFFFFFFFFF
+            elif dt == DestOpType.DT_QWORD:
+                return self._value & 0xFFFFFFFFFFFFFFFF
+            else: # TODO
+                return self._value
+        return self._value
+
 
     ######################## TEST TYPE ##########################
     # TODO: test those
