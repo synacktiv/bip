@@ -75,7 +75,7 @@ class IdaElt(object):
             do not always have a name.
 
             :return: The name of an element or an empty string if no name.
-            :rtype: str
+            :rtype: :class:`str`
         """
         return idc.Name(self.ea)
 
@@ -93,7 +93,8 @@ class IdaElt(object):
                 idc.set_name support flags so maybe make more advanced
                 functions ? (see include/name.hpp) And what about mangling.
 
-            :param str value: The name to give to this element.
+            :param value: The name to give to this element.
+            :type value: :class:`str`
         """
         if value is None:
             value = ""
@@ -131,7 +132,7 @@ class IdaElt(object):
             
             :return: The value of the comment or ``None`` if there is no
                 comment.
-            :rtype: str
+            :rtype: :class:`str`
         """
         return idc.GetCommentEx(self.ea, 0)
 
@@ -140,7 +141,8 @@ class IdaElt(object):
         """
             Setter which allow to set the value of the comment.
 
-            :param str value: The comment to set
+            :param value: The comment to set
+            :type value: :class:`str`
         """
         if value is None:
             value = ""
@@ -153,7 +155,7 @@ class IdaElt(object):
             
             :return: The value of the comment or ``None`` if there is no
                 repeatable comment.
-            :rtype: str
+            :rtype: :class:`str`
         """
         return idc.GetCommentEx(self.ea, 1)
 
@@ -162,7 +164,8 @@ class IdaElt(object):
         """
             Setter which allow to set the value of the repeatable comment.
 
-            :param str value: The comment to set.
+            :param value: The comment to set.
+            :type value: :class:`str`
         """
         if value is None:
             value = ""

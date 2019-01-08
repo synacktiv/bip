@@ -38,7 +38,7 @@ class Instr(IdaElt):
             Property returning a string representing the complete instruction.
 
             :return: A representation of the complete instruction.
-            :rtype: str
+            :rtype: :class:`str`
         """
         return idc.GetDisasm(self.ea)
 
@@ -48,7 +48,7 @@ class Instr(IdaElt):
             Property which allow to get the mnemonic of the instruction.
 
             :return: The mnemonic of the instruction
-            :rtype: str
+            :rtype: :class:`str`
         """
         return idc.GetMnem(self.ea)
 

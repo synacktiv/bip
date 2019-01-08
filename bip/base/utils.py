@@ -90,9 +90,9 @@ def absea(offset):
         The opposite of this function is :func:`relea`.
 
         :param int offset: The offset from the beginning of the image base
-        to translate.
+            to translate.
         :return: The absolute address corresponding to the offset.
-            :rtype: int
+        :rtype: int
     """
     return offset+idaapi.get_imagebase()
 
@@ -102,9 +102,10 @@ def get_addr_by_name(name):
 
         .. todo:: change the name of this function in ``get_reladdr_by_name`` ?
 
-        :param str name: The name corresponding to the point where we want the address.
+        :param name: The name corresponding to the point where we want the address.
+        :type name: :class:`str`
         :return: The relative address corresponding to name.
-            :rtype: int
+        :rtype: int
     """
     ea = idc.LocByName(name)
     if ea == 0xffffffffffffffff:

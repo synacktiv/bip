@@ -25,8 +25,6 @@ Structure API
 IDA Element
 ===========
 
-.. module:: bip.base
-
 .. autoclass:: IdaElt
     :members:
     :member-order: bysource
@@ -61,15 +59,12 @@ Utilities API
 
 This will probably change in the future.
 
-.. module:: bip.base
-
 .. autofunction:: get_highlighted_identifier_as_int
 .. autofunction:: Ptr
 .. autofunction:: get_ptr_size
 .. autofunction:: relea
 .. autofunction:: absea
 .. autofunction:: get_addr_by_name
-.. autofunction:: get_funcs_by_name
 .. autofunction:: get_name_by_addr
 .. autofunction:: get_struct_from_lvar
 

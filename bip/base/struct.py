@@ -27,7 +27,8 @@ class Struct(object):
 
             :param int sid: The structure id from IDA such as return by
                 ``idc.GetStrucIdByName`` .
-            :param str name: The name of the structure.
+            :param name: The name of the structure.
+            :type name: :class:`str`
         """
         self.sid = sid #: Structure id representing the structure in IDA.
         self.name = name #: Name of the structure.
@@ -46,8 +47,10 @@ class Struct(object):
             Add a new member with the size of a poitner at the end of
             the structure.
 
-            :param str name: the name of the field to add.
-            :param str comment: optional parameter which allow to provide a comment to associate with a member.
+            :param name: the name of the field to add.
+            :type name: :class:`str`
+            :param comment: optional parameter which allow to provide a comment to associate with a member.
+            :type comment: :class:`str`
         """
         ptr_sz = get_ptr_size()/8
         flag = ({8:FF_QWRD, 4:FF_DWRD, 2:FF_WORD}[ptr_sz])|FF_DATA
@@ -67,7 +70,8 @@ class Struct(object):
             .. todo:: handle the exact size
 
             :param int size: the size wanted for the structure.
-            :param str prefix: prefix for the name of the structure member. Default is ``field_`` .
+            :param prefix: prefix for the name of the structure member. Default is ``field_`` .
+            :type prefix: :class:`str`
         """
         offset = self.size
         ptr_sz = get_ptr_size()/8
@@ -95,7 +99,8 @@ class Struct(object):
         """
             Static method allowing to create a new empty struct.
 
-            :param str name: the name of the structure to create.
+            :param name: the name of the structure to create.
+            :type name: :class:`str`
             :raise ValueError: if the structure ``name`` already exist.
             :rtype: a :class:`Struct` object.
         """
@@ -114,7 +119,8 @@ class Struct(object):
             Static method allowing to get a :class:`Struct` object on
             an already existing structure.
 
-            :param str name: the name of the structure to get.
+            :param name: the name of the structure to get.
+            :type name: :class:`str`
             :raise ValueError: if the structure ``name`` does not exist.
             :rtype: a :class:`Struct` object.
         """
@@ -141,18 +147,20 @@ class StructField(object):
             Constructor for a :class:`StructField` object.
 
             :param int m_id: The member id from IDA which represent
-            this field such as return by ``GetMemberId`` .
-            :param str name: The name of this field.
+                this field such as return by ``GetMemberId`` .
+            :param name: The name of this field.
+            :type name: :class:`str`
             :param int offset: The position inside the structure of
-            this field.
+                this field.
             :param int size: The size of the field.
             :param struct: An object representing the structure in
-            which this field is included.
+                which this field is included.
             :type struct: a :class:`Struct` object.
             :param int flags: Flags for this field such as returned by
-            ``GetMemberFlag`` .
-            :param str comment: An optional parameter representing the
-            comment associated with this field.
+                ``GetMemberFlag`` .
+            :param comment: An optional parameter representing the
+                comment associated with this field.
+            :type comment: :class:`str`
         """
         self.name = name #: The name of this field.
         self.offset = offset #: The offset in the parent structure.
@@ -214,10 +222,10 @@ class StructField(object):
             .. todo:: what happens when this fail ?
 
             :param struct: object representing the structure containing
-            the field to recuperate.
+                the field to recuperate.
             :type struct: :class:`Struct`
             :param int offset: offset in the structure at which is 
-            present the member to get.
+                present the member to get.
             :return: An object representing a member in the structure.
             :rtype: :class:`StructField`
         """

@@ -120,7 +120,7 @@ class Operand(object):
             Wrapper on ``idc.GetOpnd`` .
 
             :return: The representation of the operand.
-            :rtype: str
+            :rtype: :class:`str`
         """
         return idc.GetOpnd(self.ea, self.opnum)
 
