@@ -81,6 +81,10 @@ class Operand(object):
         .. todo:: make test property depending of type
 
         .. todo:: make subclass by type of operand ?
+
+        .. todo:: support .reg and other stuff like that
+
+        .. todo:: make pretty printing function if possible
     """
 
     def __init__(self, ins, num):
