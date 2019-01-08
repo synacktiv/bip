@@ -6,10 +6,9 @@
 """
 
 from re import match
-from idaapi import *
-from idc import *
-from idautils import *
-from ida_hexrays import *
+
+import idaapi
+import idc
 
 def get_highlighted_identifier_as_int():
     """
@@ -20,7 +19,7 @@ def get_highlighted_identifier_as_int():
         :return: the value currently highlighted.
         :rtype: int
     """
-    s = get_highlighted_identifier()
+    s = idaapi.get_highlighted_identifier()
     h = match('(0x[0-9a-fA-F]+).*', s)
     o = match('(0[0-7]+).*', s)
     n = match('([0-9]+).*', s)
@@ -43,14 +42,14 @@ def Ptr(ea):
         :return: the pointer value
         :rtype: int
     """
-    info = get_inf_structure()
+    info = idaapi.get_inf_structure()
 
     if info.is_64bit():
-        return Qword(ea)
+        return idc.Qword(ea)
     elif info.is_32bit():
-        return Dword(ea)
+        return idc.Dword(ea)
     else:
-        return Word(ea)
+        return idc.Word(ea)
 
 def get_ptr_size():
     """
@@ -58,7 +57,7 @@ def get_ptr_size():
 
         :rtype: int
     """
-    info = get_inf_structure()
+    info = idaapi.get_inf_structure()
 
     if info.is_64bit():
         bits = 64
@@ -81,7 +80,7 @@ def relea(addr):
         :return: The offset from image base corresponding to ``addr``.
         :rtype: int
     """
-    return addr-get_imagebase()
+    return addr-idaapi.get_imagebase()
 
 def absea(offset):
     """
@@ -95,7 +94,7 @@ def absea(offset):
         :return: The absolute address corresponding to the offset.
             :rtype: int
     """
-    return offset+get_imagebase()
+    return offset+idaapi.get_imagebase()
 
 def get_addr_by_name(name):
     """
@@ -107,30 +106,10 @@ def get_addr_by_name(name):
         :return: The relative address corresponding to name.
             :rtype: int
     """
-    ea = LocByName(name)
+    ea = idc.LocByName(name)
     if ea == 0xffffffffffffffff:
         return 0
     return relea(ea)
-
-def get_funcs_by_name(name):
-    """
-        Get all the functions which are named with a particular prefix.
-
-        .. todo:: change the parameter ``name`` in ``prefix`` ?
-
-        .. todo:: rename this function ``get_funcs_by_prefix`` ?
-
-        :param str name: The prefix to match again the functions named.
-        :return: A list of the name of the functions which match the prefix.
-        :rtype: list(str)
-    """
-    res = []
-    for ea in Functions():
-        n = GetFunctionName(ea)
-        if n.startswith(name):
-            res.append(n)
-
-    return res
 
 def get_name_by_addr(offset):
     """
@@ -138,9 +117,9 @@ def get_name_by_addr(offset):
 
         .. todo:: Remove the print and raise an exception if an error occur
     """
-    s = GetFuncOffset(absea(offset))
+    s = idc.GetFuncOffset(absea(offset))
     if not s:
-        nn = NearestName({k:v for k,v in Names()})
+        nn = idaapi.NearestName({k:v for k,v in Names()})
         if nn is None:
             return '', 0
         
@@ -176,6 +155,8 @@ def get_struct_from_lvar(lvar):
 
         :rtype: A bip :class:`~bip.base.Struct` object or ``None`` on error
     """
+
+    from bip.base import Struct
     
     t = lvar.type()
     
@@ -183,7 +164,7 @@ def get_struct_from_lvar(lvar):
         s = t.get_pointed_object()
         if s.is_struct():
             try:
-                struct = Struct.get(s.get_type_name())
+                struct = bstruct.Struct.get(s.get_type_name())
                 return struct
             except ValueError:
                 return None

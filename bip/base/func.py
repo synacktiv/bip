@@ -609,6 +609,15 @@ class IdaFunction(object):
             yield cls(ea)
 
     @classmethod
+    def get_by_prefix(cls, name):
+        """
+            Class method allowing to get all the functions which are named
+            with a particular prefix.
+        """
+        return [f for f in cls.iter_all() if f.name.startswith(name)]
+
+
+    @classmethod
     def create(cls, start, end=None):
         """
             Class method allowing to create a new function.

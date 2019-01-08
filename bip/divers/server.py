@@ -20,7 +20,7 @@ def complete_symbol(data):
         print "[!] Malformed input json in search_symbol, attribute name missing"
         return {}
 
-    funcs = get_funcs_by_name(str(data['name']))
+    funcs = [f.name for f in IdaFunction.get_by_prefix(str(data['name']))]
 
     return {'symbols': funcs}
 
