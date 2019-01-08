@@ -1,6 +1,5 @@
-from idaapi import *
-from idc import *
-from idautils import *
+import idc
+import idautils
 
 from bip.base import get_ptr_size
 from biperror import BipError
@@ -27,7 +26,7 @@ class Struct(object):
             .. todo:: Should probably only take sid in param and make name a property
 
             :param int sid: The structure id from IDA such as return by
-                ``GetStrucIdByName`` .
+                ``idc.GetStrucIdByName`` .
             :param str name: The name of the structure.
         """
         self.sid = sid #: Structure id representing the structure in IDA.
@@ -40,7 +39,7 @@ class Struct(object):
 
             :rtype: int
         """
-        return int(GetStrucSize(self.sid))
+        return int(idc.GetStrucSize(self.sid))
 
     def add_ptr_field(self, name, comment=None):
         """
@@ -53,10 +52,10 @@ class Struct(object):
         ptr_sz = get_ptr_size()/8
         flag = ({8:FF_QWRD, 4:FF_DWRD, 2:FF_WORD}[ptr_sz])|FF_DATA
         
-        AddStrucMember(self.sid, name, -1, flag, -1, ptr_sz)
+        idc.AddStrucMember(self.sid, name, -1, flag, -1, ptr_sz)
 
         if comment:
-            SetMemberComment(self.sid, GetStrucSize(self.sid)-1, comment, True)
+            idc.SetMemberComment(self.sid, idc.GetStrucSize(self.sid)-1, comment, True)
     
     def fill(self, size, prefix='field_'):
         """
@@ -76,7 +75,7 @@ class Struct(object):
         flag = ({8:FF_QWRD, 4:FF_DWRD, 2:FF_WORD}[ptr_sz])|FF_DATA
         
         while offset < size:
-            AddStrucMember(self.sid, "{}{:X}".format(prefix, offset), -1, flag, -1, ptr_sz)
+            idc.AddStrucMember(self.sid, "{}{:X}".format(prefix, offset), -1, flag, -1, ptr_sz)
             offset += ptr_sz
 
     @property
@@ -88,7 +87,7 @@ class Struct(object):
 
             :rtype: iterable of :class:`~StructField` object.
         """
-        for f in StructMembers(self.sid):
+        for f in idautils.StructMembers(self.sid):
             yield StructField.from_struct(self, f[0])
             
     @staticmethod
@@ -100,11 +99,11 @@ class Struct(object):
             :raise ValueError: if the structure ``name`` already exist.
             :rtype: a :class:`Struct` object.
         """
-        sid = GetStrucIdByName(name)
+        sid = idc.GetStrucIdByName(name)
         if sid != E_NOTFOUND:
             raise ValueError('struct already exists')
         
-        sid = AddStrucEx(-1, name, 0)
+        sid = idc.AddStrucEx(-1, name, 0)
         if sid == 0xffffffffffffffff:
             raise BipError("Impossible to create structure with name={}".format(name))
         return Struct(sid, name)
@@ -119,7 +118,7 @@ class Struct(object):
             :raise ValueError: if the structure ``name`` does not exist.
             :rtype: a :class:`Struct` object.
         """
-        sid = GetStrucIdByName(name)
+        sid = idc.GetStrucIdByName(name)
         if sid == E_NOTFOUND:
             raise ValueError('struct doesnt exists')
 
@@ -172,7 +171,7 @@ class StructField(object):
 
             :rtype: ``str`` or ``None``
         """
-        t = GetType(self.m_id)
+        t = idc.GetType(self.m_id)
         common_types = {
             8: "_QWORD",
             4: "_DWORD",
@@ -222,12 +221,12 @@ class StructField(object):
             :return: An object representing a member in the structure.
             :rtype: :class:`StructField`
         """
-        name = GetMemberName(struct.sid, offset)
+        name = idc.GetMemberName(struct.sid, offset)
         # assume rpt comment
-        comment = GetMemberComment(struct.sid, offset, 1)
-        flags = GetMemberFlag(struct.sid, offset)
-        size = GetMemberSize(struct.sid, offset)
-        m_id = GetMemberId(struct.sid, offset)
+        comment = idc.GetMemberComment(struct.sid, offset, 1)
+        flags = idc.GetMemberFlag(struct.sid, offset)
+        size = idc.GetMemberSize(struct.sid, offset)
+        m_id = idc.GetMemberId(struct.sid, offset)
         return StructField(m_id, name, offset, size, struct, flags, comment)
 
 
