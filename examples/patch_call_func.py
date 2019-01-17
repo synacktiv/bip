@@ -1,4 +1,5 @@
 
+from bip.base import *
 
 name = "hello"
 sc = '\xff\xd0' # call rax
