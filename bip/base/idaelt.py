@@ -60,10 +60,34 @@ class IdaElt(object):
             Property returning the value of the bytes contain in the
             element.
 
+            .. todo:: make an orginal_bytes property
+
             :return: A list of the bytes forming the element.
             :rtype: list(int)
         """
         return [idc.Byte(i) for i in range(self.ea, idc.ItemEnd(self.ea))]
+
+    @bytes.setter
+    def bytes(self, value):
+        """
+            Setter allowing to change the bytes value of the element.
+
+            .. warning::
+
+                No check is made on the size of the array of the setter and
+                it can rewrite more than the size of the element,
+
+            :param value: A list of int corresponding to the bytes to change.
+        """
+        if isinstance(value, str):
+            ida_bytes.patch_bytes(self.ea, value)
+        elif isinstance(value, list):
+            i = 0
+            for e in value:
+                ida_bytes.patch_byte(self.ea + i, e)
+                i += 1
+        else:
+            raise TypeError("Invalid arg {} for IdaElt.bytes setter".format(value))
 
     ################### NAME ##################
     # All element do not have one
