@@ -141,6 +141,8 @@ class IdaFunction(object):
             Property which return the name of the function as display in the
             IDA window.
 
+            .. todo:: this does not handle mangling
+
             :return str: The name of the function.
         """
         return idc.get_name(self.ea, ida_name.GN_VISIBLE)

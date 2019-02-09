@@ -84,6 +84,8 @@ class Operand(object):
 
         .. todo:: support .reg and other stuff like that
 
+        .. todo:: hex((i.Op2.specval >> 0x10) & 0xFF) give the segment
+
         .. todo:: make pretty printing function if possible
     """
 
