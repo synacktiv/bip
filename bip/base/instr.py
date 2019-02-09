@@ -5,6 +5,7 @@ import idc
 import ida_bytes
 import ida_ua
 import idautils
+import idaapi
 from idaelt import IdaElt
 from operand import Operand, OpType
 from biperror import BipError
@@ -115,6 +116,27 @@ class Instr(IdaElt):
         """
         return idc.isFlow(self.flags)
 
+    @property
+    def is_call(self):
+        """
+            Property indicating if this instruction is a call.
+
+            :return bool: True if this instruction is a call, False otherwise.
+        """
+        return idaapi.is_call_insn(self.ea)
+
+    @property
+    def is_in_func(self):
+        """
+            Property which return True if this instruction is inside a
+            function.
+        """
+        try:
+            self.func
+            return True
+        except ValueError:
+            return False
+
 
     #################### UTILS #####################
 
@@ -181,7 +203,7 @@ class Instr(IdaElt):
             Return the :class:`IdaFunction` in which this instruction is
             included.
 
-            This will raise an exception if the instruction is not in a
+            This will raise a ``ValueError`` if the instruction is not in a
             defined function.
 
             :return: An :class:`IdaFunction` object containing this
