@@ -20,6 +20,10 @@ class visit(ctree_visitor_t):
         print(GetHxCItem(i))
 	return 0
 
+    def visit_insn(self, i):
+        print(GetHxCItem(i))
+        return 0
+
 def test_visit00():
     f = decompile(0x01800D2FF0)
     visit(f).apply_to(f.body, None)
