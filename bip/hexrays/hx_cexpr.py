@@ -5,16 +5,6 @@ from hx_citem import HxCType, HxCItem, GetHxCItem
 
 # TODO: this file should probably be split
 
-# TODO: make a parent class for all final operators:
-#    COT_NUM         = 61    #: n   
-#    COT_FNUM        = 62    #: fpc 
-#    COT_STR         = 63    #: string constant
-#    COT_OBJ         = 64    #: obj_ea
-#    COT_VAR         = 65    #: v
-#    COT_INSN        = 66
-#    COT_HELPER      = 68    #: arbitrary name
-#    COT_TYPE        = 69    #: arbitrary type
-
 # TODO: implement COT_INSN and COT_TYPE
 
 
@@ -28,7 +18,10 @@ class HxCExpr(HxCItem):
         expression the function :func:`~hx_citem.GetHxCItem` should be used.
 
         .. todo:: implem exflags
+
         .. todo:: implem everything in ``cexpr_t``
+
+        .. todo:: implem types
     """
 
     def __init__(self, cexpr):
@@ -58,7 +51,40 @@ class HxCExpr(HxCItem):
         """
         return []
 
-class HxCExprNum(HxCExpr):
+class HxCExprFinal(HxCExpr):
+    """
+        Abstract class for representing a :class:`HxCExpr` which does not
+        posess child expression. All the child class must have a
+        :meth:`~HxCExprFinal.value` property which return the value of the
+        expression.
+
+        This is used as a parent for:
+
+        * :class:`HxCExprNum`
+        * :class:`HxCExprFNum`
+        * :class:`HxCExprStr`
+        * :class:`HxCExprObj`
+        * :class:`HxCExprVar`
+        * :class:`HxCExprHelper`
+        * :class:`HxCExprInsn`
+        * :class:`HxCExprType`
+    """
+
+    def __str__(self):
+        """
+            Surcharge for printing a HxCExprFinal.
+        """
+        return "{}(ea=0x{:X}, value={})".format(self.__class__.__name__, self.ea, self.value)
+    @property
+    def value(self):
+        """
+            Property which return the value of a final expression. This is
+            abstract and if not overwritten it will raise a
+            :class:`RuntimeError` .
+        """
+        raise RuntimeError("Abstract property value access.")
+
+class HxCExprNum(HxCExprFinal):
     """
         Class for representing a CExpr containing a Number
         (``HxCType.COT_NUM``). 
@@ -103,7 +129,7 @@ class HxCExprNum(HxCExpr):
         """
         return self._cexpr.n.nf.org_nbyes
 
-class HxCExprFNum(HxCExpr):
+class HxCExprFNum(HxCExprFinal):
     """
         Class for representing a Floating number (``HxCType.COT_FNUM``).
 
@@ -130,7 +156,7 @@ class HxCExprFNum(HxCExpr):
         """
         return self._cexpr.fpc.nbytes
 
-class HxCExprStr(HxCExpr):
+class HxCExprStr(HxCExprFinal):
     """
         Class for representing a string (``HxCType.COT_STR``).
 
@@ -152,7 +178,7 @@ class HxCExprStr(HxCExpr):
         """
         return self._cexpr.string
 
-class HxCExprObj(HxCExpr):
+class HxCExprObj(HxCExprFinal):
     """
         Class for representing an object (``HxCType.COT_OBJ``).
 
@@ -174,7 +200,7 @@ class HxCExprObj(HxCExpr):
         """
         return self._cexpr.obj_ea
 
-class HxCExprVar(HxCExpr):
+class HxCExprVar(HxCExprFinal):
     """
         Class for representing a variable (``HxCType.COT_VAR``).
 
@@ -207,7 +233,7 @@ class HxCExprVar(HxCExpr):
         """
         return self._cexpr.v.idx
 
-class HxCExprHelper(HxCExpr):
+class HxCExprHelper(HxCExprFinal):
     """
         Class  for representing an helper string (``HxCType.COT_HELPER``) .
     """
@@ -222,7 +248,7 @@ class HxCExprHelper(HxCExpr):
         """
         return self._cexpr.helper
 
-class HxCExprInsn(HxCExpr):
+class HxCExprInsn(HxCExprFinal):
     """
         Class for representing an instruction in expression
         (``HxCType.COT_INSN``). 
@@ -237,7 +263,7 @@ class HxCExprInsn(HxCExpr):
     def value(self):
         raise NotImplemented("HxCInsn is not implemented")
 
-class HxCExprType(HxCExpr):
+class HxCExprType(HxCExprFinal):
     """
         Class for representing a type (``HxCType.COT_TYPE``). 
         
