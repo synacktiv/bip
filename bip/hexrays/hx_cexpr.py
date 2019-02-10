@@ -17,8 +17,6 @@ from hx_citem import HxCType, HxCItem, GetHxCItem
 
 # TODO: implement COT_INSN and COT_TYPE
 
-# TODO: change name of child class as they could be confusing
-
 
 class HxCExpr(HxCItem):
     """
@@ -60,7 +58,7 @@ class HxCExpr(HxCItem):
         """
         return []
 
-class HxCNum(HxCExpr):
+class HxCExprNum(HxCExpr):
     """
         Class for representing a CExpr containing a Number
         (``HxCType.COT_NUM``). 
@@ -105,7 +103,7 @@ class HxCNum(HxCExpr):
         """
         return self._cexpr.n.nf.org_nbyes
 
-class HxCFNum(HxCExpr):
+class HxCExprFNum(HxCExpr):
     """
         Class for representing a Floating number (``HxCType.COT_FNUM``).
 
@@ -132,7 +130,7 @@ class HxCFNum(HxCExpr):
         """
         return self._cexpr.fpc.nbytes
 
-class HxCStr(HxCExpr):
+class HxCExprStr(HxCExpr):
     """
         Class for representing a string (``HxCType.COT_STR``).
 
@@ -154,7 +152,7 @@ class HxCStr(HxCExpr):
         """
         return self._cexpr.string
 
-class HxCObj(HxCExpr):
+class HxCExprObj(HxCExpr):
     """
         Class for representing an object (``HxCType.COT_OBJ``).
 
@@ -176,7 +174,7 @@ class HxCObj(HxCExpr):
         """
         return self._cexpr.obj_ea
 
-class HxCVar(HxCExpr):
+class HxCExprVar(HxCExpr):
     """
         Class for representing a variable (``HxCType.COT_VAR``).
 
@@ -209,7 +207,7 @@ class HxCVar(HxCExpr):
         """
         return self._cexpr.v.idx
 
-class HxCHelper(HxCExpr):
+class HxCExprHelper(HxCExpr):
     """
         Class  for representing an helper string (``HxCType.COT_HELPER``) .
     """
@@ -224,7 +222,7 @@ class HxCHelper(HxCExpr):
         """
         return self._cexpr.helper
 
-class HxCInsn(HxCExpr):
+class HxCExprInsn(HxCExpr):
     """
         Class for representing an instruction in expression
         (``HxCType.COT_INSN``). 
@@ -251,7 +249,7 @@ class HxCExprType(HxCExpr):
     def value(self):
         raise NotImplemented("HxCInsn is not implemented")
 
-class HxCTernary(HxCExpr):
+class HxCExprTernary(HxCExpr):
     """
         Class for representing a ternary operation (``cond ? expr1 : expr2``)
         (``HxCType.COT_TERN``). 
@@ -296,7 +294,7 @@ class HxCTernary(HxCExpr):
     def ops(self):
         return [self.cond, self.expr1, self.expr2]
 
-class HxCDoubleOperation(HxCExpr):
+class HxCExprDoubleOperation(HxCExpr):
     """
         Abstract class for representing a :class:`HxCExpr` with two operands.
         Those operands are also :class:`HxCExpr` making them recursive.
@@ -326,7 +324,7 @@ class HxCDoubleOperation(HxCExpr):
     def ops(self):
         return [self.first_op, self.second_op]
 
-class HxCComma(HxCDoubleOperation):
+class HxCExprComma(HxCExprDoubleOperation):
     """
         C Expression for a comma expression.
         
@@ -334,444 +332,444 @@ class HxCComma(HxCDoubleOperation):
     """
     TYPE_HANDLE = HxCType.COT_COMMA
 
-## BEGIN REGEX GENERATED INHERITED FROM HxCDoubleOperation
+## BEGIN REGEX GENERATED INHERITED FROM HxCExprDoubleOperation
 # TODO: clean this
 
-class HxCAsg(HxCDoubleOperation):
+class HxCExprAsg(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASG
 
 
-class HxCAsgbor(HxCDoubleOperation):
+class HxCExprAsgbor(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGBOR
 
 
-class HxCAsgxor(HxCDoubleOperation):
+class HxCExprAsgxor(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGXOR
 
 
-class HxCAsgband(HxCDoubleOperation):
+class HxCExprAsgband(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGBAND
 
 
-class HxCAsgadd(HxCDoubleOperation):
+class HxCExprAsgadd(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGADD
 
 
-class HxCAsgsub(HxCDoubleOperation):
+class HxCExprAsgsub(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGSUB
 
 
-class HxCAsgmul(HxCDoubleOperation):
+class HxCExprAsgmul(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGMUL
 
 
-class HxCAsgsshr(HxCDoubleOperation):
+class HxCExprAsgsshr(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGSSHR
 
 
-class HxCAsgushr(HxCDoubleOperation):
+class HxCExprAsgushr(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGUSHR
 
 
-class HxCAsgshl(HxCDoubleOperation):
+class HxCExprAsgshl(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGSHL
 
 
-class HxCAsgsdiv(HxCDoubleOperation):
+class HxCExprAsgsdiv(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGSDIV
 
 
-class HxCAsgudiv(HxCDoubleOperation):
+class HxCExprAsgudiv(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGUDIV
 
 
-class HxCAsgsmod(HxCDoubleOperation):
+class HxCExprAsgsmod(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGSMOD
 
 
-class HxCAsgumod(HxCDoubleOperation):
+class HxCExprAsgumod(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ASGUMOD
 
 
-class HxCLor(HxCDoubleOperation):
+class HxCExprLor(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_LOR
 
 
-class HxCLand(HxCDoubleOperation):
+class HxCExprLand(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_LAND
 
 
-class HxCBor(HxCDoubleOperation):
+class HxCExprBor(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_BOR
 
 
-class HxCXor(HxCDoubleOperation):
+class HxCExprXor(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_XOR
 
 
-class HxCBand(HxCDoubleOperation):
+class HxCExprBand(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_BAND
 
 
-class HxCEq(HxCDoubleOperation):
+class HxCExprEq(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_EQ
 
 
-class HxCNe(HxCDoubleOperation):
+class HxCExprNe(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_NE
 
 
-class HxCSge(HxCDoubleOperation):
+class HxCExprSge(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_SGE
 
 
-class HxCUge(HxCDoubleOperation):
+class HxCExprUge(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_UGE
 
 
-class HxCSle(HxCDoubleOperation):
+class HxCExprSle(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_SLE
 
 
-class HxCUle(HxCDoubleOperation):
+class HxCExprUle(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ULE
 
 
-class HxCSgt(HxCDoubleOperation):
+class HxCExprSgt(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_SGT
 
 
-class HxCUgt(HxCDoubleOperation):
+class HxCExprUgt(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_UGT
 
 
-class HxCSlt(HxCDoubleOperation):
+class HxCExprSlt(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_SLT
 
 
-class HxCUlt(HxCDoubleOperation):
+class HxCExprUlt(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ULT
 
 
-class HxCSshr(HxCDoubleOperation):
+class HxCExprSshr(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_SSHR
 
 
-class HxCUshr(HxCDoubleOperation):
+class HxCExprUshr(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_USHR
 
 
-class HxCShl(HxCDoubleOperation):
+class HxCExprShl(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_SHL
 
 
-class HxCAdd(HxCDoubleOperation):
+class HxCExprAdd(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_ADD
 
 
-class HxCSub(HxCDoubleOperation):
+class HxCExprSub(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_SUB
 
 
-class HxCMul(HxCDoubleOperation):
+class HxCExprMul(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_MUL
 
 
-class HxCSdiv(HxCDoubleOperation):
+class HxCExprSdiv(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_SDIV
 
 
-class HxCUdiv(HxCDoubleOperation):
+class HxCExprUdiv(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_UDIV
 
 
-class HxCSmod(HxCDoubleOperation):
+class HxCExprSmod(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_SMOD
 
 
-class HxCUmod(HxCDoubleOperation):
+class HxCExprUmod(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_UMOD
 
 
-class HxCFadd(HxCDoubleOperation):
+class HxCExprFadd(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_FADD
 
 
-class HxCFsub(HxCDoubleOperation):
+class HxCExprFsub(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_FSUB
 
 
-class HxCFmul(HxCDoubleOperation):
+class HxCExprFmul(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_FMUL
 
 
-class HxCFdiv(HxCDoubleOperation):
+class HxCExprFdiv(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCDoubleOperation`.
+        Inherited from :class:`HxCExprDoubleOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_FDIV
 
-## END REGEX GENERATED INHERITED FROM HxCDoubleOperation
+## END REGEX GENERATED INHERITED FROM HxCExprDoubleOperation
 
-class HxCUnaryOperation(HxCExpr):
+class HxCExprUnaryOperation(HxCExpr):
     """
         Abstract for representing a :class:`HxCExpr` with a unary operation.
-        This :meth:`HxCUnaryOperation.operand` is also a :class:`HxCExpr`
+        This :meth:`HxCExprUnaryOperation.operand` is also a :class:`HxCExpr`
         making it recursive.
     """
 
@@ -789,10 +787,10 @@ class HxCUnaryOperation(HxCExpr):
     def ops(self):
         return [self.operand]
 
-class HxCPtr(HxCUnaryOperation):
+class HxCExprPtr(HxCExprUnaryOperation):
     """
         Class for representing the deref. of a pointer (``*operand``). This
-        inherit from :class:`HxCUnaryOperation`.
+        inherit from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
@@ -808,119 +806,119 @@ class HxCPtr(HxCUnaryOperation):
         """
         return self._cexpr.ptrsize
 
-## BEGIN REGEX GENERATED INHERITED FROM HxCUnaryOperation
+## BEGIN REGEX GENERATED INHERITED FROM HxCExprUnaryOperation
 
-class HxCFneg(HxCUnaryOperation):
+class HxCExprFneg(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCUnaryOperation`.
+        Inherited from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_FNEG
 
 
-class HxCNeg(HxCUnaryOperation):
+class HxCExprNeg(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCUnaryOperation`.
+        Inherited from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_NEG
 
 
-class HxCCast(HxCUnaryOperation):
+class HxCExprCast(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCUnaryOperation`.
+        Inherited from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_CAST
 
 
-class HxCLnot(HxCUnaryOperation):
+class HxCExprLnot(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCUnaryOperation`.
+        Inherited from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_LNOT
 
 
-class HxCBnot(HxCUnaryOperation):
+class HxCExprBnot(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCUnaryOperation`.
+        Inherited from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_BNOT
 
 
-class HxCRef(HxCUnaryOperation):
+class HxCExprRef(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCUnaryOperation`.
+        Inherited from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_REF
 
 
-class HxCPostinc(HxCUnaryOperation):
+class HxCExprPostinc(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCUnaryOperation`.
+        Inherited from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_POSTINC
 
 
-class HxCPostdec(HxCUnaryOperation):
+class HxCExprPostdec(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCUnaryOperation`.
+        Inherited from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_POSTDEC
 
 
-class HxCPreinc(HxCUnaryOperation):
+class HxCExprPreinc(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCUnaryOperation`.
+        Inherited from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_PREINC
 
 
-class HxCPredec(HxCUnaryOperation):
+class HxCExprPredec(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCUnaryOperation`.
+        Inherited from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_PREDEC
 
-class HxCSizeof(HxCUnaryOperation):
+class HxCExprSizeof(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCUnaryOperation`.
+        Inherited from :class:`HxCExprUnaryOperation`.
 
         .. todo:: make better description
     """
     TYPE_HANDLE = HxCType.COT_SIZEOF
 
-## END REGEX GENERATED INHERITED FROM HxCUnaryOperation
+## END REGEX GENERATED INHERITED FROM HxCExprUnaryOperation
 
-class HxCCall(HxCExpr):
+class HxCExprCall(HxCExpr):
     """
         Class for representing a call expression. This class also provide
         function which allow to manipulate the arguments.
@@ -1027,7 +1025,7 @@ class HxCCall(HxCExpr):
     def args_iter(self):
         """
             Property which return an iterator on the args of the call. This
-            is similar to :meth:`~HxCCall.args` but with an iterator, and
+            is similar to :meth:`~HxCExprCall.args` but with an iterator, and
             should have more perf.
         """
         for i in self._carglist:
@@ -1038,7 +1036,7 @@ class HxCCall(HxCExpr):
         return [self.caller] + self.args
 
 
-class HxCIdx(HxCExpr):
+class HxCExprIdx(HxCExpr):
     """
         Class for representing access to an index in an array
         (``array[index]``). The :meth:`array` is a :class:`HxCExpr`
@@ -1074,7 +1072,7 @@ class HxCIdx(HxCExpr):
         return [self.array, self.index]
 
 
-class HxCMemref(HxCExpr):
+class HxCExprMemref(HxCExpr):
     """
         Class for representing a memory reference
         (``mem.off``). The :meth:`mem` is a :class:`HxCExpr`
@@ -1110,7 +1108,7 @@ class HxCMemref(HxCExpr):
     def ops(self):
         return [self.mem, self.off]
 
-class HxCMemptr(HxCExpr):
+class HxCExprMemptr(HxCExpr):
     """
         Class for representing a memory access using a pointer
         (``ptr->off``). The :meth:`ptr` is a :class:`HxCExpr`
