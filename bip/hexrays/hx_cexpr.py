@@ -1,11 +1,9 @@
 
 from hx_citem import HxCType, HxCItem, GetHxCItem
 
-# TODO: change Statement by Stmt
-
 # TODO: this file should probably be split
 
-# TODO: implement COT_INSN and COT_TYPE
+# TODO: implement COT_EMPTY, COT_INSN and COT_TYPE
 
 
 class HxCExpr(HxCItem):
@@ -20,6 +18,8 @@ class HxCExpr(HxCItem):
         .. todo:: implem exflags
 
         .. todo:: implem everything in ``cexpr_t``
+
+        .. todo:: implem things for modifying HxCExpr
 
         .. todo:: implem types
     """
