@@ -60,6 +60,7 @@ class HxCExprFinal(HxCExpr):
 
         This is used as a parent for:
 
+        * :class:`HxCExprEmpty`
         * :class:`HxCExprNum`
         * :class:`HxCExprFNum`
         * :class:`HxCExprStr`
@@ -83,6 +84,20 @@ class HxCExprFinal(HxCExpr):
             :class:`RuntimeError` .
         """
         raise RuntimeError("Abstract property value access.")
+
+class HxCExprEmpty(HxCExprFinal):
+    """
+        Class for representing an empty CExpr (``HxCType.COT_EMPTY``).
+    """
+    TYPE_HANDLE = HxCType.COT_EMPTY
+
+    @property
+    def value(self):
+        """
+            Return ``None`` .
+        """
+        return None
+
 
 class HxCExprNum(HxCExprFinal):
     """
@@ -180,7 +195,9 @@ class HxCExprStr(HxCExprFinal):
 
 class HxCExprObj(HxCExprFinal):
     """
-        Class for representing an object (``HxCType.COT_OBJ``).
+        Class for representing an "object" (``HxCType.COT_OBJ``). An object
+        for idea can be anything with an address including the address of a
+        function, a string ...
 
         .. todo:: test
 
@@ -193,8 +210,6 @@ class HxCExprObj(HxCExprFinal):
     def value(self):
         """
             Address of the object.
-
-            .. todo:: not sure test this
 
             :return int: the address of the object.
         """
