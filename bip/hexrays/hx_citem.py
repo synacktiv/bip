@@ -215,6 +215,6 @@ def GetHxCItem(citem):
         else:
             done.add(cl)
             todo |= set(cl.__subclasses__())
-    raise ValueError("GetHxCItem function could not find an object matching the citem_t type provided")
+    raise ValueError("GetHxCItem function could not find an object matching the citem_t type provided ({})".format(citem.op))
 
 
