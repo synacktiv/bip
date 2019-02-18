@@ -274,6 +274,18 @@ class Operand(object):
         """
             Test if this operand is processor specific.
         """
-        return t >= OpType.IDPSPEC0
+        return self.type >= OpType.IDPSPEC0
+
+    ############################# OFFSET & CHANGE TYPE ######################
+
+    def set_offset(self, base=0):
+        """
+            Set this operand as being an offset.
+
+            .. todo:: this should be a setter on a property ?
+
+            .. todo:: doc base arg
+        """
+        idc.op_plain_offset(self.instr.ea, self.opnum, base)
 
 
