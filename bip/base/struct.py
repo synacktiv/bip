@@ -1,10 +1,9 @@
 import idc
 import idautils
+import ida_struct
 
 from bip.base import get_ptr_size
 from biperror import BipError
-
-E_NOTFOUND = 0xFFFFFFFFFFFFFFFF
 
 class Struct(object):
     """
@@ -53,7 +52,7 @@ class Struct(object):
             :type comment: :class:`str`
         """
         ptr_sz = get_ptr_size()/8
-        flag = ({8:FF_QWRD, 4:FF_DWRD, 2:FF_WORD}[ptr_sz])|FF_DATA
+        flag = ({8:idc.FF_QWRD, 4:idc.FF_DWRD, 2:idc.FF_WORD}[ptr_sz])|idc.FF_DATA
         
         idc.AddStrucMember(self.sid, name, -1, flag, -1, ptr_sz)
 
@@ -69,14 +68,14 @@ class Struct(object):
 
             .. todo:: handle the exact size
 
-            :param int size: the size wanted for the structure.
+            :param int size: the size in bytes wanted for the structure.
             :param prefix: prefix for the name of the structure member. Default is ``field_`` .
             :type prefix: :class:`str`
         """
         offset = self.size
         ptr_sz = get_ptr_size()/8
 
-        flag = ({8:FF_QWRD, 4:FF_DWRD, 2:FF_WORD}[ptr_sz])|FF_DATA
+        flag = ({8:idc.FF_QWRD, 4:idc.FF_DWRD, 2:idc.FF_WORD}[ptr_sz])|idc.FF_DATA
         
         while offset < size:
             idc.AddStrucMember(self.sid, "{}{:X}".format(prefix, offset), -1, flag, -1, ptr_sz)
@@ -104,8 +103,8 @@ class Struct(object):
             :raise ValueError: if the structure ``name`` already exist.
             :rtype: a :class:`Struct` object.
         """
-        sid = idc.GetStrucIdByName(name)
-        if sid != E_NOTFOUND:
+        sid = ida_struct.get_struc_id(name)
+        if sid != idc.BADADDR:
             raise ValueError('struct already exists')
         
         sid = idc.AddStrucEx(-1, name, 0)
@@ -124,8 +123,8 @@ class Struct(object):
             :raise ValueError: if the structure ``name`` does not exist.
             :rtype: a :class:`Struct` object.
         """
-        sid = idc.GetStrucIdByName(name)
-        if sid == E_NOTFOUND:
+        sid = ida_struct.get_struc_id(name)
+        if sid == idc.BADADDR:
             raise ValueError('struct doesnt exists')
 
         return Struct(sid, name)
