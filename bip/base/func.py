@@ -17,6 +17,7 @@ try:
 except ImportError:
     # TODO change this by a real log system ?
     print("WARNING: unable to import hexrays")
+    hexrays = None
 
 class IdaFuncFlags(object):
     """
@@ -190,6 +191,20 @@ class IdaFunction(object):
 
     @property
     def hxfunc(self):
+        """
+            Property which return the hexrays C function (:class:`HxCFunc`)
+            for this function.
+
+            If if it not possible to import the hexrays API an NotImplemented
+            error will be raised.
+
+            This may raise an ``ida_hexrays.DecompilationFailure`` if the
+            decompilation failed.
+
+            :return: A :class:`HxCFunc` object equivalent to this function.
+        """
+        if hexrays is None:
+            raise NotImplemented("It appears the hexrays API is not available")
         return hexrays.HxCFunc.from_addr(self.ea)
 
 
