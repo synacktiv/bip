@@ -12,6 +12,12 @@ import block
 import xref
 from biperror import BipError
 
+try:
+    import bip.hexrays as hexrays
+except ImportError:
+    # TODO change this by a real log system ?
+    print("WARNING: unable to import hexrays")
+
 class IdaFuncFlags(object):
     """
         Enum for the function flags from IDA. ``FUNC_*`` flags. Documentation
@@ -179,6 +185,12 @@ class IdaFunction(object):
 
     def __str__(self):
         return "Func: {} (0x{:X})".format(self.name, self.ea)
+
+    ######################## Hexrays ###############################
+
+    @property
+    def hxfunc(self):
+        return hexrays.HxCFunc.from_addr(self.ea)
 
 
     ####################### FLAGS & INFO ############################
