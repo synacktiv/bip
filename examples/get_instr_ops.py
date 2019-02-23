@@ -1,5 +1,7 @@
 from bip.base import Instr, OpType
 
+# TODO: merge those 2 functions with a filter on the types and include somewhere in bip ?
+#   maybe put a function at the instruction level for knowing if an instruction as a kind of operands ?
 
 def get_instr_with_displ(value):
     """
@@ -14,6 +16,16 @@ def get_instr_with_displ(value):
     for i in Instr.iter_all():
         for o in i.ops:
             if o.type == OpType.DISPL and o.value == value:
+                #print(i)
+                l.append(i)
+    return l
+
+
+def get_instr_with_value(value):
+    l = []
+    for i in Instr.iter_all():
+        for o in i.ops:
+            if o.value == value:
                 #print(i)
                 l.append(i)
     return l
