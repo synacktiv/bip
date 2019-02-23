@@ -157,6 +157,8 @@ class HxCStmtAsm(HxCStmtFinal):
 
         .. todo:: test this
 
+        .. todo:: this is currently not supported by hexrays
+
         .. todo:: this should probably be link we the normal instruction ?
 
         .. todo:: this should be probably accessible as a list?
@@ -171,18 +173,22 @@ class HxCStmtAsm(HxCStmtFinal):
 
             .. todo:: check this
 
+            .. todo:: this is currently not supported by hexrays
+
             :return: A list of address (integer) representing the address of
                 the inline assembly instruction in the binary.
         """
-        return list(self._cinsn.casm)
+        return []#list(self._cinsn.casm)
 
     @property
     def value(self):
         """
             Return a list of address of the ASM instructions. See
             :meth:`~HxCStmtAsm.addr_instr` .
+
+            .. todo:: bug with hexrays see addr_instr
         """
-        return self.addr_instr
+        return None#self.addr_instr
 
 class HxCStmtReturn(HxCStmtFinal):
     """
