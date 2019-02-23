@@ -3,6 +3,7 @@ from bip.hexrays import HexRaysEvent
 
 from ida_hexrays import *
 from idaapi import ctree_visitor_t, CV_FAST, CV_PARENTS
+import idc
 from idc import *
 from idc import GetCommentEx, op_stroff
 
@@ -30,16 +31,16 @@ def find_addr(expr, parents):
         * expr: an ``ida_hexrays.cexpr_t`` as recuperated as argument of the ``ctree_visitor_t.visit_expr`` method
         * parents: an ``ida_hexrays.ctree_items_t`` (a ``qvector< citem_t * > *`` in reality) such as recuperated through the ``ctree_visitor_t.parents`` attribute
         
-        return ``0xffffffffffffffff`` if it could not find the address, else return the address.
+        return ``idc.BADADDR`` if it could not find the address, else return the address.
     """
     if expr is None: # can't do anything here
-        return 0xffffffffffffffff
+        return idc.BADADDR
 
-    if expr.ea != 0xffffffffffffffff: # check if addr is good
+    if expr.ea != idc.BADADDR: # check if addr is good
         return expr.ea
 
     if parents is None:
-        return 0xffffffffffffffff
+        return idc.BADADDR
     
     cur = expr
     for elt in parents:
@@ -48,11 +49,11 @@ def find_addr(expr, parents):
         try:
             while cur is not None:
                 cur = elt.find_parent_of(cur)
-                if cur.ea != 0xffffffffffffffff:
+                if cur.ea != idc.BADADDR:
                     return cur.ea
         except Exception:
             continue
-    return 0xffffffffffffffff
+    return idc.BADADDR
 
 
 class visitor_propagator(ctree_visitor_t):
@@ -74,7 +75,7 @@ class visitor_propagator(ctree_visitor_t):
 
     def visit_expr(self, i):
         ea = find_addr(i, self.parents)
-        if i.opname == 'memptr' and ea != 0xffffffffffffffff:
+        if i.opname == 'memptr' and ea != idc.BADADDR:
             if i.x.v is None:
                 return 0
             lvar = self.func.lvars[i.x.v.idx]
