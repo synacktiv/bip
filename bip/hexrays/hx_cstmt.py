@@ -76,6 +76,7 @@ class HxCStmtFinal(HxCStmt):
         * :class:`HxCStmtGoto`
         * :class:`HxCStmtFinal`
         * :class:`HxCStmtReturn`
+        * :class:`HxCStmtEmtpy`
     """
 
     def __str__(self):
@@ -92,6 +93,21 @@ class HxCStmtFinal(HxCStmt):
             :class:`RuntimeError` .
         """
         raise RuntimeError("Abstract property value access.")
+
+class HxCStmtEmpty(HxCStmtFinal):
+    """
+        Class for representing a statement which is empty.
+    """
+    TYPE_HANDLE = HxCType.CIT_EMPTY
+
+    @property
+    def value(self):
+        """
+            This is implemented only for inheritance of HxCStmtFinal.
+
+            :return: None
+        """
+        return None
 
 class HxCStmtExpr(HxCStmtFinal):
     """
