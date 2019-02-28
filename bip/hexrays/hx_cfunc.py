@@ -60,6 +60,28 @@ class HxCFunc(object):
         """
         return str(self._cfunc)
 
+    ################################ CMT ###########################
+
+    def add_cmt(self, ea, value, itp=69):
+        """
+            Allow to add a comment in the hexrays interface view. 
+
+            .. todo: doc & better (in particular itp)
+
+            :param int ea: The address at which add the comment. All ea
+                address in the function will not be valid, only the one used
+                for items in the ctree seems to be. 
+            :param str value: The comment value.
+            :param int itp: The position at which add the comment
+                (item_tree_position todo).
+        """
+        tl = ida_hexrays.treeloc_t()
+        tl.ea = ea
+        tl.itp = itp
+        self._cfunc.set_user_cmt(tl, value)
+        self._cfunc.save_user_cmts()
+        
+
     ################################ LVARS ###################################
     # todo args
 
