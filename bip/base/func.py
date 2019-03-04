@@ -187,6 +187,19 @@ class IdaFunction(object):
     def __str__(self):
         return "Func: {} (0x{:X})".format(self.name, self.ea)
 
+	
+	def __cmp__(self, other):
+		if not isinstance(other, IdaFunction):
+			raise TypeError("Not an IdaFunction")
+		
+		if self.ea < self.other:
+			return -1
+		elif self.ea > self.other:
+			return 1
+		else:
+			return 0
+		
+
     ######################## Hexrays ###############################
 
     @property
