@@ -187,6 +187,45 @@ class IdaFunction(object):
     def __str__(self):
         return "Func: {} (0x{:X})".format(self.name, self.ea)
 
+    ############################ CMP FUNCTIONS #############################
+    
+    def __cmp__(self, other):
+        """
+            Compare with another IdaFunction. Will return 0 if the functions
+            have the same address, and -1 or 1 depending on the other function
+            position. This will raise a ``TypeError`` exception if the
+            argument is not a :class:`IdaFunction` .
+        """
+        if not isinstance(other, IdaFunction):
+            raise TypeError("Not an IdaFunction")
+        
+        if self.ea < other.ea:
+            return -1
+        elif self.ea > other.ea:
+            return 1
+        else:
+            return 0
+
+    def __contains__(self, value):
+        """
+            Allow to check if an element is included inside this function. It
+            accepts the following in arguments:
+
+            * :class:`IdaElt` (including :class:`Instr`)
+            * :class:`IdaBlock`
+            * An integer corresponding to an address.
+
+            In all those case the address of the element is used for testing
+            if it is present in the function.
+        """
+        if isinstance(value, (IdaElt, block.IdaBlock)):
+            ea = value.ea
+        elif isinstance(value, (int, long)):
+            ea = value
+        else:
+            raise TypeError("Unknown type comparaison for {} with IdaFunction.".format(value))
+        return ea >= self.ea and ea < self.end
+
     ######################## Hexrays ###############################
 
     @property
