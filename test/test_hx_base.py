@@ -70,7 +70,9 @@ def test_hx_visitor05():
     hxf = HxCFunc.from_addr(0x01800D2FF0)
     hxf.hx_visit_list_all([HxCExprCall, HxCStmtExpr], pr)
 
-
+def text_hx_visitor06(): # test for the casm
+    hxf = HxCFunc.from_addr(0x01800024A8)
+    hxf.hx_visit_all(pr)
 
 
 
