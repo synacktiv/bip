@@ -9,6 +9,7 @@ from re import match
 
 import idaapi
 import idc
+import idautils
 
 def get_highlighted_identifier_as_int():
     """
@@ -120,7 +121,7 @@ def get_name_by_addr(offset):
     """
     s = idc.GetFuncOffset(absea(offset))
     if not s:
-        nn = idaapi.NearestName({k:v for k,v in Names()})
+        nn = idaapi.NearestName({k:v for k,v in idautils.Names()})
         if nn is None:
             return '', 0
         
