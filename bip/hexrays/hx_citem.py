@@ -107,11 +107,11 @@ class HxCItem(object):
         defined by HexRays.
 
         An object of this class should never be created. The
-        :func:`GetHxCItem` function should be used for creating an item of the
-        correct type.
+        :func:`~HxCItem.GetHxCItem` function should be used for creating an
+        item of the correct type.
 
-        .. todo:: link with cfunc
-
+        .. todo:: link with cfunc ? Not sure if there is case where we would
+            have a citem without a cfunc.
     """
     #: Class attribute indicating which type of item it handles, this is used
     #:  by :func:`GetHxCItem` for determining if this is the good object to
@@ -176,6 +176,27 @@ class HxCItem(object):
         """
         return "{}(ea=0x{:X})".format(self.__class__.__name__, self.ea)
 
+    ############################ ITEM CREATION ##############################
+
+    def _createChild(self, obj):
+        """
+            Internal method which allow to create a :class:`HxCItem` object
+            from a ``citem_t``. This must be used by :class:`HxCStmt` and
+            :class:`HxCExpr` for creating their child expression and
+            statement. This method is used for having compatibility with
+            the :class:`CNode` class.
+
+            .. todo:: fix name for CNode class (also in GetHxCItem)
+
+            Internally this function is only a wrapper on :meth:`GetHxCItem`
+            for the :class:`HxCItem` objects.
+    
+            :param citem: A ``citem_t`` from ida.
+            :return: The equivalent object to the ``citem_t`` for bip. This
+                will be an object which inherit from :class:`HxCItem` .
+        """
+        return HxCItem.GetHxCItem(obj)
+
     @classmethod
     def is_handling_type(cls, typ):
         """
@@ -186,35 +207,40 @@ class HxCItem(object):
         """
         return cls.TYPE_HANDLE == typ
 
+    @staticmethod
+    def GetHxCItem(citem):
+        """
+            Function which convert a ``citem_t`` object from ida to one of the
+            child object of :class:`HxCItem` . This should in particular be
+            used for converting ``cexpr_t`` and ``cinsn_t`` in their correct
+            object for bip. This function is used as interface with the IDA
+            object.
+    
+            If no :class:`HxCItem` child object exist a ``ValueError`` exception
+            will be raised.
 
-
-def GetHxCItem(citem):
-    """
-        Function which convert a ``citem_t`` object from ida to one of the
-        child object of :class:`HxCItem` . This should in particular be used
-        for converting ``cexpr_t`` and ``cinsn_t`` in their correct object for
-        bip.
-
-        If no :class:`HxCItem` child object exist a ``ValueError`` exception
-        will be raised.
-
-        .. todo:: maybe return None instead of raising an exception ?
-
-        :param citem: A ``citem_t`` from ida.
-        :return: The equivalent object to the ``citem_t`` for bip. This will
-            be an object which inherit from :class:`HxCItem` .
-    """
-    done = set()
-    todo = set(HxCItem.__subclasses__())
-    while len(todo) != 0:
-        cl = todo.pop()
-        if cl in done:
-            continue
-        if cl.is_handling_type(citem.op):
-            return cl(citem)
-        else:
-            done.add(cl)
-            todo |= set(cl.__subclasses__())
-    raise ValueError("GetHxCItem function could not find an object matching the citem_t type provided ({})".format(citem.op))
+            .. note:: :class:`HxCExpr` and :class:`HxCStmt` should not used
+                this function for creating child item but
+                :meth:`HxCItem._createChild` for compatibility with the
+                :class:`CNode` class.
+    
+            .. todo:: maybe return None instead of raising an exception ?
+    
+            :param citem: A ``citem_t`` from ida.
+            :return: The equivalent object to the ``citem_t`` for bip. This
+                will be an object which inherit from :class:`HxCItem` .
+        """
+        done = set()
+        todo = set(HxCItem.__subclasses__())
+        while len(todo) != 0:
+            cl = todo.pop()
+            if cl in done:
+                continue
+            if cl.is_handling_type(citem.op):
+                return cl(citem)
+            else:
+                done.add(cl)
+                todo |= set(cl.__subclasses__())
+        raise ValueError("GetHxCItem function could not find an object matching the citem_t type provided ({})".format(citem.op))
 
 

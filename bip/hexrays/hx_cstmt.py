@@ -1,6 +1,4 @@
-from hx_citem import HxCType, HxCItem, GetHxCItem
-
-# TODO: implement CIT_EMPTY
+from hx_citem import HxCType, HxCItem
 
 class HxCStmt(HxCItem):
     """
@@ -9,7 +7,8 @@ class HxCStmt(HxCItem):
         ``cinsn_t`` ida object.
 
         No object of this class should be instanstiated, for getting an
-        expression the function :func:`~hx_citem.GetHxCItem` should be used.
+        expression the function :func:`~hx_citem.HxCItem.GetHxCItem` should be
+        used.
 
         A statement can contain one or more child statement and one or more
         child expression (:class:`HxCExpr`) object.
@@ -126,7 +125,7 @@ class HxCStmtExpr(HxCStmtFinal):
             :return: A child object of :class:`HxCExpr` which represent the
                 expression contain in this statement.
         """
-        return GetHxCItem(self._cinsn.cexpr)
+        return self._createChild(self._cinsn.cexpr)
 
     @property
     def value(self):
@@ -220,7 +219,7 @@ class HxCStmtReturn(HxCStmtFinal):
 
             :return: An object which inherits from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cinsn.creturn.expr)
+        return self._createChild(self._cinsn.creturn.expr)
 
     @property
     def value(self):
@@ -252,7 +251,7 @@ class HxCStmtIf(HxCStmt):
 
             :return: An object which inherits from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cinsn.cif.expr)
+        return self._createChild(self._cinsn.cif.expr)
 
     @property
     def st_then(self):
@@ -262,7 +261,7 @@ class HxCStmtIf(HxCStmt):
 
             :return: An object which inherits from :class:`HxCStmt` .
         """
-        return GetHxCItem(self._cinsn.cif.ithen)
+        return self._createChild(self._cinsn.cif.ithen)
 
     @property
     def has_else(self):
@@ -289,7 +288,7 @@ class HxCStmtIf(HxCStmt):
             :return: An object which inherits from :class:`HxCStmt` .
         """
         if self.has_else:
-            return GetHxCItem(self._cinsn.cif.ielse)
+            return self._createChild(self._cinsn.cif.ielse)
         else:
             return None
 
@@ -327,7 +326,7 @@ class HxCStmtFor(HxCStmt):
 
             :return: An object which inherits from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cinsn.cfor.expr)
+        return self._createChild(self._cinsn.cfor.expr)
 
     @property
     def st_body(self):
@@ -336,7 +335,7 @@ class HxCStmtFor(HxCStmt):
 
             :return: An object which inherits from :class:`HxCStmt` .
         """
-        return GetHxCItem(self._cinsn.cfor.body)
+        return self._createChild(self._cinsn.cfor.body)
 
     @property
     def init(self):
@@ -346,7 +345,7 @@ class HxCStmtFor(HxCStmt):
 
             :return: An object which inherits from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cinsn.cfor.init)
+        return self._createChild(self._cinsn.cfor.init)
 
     @property
     def step(self):
@@ -356,7 +355,7 @@ class HxCStmtFor(HxCStmt):
 
             :return: An object which inherits from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cinsn.cfor.step)
+        return self._createChild(self._cinsn.cfor.step)
 
     @property
     def st_childs(self):
@@ -381,7 +380,7 @@ class HxCStmtWhile(HxCStmt):
 
             :return: An object which inherits from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cinsn.cwhile.expr)
+        return self._createChild(self._cinsn.cwhile.expr)
 
     @property
     def st_body(self):
@@ -391,7 +390,7 @@ class HxCStmtWhile(HxCStmt):
 
             :return: An object which inherits from :class:`HxCStmt` .
         """
-        return GetHxCItem(self._cinsn.cwhile.body)
+        return self._createChild(self._cinsn.cwhile.body)
 
     @property
     def st_childs(self):
@@ -416,7 +415,7 @@ class HxCStmtDoWhile(HxCStmt):
 
             :return: An object which inherits from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cinsn.cdo.expr)
+        return self._createChild(self._cinsn.cdo.expr)
 
     @property
     def st_body(self):
@@ -426,7 +425,7 @@ class HxCStmtDoWhile(HxCStmt):
 
             :return: An object which inherits from :class:`HxCStmt` .
         """
-        return GetHxCItem(self._cinsn.cdo.body)
+        return self._createChild(self._cinsn.cdo.body)
 
     @property
     def st_childs(self):
@@ -481,7 +480,7 @@ class HxCStmtSwitch(HxCStmt):
 
             :return: An object which inherits from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cinsn.cswitch.expr)
+        return self._createChild(self._cinsn.cswitch.expr)
 
     @property
     def max_val(self):
@@ -504,7 +503,7 @@ class HxCStmtSwitch(HxCStmt):
                 cases of this switch.
             :rtype: Objects which inherit from :class:`HxCStmt` .
         """
-        return [GetHxCItem(i) for i in self._cinsn.cswitch.cases]
+        return [self._createChild(i) for i in self._cinsn.cswitch.cases]
 
     @property
     def cases_val(self):
@@ -564,7 +563,7 @@ class HxCStmtBlock(HxCStmt):
             :return: The list of child statement of this block.
             :rtype: Objects which inherit from :class:`HxCStmt` .
         """
-        return [GetHxCItem(e) for e in self._cinsn.cblock]
+        return [self._createChild(e) for e in self._cinsn.cblock]
 
     @property
     def st_childs(self):

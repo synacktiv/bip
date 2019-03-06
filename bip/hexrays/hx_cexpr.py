@@ -1,5 +1,5 @@
 
-from hx_citem import HxCType, HxCItem, GetHxCItem
+from hx_citem import HxCType, HxCItem
 
 # TODO: this file should probably be split
 
@@ -13,7 +13,8 @@ class HxCExpr(HxCItem):
         of the ``cexpr_t`` object.
 
         No object of this class should be instanstiated, for getting an
-        expression the function :func:`~hx_citem.GetHxCItem` should be used.
+        expression the function :func:`~hx_citem.HxCItem.GetHxCItem` should be
+        used.
 
         .. todo:: implem exflags
 
@@ -306,7 +307,7 @@ class HxCExprTernary(HxCExpr):
 
             :return: An object which inherit from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cexpr.x)
+        return self._createChild(self._cexpr.x)
 
     @property
     def expr1(self):
@@ -317,7 +318,7 @@ class HxCExprTernary(HxCExpr):
 
             :return: An object which inherit from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cexpr.y)
+        return self._createChild(self._cexpr.y)
 
     @property
     def expr2(self):
@@ -328,7 +329,7 @@ class HxCExprTernary(HxCExpr):
 
             :return: An object which inherit from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cexpr.z)
+        return self._createChild(self._cexpr.z)
 
 
     @property
@@ -349,7 +350,7 @@ class HxCExprDoubleOperation(HxCExpr):
             :return: The first operand of the expression, an object which
                 inherit from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cexpr.x)
+        return self._createChild(self._cexpr.x)
 
     @property
     def second_op(self):
@@ -359,7 +360,7 @@ class HxCExprDoubleOperation(HxCExpr):
             :return: The second operand of the expression, an object which
                 inherit from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cexpr.y)
+        return self._createChild(self._cexpr.y)
 
     @property
     def ops(self):
@@ -822,7 +823,7 @@ class HxCExprUnaryOperation(HxCExpr):
             :return: The operand of the expression, an object which
                 inherit from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cexpr.x)
+        return self._createChild(self._cexpr.x)
 
     @property
     def ops(self):
@@ -1004,7 +1005,7 @@ class HxCExprCall(HxCExpr):
 
             :return: An object which inherit from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cexpr.x)
+        return self._createChild(self._cexpr.x)
 
     @property
     def is_helper(self):
@@ -1048,7 +1049,7 @@ class HxCExprCall(HxCExpr):
         """
         if num > self.number_args:
             raise ValueError("Trying to access arg {} when the call take only {} args".format(num, self.number_args))
-        return GetHxCItem(self._get_carg(num))
+        return self._createChild(self._get_carg(num))
 
     @property
     def args(self):
@@ -1060,7 +1061,7 @@ class HxCExprCall(HxCExpr):
 
             :return: A list of :class:`HxCExpr` .
         """
-        return [GetHxCItem(i) for i in self._carglist]
+        return [self._createChild(i) for i in self._carglist]
 
     @property
     def args_iter(self):
@@ -1070,7 +1071,7 @@ class HxCExprCall(HxCExpr):
             should have more perf.
         """
         for i in self._carglist:
-            yield GetHxCItem(i)
+            yield self._createChild(i)
 
     @property
     def ops(self):
@@ -1095,7 +1096,7 @@ class HxCExprIdx(HxCExpr):
             :return: An operand of the expression, an object which
                 inherit from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cexpr.x)
+        return self._createChild(self._cexpr.x)
 
     @property
     def index(self):
@@ -1106,7 +1107,7 @@ class HxCExprIdx(HxCExpr):
             :return: An operand of the expression, an object which
                 inherit from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cexpr.y)
+        return self._createChild(self._cexpr.y)
 
     @property
     def ops(self):
@@ -1131,7 +1132,7 @@ class HxCExprMemref(HxCExpr):
             :return: An operand of the expression, an object which
                 inherit from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cexpr.x)
+        return self._createChild(self._cexpr.x)
 
     @property
     def off(self):
@@ -1168,7 +1169,7 @@ class HxCExprMemptr(HxCExpr):
             :return: An operand of the expression, an object which
                 inherit from :class:`HxCExpr` .
         """
-        return GetHxCItem(self._cexpr.x)
+        return self._createChild(self._cexpr.x)
 
     @property
     def off(self):
