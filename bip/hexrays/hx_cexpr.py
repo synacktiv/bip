@@ -1174,7 +1174,7 @@ class HxCExprMemref(HxCExpr):
 
     @property
     def ops(self):
-        return [self.mem, self.off]
+        return [self.mem]
 
 @cnode.buildCNode
 class HxCExprMemptr(HxCExpr):
@@ -1221,7 +1221,7 @@ class HxCExprMemptr(HxCExpr):
 
     @property
     def ops(self):
-        return [self.ptr, self.off]
+        return [self.ptr]
 
 
 
