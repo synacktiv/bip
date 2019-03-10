@@ -1,67 +1,7 @@
-from hx_citem import HxCType, HxCItem
+from hx_citem import HxCType, HxCItem, HxCStmt
+import cnode
 
-class HxCStmt(HxCItem):
-    """
-        Abstract class for representing a C Statement as returned by hexrays.
-        This is an abstract class which is a wrapper on top of the
-        ``cinsn_t`` ida object.
-
-        No object of this class should be instanstiated, for getting an
-        expression the function :func:`~hx_citem.HxCItem.GetHxCItem` should be
-        used.
-
-        A statement can contain one or more child statement and one or more
-        child expression (:class:`HxCExpr`) object.
-        By convention properties which will return child statement of an
-        object will start with the prefix ``st_`` .
-
-        .. todo:: implem types
-
-        .. todo:: implem things for modifying HxCStmt
-
-        .. todo:: test
-    """
-
-    def __init__(self, cinsn):
-        """
-            Constructor for a :class:`HxCStmt` object.
-
-            :param cinsn: A ``cinsn_t`` from ida.
-        """
-        super(HxCStmt, self).__init__(cinsn)
-        #: The ``cinsn_t`` object from ida.
-        self._cinsn = cinsn
-
-    def __str__(self):
-        """
-            Surcharge for printing a CStmt.
-        """
-        return "{}(ea=0x{:X}, st_childs={})".format(self.__class__.__name__, self.ea, self.st_childs)
-
-    @property
-    def st_childs(self):
-        """
-            Property which return a list of the statements which are childs of
-            this statement. This is used only when the statement is recursive,
-            if not this will return an empty list.
-
-            :return: A list of child statement of this object.
-            :rtype: Objects which inherit from :class:`HxCStmt` .
-        """
-        return []
-
-    @property
-    def expr_childs(self):
-        """
-            Property which return a list of the expression (:class:`HxCExpr`)
-            which are childs of this statement. This will not return childs
-            expression of the statement child of the current object.
-
-            :return: A list of child expression of this object.
-            :rtype: Objects which inherit from :class:`HxCExpr` .
-        """
-        return []
-
+@cnode.buildCNode
 class HxCStmtFinal(HxCStmt):
     """
         Abstract class for representing a :class:`HxCStmt` which does not
@@ -93,6 +33,7 @@ class HxCStmtFinal(HxCStmt):
         """
         raise RuntimeError("Abstract property value access.")
 
+@cnode.buildCNode
 class HxCStmtEmpty(HxCStmtFinal):
     """
         Class for representing a statement which is empty.
@@ -108,6 +49,7 @@ class HxCStmtEmpty(HxCStmtFinal):
         """
         return None
 
+@cnode.buildCNode
 class HxCStmtExpr(HxCStmtFinal):
     """
         Class for representing a statement which contain a single expression.
@@ -141,6 +83,7 @@ class HxCStmtExpr(HxCStmtFinal):
     def expr_childs(self):
         return [self.expr]
 
+@cnode.buildCNode
 class HxCStmtGoto(HxCStmtFinal):
     """
         Class for representing a C *goto* statement (``HxCType.CIT_GOTO``).
@@ -166,6 +109,7 @@ class HxCStmtGoto(HxCStmtFinal):
         """
         return self.label
 
+@cnode.buildCNode
 class HxCStmtAsm(HxCStmtFinal):
     """
         Class for representing a inline C ASM statement (``HxCType.CIT_ASM``).
@@ -205,6 +149,7 @@ class HxCStmtAsm(HxCStmtFinal):
         """
         return None#self.addr_instr
 
+@cnode.buildCNode
 class HxCStmtReturn(HxCStmtFinal):
     """
         Class for representing a C *return* statement (``HxCType.CIT_RETURN``).
@@ -235,6 +180,7 @@ class HxCStmtReturn(HxCStmtFinal):
 
 
 
+@cnode.buildCNode
 class HxCStmtIf(HxCStmt):
     """
         Class for representing a C *if* statement (``HxCType.CIT_IF``).
@@ -303,6 +249,7 @@ class HxCStmtIf(HxCStmt):
     def expr_childs(self):
         return [self.cond]
 
+@cnode.buildCNode
 class HxCStmtFor(HxCStmt):
     """
         Class for representing a C *for* statement (``HxCType.CIT_FOR``).
@@ -365,6 +312,7 @@ class HxCStmtFor(HxCStmt):
     def expr_childs(self):
         return [self.init, self.cond, self.step]
 
+@cnode.buildCNode
 class HxCStmtWhile(HxCStmt):
     """
         Class for representing a C *while* statement (``HxCType.CIT_WHILE``).
@@ -400,6 +348,7 @@ class HxCStmtWhile(HxCStmt):
     def expr_childs(self):
         return [self.cond]
 
+@cnode.buildCNode
 class HxCStmtDoWhile(HxCStmt):
     """
         Class for representing a C *do-while* statement (``HxCType.CIT_DO``).
@@ -435,6 +384,7 @@ class HxCStmtDoWhile(HxCStmt):
     def expr_childs(self):
         return [self.cond]
 
+@cnode.buildCNode
 class HxCStmtSwitch(HxCStmt):
     """
         Class for representing a C *switch* statement
@@ -529,6 +479,7 @@ class HxCStmtSwitch(HxCStmt):
     def expr_childs(self):
         return [self.expr]
 
+@cnode.buildCNode
 class HxCStmtContinue(HxCStmt):
     """
         Class for representing a C *continue* statement
@@ -536,6 +487,7 @@ class HxCStmtContinue(HxCStmt):
     """
     TYPE_HANDLE = HxCType.CIT_CONTINUE
 
+@cnode.buildCNode
 class HxCStmtBreak(HxCStmt):
     """
         Class for representing a C *break* statement
@@ -544,6 +496,7 @@ class HxCStmtBreak(HxCStmt):
     TYPE_HANDLE = HxCType.CIT_BREAK
 
 
+@cnode.buildCNode
 class HxCStmtBlock(HxCStmt):
     """
         Class for representing a *block* statement meaning a list of other

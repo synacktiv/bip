@@ -1,57 +1,11 @@
 
-from hx_citem import HxCType, HxCItem
+from hx_citem import HxCType, HxCItem, HxCExpr
 
 # TODO: this file should probably be split
 
-# TODO: implement COT_EMPTY, COT_INSN and COT_TYPE
+import cnode
 
-
-class HxCExpr(HxCItem):
-    """
-        Abstract class for representing a C Expression as returned by
-        HexRays. This is an abstract class which is used as a wrapper on top
-        of the ``cexpr_t`` object.
-
-        No object of this class should be instanstiated, for getting an
-        expression the function :func:`~hx_citem.HxCItem.GetHxCItem` should be
-        used.
-
-        .. todo:: implem exflags
-
-        .. todo:: implem everything in ``cexpr_t``
-
-        .. todo:: implem things for modifying HxCExpr
-
-        .. todo:: implem types
-    """
-
-    def __init__(self, cexpr):
-        """
-            Constructor for a :class:`HxCExpr` object.
-
-            :param cexpr: A ``cexpr_t`` object from ida.
-        """
-        super(HxCExpr, self).__init__(cexpr)
-        #: The ``cexpr_t`` object from ida.
-        self._cexpr = cexpr
-
-    def __str__(self):
-        """
-            Surcharge for printing a CExpr
-        """
-        return "{}(ea=0x{:X}, ops={})".format(self.__class__.__name__, self.ea, self.ops)
-
-    @property
-    def ops(self):
-        """
-            Function which return the C Expressions child of this expression.
-            This is used only when the expression is recursive.
-
-            :return: A ``list`` of object inheriting from :class:`HxCExpr` and
-                child of the current expression.
-        """
-        return []
-
+@cnode.buildCNode
 class HxCExprFinal(HxCExpr):
     """
         Abstract class for representing a :class:`HxCExpr` which does not
@@ -86,6 +40,7 @@ class HxCExprFinal(HxCExpr):
         """
         raise RuntimeError("Abstract property value access.")
 
+@cnode.buildCNode
 class HxCExprEmpty(HxCExprFinal):
     """
         Class for representing an empty CExpr (``HxCType.COT_EMPTY``).
@@ -100,6 +55,7 @@ class HxCExprEmpty(HxCExprFinal):
         return None
 
 
+@cnode.buildCNode
 class HxCExprNum(HxCExprFinal):
     """
         Class for representing a CExpr containing a Number
@@ -145,6 +101,7 @@ class HxCExprNum(HxCExprFinal):
         """
         return self._cexpr.n.nf.org_nbyes
 
+@cnode.buildCNode
 class HxCExprFNum(HxCExprFinal):
     """
         Class for representing a Floating number (``HxCType.COT_FNUM``).
@@ -172,6 +129,7 @@ class HxCExprFNum(HxCExprFinal):
         """
         return self._cexpr.fpc.nbytes
 
+@cnode.buildCNode
 class HxCExprStr(HxCExprFinal):
     """
         Class for representing a string (``HxCType.COT_STR``).
@@ -194,6 +152,7 @@ class HxCExprStr(HxCExprFinal):
         """
         return self._cexpr.string
 
+@cnode.buildCNode
 class HxCExprObj(HxCExprFinal):
     """
         Class for representing an "object" (``HxCType.COT_OBJ``). An object
@@ -216,6 +175,7 @@ class HxCExprObj(HxCExprFinal):
         """
         return self._cexpr.obj_ea
 
+@cnode.buildCNode
 class HxCExprVar(HxCExprFinal):
     """
         Class for representing a variable (``HxCType.COT_VAR``).
@@ -249,6 +209,7 @@ class HxCExprVar(HxCExprFinal):
         """
         return self._cexpr.v.idx
 
+@cnode.buildCNode
 class HxCExprHelper(HxCExprFinal):
     """
         Class  for representing an helper string (``HxCType.COT_HELPER``) .
@@ -264,12 +225,14 @@ class HxCExprHelper(HxCExprFinal):
         """
         return self._cexpr.helper
 
+@cnode.buildCNode
 class HxCExprInsn(HxCExprFinal):
     """
-        Class for representing an instruction in expression
+        Class for representing a statement in an expression
         (``HxCType.COT_INSN``). 
         
-        .. warning:: Do not confound with :class:`HxCStmt` this is a statement.
+        .. warning:: Do not confound with :class:`HxCStmt` which is a
+            statement. This is an expression which contain a statement.
         
         .. todo:: implement this, this should be link we the statement I think
     """
@@ -279,11 +242,12 @@ class HxCExprInsn(HxCExprFinal):
     def value(self):
         raise NotImplemented("HxCInsn is not implemented")
 
+@cnode.buildCNode
 class HxCExprType(HxCExprFinal):
     """
         Class for representing a type (``HxCType.COT_TYPE``). 
         
-        .. todo:: implement this, this should be link we the statement I think
+        .. todo:: implement this
     """
     TYPE_HANDLE = HxCType.COT_TYPE
 
@@ -291,6 +255,7 @@ class HxCExprType(HxCExprFinal):
     def value(self):
         raise NotImplemented("HxCInsn is not implemented")
 
+@cnode.buildCNode
 class HxCExprTernary(HxCExpr):
     """
         Class for representing a ternary operation (``cond ? expr1 : expr2``)
@@ -336,6 +301,7 @@ class HxCExprTernary(HxCExpr):
     def ops(self):
         return [self.cond, self.expr1, self.expr2]
 
+@cnode.buildCNode
 class HxCExprDoubleOperation(HxCExpr):
     """
         Abstract class for representing a :class:`HxCExpr` with two operands.
@@ -366,6 +332,7 @@ class HxCExprDoubleOperation(HxCExpr):
     def ops(self):
         return [self.first_op, self.second_op]
 
+@cnode.buildCNode
 class HxCExprComma(HxCExprDoubleOperation):
     """
         C Expression for a comma expression.
@@ -377,6 +344,7 @@ class HxCExprComma(HxCExprDoubleOperation):
 ## BEGIN REGEX GENERATED INHERITED FROM HxCExprDoubleOperation
 # TODO: clean this
 
+@cnode.buildCNode
 class HxCExprAsg(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -387,6 +355,7 @@ class HxCExprAsg(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASG
 
 
+@cnode.buildCNode
 class HxCExprAsgbor(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -397,6 +366,7 @@ class HxCExprAsgbor(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGBOR
 
 
+@cnode.buildCNode
 class HxCExprAsgxor(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -407,6 +377,7 @@ class HxCExprAsgxor(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGXOR
 
 
+@cnode.buildCNode
 class HxCExprAsgband(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -417,6 +388,7 @@ class HxCExprAsgband(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGBAND
 
 
+@cnode.buildCNode
 class HxCExprAsgadd(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -427,6 +399,7 @@ class HxCExprAsgadd(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGADD
 
 
+@cnode.buildCNode
 class HxCExprAsgsub(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -437,6 +410,7 @@ class HxCExprAsgsub(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGSUB
 
 
+@cnode.buildCNode
 class HxCExprAsgmul(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -447,6 +421,7 @@ class HxCExprAsgmul(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGMUL
 
 
+@cnode.buildCNode
 class HxCExprAsgsshr(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -457,6 +432,7 @@ class HxCExprAsgsshr(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGSSHR
 
 
+@cnode.buildCNode
 class HxCExprAsgushr(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -467,6 +443,7 @@ class HxCExprAsgushr(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGUSHR
 
 
+@cnode.buildCNode
 class HxCExprAsgshl(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -477,6 +454,7 @@ class HxCExprAsgshl(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGSHL
 
 
+@cnode.buildCNode
 class HxCExprAsgsdiv(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -487,6 +465,7 @@ class HxCExprAsgsdiv(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGSDIV
 
 
+@cnode.buildCNode
 class HxCExprAsgudiv(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -497,6 +476,7 @@ class HxCExprAsgudiv(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGUDIV
 
 
+@cnode.buildCNode
 class HxCExprAsgsmod(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -507,6 +487,7 @@ class HxCExprAsgsmod(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGSMOD
 
 
+@cnode.buildCNode
 class HxCExprAsgumod(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -517,6 +498,7 @@ class HxCExprAsgumod(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ASGUMOD
 
 
+@cnode.buildCNode
 class HxCExprLor(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -527,6 +509,7 @@ class HxCExprLor(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_LOR
 
 
+@cnode.buildCNode
 class HxCExprLand(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -537,6 +520,7 @@ class HxCExprLand(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_LAND
 
 
+@cnode.buildCNode
 class HxCExprBor(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -547,6 +531,7 @@ class HxCExprBor(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_BOR
 
 
+@cnode.buildCNode
 class HxCExprXor(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -557,6 +542,7 @@ class HxCExprXor(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_XOR
 
 
+@cnode.buildCNode
 class HxCExprBand(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -567,6 +553,7 @@ class HxCExprBand(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_BAND
 
 
+@cnode.buildCNode
 class HxCExprEq(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -577,6 +564,7 @@ class HxCExprEq(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_EQ
 
 
+@cnode.buildCNode
 class HxCExprNe(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -587,6 +575,7 @@ class HxCExprNe(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_NE
 
 
+@cnode.buildCNode
 class HxCExprSge(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -597,6 +586,7 @@ class HxCExprSge(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_SGE
 
 
+@cnode.buildCNode
 class HxCExprUge(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -607,6 +597,7 @@ class HxCExprUge(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_UGE
 
 
+@cnode.buildCNode
 class HxCExprSle(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -617,6 +608,7 @@ class HxCExprSle(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_SLE
 
 
+@cnode.buildCNode
 class HxCExprUle(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -627,6 +619,7 @@ class HxCExprUle(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ULE
 
 
+@cnode.buildCNode
 class HxCExprSgt(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -637,6 +630,7 @@ class HxCExprSgt(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_SGT
 
 
+@cnode.buildCNode
 class HxCExprUgt(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -647,6 +641,7 @@ class HxCExprUgt(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_UGT
 
 
+@cnode.buildCNode
 class HxCExprSlt(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -657,6 +652,7 @@ class HxCExprSlt(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_SLT
 
 
+@cnode.buildCNode
 class HxCExprUlt(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -667,6 +663,7 @@ class HxCExprUlt(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ULT
 
 
+@cnode.buildCNode
 class HxCExprSshr(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -677,6 +674,7 @@ class HxCExprSshr(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_SSHR
 
 
+@cnode.buildCNode
 class HxCExprUshr(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -687,6 +685,7 @@ class HxCExprUshr(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_USHR
 
 
+@cnode.buildCNode
 class HxCExprShl(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -697,6 +696,7 @@ class HxCExprShl(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_SHL
 
 
+@cnode.buildCNode
 class HxCExprAdd(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -707,6 +707,7 @@ class HxCExprAdd(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_ADD
 
 
+@cnode.buildCNode
 class HxCExprSub(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -717,6 +718,7 @@ class HxCExprSub(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_SUB
 
 
+@cnode.buildCNode
 class HxCExprMul(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -727,6 +729,7 @@ class HxCExprMul(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_MUL
 
 
+@cnode.buildCNode
 class HxCExprSdiv(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -737,6 +740,7 @@ class HxCExprSdiv(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_SDIV
 
 
+@cnode.buildCNode
 class HxCExprUdiv(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -747,6 +751,7 @@ class HxCExprUdiv(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_UDIV
 
 
+@cnode.buildCNode
 class HxCExprSmod(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -757,6 +762,7 @@ class HxCExprSmod(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_SMOD
 
 
+@cnode.buildCNode
 class HxCExprUmod(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -767,6 +773,7 @@ class HxCExprUmod(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_UMOD
 
 
+@cnode.buildCNode
 class HxCExprFadd(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -777,6 +784,7 @@ class HxCExprFadd(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_FADD
 
 
+@cnode.buildCNode
 class HxCExprFsub(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -787,6 +795,7 @@ class HxCExprFsub(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_FSUB
 
 
+@cnode.buildCNode
 class HxCExprFmul(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -797,6 +806,7 @@ class HxCExprFmul(HxCExprDoubleOperation):
     TYPE_HANDLE = HxCType.COT_FMUL
 
 
+@cnode.buildCNode
 class HxCExprFdiv(HxCExprDoubleOperation):
     """
         See :class:`HxCType` for description.
@@ -808,6 +818,7 @@ class HxCExprFdiv(HxCExprDoubleOperation):
 
 ## END REGEX GENERATED INHERITED FROM HxCExprDoubleOperation
 
+@cnode.buildCNode
 class HxCExprUnaryOperation(HxCExpr):
     """
         Abstract for representing a :class:`HxCExpr` with a unary operation.
@@ -829,6 +840,7 @@ class HxCExprUnaryOperation(HxCExpr):
     def ops(self):
         return [self.operand]
 
+@cnode.buildCNode
 class HxCExprPtr(HxCExprUnaryOperation):
     """
         Class for representing the deref. of a pointer (``*operand``). This
@@ -850,6 +862,7 @@ class HxCExprPtr(HxCExprUnaryOperation):
 
 ## BEGIN REGEX GENERATED INHERITED FROM HxCExprUnaryOperation
 
+@cnode.buildCNode
 class HxCExprFneg(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
@@ -860,6 +873,7 @@ class HxCExprFneg(HxCExprUnaryOperation):
     TYPE_HANDLE = HxCType.COT_FNEG
 
 
+@cnode.buildCNode
 class HxCExprNeg(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
@@ -870,6 +884,7 @@ class HxCExprNeg(HxCExprUnaryOperation):
     TYPE_HANDLE = HxCType.COT_NEG
 
 
+@cnode.buildCNode
 class HxCExprCast(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
@@ -880,6 +895,7 @@ class HxCExprCast(HxCExprUnaryOperation):
     TYPE_HANDLE = HxCType.COT_CAST
 
 
+@cnode.buildCNode
 class HxCExprLnot(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
@@ -890,6 +906,7 @@ class HxCExprLnot(HxCExprUnaryOperation):
     TYPE_HANDLE = HxCType.COT_LNOT
 
 
+@cnode.buildCNode
 class HxCExprBnot(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
@@ -900,6 +917,7 @@ class HxCExprBnot(HxCExprUnaryOperation):
     TYPE_HANDLE = HxCType.COT_BNOT
 
 
+@cnode.buildCNode
 class HxCExprRef(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
@@ -910,6 +928,7 @@ class HxCExprRef(HxCExprUnaryOperation):
     TYPE_HANDLE = HxCType.COT_REF
 
 
+@cnode.buildCNode
 class HxCExprPostinc(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
@@ -920,6 +939,7 @@ class HxCExprPostinc(HxCExprUnaryOperation):
     TYPE_HANDLE = HxCType.COT_POSTINC
 
 
+@cnode.buildCNode
 class HxCExprPostdec(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
@@ -930,6 +950,7 @@ class HxCExprPostdec(HxCExprUnaryOperation):
     TYPE_HANDLE = HxCType.COT_POSTDEC
 
 
+@cnode.buildCNode
 class HxCExprPreinc(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
@@ -940,6 +961,7 @@ class HxCExprPreinc(HxCExprUnaryOperation):
     TYPE_HANDLE = HxCType.COT_PREINC
 
 
+@cnode.buildCNode
 class HxCExprPredec(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
@@ -949,6 +971,7 @@ class HxCExprPredec(HxCExprUnaryOperation):
     """
     TYPE_HANDLE = HxCType.COT_PREDEC
 
+@cnode.buildCNode
 class HxCExprSizeof(HxCExprUnaryOperation):
     """
         See :class:`HxCType` for description.
@@ -960,6 +983,7 @@ class HxCExprSizeof(HxCExprUnaryOperation):
 
 ## END REGEX GENERATED INHERITED FROM HxCExprUnaryOperation
 
+@cnode.buildCNode
 class HxCExprCall(HxCExpr):
     """
         Class for representing a call expression. This class also provide
@@ -1078,6 +1102,7 @@ class HxCExprCall(HxCExpr):
         return [self.caller] + self.args
 
 
+@cnode.buildCNode
 class HxCExprIdx(HxCExpr):
     """
         Class for representing access to an index in an array
@@ -1114,6 +1139,7 @@ class HxCExprIdx(HxCExpr):
         return [self.array, self.index]
 
 
+@cnode.buildCNode
 class HxCExprMemref(HxCExpr):
     """
         Class for representing a memory reference
@@ -1150,6 +1176,7 @@ class HxCExprMemref(HxCExpr):
     def ops(self):
         return [self.mem, self.off]
 
+@cnode.buildCNode
 class HxCExprMemptr(HxCExpr):
     """
         Class for representing a memory access using a pointer

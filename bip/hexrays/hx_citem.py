@@ -101,20 +101,19 @@ class HxCType(object):
     CIT_ASM         = 82    #: asm-statement
     CIT_END         = 83
 
-class HxCItem(object):
-    """
-        Abstract class representing both C expression and C statement as
-        defined by HexRays.
 
-        An object of this class should never be created. The
-        :func:`~HxCItem.GetHxCItem` function should be used for creating an
-        item of the correct type.
-
-        .. todo:: link with cfunc ? Not sure if there is case where we would
-            have a citem without a cfunc.
+class AbstractCItem(object):
     """
-    #: Class attribute indicating which type of item it handles, this is used
-    #:  by :func:`GetHxCItem` for determining if this is the good object to
+        Abstract class for common element between :class:`HxCItem` and
+        :class:`CNode`.
+
+
+        .. todo:: precise what this class provides
+
+        .. todo:: add cmp operators
+    """
+    #: Class attribute indicating which type of item this class handles,
+    #:  this is used for determining if this is the good object to
     #:  instantiate. All abstract class should have a value of -1 for this
     #:  object, non-abstract class should have a value corresponding to the
     #:  :class:`HxCType` they handle.
@@ -129,8 +128,8 @@ class HxCItem(object):
                 be a ``cexpr_t`` or a ``cinsn_t`` object.
         """
         #: The ``citem_t`` object from ida, this is conserved at this level
-        #:  for providing a few functionnality compatible between
-        #:  :class:`HxCExpr` and :class:`HxCStmt` .
+        #:  for providing a few functionnality compatible between different
+        #:  item types (such as :class:`HxCExpr` and :class:`HxCStmt`) .
         self._citem = citem
 
     @property
@@ -138,7 +137,8 @@ class HxCItem(object):
         """
             Property which return the address corresponding to this item.
 
-            .. todo:: check this, not sure if it even works.
+            :return: An integer corresponding to the address of the item. This
+                may be ``idc.BADADDR`` if the item as no equivalent address.
         """
         return self._citem.ea
 
@@ -176,26 +176,14 @@ class HxCItem(object):
         """
         return "{}(ea=0x{:X})".format(self.__class__.__name__, self.ea)
 
-    ############################ ITEM CREATION ##############################
-
     def _createChild(self, obj):
         """
-            Internal method which allow to create a :class:`HxCItem` object
-            from a ``citem_t``. This must be used by :class:`HxCStmt` and
-            :class:`HxCExpr` for creating their child expression and
-            statement. This method is used for having compatibility with
-            the :class:`CNode` class.
-
-            .. todo:: fix name for CNode class (also in GetHxCItem)
-
-            Internally this function is only a wrapper on :meth:`GetHxCItem`
-            for the :class:`HxCItem` objects.
-    
-            :param citem: A ``citem_t`` from ida.
-            :return: The equivalent object to the ``citem_t`` for bip. This
-                will be an object which inherit from :class:`HxCItem` .
+            Abstract method which allow to create child element for this
+            object with the correct class. This should be implemented by child
+            classes and will raise a :class:`NotImplementedError` exception
+            if not surcharge.
         """
-        return HxCItem.GetHxCItem(obj)
+        raise NotImplementedError("_createChild is an abstract method and should be surcharge by child class")
 
     @classmethod
     def is_handling_type(cls, typ):
@@ -206,6 +194,51 @@ class HxCItem(object):
             :param typ: One of the :class:`HxCType` value.
         """
         return cls.TYPE_HANDLE == typ
+
+
+class HxCItem(AbstractCItem):
+    """
+        Abstract class representing both C expression and C statement as
+        defined by HexRays.
+
+        An object of this class should never be created. The
+        :func:`HxCItem.GetHxCItem` static method should be used for creating
+        an item of the correct type.
+
+        Most of the functionnality provided by this class are inherited from
+        its parent class :class:`AbstractCItem` and are common with the
+        :class:`CNode` class.
+
+        .. todo:: link with cfunc ? Not sure if there is case where we would
+            have a citem without a cfunc.
+
+        .. todo:: make a commentary for comparing to the :class:`CNode` in
+            this doc.
+    """
+    #: Class attribute indicating which type of item this class handles, this is used
+    #:  by :func:`GetHxCItem` for determining if this is the good object to
+    #:  instantiate. All abstract class should have a value of -1 for this
+    #:  object, non-abstract class should have a value corresponding to the
+    #:  :class:`HxCType` they handle.
+    TYPE_HANDLE = -1
+
+    ############################ ITEM CREATION ##############################
+
+    def _createChild(self, citem):
+        """
+            Internal method which allow to create a :class:`HxCItem` object
+            from a ``citem_t``. This must be used by :class:`HxCStmt` and
+            :class:`HxCExpr` for creating their child expression and
+            statement. This method is used for having compatibility with
+            the :class:`CNode` class.
+
+            Internally this function is only a wrapper on :meth:`GetHxCItem`.
+    
+            :param citem: A ``citem_t`` from ida.
+            :return: The equivalent object to the ``citem_t`` for bip. This
+                will be an object which inherit from :class:`HxCItem` .
+        """
+        return HxCItem.GetHxCItem(citem)
 
     @staticmethod
     def GetHxCItem(citem):
@@ -241,6 +274,113 @@ class HxCItem(object):
             else:
                 done.add(cl)
                 todo |= set(cl.__subclasses__())
-        raise ValueError("GetHxCItem function could not find an object matching the citem_t type provided ({})".format(citem.op))
+        raise ValueError("GetHxCItem could not find an object matching the citem_t type provided ({})".format(citem.op))
 
+class HxCExpr(HxCItem):
+    """
+        Abstract class for representing a C Expression as returned by
+        HexRays. This is an abstract class which is used as a wrapper on top
+        of the ``cexpr_t`` object.
+
+        No object of this class should be instanstiated, for getting an
+        expression the function :func:`~hx_citem.HxCItem.GetHxCItem` should be
+        used.
+
+        .. todo:: implem exflags
+
+        .. todo:: implem everything in ``cexpr_t``
+
+        .. todo:: implem things for modifying HxCExpr
+
+        .. todo:: implem types
+    """
+
+    def __init__(self, cexpr):
+        """
+            Constructor for a :class:`HxCExpr` object.
+
+            :param cexpr: A ``cexpr_t`` object from ida.
+        """
+        super(HxCExpr, self).__init__(cexpr)
+        #: The ``cexpr_t`` object from ida.
+        self._cexpr = cexpr
+
+    def __str__(self):
+        """
+            Surcharge for printing a CExpr
+        """
+        return "{}(ea=0x{:X}, ops={})".format(self.__class__.__name__, self.ea, self.ops)
+
+    @property
+    def ops(self):
+        """
+            Function which return the C Expressions child of this expression.
+            This is used only when the expression is recursive.
+
+            :return: A ``list`` of object inheriting from :class:`HxCExpr` and
+                child of the current expression.
+        """
+        return []
+
+class HxCStmt(HxCItem):
+    """
+        Abstract class for representing a C Statement as returned by hexrays.
+        This is an abstract class which is a wrapper on top of the
+        ``cinsn_t`` ida object.
+
+        No object of this class should be instanstiated, for getting an
+        expression the function :func:`~hx_citem.HxCItem.GetHxCItem` should be
+        used.
+
+        A statement can contain one or more child statement and one or more
+        child expression (:class:`HxCExpr`) object.
+        By convention properties which will return child statement of an
+        object will start with the prefix ``st_`` .
+
+        .. todo:: implem types
+
+        .. todo:: implem things for modifying HxCStmt
+
+        .. todo:: test
+    """
+
+    def __init__(self, cinsn):
+        """
+            Constructor for a :class:`HxCStmt` object.
+
+            :param cinsn: A ``cinsn_t`` from ida.
+        """
+        super(HxCStmt, self).__init__(cinsn)
+        #: The ``cinsn_t`` object from ida.
+        self._cinsn = cinsn
+
+    def __str__(self):
+        """
+            Surcharge for printing a CStmt.
+        """
+        return "{}(ea=0x{:X}, st_childs={})".format(self.__class__.__name__, self.ea, self.st_childs)
+
+    @property
+    def st_childs(self):
+        """
+            Property which return a list of the statements which are childs of
+            this statement. This is used only when the statement is recursive,
+            if not this will return an empty list.
+
+            :return: A list of child statement of this object.
+            :rtype: Objects which inherit from :class:`HxCStmt` .
+        """
+        return []
+
+    @property
+    def expr_childs(self):
+        """
+            Property which return a list of the expression (:class:`HxCExpr`)
+            which are childs of this statement. This will not return childs
+            expression of the statement child of the current object.
+
+            :return: A list of child expression of this object.
+            :rtype: Objects which inherit from :class:`HxCExpr` .
+        """
+        return []
 
