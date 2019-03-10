@@ -1,12 +1,13 @@
 from hx_lvar import HxLvar
 from hx_visitor import _hx_visitor_expr, _hx_visitor_list_expr, _hx_visitor_stmt, _hx_visitor_list_stmt, _hx_visitor_all, _hx_visitor_list_all
+from cnode import CNode
+from cnode_visitor import visit_dfs_cnode
 import ida_hexrays
 
 
 class HxCFunc(object):
     """
         Python object for representing a C function as decompile by hexrays.
-
         This is an abstraction on top of the ``ida_hexrays.cfuncptr_t``  and
         ``cfunc_t`` object.
 
@@ -15,15 +16,19 @@ class HxCFunc(object):
             * Comments (cfuncp.user_cmts)
 
         .. todo:: raccord to normal func (inheritance ?)
+
         .. todo:: type
+
         .. todo:: everything in ``cfunc_t`` .
 
         .. todo:: make smart? error for when ida_hexrays api does not exist
 
         .. todo:: pretty printer
 
-        .. todo:: test
+        .. todo:: make a function for recuperating a lvar from a register or a stack
+            location
 
+        .. todo:: test
     """
 
     def __init__(self, cfunc):
@@ -124,13 +129,41 @@ class HxCFunc(object):
         """
         return [HxLvar(l) for l in self._cfunc.get_lvars() if l.is_arg_var]
 
-    # TODO: make a function for recuperating a lvar from a register or a stack
-    #   location
+    ############################ CNODE & VISITORS ############################
+
+    @property
+    def root_node(self):
+        """
+            Property which return the :class:`CNode` object which is the root
+            element for
+            this function. This :class:`CNode` will allow to visit the AST of
+            the function. In practice it should always be of
+            class :class:`CNodeStmtBlock` .
+
+            :return: The root object for this function which inherit from
+                :class:`CNode` .
+        """
+        return CNode.GetCNode(self._cfunc.body, self, None)
+
+    def visit_cnode(self, callback):
+        """
+            Method which allow to visit all :class:`CNode` elements of this
+            function starting from the root object. This is implemented using
+            a DFS algorithm. This does not use the hexrays visitor. For more
+            information about the implementation see
+            :func:`~cnode_visitor.visit_dfs_cnode` (this method is just a
+            wrapper).
+
+            :param callback: A callable which will be called on all
+                :class:`CNode` in the function decompiled by hexrays. The call
+                should take only one argument which correspond to the
+                :class:`CNode` currently visited.
+        """
+        visit_dfs_cnode(self.root_node, callback)
 
     ############################ HX VISITOR METHODS ##########################
 
 # todo: 
-# * TEST
 # * indicated as deprecated or that it should use bip visitors
 # * make examples ?
 

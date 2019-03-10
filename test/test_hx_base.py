@@ -44,6 +44,13 @@ def visit_all_function00():
         except DecompilationFailure: # ida hexrays error
             pass # we ignore it
 
+def visit_all_function01():
+    for f in IdaFunction.iter_all():
+        try:
+            f.hxfunc.visit_cnode(pr)
+        except DecompilationFailure: # ida hexrays error
+            pass # we ignore it
+
 # TODO: should make all those test with verification that the class is well
 #   received & maybe more precise test ?
 def test_hx_visitor00():
@@ -74,9 +81,13 @@ def text_hx_visitor06(): # test for the casm
     hxf = HxCFunc.from_addr(0x01800024A8)
     hxf.hx_visit_all(pr)
 
+def test_cnode_visitor00():
+    hxf = HxCFunc.from_addr(0x01800D2FF0)
+    hxf.visit_cnode(pr)
 
-
-
+def test_cnode_visitor01():
+    hxf = HxCFunc.from_addr(0x0180002524)
+    hxf.visit_cnode(pr)
 
 
 

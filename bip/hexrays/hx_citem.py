@@ -11,8 +11,6 @@ class HxCType(object):
 
         .. todo:: static function for manipulating the enum ?
 
-        .. todo:: delete the DONE coms
-
         Comment on the enum are from ``hexrays.hpp`` .
     """
     COT_EMPTY       = 0

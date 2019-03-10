@@ -24,9 +24,16 @@ class CNode(AbstractCItem):
 
         .. todo:: precise that all subclasses have the same comportement but
             just with the additional features.
-        
-        .. todo:: This class does not make use of the ctree_visitor_t provided
-            by IDA. (Add to doc if it is actually true).
+
+        .. todo:: implement getter for access to the parent
+
+        .. todo:: implement getter for access to the function
+
+        .. todo:: implement low and high address ? (map ea from cfunc could may be help ?)
+
+        .. todo:: implement find closest address
+
+        .. todo:: implement function for making more easy the iterations
 
         This is an abstract class and no object of this class should ever be
         created. The static method :meth:`GetCNode` allow to create object 
@@ -130,12 +137,6 @@ class CNode(AbstractCItem):
                 todo |= set(cl.__subclasses__())
         raise ValueError("GetCNode could not find an object matching the citem_t type provided ({})".format(citem.op))
 
-
-    # TODO: implement getter for access to the parent
-    # TODO: implement getter for access to the function
-    # TODO: implement low and high address ? (map ea from cfunc could may be help ?)
-    # TODO: implement find closest address
-    # TODO: implement function for making more easy the iterations
 
 class CNodeExpr(CNode):
     """
