@@ -124,7 +124,7 @@ class CNode(AbstractCItem):
             if cl in done:
                 continue
             if cl.is_handling_type(citem.op):
-                return cl(citem)
+                return cl(citem, hxcfunc, parent)
             else:
                 done.add(cl)
                 todo |= set(cl.__subclasses__())
