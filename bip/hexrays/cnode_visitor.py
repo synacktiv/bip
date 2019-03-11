@@ -52,4 +52,54 @@ def visit_dfs_cnode(cnode, callback):
             # this should never happen
             raise RuntimeError("Unknown type for visiting: {}".format(elt))
 
+def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
+    """
+        Visitor for :class:`CNode` with filtering. This function is the same
+        than :func:`visit_dfs_cnode` but allow to use the callback only on
+        :class:`CNode` which are in a list (white listing of the node to
+        visit).
+
+        For information about the visitor implementation see
+        :func:`visit_dfs_cnode` . If the `filter_list` parameter contain only
+        statement (:class:`CNodeStmt`) the expression will not be visited at
+        all, this should allow a little performance gain.
+
+        .. todo:: test
+
+        :param cnode: An object which inherit from :class:`CNode`. This object
+            and all its child will be visited.
+        :param callback: A callable taking one argument which will be called
+            on all the :class:`CNode` visited with the :class:`CNode` as
+            argument.
+        :param filter_list: A list of class which inherit from :class:`CNode`.
+            The callback will be called only for the node from a class in this
+            list.
+    """
+    if len(filter_list) == 0: # we don't visit anything
+        return
+    # check if we need to visit the child of the expression
+    vist_expr = False
+    for i in filter_list:
+        if issubclass(i, CNodeExpr):
+            vist_expr = True
+            break
+    stack = [cnode]
+    while len(stack) != 0:
+        elt = stack.pop() # get the next element
+        if elt.__class__ in filter_list: # check if we want the call
+            callback(elt) # call the callback before visiting the next
+        if isinstance(elt, CNodeExpr):
+            if vist_expr:
+                ch = list(elt.ops)
+                ch.reverse()
+                stack += ch
+        elif isinstance(elt, CNodeStmt):
+            ch = list(elt.expr_childs)
+            ch += list(elt.st_childs)
+            ch.reverse()
+            stack += ch
+        else:
+            # this should never happen
+            raise RuntimeError("Unknown type for visiting: {}".format(elt))
+
 

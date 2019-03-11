@@ -1,7 +1,7 @@
 from hx_lvar import HxLvar
 from hx_visitor import _hx_visitor_expr, _hx_visitor_list_expr, _hx_visitor_stmt, _hx_visitor_list_stmt, _hx_visitor_all, _hx_visitor_list_all
 from cnode import CNode
-from cnode_visitor import visit_dfs_cnode
+from cnode_visitor import visit_dfs_cnode, visit_dfs_cnode_filterlist
 import ida_hexrays
 
 
@@ -160,6 +160,25 @@ class HxCFunc(object):
                 :class:`CNode` currently visited.
         """
         visit_dfs_cnode(self.root_node, callback)
+
+    def visit_cnode_filterlist(self, callback, filter_list):
+        """
+            Method which allow to visit :class:`CNode` elements which are
+            present in a list. This is implemented using
+            a DFS algorithm. This does not use the hexrays visitor. For more
+            information about the implementation see
+            :func:`~cnode_visitor.visit_dfs_cnode_filterlist` (this method is just
+            a wrapper).
+
+            :param callback: A callable which will be called on all
+                :class:`CNode` in the function decompiled by hexrays. The call
+                should take only one argument which correspond to the
+                :class:`CNode` currently visited.
+            :param filter_list: A list of class which inherit from :class:`CNode`.
+                The callback will be called only for the node from a class in this
+                list.
+        """
+        visit_dfs_cnode_filterlist(self.root_node, callback, filter_list)
 
     ############################ HX VISITOR METHODS ##########################
 

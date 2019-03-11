@@ -5,6 +5,7 @@ sys.path.append(r"E:\bip")
 from ida_hexrays import *
 from idaapi import ctree_visitor_t, CV_FAST, CV_PARENTS
 from bip.hexrays import *
+from bip.hexrays.cnode import *
 from bip.base import *
 # TODO make this compatible with pytest
 
@@ -88,6 +89,18 @@ def test_cnode_visitor00():
 def test_cnode_visitor01():
     hxf = HxCFunc.from_addr(0x0180002524)
     hxf.visit_cnode(pr)
+
+def test_cnode_visitor02():
+    hxf = HxCFunc.from_addr(0x01800D2FF0)
+    hxf.visit_cnode_filterlist(pr, [CNodeStmtExpr])
+
+def test_cnode_visitor03():
+    hxf = HxCFunc.from_addr(0x01800D2FF0)
+    hxf.visit_cnode_filterlist(pr, [CNodeExprCall])
+
+def test_cnode_visitor04():
+    hxf = HxCFunc.from_addr(0x01800D2FF0)
+    hxf.visit_cnode_filterlist(pr, [CNodeExprCall, CNodeStmtExpr])
 
 
 
