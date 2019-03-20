@@ -728,6 +728,31 @@ class IdaFunction(object):
         """
         return ida_funcs.get_func_qty()
 
+    @staticmethod
+    def Entries():
+        """
+            Get the functions which are entry points of the binary.
+
+            .. todo:: make unit test
+
+            :return: A list of :class:`IdaFunction` which are entry points
+                of the binary currently analyzed.
+        """
+        return [IdaFunction(elt[2]) for elt in idautils.Entries()]
+
+    @staticmethod
+    def Entries_iter():
+        """
+            Get an generator on the functions which are entry points of the
+            binary. This should be faster than :meth:`~IdaFunction.Entries` .
+
+            .. todo:: make unit test
+
+            :return: A generator on :class:`IdaFunction` which are entry
+                points of the binary currently analyzed.
+        """
+        for elt in idautils.Entries():
+            yield IdaFunction(elt[2]) 
     
 
 
