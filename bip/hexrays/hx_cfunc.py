@@ -180,6 +180,29 @@ class HxCFunc(object):
         """
         visit_dfs_cnode_filterlist(self.root_node, callback, filter_list)
 
+    def get_cnode_filter(self, cb_filter):
+        """
+            Method which return a list of :class:`CNode` for which a filter
+            return true. Internally this use the :meth:`~HxCFunc.visit_cnode`
+            method which visit all nodes of the function, this is just a
+            usefull wrapper.
+
+            :param cb_filter: A callable which take a :class:`CNode` in
+                parameter and return a boolean. This callback will be called
+                on all node of the function and all node for which it returns
+                true will be added in a list which will be returned by this
+                function.
+            :return: A list of :class:`CNode` which have match the filter.
+                This list is order in which the node have been visited (see
+                :meth:`~HxCFunc.visit_cnode` for more information).
+        """
+        l = []
+        def _app_filt(cn):
+            if cb_filter(cn):
+                l.append(cn)
+        self.visit_cnode(_app_filt)
+        return l
+
     ############################ HX VISITOR METHODS ##########################
 
 # todo: 
