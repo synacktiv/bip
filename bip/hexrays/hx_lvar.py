@@ -105,6 +105,17 @@ class HxLvar(object):
     #def comment(self, value):
     #    # TODO: no idea how to do this
 
+    @property
+    def _ida_tinfo(self):
+        """
+            Internal property which allow to get the ``tinfo_t`` swig proxy
+            from IDA associated with this lvar.
+
+            :return: The ``ida_typeinf.tinfo_t`` object (swig proxy) provided
+                by IDA for this structure.
+        """
+        return self._lvar.type()
+
     #@property
     #def type(self):
     #    # TODO
