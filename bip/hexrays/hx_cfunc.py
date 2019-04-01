@@ -11,11 +11,21 @@ class HxCFunc(object):
         This is an abstraction on top of the ``ida_hexrays.cfuncptr_t``  and
         ``cfunc_t`` object.
 
+        .. warning::
+        
+            Decompiling again the function in hexrays (meaning
+            hitting F5 again) will create a new ``cfunc_t`` object. An
+            :class:`HxCFunc` python object (or the corresponding ``cfunc_t``
+            object from IDA) and the others associated objects (such as the 
+            :class:`HxLvar` for example) will not be the same anymore. This
+            can create problems when using the scripting and the interactive
+            view at the same time. Basically you will want to regenerate this
+            object for the function each time you make F5 again in the GUI,
+            this can be done using the :meth:`HxCFunc.from_addr` class method.
+
         .. todo:: support everything
 
             * Comments (cfuncp.user_cmts)
-
-        .. todo:: raccord to normal func (inheritance ?)
 
         .. todo:: type
 
