@@ -112,7 +112,7 @@ class HxLvar(object):
             from IDA associated with this lvar.
 
             :return: The ``ida_typeinf.tinfo_t`` object (swig proxy) provided
-                by IDA for this structure.
+                by IDA for this variable.
         """
         return self._lvar.type()
 

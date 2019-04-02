@@ -5,6 +5,7 @@ import ida_funcs
 import ida_name
 import ida_gdl
 import ida_bytes
+import ida_typeinf
 
 from idaelt import IdaElt, GetElt
 import instr
@@ -519,7 +520,36 @@ class IdaFunction(object):
     ############################ TYPE, ARGS, .... #########################
 
     @property
-    def type(self):
+    def _ida_tinfo(self):
+        """
+            Internal property which allow to get the ``tinfo_t`` swig proxy
+            from IDA associated with this function. Internally this use the
+            ``idaapi.get_type`` method with the third argument
+            (``type_source_t``) as ``idaapi.GUESSED_FUNC`` .
+
+            This property can raise a :class:`BipError` in case it was not
+            possible to determine (guess ?) the type, meaning the
+            ``idaapi.get_type`` returned false. It should be possible to try
+            with a less agressive type source, but except problem with this
+            way it is probably better to be more restrective than less.
+
+            .. note:: When a function is decompiled using hexrays IDA will
+                have a usually way better guess on the type of the function so
+                it may be a good idea to decompile the function before getting
+                the type.
+
+            .. todo:: add test on this
+
+            :return: The ``ida_typeinf.tinfo_t`` object (swig proxy) provided
+                by IDA for this function.
+        """
+        tif = ida_typeinf.tinfo_t()
+        if not idaapi.get_type(self.ea, tif, idaapi.GUESSED_FUNC):
+            raise BipError("Unable to get the type for the function {}".format(str(self)))
+        return tif
+
+    @property
+    def str_type(self):
         """
             Property which return the type (prototype) of the function.
 
@@ -535,8 +565,8 @@ class IdaFunction(object):
         """
         return idc.get_type(self.ea)
 
-    @type.setter
-    def type(self, value):
+    @str_type.setter
+    def str_type(self, value):
         """
             Setter which allow to change the type (prototype) of the function.
 
@@ -546,7 +576,7 @@ class IdaFunction(object):
         idc.SetType(self.ea, value)
 
     @property
-    def guesstype(self):
+    def guess_strtype(self):
         """
             Property which allow to return the prototype of the function
             guessed by IDA.
