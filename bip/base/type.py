@@ -182,16 +182,67 @@ class IdaType(object):
             converting the type from IDA into their correct object for bip.
             This function is used as an interface with the IDA object.
     
-            If no :class:`IdaType` child object supports the ``info_t`` a
+            If no :class:`IdaType` child object supports the ``tinfo_t`` a
+            ``ValueError`` exception will be raised. Internally this use
+            the :func:`~IdaType._GetClassIdaType` function.
+            
+            This create a **copy** of the underlying ``tinfo_t`` object, this
+            allow to avoid problems if when using the IdaPython API or the GUI
+            from IDA the type is change. This is a problem because it means
+            bip should dynamically change the class of the object and even if
+            possible this will create an error prone API. Instead types are
+            handle by copy instead of by reference, and interface with other
+            bip object take this into account. For creating an object of the
+            correct class without a copy the :func:`~IdaType.GetIdaTypeNoCopy`
+            can be used by is subject to the above problems.
+    
+            :param tinfo: A ``tinfo_t`` from ida.
+            :return: The equivalent object to the ``tinfo_t`` for bip. This
+                will be an object which inherit from :class:`IdaType` .
+        """
+        return IdaType._GetClassIdaType(tinfo)(tinfo_t(tinfo))
+
+
+    @staticmethod
+    def GetIdaTypeNoCopy(tinfo):
+        """
+            Function which convert a ``tinfo_t`` object from ida to one of the
+            child object of :class:`IdaType` .
+    
+            If no :class:`IdaType` child object supports the ``tinfo_t`` a
+            ``ValueError`` exception will be raised. Internally this use
+            the :func:`~IdaType._GetClassIdaType` function.
+            
+            .. warning::
+            
+                This function does **not** create a copy of the underlying
+                ``tinfo_t`` object which can create several problems when
+                using the GUI or the IdaPython/IDC API. For creating a copy
+                of the object use the :func:`~IdaType.GetIdaType` instead.
+    
+            :param tinfo: A ``tinfo_t`` from ida.
+            :return: The equivalent object to the ``tinfo_t`` for bip. This
+                will be an object which inherit from :class:`IdaType` .
+        """
+        return IdaType._GetClassIdaType(tinfo)(tinfo)
+
+    @staticmethod
+    def _GetClassIdaType(tinfo):
+        """
+            Internal function which allow to recuperate the correct child
+            class of :class:`IdaType` corresponding to  ``tinfo_t`` object
+            from ida. This is used internally for converting the type from IDA
+            into their correct object for bip.
+            This function is used as an interface with the IDA object.
+    
+            If no :class:`IdaType` child object supports the ``tinfo_t`` a
             ``ValueError`` exception will be raised.
     
             .. todo:: maybe return None instead of raising an exception ?
 
-            .. todo:: this should probably use a copy of the tinfo_t and
-                not directly the tinfo
-    
             :param tinfo: A ``tinfo_t`` from ida.
-            :return: The equivalent object to the ``tinfo_t`` for bip. This
+            :return: The bip class which should be used as equivalent for
+                the ``tinfo_t`` provided as argument. This
                 will be an object which inherit from :class:`IdaType` .
         """
         done = set()
@@ -201,7 +252,7 @@ class IdaType(object):
             if cl in done:
                 continue
             if cl.is_handling_type(tinfo):
-                return cl(tinfo)
+                return cl
             else:
                 done.add(cl)
                 todo |= set(cl.__subclasses__())
