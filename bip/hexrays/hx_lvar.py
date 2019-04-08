@@ -69,7 +69,8 @@ class HxLvar(object):
             :param hxcfunc: The :class:`HxCFunc` object to which this local
                 variable is attached.
             :param bool persistent: Indicate if change to this object using
-                the setter should be made persistent. True by default.
+                the setter should be made persistent in the idb. True by
+                default. See :meth:`~HxLvar.save` for more information.
         """
         self._lvar = lvar
         self._hxcfunc = hxcfunc
@@ -82,15 +83,25 @@ class HxLvar(object):
         """
             Property which return the name of this local variable.
 
-            .. todo:: test
-
             :return str: The name of the variable
         """
         return self._lvar.name
 
-    #@name.setter
-    #def name(self, value):
-    #    # TODO need mbl_array_t access
+    @name.setter
+    def name(self, value):
+        """
+            Setter for the name of this local variable.
+            
+            If this local variable is not set as persistent (True by default)
+            this will not be saved in the idb. See :meth:`~HxLvar.save` for
+            more information.
+
+            :param str value: The new name of this local variable.
+        """
+        self._lvar.name = value
+        self._lvar.set_user_name()
+        if self._persistent:
+            self.save()
 
     @property
     def size(self):
@@ -109,9 +120,20 @@ class HxLvar(object):
         """
         return self._lvar.cmt
 
-    #@comment.setter
-    #def comment(self, value):
-    #    # TODO: no idea how to do this
+    @comment.setter
+    def comment(self, value):
+        """
+            Setter for the comment of this local variable.
+            
+            If this local variable is not set as persistent (True by default)
+            this will not be saved in the idb. See :meth:`~HxLvar.save` for
+            more information.
+
+            :param str value: The new comment of this local variable.
+        """
+        self._lvar.cmt = value
+        if self._persistent:
+            self.save()
 
     @property
     def _ida_tinfo(self):
@@ -159,7 +181,7 @@ class HxLvar(object):
             raise TypeError("HxLvar type setter expect an object which inherit from IdaType")
         if not self._lvar.set_lvar_type(value._get_tinfo_copy()):
             raise RuntimeError("Unable to set the type {} for this lvar {}".format(value.str, self.name))
-        self._lvar.set_typed()
+        self._lvar.set_user_type()
         if self._persistent:
             self.save()
 
@@ -181,6 +203,7 @@ class HxLvar(object):
         lsi.name = self.name
         lsi.type = self._lvar.tif
         lsi.size = self.size
+        lsi.cmt = self.comment
         # create the object which is used for saving in the idb
         lvuv = lvar_uservec_t()
         if not lvuv.lvvec.add_unique(lsi): # adding this var to save
