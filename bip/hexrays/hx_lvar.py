@@ -41,6 +41,8 @@
 #    CVAR_THISARG 0x00008000 #: 'this' argument of c++ member functions   
 #    CVAR_FORCED  0x00010000 #: variable was created by an explicit request otherwise we could reuse an existing var  
 
+from bip.base import type as biptype
+from ida_hexrays import lvar_saved_info_t, lvar_uservec_t, save_user_lvar_settings
 
 
 class HxLvar(object):
@@ -55,7 +57,7 @@ class HxLvar(object):
         .. todo:: test
     """
 
-    def __init__(self, lvar):
+    def __init__(self, lvar, hxcfunc, persistent=True):
         """
             Constructor for the :class:`HxLvar` representing a local variable
             from hexrays.
@@ -64,8 +66,14 @@ class HxLvar(object):
 
             :param lvar: A ``lvar_t`` object from hexrays (those are swig
                 proxy) which is the ida variable corresponding to this object.
+            :param hxcfunc: The :class:`HxCFunc` object to which this local
+                variable is attached.
+            :param bool persistent: Indicate if change to this object using
+                the setter should be made persistent. True by default.
         """
         self._lvar = lvar
+        self._hxcfunc = hxcfunc
+        self._persistent = persistent
 
     #################################### BASE ################################
 
@@ -116,9 +124,70 @@ class HxLvar(object):
         """
         return self._lvar.type()
 
-    #@property
-    #def type(self):
-    #    # TODO
+    @property
+    def type(self):
+        """
+            Property which return the object, which inherit from
+            :class:`IdaType`, corresponding to the type of this local
+            variable.
+            
+            Because of the handling of the type in IDA the object
+            returned is a copy of the type of this local variable. For
+            changing the type of this variable it is necessary to use the
+            setter of this property. For more information about this problem
+            see :class:`IdaType` .
+
+            :return: An object which inherit from :class:`IdaType` and
+                represent the type of this local variable.
+        """
+        return biptype.IdaType.GetIdaType(self._ida_tinfo)
+
+    @type.setter
+    def type(self, value):
+        """
+            Property setter which take an object inherited from
+            :class:`IdaType` and set the type of this local variable to this
+            new type.
+            
+            This will create a copy of the type provided in argument
+            for avoiding problem with the IDA type system. For more
+            informaiton see :class:`IdaType` .
+
+            :param value: An object which inherit from :class:`IdaType` .
+        """
+        if not isinstance(value, biptype.IdaType):
+            raise TypeError("HxLvar type setter expect an object which inherit from IdaType")
+        if not self._lvar.set_lvar_type(value._get_tinfo_copy()):
+            raise RuntimeError("Unable to set the type {} for this lvar {}".format(value.str, self.name))
+        self._lvar.set_typed()
+        if self._persistent:
+            self.save()
+
+    def save(self):
+        """
+            Function which allow to save the change made to the local variable
+            inside the idb. This is necessary because by default the change
+            made to a lvar using the IDA interface only change the object in
+            memory and not its content.
+            
+            This function is called by default by the setters of this object
+            if the ``_persistent`` property is at True (the default). It
+            should not be necessary to call this directly.
+        """
+        # object needed for containing the information to save about the lvar
+        lsi = lvar_saved_info_t()
+        # set everything which need to be save
+        lsi.ll = self._lvar
+        lsi.name = self.name
+        lsi.type = self._lvar.tif
+        lsi.size = self.size
+        # create the object which is used for saving in the idb
+        lvuv = lvar_uservec_t()
+        if not lvuv.lvvec.add_unique(lsi): # adding this var to save
+            raise RuntimeError("Unable to create object for saving the variable")
+        # saving in the idb
+        save_user_lvar_settings(self._hxcfunc.ea, lvuv)
+
 
     ################################ FLAGS ##################################
 

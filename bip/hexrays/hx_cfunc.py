@@ -111,7 +111,7 @@ class HxCFunc(object):
 
             :return: A list of :class:`HxLvar`.
         """
-        return [HxLvar(l) for l in self._cfunc.get_lvars()]
+        return [HxLvar(l, self) for l in self._cfunc.get_lvars()]
 
     @property
     def lvars_iter(self):
@@ -125,7 +125,7 @@ class HxCFunc(object):
             :return: A interator of :class:`HxLvar`.
         """
         for l in self._cfunc.get_lvars():
-            yield HxLvar(l)
+            yield HxLvar(l, self)
 
     @property
     def args(self):
@@ -137,7 +137,7 @@ class HxCFunc(object):
 
             :return: A list of :class:`HxLvar`.
         """
-        return [HxLvar(l) for l in self._cfunc.get_lvars() if l.is_arg_var]
+        return [HxLvar(l, self) for l in self._cfunc.get_lvars() if l.is_arg_var]
 
     ############################ CNODE & VISITORS ############################
 

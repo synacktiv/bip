@@ -258,6 +258,16 @@ class IdaType(object):
                 todo |= set(cl.__subclasses__())
         raise ValueError("GetHxCItem could not find an object matching the tinfo_t type provided ({})".format(tinfo))
 
+    def _get_tinfo_copy(self):
+        """
+            Return a copy of the ida type (``tinfo_t``) represented by this
+            object. This is an internal function which is used as an helper
+            for setting the types of an element from a :class:`IdaType`
+
+            :return: A copy of the ``tinfo_t`` represented by this object.
+        """
+        return tinfo_t(self._tinfo)
+
 # TODO: unknown type
 
 class ITypeVoid(IdaType):
