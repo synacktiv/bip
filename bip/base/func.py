@@ -15,7 +15,7 @@ from biperror import BipError
 
 try:
     import bip.hexrays as hexrays
-except ImportError:
+except Exception:
     # TODO change this by a real log system ?
     print("WARNING: unable to import hexrays")
     hexrays = None

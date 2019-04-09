@@ -11,6 +11,7 @@ Welcome to Bip's documentation!
     :caption: Contents:
 
     base.rst
+    hexrays.rst
 
 
 Indices and tables
