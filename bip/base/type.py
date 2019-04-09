@@ -645,7 +645,9 @@ class ITypeFunc(IdaType):
 
             :return: An object which inherit from :class:`IdaType` class.
         """
-        return IdaType.GetIdaType(self._ida_func_type_data[pos].type)
+        # This does not work, don't know why
+        #return IdaType.GetIdaType(self._ida_func_type_data[pos].type)
+        return IdaType.GetIdaType(self._tinfo.get_nth_arg(pos))
 
     @property
     def nb_args(self):
