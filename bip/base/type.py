@@ -40,7 +40,8 @@
         * call ?
 """
 
-from ida_typeinf import tinfo_t, array_type_data_t, func_type_data_t, udt_type_data_t, enum_type_data_t
+from ida_typeinf import tinfo_t, array_type_data_t, func_type_data_t, udt_type_data_t, enum_type_data_t, apply_tinfo, guess_tinfo, GUESS_FUNC_OK
+import ida_nalt
 
 
 # The tinfo_t class will have to be recursive...
@@ -146,7 +147,99 @@ class IdaType(object):
 
         return self._tinfo.get_type_name()
 
-    ############################# CHILDS INJECTION ##########################
+    ########################## GENERAL TYPE SET/GET #########################
+
+    def set_at(self, ea, flags=1):
+        """
+            Function which try to set the type of the current object at a
+            given position, in particular this will work for global data and
+            function. If an error occur when trying to set the type a
+            :class:`RuntimeError` will be raised.
+            
+            This create a copy of the ``tinfo_t`` in this object.
+
+            .. todo:: delete flags and make something better here.
+
+            :param int ea: The address at which set the type. 
+            :param int flags: This are the ``TINFO_*`` flags from ida_typeinf,
+                by default ``TINFO_DEFINITE`` .
+        """
+        if not apply_tinfo(ea, self._get_tinfo_copy(), flags):
+            raise RuntimeError("Unable to set type {} at address {}".format(self.str, ea))
+
+    @staticmethod
+    def is_set_at(ea):
+        """
+            This function allow to test if a type is defined at a particular
+            address. This function will return False if a type is not set but
+            ida may be able to guess it. This means that this function may
+            return False while :func:`IdaType.get_at` return a type, if this
+            function return True :func:`IdaType.get_at` should always return
+            True.
+
+            :param ea: The address at which to make the test.
+            :return: True if a type is defined at the address given in
+                argument, False otherwise.
+        """
+        tif = tinfo_t()
+        return ida_nalt.get_tinfo(ea, tif)
+
+    @staticmethod
+    def get_at(ea):
+        """
+            Function which will create an object which inherit from
+            :class:`IdaType` representing the type at the current address.
+            This function will **not** set the type at the address given and
+            it may not be set if it was guess by ida.
+
+            Internally this function will first try to get the type at the
+            address, if no type are defined it will try to guess it. If ida
+            is not able to guess it it will return ``None``.
+
+            .. todo:: make something better when no type are set ?
+
+            .. note:: **Implementation**
+                
+                Ida allow to guess the type but this "guess" ignore the fact
+                that this may have been set. It seems necessary to use
+                ida_nalt.get_tinfo for recuperating the type set, it will fail
+                if no type has been set. If no type were set the guess_tinfo
+                is then used, it will typically fail if the data is undefined,
+                in this case None will be return. This may change in the
+                future as by default a tinfo_t ``empty`` is true (but not the
+                tinfo_t.is_unknown).
+
+            :param ea: The address at which to get the type.
+            :return: An object which inherit from :class:`IdaType`
+                representing the type at the address given in argument.
+                ``None`` will be return if no type is define and ida was not
+                able to guess it .
+        """
+        tif = tinfo_t()
+        # try to get the define type
+        # this seems to be define in ida_nalt...
+        if ida_nalt.get_tinfo(ea, tif):
+            # no need to make a copy in this case
+            return IdaType.GetIdaTypeNoCopy(tif)
+        
+        # no type define, try to guess it 
+        # don't know when GUESS_FUNC_TRIVIAL is return so consider failure 
+        if guess_tinfo(ea, tif) == GUESS_FUNC_OK:
+            return IdaType.GetIdaTypeNoCopy(tif)
+        
+        # not able to guess, this should be a tinfo_t empty ? (tif.empty() ?)
+        return None
+
+    @staticmethod
+    def del_at(ea):
+        """
+            Function which delete the type set at a particular address.
+
+            :param ea: The address at which to get the type.
+        """
+        ida_nalt.del_tinfo(ea)
+
+    ############################# CHILDS ##############################
 
     @property
     def childs(self):
@@ -267,6 +360,7 @@ class IdaType(object):
             :return: A copy of the ``tinfo_t`` represented by this object.
         """
         return tinfo_t(self._tinfo)
+
 
 # TODO: unknown type
 
