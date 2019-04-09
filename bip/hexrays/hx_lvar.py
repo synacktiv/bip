@@ -50,8 +50,6 @@ class HxLvar(object):
         Python object for representing a local variable of hexrays.
 
         .. todo:: flags (not accessible publicly)
-        ., todo:: setters
-        ., todo:: type info
         .. todo:: raccord with cfunc_t (HxFunc)
 
         .. todo:: test
@@ -105,7 +103,25 @@ class HxLvar(object):
 
     @property
     def size(self):
+        """
+            Property which return the size of the current local variable.
+
+            .. todo:: setter ?
+
+            :return: The number of bytes (``int``) corresponding to the size
+                of this lvar.
+        """
         return self._lvar.width
+
+    @property
+    def hxfunc(self):
+        """
+            Property which return the hexrays C function (:class:`HxCFunc`)
+            object to which this local variable is attached.
+
+            :return: A :class:`HxCFunc` object.
+        """
+        return self._hxcfunc
 
     @property
     def comment(self):
@@ -195,6 +211,10 @@ class HxLvar(object):
             This function is called by default by the setters of this object
             if the ``_persistent`` property is at True (the default). It
             should not be necessary to call this directly.
+
+            .. todo:: this should probably set the flags to ? flags are not
+                directly accessible through the the lvar object from IDAPython
+                rigth now...
         """
         # object needed for containing the information to save about the lvar
         lsi = lvar_saved_info_t()
