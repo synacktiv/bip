@@ -40,7 +40,7 @@
         * call ?
 """
 
-from ida_typeinf import tinfo_t, array_type_data_t, func_type_data_t, udt_type_data_t, enum_type_data_t, apply_tinfo, guess_tinfo, GUESS_FUNC_OK
+from ida_typeinf import tinfo_t, array_type_data_t, func_type_data_t, udt_type_data_t, enum_type_data_t, apply_tinfo, guess_tinfo, GUESS_FUNC_OK, parse_decl
 import ida_nalt
 
 
@@ -318,6 +318,34 @@ class IdaType(object):
                 will be an object which inherit from :class:`IdaType` .
         """
         return IdaType._GetClassIdaType(tinfo)(tinfo)
+
+    @staticmethod
+    def FromC(cstr, flags=0x401):
+        """
+            Function which convert a C string declaration into a object which
+            inherit from a :class:`IdaType` . If there is no ``;`` at the end
+            of the string provided, one will be added automatically.
+
+            This is made for parsing **one** declaration and can create
+            problem if several declarations are in the string. This function
+            will raise a :class:`RuntimeError` if it was not able to create
+            the type.
+            
+            :param str cstr: A string representing a declaration in C.
+            :param int flags: ``PT_*`` flags from IDA (see typeinf.hpp).
+                The default is ``0x401`` (``PT_RAWARGS | PT_SIL``) should be
+                enough in most case.
+            :return: An object which inherit from :class:`IdaType` equivalent
+                to the C declaration.
+        """
+        tif = tinfo_t()
+        cstr = cstr.strip()
+        if cstr[-1] != ';':
+            cstr += ';'
+        if parse_decl(tif, None, cstr, flags) is None:
+            raise RuntimeError("Unable to create a IdaType from declaration {}".format(repr(cstr)))
+        return IdaType.GetIdaTypeNoCopy(tif)
+
 
     @staticmethod
     def _GetClassIdaType(tinfo):
@@ -612,7 +640,7 @@ class ITypeFunc(IdaType):
         """
             Get the :class:`IdaType` object corresponding to the type of an
             argument.
-
+            
             .. todo:: handle the recuperation of an argument by name ?
 
             :return: An object which inherit from :class:`IdaType` class.
