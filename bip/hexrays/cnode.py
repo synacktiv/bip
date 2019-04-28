@@ -3,6 +3,7 @@
     necessary for defining automatically the inherited class from their
     :class:`HxCItem` equivalent.
 """
+import idc
 from hx_citem import AbstractCItem, HxCType, HxCItem, HxCExpr, HxCStmt
 
 class CNode(AbstractCItem):
@@ -25,13 +26,7 @@ class CNode(AbstractCItem):
         .. todo:: precise that all subclasses have the same comportement but
             just with the additional features.
 
-        .. todo:: implement getter for access to the parent
-
-        .. todo:: implement getter for access to the function
-
         .. todo:: implement low and high address ? (map ea from cfunc could may be help ?)
-
-        .. todo:: implement find closest address
 
         .. todo:: implement function for making more easy the iterations
 
@@ -75,6 +70,34 @@ class CNode(AbstractCItem):
         #:  IDA.
         self._parent = parent
 
+    ################################## BASE #################################
+    
+    @property
+    def closest_ea(self):
+        """
+            Property which return the closest address for this :class:`CNode`.
+            
+            By default this should be equivalent to the :meth:`~CNode.ea`
+            property except if it return ``idc.BADADDR``, in this case it will
+            try and get the address of the parent. If the most parrent node
+            of this node (which should be the root node of the function) still 
+            has no address, ``None`` is return.
+
+            :return: An integer corresponding to the closest address for this
+                node. If no address where found this method will return None.
+        """
+        ea = self.ea
+        obj = self._parent
+        while ea == idc.BADADDR and obj is not None:
+            ea = obj.ea
+            obj = obj._parent
+        if ea == idc.BADADDR:
+            return None
+        else:
+            return ea
+
+    ########################### ACCESS PROPERTIES ############################
+
     @property
     def has_parent(self):
         """
@@ -96,6 +119,18 @@ class CNode(AbstractCItem):
             raise RuntimeError("CNode {} as not parent".format(self))
         return self._parent
     
+    @property
+    def cfunc(self):
+        """
+            Property returning the :class:`HxCFunc` to which this node is
+            associated.
+
+            :return: A :class:`HxCFunc` object corresponding to the function
+                associated with this node.
+        """
+
+    ########################### CNODE CREATION #############################
+
     def _createChild(self, citem):
         """
             Internal method which allow to create a :class:`CNode` object
@@ -156,7 +191,6 @@ class CNode(AbstractCItem):
                 done.add(cl)
                 todo |= set(cl.__subclasses__())
         raise ValueError("GetCNode could not find an object matching the citem_t type provided ({})".format(citem.op))
-
 
 class CNodeExpr(CNode):
     """
