@@ -7,4 +7,4 @@ from xref import XrefTypes, IdaXref
 from biperror import BipError
 from func import IdaFuncFlags, IdaFunction
 from block import IdaBlockType, IdaBlock
-
+from .type import IdaType, ITypeVoid, ITypeInt, ITypeBool, ITypeFloat, ITypePtr, ITypeArray, ITypeFunc, ITypeStruct, ITypeUnion, ITypeEnum
