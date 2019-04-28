@@ -381,11 +381,19 @@ def addCNodeMethod(cnode_name, func_name=None):
         added this way should be done before calling it. If the method already
         exist it will be overwrite by this implementation, this allow to
         redefine base methods from the HxCExpr.
+        Internally this use the ``_cnodeMethods`` global dictionnary.
+        
+        It is possible to add properties using this method, if no
+        ``func_name`` parameter is provided the name of the getter will be
+        taken (and so the property must have a getter name). It is possible
+        to use ``property`` as a decorator:
+        
+        .. code-block:: py
 
-        Internally this use the ``_cnodeMethods`` global dictionnary. This
-        currently does not allow to add property.
-
-        .. todo:: support to add property
+            @addCNodeMethod(myclassname)
+            @property #order of those decorator is important
+            def my_new_property(self):
+                pass # THE CODE
 
         :param str cnode_name: The name of the CNode class to which add the
             property.
@@ -402,7 +410,10 @@ def addCNodeMethod(cnode_name, func_name=None):
         # TODO prop.fget/fset/fdel are the real function of a property
         fn = func_name
         if fn is None:
-            fn = func.__name__
+            if isinstance(func, property):
+                fn = func.fget.__name__
+            else:
+                fn = func.__name__
         # adding the method in the dict
         _cnodeMethods[cnode_name].append((fn, func, ))
         # we let the method be define without change
@@ -469,7 +480,8 @@ def buildCNode(cls):
 
 
 @addCNodeMethod("CNodeExprVar")
-def get_lvar(self):
+@property
+def lvar(self):
     return self._hxcfunc.lvar_at(self.index)
 
 
