@@ -386,7 +386,7 @@ def addCNodeMethod(cnode_name, func_name=None):
         It is possible to add properties using this method, if no
         ``func_name`` parameter is provided the name of the getter will be
         taken (and so the property must have a getter name). It is possible
-        to use ``property`` as a decorator:
+        to use ``property`` as a decorator but this will work only for getter:
         
         .. code-block:: py
 
@@ -394,6 +394,8 @@ def addCNodeMethod(cnode_name, func_name=None):
             @property #order of those decorator is important
             def my_new_property(self):
                 pass # THE CODE
+
+        .. todo:: correctly handle all property decorators
 
         :param str cnode_name: The name of the CNode class to which add the
             property.
