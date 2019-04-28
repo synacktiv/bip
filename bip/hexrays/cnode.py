@@ -242,6 +242,48 @@ class CNodeExpr(CNode):
         """
         return []
 
+    ################################### HELPERS ##############################
+
+    def find_final_left_node(self):
+        """
+            Return the node which is the left most "final" expression (inherit
+            from :class:`CNodeExprFinal`) bellow this node. If this
+            node is a final expression it is returned.
+        """
+        obj = self
+        while not isinstance(obj, CNodeExprFinal):
+            if len(obj.ops) == 0:
+                raise Exception("Node {} is not final nor have child expr".format(obj))
+            obj = obj.ops[0]
+        return obj
+
+    def find_left_node_notmatching(self, li):
+        """
+            Find the most left node not matching some classes. If the current
+            node does not match any classes in the list provided it will be
+            returned.
+
+            This function allow to bypass nodes to ignored. A common
+            utilisation will be to bypass some unary operand for getting a
+            final value or to bypass cast, reference or ptr derefence only.
+            For getting the final node and ingore all other nodes see
+            :meth:`~CNode.find_final_left_node`. If a node found is a "final"
+            node (inherit from :class:`CNodeExprFinal`) it will always be
+            returned.
+
+            For example for ignoring cast and ref use:
+            ``cn.find_left_node_notmatching([CNodeExprCast, CNodeExprRef])`` .
+            
+            :param li: A ``list`` or ``tuple`` of classes which inherit from
+                :class:`CNodeExpr` to ignore.
+            :return: A CNode object which is not of one of the class in
+                ``li``.
+        """
+        obj = self
+        while isinstance(obj, tuple(li)) and not isinstance(obj, CNodeExprFinal):
+            obj = obj.ops[0]
+        return obj
+
 class CNodeStmt(CNode):
     """
         Abstract class for representing a C Statement as returned by hexrays.
@@ -318,6 +360,56 @@ _citem2cnode = {
         HxCStmt: CNodeStmt,
     }
 
+#: Dictionnary which allows to add method to a particular CNode
+#:  implementation. This is used by :func:`addCNodeMethod` for adding a method
+#:  in a CNode class which does not exist (is not possible to implement) in
+#:  the HxCItem class equivalent. When the object is created by
+#:  ``buildCNode`` the method will be added.
+#:  
+#:  This dictionnary as the name of the class for key, and a parameter a list
+#:  of tuples. Each tuple consist of the name of the method as first element
+#:  follow by the function object.
+_cnodeMethods = {}
+
+def addCNodeMethod(cnode_name, func_name=None):
+    """
+        Decorator for a function, allow to add a method to a
+        CNode class. This is for supporting to add method specific to a CNode
+        which are not implemented (probably because it is not possible to do
+        so) in their equivalent HxCItem class. This is design to be used in
+        conjonction with the :func:`buildCNode` decorator, methods which are
+        added this way should be done before calling it. If the method already
+        exist it will be overwrite by this implementation, this allow to
+        redefine base methods from the HxCExpr.
+
+        Internally this use the ``_cnodeMethods`` global dictionnary. This
+        currently does not allow to add property.
+
+        .. todo:: support to add property
+
+        :param str cnode_name: The name of the CNode class to which add the
+            property.
+        :param str func_name: The name to use for adding to the CNode class,
+            if None the name of the function will be used.
+    """
+    global _cnodeMethods
+    # check if the cnode is already present in the dict:
+    if cnode_name not in _cnodeMethods:
+        _cnodeMethods[cnode_name] = []
+    # the real internal function decorator.
+    def _internal_addcnodemeth(func):
+        # select function name
+        # TODO prop.fget/fset/fdel are the real function of a property
+        fn = func_name
+        if fn is None:
+            fn = func.__name__
+        # adding the method in the dict
+        _cnodeMethods[cnode_name].append((fn, func, ))
+        # we let the method be define without change
+        return func
+    return _internal_addcnodemeth
+
+
 def buildCNode(cls):
     """
         Class decorator for automatically building a class equivalent to the
@@ -351,9 +443,17 @@ def buildCNode(cls):
     attr["__module__"] = __name__ # change module to cnode
     attr["__doc__"] = "Copy of :class:`{}` but which inherit from :class:`CNode`.\nAutomatically created by :func:`~cnode.buildCNode.`".format(cls.__name__)# change doc
 
+    # getting the name of the new class
+    cn_cls_nm = cls.__name__.replace("HxC", "CNode")
+
+    # adding methods from _cnodeMethods if any
+    if cn_cls_nm in _cnodeMethods:
+        for na, f in _cnodeMethods[cn_cls_nm]:
+            attr[na] = f
+
     # creating the new class
     cn_cls = type(
-            cls.__name__.replace("HxC", "CNode"), # change name
+            cn_cls_nm, # change name
             tuple(lb), # bases classes
             attr
         )
@@ -367,6 +467,10 @@ def buildCNode(cls):
     # return the old class we don't want to change it
     return cls
 
+
+@addCNodeMethod("CNodeExprVar")
+def get_lvar(self):
+    return self._hxcfunc.lvar_at(self.index)
 
 
 
