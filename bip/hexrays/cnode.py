@@ -75,6 +75,26 @@ class CNode(AbstractCItem):
         #:  IDA.
         self._parent = parent
 
+    @property
+    def has_parent(self):
+        """
+            Property which return true if the :class:`CNode` as a parent. Only
+            CNode which are root of a function should not have a parent.
+        """
+        return self._parent is not None
+    
+    @property
+    def parent(self):
+        """
+            Property which return the parent of this :class:`CNode`. If this
+            node does not have a parent a :class:`RuntimeError` exception
+            will be raised.
+
+            :return: A :class:`CNode` object parent of this node.
+        """
+        if self._parent is None:
+            raise RuntimeError("CNode {} as not parent".format(self))
+        return self._parent
     
     def _createChild(self, citem):
         """
