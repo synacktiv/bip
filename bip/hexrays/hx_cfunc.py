@@ -98,7 +98,17 @@ class HxCFunc(object):
         
 
     ################################ LVARS ###################################
-    # todo args
+
+    def lvar_at(self, idx):
+        """
+            Return the local variable corresponding to an index.
+
+            This equivalent to using :meth:`~HxCFunc.lvars` with access in an
+            index but should be faster.
+            
+            :return: A :class:`HxLvar` object.
+        """
+        return HxLvar(self._cfunc.lvars[idx], self)
 
     @property
     def lvars(self):
