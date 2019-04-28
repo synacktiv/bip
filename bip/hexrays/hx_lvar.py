@@ -231,6 +231,8 @@ class HxLvar(object):
         # saving in the idb
         save_user_lvar_settings(self._hxcfunc.ea, lvuv)
 
+    def __str__(self):
+        return "LVAR(name={}, size={}, type={})".format(self.name, self.size, self.type)
 
     ################################ FLAGS ##################################
 
