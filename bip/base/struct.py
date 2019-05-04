@@ -14,7 +14,7 @@ class IdaStruct(object):
         to easilly get an instance of those object.
 
         .. todo::
-            
+
             Should make this accessible by the xref. Maybe inherit from
             IdaElt ?
 
@@ -225,7 +225,7 @@ class IdaStruct(object):
         flags = idc.FF_DATA
         d= {8:idc.FF_QWRD, 4:idc.FF_DWRD, 2:idc.FF_WORD, 1:idc.FF_BYTE}
         flags |= d[size]
-        
+
         # create member
         r = ida_struct.add_struc_member(self._struct, name, -1, flags, None, size)
         if r != 0:
@@ -241,7 +241,7 @@ class IdaStruct(object):
         """
             Add new members to the structure until it reach
             ``size`` . Thie function add field the size of a pointer
-            at the end of the structure. 
+            at the end of the structure.
 
             :param int size: The size in bytes wanted for the structure.
             :param str prefix: Prefix for the name of the structure member.
@@ -269,7 +269,7 @@ class IdaStruct(object):
             name of an existing structure.
 
             .. todo:: support providing a sid directly instead of a name ?
-            
+
             .. todo:: support typedef on struct
 
             :param str name: The name of the structure to get.
@@ -282,7 +282,7 @@ class IdaStruct(object):
             raise ValueError('Struct {} does not exists'.format(name))
 
         return cls(ida_struct.get_struc(sid))
-            
+
     @classmethod
     def create(cls, name):
         """
@@ -296,13 +296,29 @@ class IdaStruct(object):
         sid = ida_struct.get_struc_id(name)
         if sid != idc.BADADDR:
             raise ValueError('Struct {} already exists'.format(name))
-        
+
         sid = ida_struct.add_struc(-1, name, 0)
         if sid == idc.BADADDR:
             raise BipError("Impossible to create structure with name={}".format(name))
         return cls(ida_struct.get_struc(sid))
 
-                
+    @staticmethod
+    def delete(name):
+        """
+            Static method allowing to delete a struct by its name.
+
+            :param str name: The name of the structure to delete.
+            :raise ValueError: If the structure ``name`` does not exist.
+            :raise RuntimeError: If it was not possible to delete the
+                strucutre.
+        """
+        sid = ida_struct.get_struc_id(name)
+        if sid == idc.BADADDR:
+            raise ValueError('Struct {} does not exists'.format(name))
+
+        if not ida_struct.del_struc(ida_struct.get_struc(sid)):
+            raise RuntimeError("Unable to delete structure {}".format(name))
+
 
 class IStructMember(object):
     """
@@ -431,7 +447,7 @@ class IStructMember(object):
     def has_type(self):
         """
             Property which return True if this member as a type defined (which
-            can be recuperated through :meth:`IStructMember.type`) False if 
+            can be recuperated through :meth:`IStructMember.type`) False if
             no type is defined for this member.
         """
         return self._member.has_ti()
@@ -473,7 +489,7 @@ class IStructMember(object):
             :param bool compatible: The new type should be compatible with
                 the previous one. Default is False.
             :param bool funcarg: Is the member used as argument of a function,
-                in particular this forbid the setting of array. Default is 
+                in particular this forbid the setting of array. Default is
                 False.
             :param bool bytil: The new type was created by the type subsystem.
                 Default False.
@@ -508,7 +524,7 @@ class IStructMember(object):
             :meth:`IStructMember.set_type` method.
 
             .. note::
-            
+
                 This will create a copy of the type for avoiding problem with
                 the IDA interface. See :class:`IdaType` for more information.
 
