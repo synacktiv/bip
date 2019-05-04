@@ -158,7 +158,7 @@ def get_struct_from_lvar(lvar):
         :rtype: A bip :class:`~bip.base.Struct` object or ``None`` on error
     """
 
-    from bip.base import Struct
+    from bip.base import IdaStruct
     
     t = lvar.type()
     
@@ -166,7 +166,7 @@ def get_struct_from_lvar(lvar):
         s = t.get_pointed_object()
         if s.is_struct():
             try:
-                struct = bstruct.Struct.get(s.get_type_name())
+                struct = bstruct.IdaStruct.get(s.get_type_name())
                 return struct
             except ValueError:
                 return None
