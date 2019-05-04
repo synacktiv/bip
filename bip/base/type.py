@@ -392,6 +392,19 @@ class IdaType(object):
 
 # TODO: unknown type
 
+class ITypePartial(IdaType):
+    """
+        Class which represent the :class:`IdaType` for a partial type: when
+        only the size is known but no other information is available.
+
+        .. todo:: test everything for this.
+        .. todo:: check for collision with other types!
+    """
+
+    @classmethod
+    def is_handling_type(cls, tinfo):
+        return tinfo.is_partial()
+
 class ITypeVoid(IdaType):
     """
         Class which represent the :class:`IdaType` for a void. 
