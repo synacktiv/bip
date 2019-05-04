@@ -22,8 +22,6 @@ class IdaStruct(object):
 
         .. todo:: allow to iterate on all structure and other stuff like that
 
-        .. todo:: allow to access child struct
-
         .. todo:: test
 
     """
@@ -326,8 +324,6 @@ class IStructMember(object):
         :class:`IdaStruct` structure.
 
         .. todo:: flags
-
-        .. todo:: link to child struct for embedded struct.
     """
 
     def __init__(self, member, istruct):
@@ -538,6 +534,31 @@ class IStructMember(object):
             self.del_type()
             return
         self.set_type(value)
+
+    @property
+    def is_nested(self):
+        """
+            Return True if this member represent a nested struct included
+            inside the current one. The structure can be recuperated using
+            :meth:`~IStructMember.nested_struct` .
+        """
+        return ida_struct.get_sptr(self._member) is not None
+
+    @property
+    def nested_struct(self):
+        """
+            If this member represent a nested structure this property allows
+            to get the :class:`IdaStruct` corresponding to the nested struct.
+            
+            :raise RuntimeError: If this member does not have a nested struct.
+                This can be tested using :meth:`~IStructMember.is_nested`.
+            :return: An :class:`IdaStruct` object corresponding to the nested
+                struct.
+        """
+        st = ida_struct.get_sptr(self._member)
+        if st is None:
+            raise RuntimeError("{} does not represent a nested struct".format(self))
+        return IdaStruct(st)
 
     #def to_dict(self):
     #    """
