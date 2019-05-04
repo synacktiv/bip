@@ -1,4 +1,3 @@
-from bip.base import Struct
 from bip.base.utils import *
 from bip.hexrays import HexRaysEvent
 from ida_hexrays import *

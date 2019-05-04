@@ -19,7 +19,7 @@ def define_vtables_struct(vtables=None):
 
 		classname = name.replace("<", "_").replace(">", "").replace(',', '').replace(' ', '_').replace('*', '')
 		
-		s = Struct.create("%sVTable" % classname)
+		s = IdaStruct.create("%sVTable" % classname)
 					
 		while Ptr(ea):
 			# if i in (1,2) and GetFunctionName(Ptr(ea)):
@@ -29,7 +29,7 @@ def define_vtables_struct(vtables=None):
 			name = "Method_%d" % i
 			
 
-			s.add_ptr_field(name, "0x%x" % Ptr(ea))
+			s.add(name, get_ptr_size()/8, "0x%x" % Ptr(ea))
 			ea += get_ptr_size()/8
 			i+=1
 

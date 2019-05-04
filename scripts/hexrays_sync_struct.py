@@ -1,4 +1,4 @@
-from bip.base import Struct
+from bip.base import IdaStruct
 from bip.hexrays import HexRaysEvent
 
 from ida_hexrays import *
@@ -16,7 +16,7 @@ def get_struct_from_lvar(lvar):
         s = t.get_pointed_object()
         if s.is_struct():
             try:
-                struct = Struct.get(s.get_type_name())
+                struct = IdaStruct.get(s.get_type_name())
                 return struct
             except ValueError:
                 return None
@@ -84,7 +84,7 @@ class visitor_propagator(ctree_visitor_t):
             if s is not None:
                 print '0x%x () : ref to %s + 0x%x' % (ea, self.func.lvars[i.x.v.idx].name, i.m)
                 if self.set_all_operand:
-                    op_stroff(ea, -1, s.sid, 0)
+                    op_stroff(ea, -1, s._sid, 0)
                 else:
                     # this convert only the displacement access, this is
                     #   mainly for avoiding to convert the immediate as an
@@ -93,9 +93,9 @@ class visitor_propagator(ctree_visitor_t):
                     #   operand should be set
                     # TODO: Use bip.base.Instr for doing that
                     if get_operand_type(ea, 0) == o_displ:
-                        op_stroff(ea, 0, s.sid, 0)
+                        op_stroff(ea, 0, s._sid, 0)
                     if get_operand_type(ea, 1) == o_displ:
-                        op_stroff(ea, 1, s.sid, 0)
+                        op_stroff(ea, 1, s._sid, 0)
 
         return 0 # continue enumeration
 
