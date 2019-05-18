@@ -4,7 +4,157 @@ import ida_bytes
 import xref
 from biperror import BipError
 
-class IdaElt(object):
+class IdaBaseElt(object):
+    """
+        Base class for representing an element in IDA which is identified by
+        an id, this should be used as an abstract class and no object of this
+        class should be instantiated.
+        
+        This is a really generic class which only support the constructor
+        taking an id and the :meth:`IdaBaseElt._is_this_elt` for used in
+        conjonction with :func:`GetElt`. Child classes should reimplement the
+        :meth:`IdaBaseElt._is_this_elt` and call the constructor.
+
+        .. todo:: make list of subclasses in this doc. Add to doc a descision
+            tree for which classes should be return by the GetElt.
+    """
+
+    def __init__(self, idelt):
+        """
+            Consctructor for an IdaElt.
+            
+            .. note:: There is no reason to use this constructor, the
+                :func:`GetElt` function should be used.
+
+            :param int idelt: The id for representing the IDA element. In most
+                case this will be the address of the element.
+        """
+        if not isinstance(idelt, (int, long)):
+            raise TypeError("IdaBaseElt.__init__ : idelt should be an integer")
+        #: The id which represent the element in IDA, this will typically
+        #:  be an address.
+        self._idelt = idelt
+
+
+    @classmethod
+    def _is_this_elt(cls, idelt):
+        """
+            Class method which allow the function :func:`GetElt` to know if
+            this the correct type for an address. Only subclasses of an
+            element which return True will be tested by :func:`GetElt`,
+            :class:`IdaBaseElt` return always True except if ``idelt`` is not
+            of the correct type.
+
+            :param int idelt: An id representing the element, typically an
+                address.
+            :return: True if this is a valid class for constructing this
+                element.
+        """
+        if not isinstance(idelt, (int, long)):
+            return False
+        return True
+
+class IdaRefElt(IdaBaseElt):
+    """
+        Class which represent element which can be reference through a xref.
+        This include data, instruction and structures. This class provide
+        methods for accessing the references to and from the element
+        represented by the object.
+
+        .. todo:: put name of the class in this doc.
+    """
+
+    ################################# XREFS ############################
+    # all those functions start with a ``x``
+
+    @property
+    def xFrom(self):
+        """
+            Property which allow to get all xrefs generated (from) by the
+            element. This is the equivalent to ``XrefsFrom`` from idapython.
+
+            :return: A list of :class:`IdaXref` with the ``src`` being this
+                element.
+        """
+        return [xref.IdaXref(x) for x in idautils.XrefsFrom(self._idelt)]
+
+    @property
+    def xTo(self):
+        """
+            Property which allow to get all xrefs pointing to (to) this
+            element. This is the equivalent to ``XrefsTo`` from idapython.
+
+            :return: A list of :class:`IdaXref` with the ``dst`` being this
+                element.
+        """
+        return [xref.IdaXref(x) for x in idautils.XrefsTo(self._idelt)]
+
+    @property
+    def xEaFrom(self):
+        """
+            Property which allow to get all addresses referenced (by a xref) by
+            (from) the element.
+
+            :return: A list of address.
+        """
+        return [x.dst_ea for x in self.xFrom]
+
+    @property
+    def xEaTo(self):
+        """
+            Property which allow to get all addresses which referenced this
+            element (xref to).
+
+            :return: A list of address.
+        """
+        return [x.src_ea for x in self.xTo]
+
+    @property
+    def xEltFrom(self):
+        """
+            Property which allow to get all elements referenced (by a xref)
+            by (from) this element.
+
+            :return: A list of :class:`IdaBaseElt` (or subclasses
+                of :class:`IdaBaseElt`).
+        """
+        return [x.dst for x in self.xFrom]
+
+    @property
+    def xEltTo(self):
+        """
+            Property which allow to get all elements which referenced this
+            element (xref to).
+
+            :return: A list of :class:`IdaBaseElt` (or subclasses
+                of :class:`IdaBaseElt`).
+        """
+        return [x.src for x in self.xTo]
+
+    @property
+    def xCodeFrom(self):
+        """
+            Property which return all instructions which are referenced by the
+            element. This will take into account jmp, call, ordinary flow and
+            "data" references.
+
+            :return: A list of :class:`Instr` referenced by this element.
+        """
+        return [x.dst for x in self.xFrom if ('is_code' in dir(x.dst) and x.dst.is_code)]
+
+    @property
+    def xCodeTo(self):
+        """
+            Property which return all instructions which referenced this
+            element. This will take into account jmp, call, ordinary flow and
+            "data" references.
+
+            :return: A list of :class:`Instr` referenced by this element.
+        """
+        return [x.src for x in self.xTo if ('is_code' in dir(x.src) and x.src.is_code)]
+
+
+class IdaElt(IdaRefElt):
     """
         Base class for representing an element in IDA which have an address.
         This is the basic element on top of which access to instruction and
@@ -26,6 +176,7 @@ class IdaElt(object):
 
             :param int ea: The address of the element in IDA.
         """
+        super(IdaElt, self).__init__(ea)
         if not isinstance(ea, (int, long)):
             raise TypeError("IdaElt.__init__ : ea should be an integer")
         self.ea = ea #: The address of the element in the IDA database
@@ -267,114 +418,15 @@ class IdaElt(object):
         """
         idc.Jump(self.ea)
 
-    @classmethod
-    def _is_this_elt(cls, ea):
-        """
-            Class method which allow the function :func:`GetElt` to know if
-            this the correct type for an address.
-
-            :param int ea: An address at which to get an element.
-            :return: True if this is a valid class for constructing from 
-        """
-        return True
-
-    ################################# XREFS ############################
-    # all those functions start with a ``x``
-
-    @property
-    def xFrom(self):
-        """
-            Property which allow to get all xrefs generated (from) by the
-            element. This is the equivalent to ``XrefsFrom`` from idapython.
-
-            :return: A list of :class:`IdaXref` with the ``src`` being this
-                element.
-        """
-        return [xref.IdaXref(x) for x in idautils.XrefsFrom(self.ea)]
-
-    @property
-    def xTo(self):
-        """
-            Property which allow to get all xrefs pointing to (to) this
-            element. This is the equivalent to ``XrefsTo`` from idapython.
-
-            :return: A list of :class:`IdaXref` with the ``dst`` being this
-                element.
-        """
-        return [xref.IdaXref(x) for x in idautils.XrefsTo(self.ea)]
-
-    @property
-    def xEaFrom(self):
-        """
-            Property which allow to get all addresses referenced (by a xref) by
-            (from) the element.
-
-            :return: A list of address.
-        """
-        return [x.dst_ea for x in self.xFrom]
-
-    @property
-    def xEaTo(self):
-        """
-            Property which allow to get all addresses which referenced this
-            element (xref to).
-
-            :return: A list of address.
-        """
-        return [x.src_ea for x in self.xTo]
-
-    @property
-    def xEltFrom(self):
-        """
-            Property which allow to get all elements referenced (by a xref)
-            by (from) this element.
-
-            :return: A list of :class:`IdaElt` (or subclasses
-                of :class:`IdaElt`).
-        """
-        return [x.dst for x in self.xFrom]
-
-    @property
-    def xEltTo(self):
-        """
-            Property which allow to get all elements which referenced this
-            element (xref to).
-
-            :return: A list of :class:`IdaElt` (or subclasses
-                of :class:`IdaElt`).
-        """
-        return [x.src for x in self.xTo]
-
-    @property
-    def xCodeFrom(self):
-        """
-            Property which return all instructions which are referenced by the
-            element. This will take into account jmp, call, ordinary flow and
-            "data" references.
-
-            :return: A list of :class:`Instr` referenced by this element.
-        """
-        return [x.dst for x in self.xFrom if x.dst.is_code]
-
-    @property
-    def xCodeTo(self):
-        """
-            Property which return all instructions which referenced this
-            element. This will take into account jmp, call, ordinary flow and
-            "data" references.
-
-            :return: A list of :class:`Instr` referenced by this element.
-        """
-        return [x.src for x in self.xTo if x.src.is_code]
-
 
 def GetElt(ea):
     """
-        Return an object inherithed from :class:`IdaElt` which correspond to
-        the element at an address.
+        Return an object inherithed from :class:`IdaBaseElt` which correspond
+        to the element at an id.
         
-        Internally this function parcours subclasses of :class:`IdaElt` and
-        call the :meth:`~IdaElt._is_this_elt` and return the one which match.
+        Internally this function parcours subclasses of :class:`IdaBaseElt`
+        and call the :meth:`~IdaBaseElt._is_this_elt` and return the one which
+        match.
 
         .. warning::
             
@@ -383,9 +435,9 @@ def GetElt(ea):
 
         :param int ea: An address at which to get an element.
         :return: An object representing the element.
-        :rtype: Subclass of :class:`IdaElt`.
+        :rtype: Subclass of :class:`IdaBaseElt`.
     """
-    cls = IdaElt
+    cls = IdaBaseElt
     sbcls = cls.__subclasses__()
     while len(sbcls) != 0:
         cl = sbcls.pop()

@@ -34,7 +34,6 @@ class IdaXref(object):
 
         .. todo::
 
-            * xref to structure
             * property on data xref
             * property on dst and src
             * classmethod allowing to create xref
@@ -71,8 +70,9 @@ class IdaXref(object):
     @property
     def src_ea(self):
         """
-            Source address of the XRef: the object which created it. This is
-            equivalent to the *from* in the standard IDA api.
+            Source address (or member id for xref on struct) of the XRef:
+            the object which created it. This is equivalent to the *from* in
+            the standard IDA api.
         """
         return self._xref.frm
 
@@ -83,7 +83,7 @@ class IdaXref(object):
             the source address.
 
             :return: An object representing the element at the source address.
-            :rtypes: An :class:`IdaElt` or one of its subclasses. See 
+            :rtypes: An :class:`IdaRefElt` or one of its subclasses. See 
                 :func:`GetElt`.
         """
         return idaelt.GetElt(self.src_ea)
@@ -91,15 +91,21 @@ class IdaXref(object):
     @property
     def dst_ea(self):
         """
-            Destination address of the XRef. This is
-            equivalent to the *to* in the standard IDA api.
+            Destination address (or member id for xref on struct) of the XRef.
+            This is equivalent to the *to* in the standard IDA api.
         """
         return self._xref.to
 
     @property
     def dst(self):
         """
-            TODO: return the object at the destination of the xref.
+            Property which allow to get an object representing the element at
+            the destination address or id.
+
+            :return: An object representing the element at the destination
+                address.
+            :rtypes: An :class:`IdaRefElt` or one of its subclasses. See 
+                :func:`GetElt`.
         """
         return idaelt.GetElt(self.dst_ea)
 

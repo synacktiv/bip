@@ -5,9 +5,10 @@ import ida_typeinf
 
 from .type import IdaType
 from bip.base import get_ptr_size
+from idaelt import IdaRefElt
 from biperror import BipError
 
-class IdaStruct(object):
+class IdaStruct(IdaRefElt):
     """
         Class for representing and manipulating a structure in IDA.
         Static functions :func:`~IdaStruct.create` and :func:`~IdaStruct.get` allow
@@ -20,6 +21,8 @@ class IdaStruct(object):
 
         .. todo:: get/set alignement
 
+        .. todo:: support deletion of members
+
         .. todo:: allow to iterate on all structure and other stuff like that
 
         .. todo:: test
@@ -28,15 +31,28 @@ class IdaStruct(object):
 
     ############################ BASE ###########################
 
-    def __init__(self, struct_t):
+    def __init__(self, st):
         """
             Constructor for a :class:`IdaStruct` object. There is few reason
             to directly use this constructor, see functions
             :func:`~IdaStruct.get` or :func:`~IdaStruct.create`.
 
-            :param struct_t: A structure ``struc_t`` from IDA such as return
-                by ``get_struc`` .
+            :param st: A structure ``struc_t`` from IDA such as return
+                by ``get_struc`` or an sid (int) representing a structure.
+            :raise ValueError: If an integer is provided and is not a valid
+                sid, or if an incorrect type is provided as ``st``.
         """
+        if isinstance(st, (int, long)):
+            super(IdaStruct, self).__init__(st)
+            # we got a sid, get the struct from that
+            struct_t = ida_struct.get_struc(st)
+            if struct_t is None:
+                raise ValueError("sid 0x{:X} is invalid".format(st))
+        elif isinstance(st, ida_struct.struc_t):
+            super(IdaStruct, self).__init__(st.id)
+            struct_t = st
+        else:
+            raise ValueError("Invalid structure object {}".format(st))
         #: Internal ``struct_t`` object from IDA.
         self._struct = struct_t
 
@@ -51,6 +67,14 @@ class IdaStruct(object):
             :return: An int corresponding to the sid.
         """
         return self._struct.id
+
+
+    @classmethod
+    def _is_this_elt(cls, idelt):
+        """
+            Return true if ``idelt`` correspond to a sid.
+        """
+        return ida_struct.get_struc(idelt) is not None
 
     @property
     def name(self):
@@ -318,15 +342,18 @@ class IdaStruct(object):
             raise RuntimeError("Unable to delete structure {}".format(name))
 
 
-class IStructMember(object):
+class IStructMember(IdaRefElt):
     """
         Class for representing and manipulating a member of an
         :class:`IdaStruct` structure.
 
         .. todo:: flags
+
+        .. todo:: implement comparaison with other members (mid) and test for
+            presence in a struct.
     """
 
-    def __init__(self, member, istruct):
+    def __init__(self, member, istruct=None):
         """
             Constructor for a :class:`IStructMember` object. There is no
             reason this constructor should be used.
@@ -335,13 +362,41 @@ class IStructMember(object):
             interfacing directly with IDA.
 
             :param member: A ``member_t`` object from ida corresponding to
-                this member.
+                this member or a member id (int, long) corresponding to this
+                member.
             :param istruct: A :class:`IdaStruct` object corresponding to
-                the structure from which member this member is part of.
+                the structure from which member this member is part of. If it
+                is ``None`` the structure will found dynamically.
+            :raise ValueError: If the parameter is incorrect.
         """
+        if isinstance(member, (int, long)):
+            tmp = ida_struct.get_member_by_id(member)
+            if tmp is None:
+                raise ValueError("{} is not a member id".format(member))
+            super(IStructMember, self).__init__(member)
+            member = tmp[0]
+            if istruct is None:
+                istruct = IdaStruct(tmp[2])
+        elif isinstance(member, ida_struct.member_t):
+            super(IStructMember, self).__init__(member.id)
+            if istruct is None:
+                tmp = ida_struct.get_member_by_id(member.id)
+                if tmp is None:
+                    raise ValueError("{} is not a member id".format(member.id))
+                istruct = IdaStruct(tmp[2])
+        else:
+            raise ValueError("IStructMember invalid member: {}".format(member))
+        #: ``member_t`` object from ida corresponding to this member.
         self._member = member
         #: :class:`IdaStruct` parent of this member.
         self.struct = istruct
+
+    @classmethod
+    def _is_this_elt(cls, idelt):
+        """
+            Return true if ``idelt`` correspond to a mid.
+        """
+        return cls._is_member_id(idelt)
 
     @property
     def _mid(self):
@@ -559,6 +614,43 @@ class IStructMember(object):
         if st is None:
             raise RuntimeError("{} does not represent a nested struct".format(self))
         return IdaStruct(st)
+
+    @staticmethod
+    def _is_member_id(mid):
+        """
+            Allow to check if an id (address) from IDA represent a member id.
+            This is a wrapper on ``ida_struct.is_member_id`` and there should
+            not be any reason to use this method except for interfacing with
+            the IDAPython interface.
+
+            :param int mid: The id to check for being a member id.
+            :return: ``True`` if ``mid`` is a member id which can be used for
+                getting a :class:`IStructMember` object, ``False`` otherwise.
+        """
+        return ida_struct.is_member_id(mid)
+
+    @classmethod
+    def _from_member_id(cls, mid):
+        """
+            Class method for getting a :class:`IStructMember` object from an
+            id which  represent a member in IDA. There should be no reason to
+            use this method except for interfacing with the IDAPython
+            interface.
+
+            :param int mid: The member id to convert to a
+                :class:`IStructMember`.
+            :raise ValueError: If the argument ``mid`` is not a valid member
+                id. This can be check using the static method
+                :meth:`~IStructMember._is_member_id` .
+            :return: A :class:`IStructMember` object corresponding to the
+                member with id ``mid``.
+        """
+        tmp = ida_struct.get_member_by_id(mid)
+
+        if tmp is None:
+            raise ValueError("{} is not a member id".format(mid))
+
+        return cls(tmp[0], IdaStruct(tmp[2]))
 
     #def to_dict(self):
     #    """
