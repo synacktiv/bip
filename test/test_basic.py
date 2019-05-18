@@ -226,7 +226,7 @@ def test_funcA():
     assert IdaFunction(0x01800D6B30).is_inside(Instr(0x01800D6B50)) == False
 
 def test_funcB():
-    assert IdaFunction(0x01800D6B30).guesstype == "__int64 __fastcall()"
+    assert IdaFunction(0x01800D6B30).guess_strtype == "__int64 __fastcall()"
 
 def test_funcC():
     assert IdaFunction(0x0180099990).nb_blocks == 3
