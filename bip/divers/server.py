@@ -123,18 +123,13 @@ handlers = {
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        print self.path
         if self.path in handlers:
             ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
             if ctype == 'application/json':
                 length = int(self.headers.getheader('content-length'))
                 data = loads(self.rfile.read(length))
-
                 # needs to execute the handlers in the main thread to avoid fails
                 out = dumps(bip_exec_sync(handlers[self.path], data))
-                print "out sync %s" % out
-
-                # out = dumps(handlers[self.path](data))
             else:
                 out = {}
             self.send_response(200)
