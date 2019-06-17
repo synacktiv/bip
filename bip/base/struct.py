@@ -652,24 +652,3 @@ class IStructMember(IdaRefElt):
 
         return cls(tmp[0], IdaStruct(tmp[2]))
 
-    #def to_dict(self):
-    #    """
-    #        Recuperate information about this field as a dictionnary.
-    #        Field of the dictionnary are:
-
-    #        * ``name`` (``str``): the name of this field.
-    #        * ``offset`` (``int``): the offset of this field.
-    #        * ``size`` (``int``): the size of this field.
-    #        * ``comment`` (``str``): the comment of this field, empty string if no comment.
-    #        * ``type`` (``str``): the type of this field.
-
-    #        :rtype: dict()
-    #    """
-    #    return {
-    #        'name':self.name,
-    #        'offset':self.offset,
-    #        'size':self.size,
-    #        'comment':self.comment,
-    #        'type':self.type
-    #    }
-    #
