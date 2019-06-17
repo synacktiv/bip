@@ -8,9 +8,34 @@ import argparse
 import re
 import cgi
 import socket
+import os
 from json import loads, dumps
 
+from ida_kernwin import MFF_READ, execute_sync
+
 from idc import GetInputFile
+
+def to_dict(self):
+    """
+        Recuperate information about this field as a dictionnary.
+        Field of the dictionnary are:
+
+        * ``name`` (``str``): the name of this field.
+        * ``offset`` (``int``): the offset of this field.
+        * ``size`` (``int``): the size of this field.
+        * ``comment`` (``str``): the comment of this field, empty string if no comment.
+        * ``type`` (``str``): the type of this field.
+
+        :rtype: dict()
+    """
+    return {
+        'name':self.name,
+        'offset':self.offset,
+        'size':self.size,
+        'comment':self.comment,
+        'type':str(self.type)
+    }
+    
 
 def complete_symbol(data):
     """
@@ -95,6 +120,7 @@ handlers = {
     '/get_breakpoints': get_breakpoints
 }
 
+
 class HTTPRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         print self.path
@@ -103,7 +129,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             if ctype == 'application/json':
                 length = int(self.headers.getheader('content-length'))
                 data = loads(self.rfile.read(length))
-                out = dumps(handlers[self.path](data))
+
+                # needs to execute the handlers in the main thread to avoid fails
+                out = dumps(bip_exec_sync(handlers[self.path], data))
+                print "out sync %s" % out
+
+                # out = dumps(handlers[self.path](data))
             else:
                 out = {}
             self.send_response(200)
