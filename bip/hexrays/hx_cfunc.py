@@ -132,7 +132,7 @@ class HxCFunc(object):
 
             .. todo:: test
 
-            :return: A interator of :class:`HxLvar`.
+            :return: An interator of :class:`HxLvar`.
         """
         for l in self._cfunc.get_lvars():
             yield HxLvar(l, self)
