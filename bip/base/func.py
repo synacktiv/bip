@@ -16,6 +16,7 @@ from biperror import BipError
 try:
     import bip.hexrays as hexrays
 except Exception:
+#except ImportError: # fix build of the doc for this and support the correct exception
     # TODO change this by a real log system ?
     print("WARNING: unable to import hexrays")
     hexrays = None
@@ -206,6 +207,22 @@ class IdaFunction(object):
             return 1
         else:
             return 0
+
+    def __hash__(self):
+        """
+            Compute a unique hash for this ida function. The produce hash is
+            dependant of the type of the object (:class:`IdaFunction`) and
+            of its address. This allow to create container using the hash
+            of the object for matching an object of a defined type and with
+            a particular address.
+
+            Calculation made is: ``hash(type(self)) ^ self.ea``, in particular
+            it means than child classes will not have the same hash as a
+            parrent classes even if the compare works.
+
+            :return: An integer corresponding to the hash for this object.
+        """
+        return hash(type(self)) ^ self.ea
 
     def __contains__(self, value):
         """
