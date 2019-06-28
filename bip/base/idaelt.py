@@ -1,6 +1,7 @@
 import idc
 import idautils
 import ida_bytes
+import ida_name
 import xref
 from biperror import BipError
 
@@ -445,4 +446,19 @@ def GetElt(ea):
             cls = cl
             sbcls = cl.__subclasses__()
     return cls(ea)
+
+def GetEltByName(name):
+    """
+        Same as :func:`GetElt`but using a name and not an address.
+
+        :param str name: The name of the element to get. If a "dummy" name
+            (``byte_xxxx``, ...) is provided the database is not consulted.
+        :return: An object representing the element or ``None`` if the name
+            was not found.
+        :rtype: Subclass of :class:`IdaBaseElt`.
+    """
+    ea = ida_name.get_name_ea(idc.BADADDR, name)
+    if ea is None or ea == idc.BADADDR:
+        return None
+    return GetElt(ea)
 
