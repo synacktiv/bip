@@ -5,6 +5,12 @@ import ida_name
 import xref
 from biperror import BipError
 
+# TODO:
+#   * make a iter_all for elements
+#   * for IdaElt object maybe return True only if mapped ?
+#   * create a special object for error address instead of the ugly test in
+#       GetElt ?
+
 class IdaBaseElt(object):
     """
         Base class for representing an element in IDA which is identified by
@@ -244,6 +250,9 @@ class IdaElt(IdaRefElt):
     ################### NAME ##################
     # All element do not have one
 
+    # TODO: add testing methods for if an element has a name or not, if it
+    #   is user defined, or auto generated and so on.
+
     @property
     def name(self):
         """
@@ -401,16 +410,26 @@ class IdaElt(IdaRefElt):
             beginning of an instruction) and can be named.
             Wrapper on ``idc.isHead`` .
 
-            :return: True if the current element is an head, Flase otherwise.
+            :return: True if the current element is an head, False otherwise.
             :rtype: bool
         """
         return idc.isHead(self.flags)
 
     # no is_tail because counter intuitive as it is only a ``not is_head`` 
 
-    
-    ######################## STUFF ############################
+    @property
+    def has_data(self):
+        """
+            Property which indicate if an element has a value. If an element
+            has no value a default value of ``0xFF`` will be returned in
+            general. This correspond to element in IDA which are marked with
+            a ``?`` in value. Wrapper on ``idc.has_value``.
 
+            :return: True if the current element has a value, False otherwise.
+        """
+        return idc.has_value(self.flags)
+    
+    ######################## GUI ############################
 
     def goto(self):
         """
@@ -418,6 +437,17 @@ class IdaElt(IdaRefElt):
             element. Wrapper on ``idc.Jump`` .
         """
         idc.Jump(self.ea)
+
+    #################### STATIC METHOD ######################
+
+    @staticmethod
+    def is_mapped(ea):
+        """
+            Static method which allow to know if an address is mapped or not.
+
+            :return: True if the address is mapped, False otherwise.
+        """
+        return ida_bytes.is_mapped(ea)
 
 
 def GetElt(ea):
@@ -435,9 +465,12 @@ def GetElt(ea):
             return True on the same element.
 
         :param int ea: An address at which to get an element.
+        :raise RuntimeError: If the address correspond to the error value.
         :return: An object representing the element.
         :rtype: Subclass of :class:`IdaBaseElt`.
     """
+    if ea == idc.BADADDR:
+        raise RuntimeError("Trying to get element for error address")
     cls = IdaBaseElt
     sbcls = cls.__subclasses__()
     while len(sbcls) != 0:
