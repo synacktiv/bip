@@ -1,6 +1,7 @@
 from utils import get_highlighted_identifier_as_int, Ptr, get_ptr_size, relea, absea, get_addr_by_name, get_name_by_addr, get_struct_from_lvar, bip_exec_sync
 from idaelt import IdaBaseElt, IdaRefElt, IdaElt, GetElt, GetEltByName
 from instr import Instr
+from data import IdaData
 from operand import OpType, Operand
 from struct import IdaStruct, IStructMember
 from xref import XrefTypes, IdaXref
