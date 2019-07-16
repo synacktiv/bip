@@ -175,7 +175,7 @@ class IdaType(object):
             ida may be able to guess it. This means that this function may
             return False while :func:`IdaType.get_at` return a type, if this
             function return True :func:`IdaType.get_at` should always return
-            True.
+            a type.
 
             :param ea: The address at which to make the test.
             :return: True if a type is defined at the address given in
