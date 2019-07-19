@@ -259,6 +259,28 @@ class IdaStruct(IdaRefElt):
             mm.comment = comment
         return mm
 
+    def add_varsize(self, name, comment=None):
+        """
+            Add a variable size new member at the end of the structure.
+
+            :param str name: The name of the field to add.
+            :param str comment: Optional parameter which allow to add a
+                comment associated with the new member.
+            :raise ValueError: If an error occur when adding the member.
+            :return: An :class:`IStructMember` object corresponding to the
+                member added.
+        """
+        flags = idc.FF_DATA
+        r = ida_struct.add_struc_member(self._struct, name, -1, flags, None, 0)
+        if r != 0:
+            raise ValueError("Unable to add member {} (size={}) in {}".format(name, size, self))
+
+        # get member and add comment if needed
+        mm = self[name]
+        if comment is not None:
+            mm.comment = comment
+        return mm
+
     def fill(self, size, prefix='field_'):
         """
             Add new members to the structure until it reach
