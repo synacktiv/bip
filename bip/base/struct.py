@@ -273,7 +273,7 @@ class IdaStruct(IdaRefElt):
         flags = idc.FF_DATA
         r = ida_struct.add_struc_member(self._struct, name, -1, flags, None, 0)
         if r != 0:
-            raise ValueError("Unable to add member {} (size={}) in {}".format(name, size, self))
+            raise ValueError("Unable to add variable size member {} in {}".format(name, self))
 
         # get member and add comment if needed
         mm = self[name]
