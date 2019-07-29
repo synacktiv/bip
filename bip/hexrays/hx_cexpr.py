@@ -1,5 +1,6 @@
 
 from hx_citem import HxCType, HxCItem, HxCExpr
+from bip.base import type as biptype
 
 # TODO: this file should probably be split
 
@@ -1018,6 +1019,39 @@ class HxCExprCall(HxCExpr):
             .. todo:: test this
         """
         return self._cexpr.a[num]
+
+    ## Call type
+
+    @property
+    def type_call(self):
+        """
+            Return the type for the function call. This will be the type
+            printed by HexRays for the function. It differs from
+            :meth:`~HxCExpr.type` which is the type of result of the node.
+
+            .. todo:: setter
+
+            :return: An object which inherit from :class:`IdaType` which
+                correspond to the call type of this node.
+        """
+        return biptype.IdaType.GetIdaType(self._carglist.functype)
+
+    #@type_call.setter
+    #def type_call(self, value):
+    #    """
+    #        Setter for the call type of this expression.
+    #        
+    #        This will create a copy of the type provided in argument
+    #        for avoiding problem with the IDA type system. For more
+    #        informaiton see :class:`IdaType` .
+
+    #        .. todo:: more test
+    #        .. todo:: does not work
+
+    #        :param value: An object which inherit from :class:`IdaType` .
+    #    """
+    #    self._carglist.functype = value._get_tinfo_copy()
+
 
     ## Caller
 
