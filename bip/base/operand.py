@@ -1,5 +1,8 @@
 import idaapi
 import idc
+import type as biptype
+from ida_typeinf import tinfo_t
+from ida_nalt import get_op_tinfo, set_op_tinfo, del_op_tinfo
 
 class OpType(object):
     """
@@ -160,6 +163,53 @@ class Operand(object):
                 in :class:`DestOpType`.
         """
         return self._op_t.dtype
+
+    @property
+    def type_info(self):
+        """
+            Property which allow to get the information on the type of the
+            operand if defined. This will return an object which inherit from
+            :class:`IdaType` if defined or ``None`` if not.
+
+            .. note:: By default this does not seems to be defined by IDA.
+
+            :return: A :class:`IdaType` object defined for this operand or
+                ``None`` if it was not defined.
+        """
+        ti = tinfo_t()
+        if not get_op_tinfo(self.ea, self.opnum, ti): # recuperation of the type failed
+            return None
+        return biptype.IdaType.GetIdaType(ti)
+
+    @type_info.setter
+    def type_info(self, value):
+        """
+            Setter which allow to set the information type (:class:`IdaType`)
+            of the operand. This is equivalent to using the
+            ``Edit>Operand>Set Operand Type`` menu in IDA with an
+            :class:`IdaType` instead of a string.
+            
+            This will create a copy of the type provided in argument
+            for avoiding problem with the IDA type system. For more
+            informaiton see :class:`IdaType` .
+
+            :param value: An object which inherit from :class:`IdaType` and
+                will be set as the type of the current operand.
+            :raise TypeError: If the argument does not inherit from
+                :class:`IdaType` .
+            :raise RuntimeError: If the setting of the type is not a success.
+        """
+        if not isinstance(value, biptype.IdaType):
+            raise TypeError("Operand.type_info expect an IdaType object.")
+        if not set_op_tinfo(self.ea, self.opnum, value._get_tinfo_copy()):
+            raise RuntimeError("Fail to set the type ({}) of the operand {}".format(value, self))
+
+    @type_info.deleter
+    def type_info(self):
+        """
+            Deleter for removing infomarion type of the operand.
+        """
+        del_op_tinfo(self.ea, self.opnum)
 
     @property
     def _value(self):
