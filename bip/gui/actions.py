@@ -1,24 +1,19 @@
 import idaapi
+
 from bip.base import *
+from activity import BipActivity
 
-
-
-
-class BipAction(object):
+class BipAction(BipActivity):
     """
         Bip object for representing an action in IDA. Action can have
-        shortcuts, tollbar action, icon, name and must have an handler.
+        shortcuts, tollbar action, icon, name and must have an handler. This
+        is the equivalent of the ``idaapi.action_handler_t`` for Bip.
 
         The main use of this class can be made through decorator which should
         allow to simplify the life of the developer. See TODO.
 
         .. todo:: doc
         .. todo:: everything
-
-        .. todo:: this should not be a simple wrapper on action_handler_t but
-            should also allow to have events, callbacks, gui, ... Or probably
-            need a base class for interface with the plugin and subclasses
-            for integration in IDA.
 
         .. todo:: decorators
         .. todo:: metaclass for actions (maybe use this for checking unique name & stuff)
@@ -34,7 +29,7 @@ class BipAction(object):
         .. todo:: Handle tooltip & icon
     """
 
-    def __init__(self, name=None, label=None, shortcut=None, tooltip=None, icon=None, plugin=None):
+    def __init__(self, name, handler=None, label=None, shortcut=None, tooltip=None, icon=None):
         """
             Constructor for a :class:`BipAction` object.
 
@@ -43,13 +38,12 @@ class BipAction(object):
             .. todo:: Handle tooltip & icon, remove previous warning
 
             :param name: Unique internal name for this action.
+            :param handler: Handler function for this action. If it is None
+                the :meth:`~BipAction.handler` method will be used instead.
             :param label: Label for the action.
             :param shortcut: Optional shortcut for triggering the action.
             :param tooltip: Optional tooltip for the action.
             :param icon: Option icon for the action. 
-            :param plugin: :class:`BipPlugin` to which this action is attach.
-                Not used for now.
-                
         """
         # Param
         self._name = name
@@ -57,7 +51,16 @@ class BipAction(object):
         self._shortcut = shortcut
         self._tooltip = tooltip
         self._icon = icon
-        self._plugin = plugin
+
+        # Handler
+        if handler is not None:
+            ## create a method associated with this object
+            #self.handler = types.MethodType(handler, self, self.__class__)
+            # lets try simpler
+            self._internal_handler = handler
+        else:
+            self._internal_handler = None
+
 
         # Internals
         self._ida_action_handler = None #: Internal idaapi.action_handler_t object
@@ -70,17 +73,6 @@ class BipAction(object):
             self._name = self.__class__.__name__ # TODO: check for not already registered
         if self._label is None:
             self._label = self._name # if no label use the name
-
-    def handler(self):
-        """
-            Handler for an action.
-
-            By default raise a RuntimeError.
-
-            .. todo:: doc
-            .. todo:: ctx ? see idaapi.action_handler_t.activate
-        """
-        raise RuntimeError("Undefine handler for {}".format(self.__class__.__name__))
 
     def _activate(self, action_handler, ctx):
         """
@@ -124,12 +116,19 @@ class BipAction(object):
         self._ida_action_handler = aht
         return aht
 
+    def handler(self, *args, **kwargs):
+        """
+            Call the handler pass as argument if defined or raise a
+            ``RuntimeError`` if it is not defined.
+        """
+        if self._internal_handler is not None:
+            return self._internal_handler(self, *args, **kwargs)
+        else:
+            raise RuntimeError("BipAction handler is not defined.")
+
     def register(self):
         """
             Register the action in IDA.
-
-            .. todo:: This should register all the actions necessary once
-                it is possible to register several shortcuts and stuff
 
             .. todo:: this should be called by the plugin manager
         """
@@ -150,10 +149,6 @@ class BipAction(object):
         """
         # by default, add menu item after the specified path (can also be SETMENU_INS)
         idaapi.attach_action_to_menu(path, self._name, flags)
-
-
-
-
 
 
 

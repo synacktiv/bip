@@ -6,8 +6,9 @@ class ExPlugin(BipPlugin):
         return True # always loading
 
     @shortcut("Ctrl-H")
-    def action_with_shortcut(bipaction):
-        # TODO: this should be self in arguments (and maybe context ?)
+    @shortcut("Ctrl-0")
+    def action_with_shortcut(self):
+        print(self)
         print("In ExPlugin action !")# code here
 
 # exp = ExPlugin()
