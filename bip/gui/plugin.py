@@ -7,10 +7,18 @@ _BIP_PLUGINS_LIST = {} # dict of bip plugin for plugin manager
 
 class MetaBipPlugin(type):
     """
-        Metaclass for plugins. This is used for checking no colision are made
-        and to allow the plugin manager to register all plugins.
+        Metaclass for :class:`BipPlugin`.
 
-        .. todo:: doc the handling of the actions
+        This metaclass has two main usage. The first is for interfacing
+        with the plugin manager: it is used for checking no colision are made
+        between the plugins and to allow the plugin manager to register all 
+        the plugins.
+
+        .. todo:: Link to the plugin manager
+
+        The second usage is to create a dict of :class:`BipActivity`
+        associated with a plugin. Those are stored in a dict with the name
+        of the attribute as key and the :class:`BipActivity` object as value.
     """
 
     def __init__(cls, name, bases, dct):
@@ -19,7 +27,7 @@ class MetaBipPlugin(type):
         if name in _BIP_PLUGINS_LIST:
             raise RuntimeError("Plugin already registered")
         _BIP_PLUGINS_LIST[name] = cls
-        # Add activity in the class list # TODO: doc this
+        # Add activity in the class list
         cls._activities = {}
         for name, value in dct.items():
             if isinstance(value, BipActivity):
@@ -37,14 +45,18 @@ class BipPlugin(object):
         
         .. todo:: provide a way to pass "arguments" to a plugin
 
-        .. note:: **BipPlugin and metaclass**
+        .. note:: **BipPlugin, metaclass and BipActivity**
         
             If you use a metaclass when defining a plugin, make sure
             it inherit from :class:`MetaBipPlugin` which is necessary for
             working with the plugin manager and the :class:`BipActivity`
 
+            All :class:`BipPlugin` have an attribute ``_activities``
+            corresponding to a dict of ``name`` (corresponding to the orginal
+            name of the method) as key and with objects which inherit from
+            :class:`BipActivity`
+
         .. todo:: doc
-        .. todo:: everything
     """
     __metaclass__ = MetaBipPlugin
 
@@ -97,17 +109,31 @@ class BipPlugin(object):
         """
         return True
 
-    def _register_activities(self): # TODO
+    def _register_activities(self):
         """
-            .. todo:: doc this
+            Internal method which will parcour all the :class:`BipActivity`
+            object which are associated with this plugin and register all of
+            them.
+
+            This method is not made for being called directly and should be
+            call by the :meth:`BipPlugin.load` function.
         """
         for name, action in self._activities.items():
             action.register()
 
-    def load(self): # TODO
+    def load(self):
         """
-            .. todo:: doc this
-            .. todo:: finish implem
+            Method which will be called by the PluginManager when the plugin
+            must be loaded.
+            
+            This method can be surcharge by a Plugin for allowing to take
+            actions at the moment where it will be loaded.
+
+            .. note:: This method is in charge of calling
+                :meth:`~BipPlugin._register_activities` which allow to
+                activate the :class:`BipActivity` link to this plugin.
+
+            .. todo:: link to the plugin manager
         """
         self._register_activities()
 

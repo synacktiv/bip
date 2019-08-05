@@ -4,7 +4,10 @@ import inspect # isfunction
 class BipActivity(object):
     """
         Class allowing to make the link between the IDA API and a
-        :class:`BipPlugin` .
+        :class:`BipPlugin` . In particular this will allow to define
+        :class:`BipAction` (including shortcut and menu entry) or callbacks.
+
+        .. todo:: put link to callbacks when realized
 
         All :class:`BipActivity` object link to a :class:`BipPlugin` have a
         property ``plugin`` which give them access to the plugin object.
