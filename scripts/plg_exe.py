@@ -7,6 +7,7 @@ class ExPlugin(BipPlugin):
 
     @shortcut("Ctrl-H")
     @shortcut("Ctrl-0")
+    @menu("Edit/Plugins/", "ExPlugin Action!")
     def action_with_shortcut(self):
         print(self)
         print("In ExPlugin action !")# code here

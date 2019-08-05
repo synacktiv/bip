@@ -15,21 +15,16 @@ class BipAction(BipActivity):
         .. todo:: doc
         .. todo:: everything
 
-        .. todo:: decorators
-        .. todo:: metaclass for actions (maybe use this for checking unique name & stuff)
         .. todo:: allow to unregister
         .. todo:: handle ctx and access to it
 
-        .. todo:: handler should be a method ?
-
         .. todo:: Make properties for every attribute...
 
-        .. todo:: Allow sevaral shortcut, menu path, icon, ...
         .. todo:: handle activate **and** update
         .. todo:: Handle tooltip & icon
     """
 
-    def __init__(self, name, handler=None, label=None, shortcut=None, tooltip=None, icon=None):
+    def __init__(self, name, handler=None, label=None, shortcut=None, path_menu=None, tooltip=None, icon=None):
         """
             Constructor for a :class:`BipAction` object.
 
@@ -40,8 +35,14 @@ class BipAction(BipActivity):
             :param name: Unique internal name for this action.
             :param handler: Handler function for this action. If it is None
                 the :meth:`~BipAction.handler` method will be used instead.
-            :param label: Label for the action.
-            :param shortcut: Optional shortcut for triggering the action.
+            :param label: Label for the action. If ``None`` is provided
+                (default) the name of the action will be used.
+            :param str shortcut: Optional shortcut for triggering the action.
+                This should be a string representing the shortcut
+                (ex: ``Ctrl-H``).
+            :param str path_menu: Optional path in the menu at which register
+                the action. This should be a string representing the path
+                (ex: ``Edit/Plugins/``)
             :param tooltip: Optional tooltip for the action.
             :param icon: Option icon for the action. 
         """
@@ -51,6 +52,7 @@ class BipAction(BipActivity):
         self._shortcut = shortcut
         self._tooltip = tooltip
         self._icon = icon
+        self._path_menu = path_menu
 
         # Handler
         if handler is not None:
@@ -140,12 +142,21 @@ class BipAction(BipActivity):
             self._name, self._label, aht, self._shortcut,
             None, -1) # TODO: handle tooltip & icon
         idaapi.register_action(adt) # TODO: handle failure to register
+        if self._path_menu is not None:
+            self.attach_to_menu(self._path_menu)
         self.is_register = True
 
     def attach_to_menu(self, path, flags=idaapi.SETMENU_APP):
         """
-            .. todo:: doc this
-            .. todo:: this should be a param, enable when registering the action
+            Attach this :class:`BipAction` as an element in the menu. The
+            name of the action will be the one defined as the ``label`` of the
+            constructor.
+
+            This will be called automatically when the :class:`BipAction`
+            is :meth:`~BipAction.register` if the path is provided in argument
+            of the constructor as ``path_menu``.
+
+            .. todo:: handler error case
         """
         # by default, add menu item after the specified path (can also be SETMENU_INS)
         idaapi.attach_action_to_menu(path, self._name, flags)

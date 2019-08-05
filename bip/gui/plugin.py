@@ -32,9 +32,16 @@ class BipPlugin(object):
 
         All plugin should be instantiated only once.
 
-        .. warning:: If you use a metaclass when defining a plugin, make sure
+        .. todo:: Put link to the PluginManager class for getting, loading,
+            and Unloading driver
+        
+        .. todo:: provide a way to pass "arguments" to a plugin
+
+        .. note:: **BipPlugin and metaclass**
+        
+            If you use a metaclass when defining a plugin, make sure
             it inherit from :class:`MetaBipPlugin` which is necessary for
-            working with the plugin manager. 
+            working with the plugin manager and the :class:`BipActivity`
 
         .. todo:: doc
         .. todo:: everything
@@ -151,6 +158,7 @@ def shortcut(shortcut_str):
         # use len of the container for avoiding redef.
         ba = BipAction("{}ShortCutAction{}".format(of.__name__, len(bac)),
                 handler=lambda bipa, *args, **kwargs: of(bipa.plugin, *args, **kwargs),
+                label=of.__name__, # put the normal string for the label
                 shortcut=shortcut_str)
 
         # register the new action
@@ -159,5 +167,46 @@ def shortcut(shortcut_str):
         return bac
     return dec
 
+def menu(menu_path, menu_entry=None):
+    """
+        Decorator for defining a method of a :class:`BipPlugin` as an entry
+        in the menu of IDA. This decorator expect a string in argument
+        representing the path in the menu it wants to register
+        (ex.: ``Edit/Plugins/``).
 
+        The method which is decorated should only take ``self`` in argument
+        which will be the :class:`BipPlugin` object. Internally this will
+        create and add a :class:`BipAction` (for more information about the
+        internal see :func:`shortcut`).
+
+        :param str menu_path: The path at which the action should be
+            registered.
+        :param str menu_entry: The name which will apear in the menu for this
+            action. If it is ``None`` (default) the name of the function will
+            be used. Internaly this is the ``label`` of the
+            :class:`BipAction`.
+    """
+    def dec(func):
+        bac = BipActivityContainer.get_container(func)
+
+        # get the original method
+        of = bac.get_original_method()
+        
+        if menu_entry is not None:
+            lbl = menu_entry
+        else:
+            lbl = of.__name__
+
+        # create the new action
+        # use len of the container for avoiding redef.
+        ba = BipAction("{}MenuAction{}".format(of.__name__, len(bac)),
+                handler=lambda bipa, *args, **kwargs: of(bipa.plugin, *args, **kwargs),
+                label=lbl,
+                path_menu=menu_path)
+
+        # register the new action
+        bac.add_activity(ba)
+
+        return bac
+    return dec
 
