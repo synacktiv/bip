@@ -173,7 +173,7 @@ class BipBlock(object):
         return [BipBlock(bb) for bb in self._bb.succs()]
 
     @property
-    def iter_succ(self):
+    def succ_iter(self):
         """
             Return a generator of the :class:`BipBlock` following this one.
             This is equivalent to :meth:`succ` and will probably be a little
@@ -196,7 +196,7 @@ class BipBlock(object):
         return [BipBlock(bb) for bb in self._bb.preds()]
 
     @property
-    def iter_pred(self):
+    def pred_iter(self):
         """
             Return a generator of the :class:`BipBlock` predecessor of this
             one. This is equivalent to :meth:`pred` and will probably be a

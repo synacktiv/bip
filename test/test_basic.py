@@ -295,7 +295,7 @@ def test_blockD():
     b = BipBlock(0x0180099990)
     ss = b.succ
     i = 0
-    for bb in b.iter_succ:
+    for bb in b.succ_iter:
         assert ss[i].ea == bb.ea
         i += 1
 
@@ -315,7 +315,7 @@ def test_block12():
     b = BipBlock(0x01800999F0)
     ss = b.pred
     i = 0
-    for bb in b.iter_pred:
+    for bb in b.pred_iter:
         assert ss[i].ea == bb.ea
         i += 1
 
