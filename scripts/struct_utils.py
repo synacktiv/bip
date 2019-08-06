@@ -67,7 +67,7 @@ def create_struct_with_size(n):
 		try:
 			print repr(name.value)
 			print repr(num.value)
-			s = IdaStruct.create(name.value)
+			s = BipStruct.create(name.value)
 			s.fill(num.value)
 			break
 		except ValueError as e:
@@ -94,7 +94,7 @@ def copy_struct_with_size(n):
 		try:
 			print repr(name.value)
 			print repr(num.value)
-			s = IdaStruct.create(name.value)
+			s = BipStruct.create(name.value)
 			s.fill(num.value)
 			break
 		except ValueError as e:

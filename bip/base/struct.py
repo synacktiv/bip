@@ -3,21 +3,16 @@ import idautils
 import ida_struct
 import ida_typeinf
 
-from .type import IdaType
+from .type import BipType
 from bip.base import get_ptr_size
-from idaelt import IdaRefElt
+from idaelt import BipRefElt
 from biperror import BipError
 
-class IdaStruct(IdaRefElt):
+class BipStruct(BipRefElt):
     """
         Class for representing and manipulating a structure in IDA.
-        Static functions :func:`~IdaStruct.create` and :func:`~IdaStruct.get` allow
+        Static functions :func:`~BipStruct.create` and :func:`~BipStruct.get` allow
         to easilly get an instance of those object.
-
-        .. todo::
-
-            Should make this accessible by the xref. Maybe inherit from
-            IdaElt ?
 
         .. todo:: get/set alignement
 
@@ -33,9 +28,9 @@ class IdaStruct(IdaRefElt):
 
     def __init__(self, st):
         """
-            Constructor for a :class:`IdaStruct` object. There is few reason
+            Constructor for a :class:`BipStruct` object. There is few reason
             to directly use this constructor, see functions
-            :func:`~IdaStruct.get` or :func:`~IdaStruct.create`.
+            :func:`~BipStruct.get` or :func:`~BipStruct.create`.
 
             :param st: A structure ``struc_t`` from IDA such as return
                 by ``get_struc`` or an sid (int) representing a structure.
@@ -43,13 +38,13 @@ class IdaStruct(IdaRefElt):
                 sid, or if an incorrect type is provided as ``st``.
         """
         if isinstance(st, (int, long)):
-            super(IdaStruct, self).__init__(st)
+            super(BipStruct, self).__init__(st)
             # we got a sid, get the struct from that
             struct_t = ida_struct.get_struc(st)
             if struct_t is None:
                 raise ValueError("sid 0x{:X} is invalid".format(st))
         elif isinstance(st, ida_struct.struc_t):
-            super(IdaStruct, self).__init__(st.id)
+            super(BipStruct, self).__init__(st.id)
             struct_t = st
         else:
             raise ValueError("Invalid structure object {}".format(st))
@@ -59,7 +54,7 @@ class IdaStruct(IdaRefElt):
     @property
     def _sid(self):
         """
-            Property which return the sid for this :class:`IdaStruct` object. The
+            Property which return the sid for this :class:`BipStruct` object. The
             sid is the struct id number (``tid_t``) from IDA and there is no
             reason it should be used except for interfacing with the standard
             API from IDA.
@@ -106,7 +101,7 @@ class IdaStruct(IdaRefElt):
     def comment(self):
         """
             Property which return the comment associated with a structure.
-            For repeatable comment see :meth:`~IdaStruct.rcomment`
+            For repeatable comment see :meth:`~BipStruct.rcomment`
         """
         return ida_struct.get_struc_cmt(self._sid, 0)
 
@@ -114,7 +109,7 @@ class IdaStruct(IdaRefElt):
     def comment(self, value):
         """
             Setter which allow to set a comment associated with this
-            :class:`IdaStruct` object.
+            :class:`BipStruct` object.
 
             :param str value: The new comment to associate with this object.
         """
@@ -124,14 +119,14 @@ class IdaStruct(IdaRefElt):
     def rcomment(self):
         """
             Property which return the repeatable comment associated with this
-            :class:`IdaStruct` object.
+            :class:`BipStruct` object.
         """
         return ida_struct.get_struc_cmt(self._sid, 1)
 
     @rcomment.setter
     def rcomment(self, value):
         """
-            Setter which allow to set a repeatable comment for :class:`IdaStruct`
+            Setter which allow to set a repeatable comment for :class:`BipStruct`
             object.
 
             :param str value: The new comment to associate with this object.
@@ -144,69 +139,69 @@ class IdaStruct(IdaRefElt):
     def nb_members(self):
         """
             Property which return the number of members in this
-            :class:`IdaStruct` object.
+            :class:`BipStruct` object.
         """
         return self._struct.memqty
 
     @property
     def members(self):
         """
-            Property which return a list of :class:`IStructMember` objects
+            Property which return a list of :class:`BStructMember` objects
             representing the members of this structure.
 
-            :rtype: A list of :class:`IStructMember` object.
+            :rtype: A list of :class:`BStructMember` object.
         """
-        return [IStructMember(self._struct.get_member(i), self) for i in range(self.nb_members)]
+        return [BStructMember(self._struct.get_member(i), self) for i in range(self.nb_members)]
 
     @property
     def members_iter(self):
         """
             Property returning an iterable of
-            :class:`IStructMember` representing the different
-            members of this struct. This is similar to :meth:`IdaStruct.members`.
+            :class:`BStructMember` representing the different
+            members of this struct. This is similar to :meth:`BipStruct.members`.
 
             .. todo:: maybe delete this ? I am worried because of the
                 get_member property which may create problem if the number of
                 members change during the iteration.
 
-            :rtype: Iterable of :class:`IStructMember` object.
+            :rtype: Iterable of :class:`BStructMember` object.
         """
         for i in range(self.nb_members):
             # WARNING: get_member does not check for bound in IDA
             #   implementation, possible to access adjacent memory.
-            yield IStructMember(self._struct.get_member(i), self)
+            yield BStructMember(self._struct.get_member(i), self)
 
     def member_at(self, off):
         """
-            Method which return the member of this :class:`IdaStruct` at the
+            Method which return the member of this :class:`BipStruct` at the
             offset provided in argument. This will return the correct member
             even if the offset is not aligned.
 
             :param int off: The offset of the member to get.
             :raise ValueError: If the member was not found (offset bigger than
                 the struct).
-            :return: An :class:`IStructMember` object corresponding to the
+            :return: An :class:`BStructMember` object corresponding to the
                 member.
         """
         mm = ida_struct.get_member(self._struct, off)
         if mm is None:
             raise ValueError("Member at offset {} does not seems to exist in {}".format(off, self))
-        return IStructMember(mm, self)
+        return BStructMember(mm, self)
 
     def member_by_name(self, name):
         """
-            Method which return the member of this :class:`IdaStruct` from its
+            Method which return the member of this :class:`BipStruct` from its
             name.
 
             :param str name: The name of the member to get.
             :raise ValueError: If the member was not found.
-            :return: An :class:`IStructMember` object corresponding to the
+            :return: An :class:`BStructMember` object corresponding to the
                 member.
         """
         mm = ida_struct.get_member_by_name(self._struct, name)
         if mm is None:
             raise ValueError("Member {} does not seems to exist in {}".format(name, self))
-        return IStructMember(mm, self)
+        return BStructMember(mm, self)
 
     def __getitem__(self, key):
         """
@@ -216,7 +211,7 @@ class IdaStruct(IdaRefElt):
                 if it is a integer it will search the member by offset.
             :raise ValueError: If the member was not found.
             :raise TypeError: If ``key`` is not an integer or a string.
-            :return: An :class:`IStructMember` object corresponding to the
+            :return: An :class:`BStructMember` object corresponding to the
                 member.
         """
         if isinstance(key, (int, long)):
@@ -224,7 +219,7 @@ class IdaStruct(IdaRefElt):
         elif isinstance(key, (str, unicode)):
             return self.member_by_name(key)
         else:
-            raise TypeError("IdaStruct.__getitem__ expect a integer or a string as key, got: {}".format(key))
+            raise TypeError("BipStruct.__getitem__ expect a integer or a string as key, got: {}".format(key))
 
     def add(self, name, size, comment=None):
         """
@@ -238,7 +233,7 @@ class IdaStruct(IdaRefElt):
             :raise TypeError: If one argument is not of the correct type or
                 with the correct value.
             :raise ValueError: If an error occur when adding the member.
-            :return: An :class:`IStructMember` object corresponding to the
+            :return: An :class:`BStructMember` object corresponding to the
                 member added.
         """
         if size not in (1, 2, 4, 8) or not isinstance(name, (str, unicode)):
@@ -267,7 +262,7 @@ class IdaStruct(IdaRefElt):
             :param str comment: Optional parameter which allow to add a
                 comment associated with the new member.
             :raise ValueError: If an error occur when adding the member.
-            :return: An :class:`IStructMember` object corresponding to the
+            :return: An :class:`BStructMember` object corresponding to the
                 member added.
         """
         flags = idc.FF_DATA
@@ -309,7 +304,7 @@ class IdaStruct(IdaRefElt):
     @classmethod
     def get(cls, name):
         """
-            Class method allowing to get a :class:`IdaStruct` object from the
+            Class method allowing to get a :class:`BipStruct` object from the
             name of an existing structure.
 
             .. todo:: support providing a sid directly instead of a name ?
@@ -318,7 +313,7 @@ class IdaStruct(IdaRefElt):
 
             :param str name: The name of the structure to get.
             :raise ValueError: if the structure ``name`` does not exist.
-            :return: A :class:`IdaStruct` object corresponding to the structure
+            :return: A :class:`BipStruct` object corresponding to the structure
                 identified by the name provided.
         """
         sid = ida_struct.get_struc_id(name)
@@ -364,10 +359,10 @@ class IdaStruct(IdaRefElt):
             raise RuntimeError("Unable to delete structure {}".format(name))
 
 
-class IStructMember(IdaRefElt):
+class BStructMember(BipRefElt):
     """
         Class for representing and manipulating a member of an
-        :class:`IdaStruct` structure.
+        :class:`BipStruct` structure.
 
         .. todo:: flags
 
@@ -377,7 +372,7 @@ class IStructMember(IdaRefElt):
 
     def __init__(self, member, istruct=None):
         """
-            Constructor for a :class:`IStructMember` object. There is no
+            Constructor for a :class:`BStructMember` object. There is no
             reason this constructor should be used.
 
             There is few reason to use directly this constructor except for
@@ -386,7 +381,7 @@ class IStructMember(IdaRefElt):
             :param member: A ``member_t`` object from ida corresponding to
                 this member or a member id (int, long) corresponding to this
                 member.
-            :param istruct: A :class:`IdaStruct` object corresponding to
+            :param istruct: A :class:`BipStruct` object corresponding to
                 the structure from which member this member is part of. If it
                 is ``None`` the structure will found dynamically.
             :raise ValueError: If the parameter is incorrect.
@@ -395,22 +390,22 @@ class IStructMember(IdaRefElt):
             tmp = ida_struct.get_member_by_id(member)
             if tmp is None:
                 raise ValueError("{} is not a member id".format(member))
-            super(IStructMember, self).__init__(member)
+            super(BStructMember, self).__init__(member)
             member = tmp[0]
             if istruct is None:
-                istruct = IdaStruct(tmp[2])
+                istruct = BipStruct(tmp[2])
         elif isinstance(member, ida_struct.member_t):
-            super(IStructMember, self).__init__(member.id)
+            super(BStructMember, self).__init__(member.id)
             if istruct is None:
                 tmp = ida_struct.get_member_by_id(member.id)
                 if tmp is None:
                     raise ValueError("{} is not a member id".format(member.id))
-                istruct = IdaStruct(tmp[2])
+                istruct = BipStruct(tmp[2])
         else:
-            raise ValueError("IStructMember invalid member: {}".format(member))
+            raise ValueError("BStructMember invalid member: {}".format(member))
         #: ``member_t`` object from ida corresponding to this member.
         self._member = member
-        #: :class:`IdaStruct` parent of this member.
+        #: :class:`BipStruct` parent of this member.
         self.struct = istruct
 
     @classmethod
@@ -520,7 +515,7 @@ class IStructMember(IdaRefElt):
     def has_type(self):
         """
             Property which return True if this member as a type defined (which
-            can be recuperated through :meth:`IStructMember.type`) False if
+            can be recuperated through :meth:`BStructMember.type`) False if
             no type is defined for this member.
         """
         return self._member.has_ti()
@@ -529,16 +524,16 @@ class IStructMember(IdaRefElt):
     def type(self):
         """
             Property which return an object which inherit from
-            :class:`IdaType` and represent the type of this member.
+            :class:`BipType` and represent the type of this member.
 
             :raise RuntimeError: If it was not possible to get the type of
                 this member, this may happen in particular if
-                :meth:`~IStructMember.has_type` returned false.
+                :meth:`~BStructMember.has_type` returned false.
         """
         ti = ida_typeinf.tinfo_t()
         if not ida_struct.get_member_tinfo(ti, self._member):
             raise RuntimeError("Could not get the type for {}".format(self))
-        return IdaType.GetIdaType(ti)
+        return BipType.GetBipType(ti)
 
     def del_type(self):
         """
@@ -553,7 +548,7 @@ class IStructMember(IdaRefElt):
         """
             Method which allow to change the type of this member.
 
-            :param new_type: An object which inherit from :class:`IdaType`
+            :param new_type: An object which inherit from :class:`BipType`
                 which represent the new type for this member.
             :param bool userspecified: Is this type specified by the user,
                 True by default.
@@ -567,10 +562,10 @@ class IStructMember(IdaRefElt):
             :param bool bytil: The new type was created by the type subsystem.
                 Default False.
             :raise RuntimeError: If setting the type failed.
-            :raise TypeError: If the argument is not an :class:`IdaType` object.
+            :raise TypeError: If the argument is not an :class:`BipType` object.
         """
-        if not isinstance(new_type, IdaType):
-            raise TypeError("IStructMember.set_type setter expect an object which inherit from IdaType")
+        if not isinstance(new_type, BipType):
+            raise TypeError("BStructMember.set_type setter expect an object which inherit from BipType")
         # compute the flags, from SET_MEMTI_* in struct.hpp
         flags = 0
         if userspecified:
@@ -594,18 +589,18 @@ class IStructMember(IdaRefElt):
 
             This will set the type as being a user-specified type and will not
             destroy other members. For more specific change of type see
-            :meth:`IStructMember.set_type` method.
+            :meth:`BStructMember.set_type` method.
 
             .. note::
 
                 This will create a copy of the type for avoiding problem with
-                the IDA interface. See :class:`IdaType` for more information.
+                the IDA interface. See :class:`BipType` for more information.
 
-            :param value: An object which inherit from :class:`IdaType` which
+            :param value: An object which inherit from :class:`BipType` which
                 represent the new type for this member.
             :raise RuntimeError: If setting the type failed.
             :raise TypeError: If the argument is not None or an
-                :class:`IdaType` object.
+                :class:`BipType` object.
         """
         if value is None:
             self.del_type()
@@ -617,7 +612,7 @@ class IStructMember(IdaRefElt):
         """
             Return True if this member represent a nested struct included
             inside the current one. The structure can be recuperated using
-            :meth:`~IStructMember.nested_struct` .
+            :meth:`~BStructMember.nested_struct` .
         """
         return ida_struct.get_sptr(self._member) is not None
 
@@ -625,17 +620,17 @@ class IStructMember(IdaRefElt):
     def nested_struct(self):
         """
             If this member represent a nested structure this property allows
-            to get the :class:`IdaStruct` corresponding to the nested struct.
+            to get the :class:`BipStruct` corresponding to the nested struct.
             
             :raise RuntimeError: If this member does not have a nested struct.
-                This can be tested using :meth:`~IStructMember.is_nested`.
-            :return: An :class:`IdaStruct` object corresponding to the nested
+                This can be tested using :meth:`~BStructMember.is_nested`.
+            :return: An :class:`BipStruct` object corresponding to the nested
                 struct.
         """
         st = ida_struct.get_sptr(self._member)
         if st is None:
             raise RuntimeError("{} does not represent a nested struct".format(self))
-        return IdaStruct(st)
+        return BipStruct(st)
 
     @staticmethod
     def _is_member_id(mid):
@@ -647,24 +642,24 @@ class IStructMember(IdaRefElt):
 
             :param int mid: The id to check for being a member id.
             :return: ``True`` if ``mid`` is a member id which can be used for
-                getting a :class:`IStructMember` object, ``False`` otherwise.
+                getting a :class:`BStructMember` object, ``False`` otherwise.
         """
         return ida_struct.is_member_id(mid)
 
     @classmethod
     def _from_member_id(cls, mid):
         """
-            Class method for getting a :class:`IStructMember` object from an
+            Class method for getting a :class:`BStructMember` object from an
             id which  represent a member in IDA. There should be no reason to
             use this method except for interfacing with the IDAPython
             interface.
 
             :param int mid: The member id to convert to a
-                :class:`IStructMember`.
+                :class:`BStructMember`.
             :raise ValueError: If the argument ``mid`` is not a valid member
                 id. This can be check using the static method
-                :meth:`~IStructMember._is_member_id` .
-            :return: A :class:`IStructMember` object corresponding to the
+                :meth:`~BStructMember._is_member_id` .
+            :return: A :class:`BStructMember` object corresponding to the
                 member with id ``mid``.
         """
         tmp = ida_struct.get_member_by_id(mid)
@@ -672,5 +667,5 @@ class IStructMember(IdaRefElt):
         if tmp is None:
             raise ValueError("{} is not a member id".format(mid))
 
-        return cls(tmp[0], IdaStruct(tmp[2]))
+        return cls(tmp[0], BipStruct(tmp[2]))
 

@@ -6,13 +6,13 @@ import ida_bytes
 import ida_ua
 import idautils
 import idaapi
-from idaelt import IdaElt
+from idaelt import BipElt
 from operand import Operand, OpType
 from biperror import BipError
 import block
 import func
 
-class Instr(IdaElt):
+class Instr(BipElt):
     """
         Class for representing and manipulating a assembleur instruction in
         IDA.
@@ -190,30 +190,30 @@ class Instr(IdaElt):
     @property
     def block(self):
         """
-            Return the :class:`IdaBlock` in which this instruction is
+            Return the :class:`BipBlock` in which this instruction is
             included.
             
             This instruction will raise an exception if the instruction is
-            not included an IDA basic block. See :class:`IdaBlock` for more
+            not included an IDA basic block. See :class:`BipBlock` for more
             information.
 
-            :return: An :class:`IdaBlock` object containing this instruction.
+            :return: An :class:`BipBlock` object containing this instruction.
         """
-        return block.IdaBlock(self.ea)
+        return block.BipBlock(self.ea)
 
     @property
     def func(self):
         """
-            Return the :class:`IdaFunction` in which this instruction is
+            Return the :class:`BipFunction` in which this instruction is
             included.
 
             This will raise a ``ValueError`` if the instruction is not in a
             defined function.
 
-            :return: An :class:`IdaFunction` object containing this
+            :return: An :class:`BipFunction` object containing this
                 instruction.
         """
-        return func.IdaFunction(self.ea)
+        return func.BipFunction(self.ea)
 
     ########################## XREFS ##############################
 

@@ -2,8 +2,8 @@ import idc
 import ida_bytes
 import ida_kernwin
 
-from idaelt import IdaElt
-from type import IdaType
+from idaelt import BipElt
+from type import BipType
 from biperror import BipError
 
 # TODO:
@@ -18,7 +18,7 @@ from biperror import BipError
 #   * link to enum
 #   * allow to transform to code ??
 
-class IdaData(IdaElt):
+class BipData(BipElt):
     """
         Class for representing and manipulating data in IDA.
 
@@ -29,7 +29,7 @@ class IdaData(IdaElt):
 
     def __init__(self, ea=None):
         """
-            Constructor for :class:`IdaData`, take the address of the
+            Constructor for :class:`BipData`, take the address of the
             data in IDA in parameter.
 
 
@@ -37,7 +37,7 @@ class IdaData(IdaElt):
                 screen address is taken.
             :raise BipError: If address do not correspond to data
         """
-        super(IdaData, self).__init__(ea)
+        super(BipData, self).__init__(ea)
         if ((not self.is_data) and (not self.is_unknown)):
             raise BipError("Not a data object at 0x{:X}".format(ea))
 
@@ -49,9 +49,9 @@ class IdaData(IdaElt):
         """
             Property which return the value corresponding to the data of a
             numberable elements. This property works only if the
-            :meth:`~IdaData.is_numerable` and :meth:`~IdaData.has_data`
+            :meth:`~BipData.is_numerable` and :meth:`~BipData.has_data`
             properties returned True. For getting value of an element which
-            is not numerable use the :meth:`~IdaElt.bytes` property.
+            is not numerable use the :meth:`~BipElt.bytes` property.
 
             This property is link to the type defined or guessed by IDA and
             it is a good idea to assure you have the proper type before using
@@ -77,7 +77,7 @@ class IdaData(IdaElt):
     def original_value(self):
         """
             Property which allow to get the original value of data. This is
-            the same as :meth:`~IdaData.value` getter property but for the
+            the same as :meth:`~BipData.value` getter property but for the
             original bytes before they were patch.
         """
         if not self.has_data:
@@ -97,14 +97,14 @@ class IdaData(IdaElt):
     def value(self, value):
         """
             Property setter which allow to set the value of this object.
-            This property works only if the :meth:`~IdaData.is_numerable`
+            This property works only if the :meth:`~BipData.is_numerable`
             property returned True. If this object has no data
-            (:meth:`~IdaData.has_data` property return False) or is unknown
-            (:meth:`~IdaData.is_unknwon` return True) the value set is
+            (:meth:`~BipData.has_data` property return False) or is unknown
+            (:meth:`~BipData.is_unknwon` return True) the value set is
             considered to be on 1 byte.
 
             For setting non numerical value or value on more than 8 bytes use
-            the :meth:`~IdaElt.bytes` property setter.
+            the :meth:`~BipElt.bytes` property setter.
 
             This property is link to the type defined or guessed by IDA and
             it is a good idea to assure you have the proper type before using
@@ -269,7 +269,7 @@ class IdaData(IdaElt):
     def is_numerable(self):
         """
             Property which allow to test if this data element can be
-            considered as a number for the :meth:`~IdaData.value` property.
+            considered as a number for the :meth:`~BipData.value` property.
 
             :return: True if the data is a byte, word, dword, qword
                 or unknwon, False otherwise.
@@ -281,20 +281,20 @@ class IdaData(IdaElt):
     def type(self):
         """
             Property which allow to get the type of an element.
-            This is a wrapper for :meth:`IdaType.get_at` .
+            This is a wrapper for :meth:`BipType.get_at` .
 
-            :return: An object which inherit from :class:`IdaType` or ``None``
+            :return: An object which inherit from :class:`BipType` or ``None``
                 if it was not able to guess a type.
         """
-        return IdaType.get_at(self.ea)
+        return BipType.get_at(self.ea)
 
     @type.setter
     def type(self, value):
         """
             Property setter which allow to define the type for this data
-            element. This is a wrapper for :meth:`IdaType.set_at` .
+            element. This is a wrapper for :meth:`BipType.set_at` .
 
-            :param value: An object which inherit from :class:`IdaType`
+            :param value: An object which inherit from :class:`BipType`
                 corresponding to the new type for this data object. If
                 ``None`` is given in argument the type of the object is
                 deleted.
@@ -331,7 +331,7 @@ class IdaData(IdaElt):
                 Internally this function iterate on all the ``Heads`` and
                 create the object if the ``idc.is_data`` function return True.
 
-            :return: A generator of :class:`IdaData` allowing to iter on all
+            :return: A generator of :class:`BipData` allowing to iter on all
                 the instruction define in the idb.
         """
         for h in idautils.Heads():

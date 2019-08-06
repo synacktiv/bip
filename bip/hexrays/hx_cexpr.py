@@ -1031,10 +1031,10 @@ class HxCExprCall(HxCExpr):
 
             .. todo:: setter
 
-            :return: An object which inherit from :class:`IdaType` which
+            :return: An object which inherit from :class:`BipType` which
                 correspond to the call type of this node.
         """
-        return biptype.IdaType.GetIdaType(self._carglist.functype)
+        return biptype.BipType.GetBipType(self._carglist.functype)
 
     #@type_call.setter
     #def type_call(self, value):
@@ -1043,12 +1043,12 @@ class HxCExprCall(HxCExpr):
     #        
     #        This will create a copy of the type provided in argument
     #        for avoiding problem with the IDA type system. For more
-    #        informaiton see :class:`IdaType` .
+    #        informaiton see :class:`BipType` .
 
     #        .. todo:: more test
     #        .. todo:: does not work
 
-    #        :param value: An object which inherit from :class:`IdaType` .
+    #        :param value: An object which inherit from :class:`BipType` .
     #    """
     #    self._carglist.functype = value._get_tinfo_copy()
 

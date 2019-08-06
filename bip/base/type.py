@@ -1,14 +1,14 @@
 """
     File for basic type gestion. In particular this contain the wrapper on top
     of the type implementation in IDA (typeinf). In particular this contain
-    the abstraction on top of the ``tinfo_t`` (:class:`IdaType`).
+    the abstraction on top of the ``tinfo_t`` (:class:`BipType`).
 
     .. todo:: explain here the recursive concept of the implementation.
         Provide a representation of the class hierarchy.
 
     .. todo:: fix the problem of the bellow ptr which change, the easiest way is
         to duplicate the type when creating the object which could be done 
-        in the GetIdaType function directly (with another for creating a type
+        in the GetBipType function directly (with another for creating a type
         without a copy ?). This seems to work even if we copy a ptr (subjacent
         type will also be copied but it is necessary to test when doing change
         using the API). But that technics will be way more painfull
@@ -44,20 +44,20 @@ from ida_typeinf import tinfo_t, array_type_data_t, func_type_data_t, udt_type_d
 import ida_nalt
 import ida_kernwin
 
-class IdaType(object):
+class BipType(object):
     """
         Abstract class for representing a ``tinfo_t`` object from ida in bip.
         All basic types are subclasses of this one, the class name start with
-        the prefix ``IType``:
+        the prefix ``BType``:
 
-        * :class:`ITypeInt` : an integer (signed or unsigned with different size)
+        * :class:`BTypeInt` : an integer (signed or unsigned with different size)
         * TODO
 
         .. todo:: precise "basic types" and more complex, also doc. which one
             have childs and which do not.
 
-        The objects which inherit from :class:`IdaType` can contain other
-        *child* :class:`IdaType` objects. For example a pointer (TODO class
+        The objects which inherit from :class:`BipType` can contain other
+        *child* :class:`BipType` objects. For example a pointer (TODO class
         name in bip) will contain one child object corresponding to the
         pointed type. The :meth:`childs` property allow to get a list of the
         child object.
@@ -88,9 +88,9 @@ class IdaType(object):
 
     def __init__(self, tinfo):
         """
-            Base constructor for the child classes of :class:`IdaType`. This
+            Base constructor for the child classes of :class:`BipType`. This
             constructor is used for interfacing with IDA and initializing. A
-            bip user should probably used the :func:`IdaType.GetIdaType`
+            bip user should probably used the :func:`BipType.GetBipType`
             function which will directly create the object of the correct
             class.
 
@@ -123,7 +123,7 @@ class IdaType(object):
         """
             Return true if this type has a name. This can be because of a
             typedef, a structure declaration, ... The name can be recuperated
-            with the :meth:`IdaType.name` property.
+            with the :meth:`BipType.name` property.
         """
         return self._tinfo.get_type_name() is not None
 
@@ -133,7 +133,7 @@ class IdaType(object):
             Property which return the name of this type if it has one. A type
             can a name because of a typedef, a structure, ... If it does not
             have one this property will return an empty string. The presence
-            of a named can be tested using the :meth:`IdaType.is_named`
+            of a named can be tested using the :meth:`BipType.is_named`
             property.
 
             :return: A string corresponding to the name of this type. Empty
@@ -168,8 +168,8 @@ class IdaType(object):
             This function allow to test if a type is defined at a particular
             address. This function will return False if a type is not set but
             ida may be able to guess it. This means that this function may
-            return False while :func:`IdaType.get_at` return a type, if this
-            function return True :func:`IdaType.get_at` should always return
+            return False while :func:`BipType.get_at` return a type, if this
+            function return True :func:`BipType.get_at` should always return
             a type.
 
             :param ea: The address at which to make the test.
@@ -183,7 +183,7 @@ class IdaType(object):
     def get_at(ea=None):
         """
             Function which will create an object which inherit from
-            :class:`IdaType` representing the type at the current address.
+            :class:`BipType` representing the type at the current address.
             This function will **not** set the type at the address given and
             it may not be set if it was guess by ida.
 
@@ -206,7 +206,7 @@ class IdaType(object):
 
             :param ea: The address at which to get the type. If ``None``
                 the screen address will be used.
-            :return: An object which inherit from :class:`IdaType`
+            :return: An object which inherit from :class:`BipType`
                 representing the type at the address given in argument.
                 ``None`` will be return if no type is define and ida was not
                 able to guess it .
@@ -218,12 +218,12 @@ class IdaType(object):
         # this seems to be define in ida_nalt...
         if ida_nalt.get_tinfo(ea, tif):
             # no need to make a copy in this case
-            return IdaType.GetIdaTypeNoCopy(tif)
+            return BipType.GetBipTypeNoCopy(tif)
         
         # no type define, try to guess it 
         # don't know when GUESS_FUNC_TRIVIAL is return so consider failure 
         if guess_tinfo(ea, tif) == GUESS_FUNC_OK:
-            return IdaType.GetIdaTypeNoCopy(tif)
+            return BipType.GetBipTypeNoCopy(tif)
         
         # not able to guess, this should be a tinfo_t empty ? (tif.empty() ?)
         return None
@@ -246,9 +246,9 @@ class IdaType(object):
     def childs(self):
         """
             Property which return a list of childs types. All elements of this
-            list will be object which inherit from :class:`IdaType`.
+            list will be object which inherit from :class:`BipType`.
 
-            :return: A list of object inheriting from :class:`IdaType`
+            :return: A list of object inheriting from :class:`BipType`
                 which are "child" of this type.
         """
         return []
@@ -269,16 +269,16 @@ class IdaType(object):
         return False
 
     @staticmethod
-    def GetIdaType(tinfo):
+    def GetBipType(tinfo):
         """
             Function which convert a ``tinfo_t`` object from ida to one of the
-            child object of :class:`IdaType` . This should be used for
+            child object of :class:`BipType` . This should be used for
             converting the type from IDA into their correct object for bip.
             This function is used as an interface with the IDA object.
     
-            If no :class:`IdaType` child object supports the ``tinfo_t`` a
+            If no :class:`BipType` child object supports the ``tinfo_t`` a
             ``ValueError`` exception will be raised. Internally this use
-            the :func:`~IdaType._GetClassIdaType` function.
+            the :func:`~BipType._GetClassBipType` function.
             
             This create a **copy** of the underlying ``tinfo_t`` object, this
             allow to avoid problems if when using the IdaPython API or the GUI
@@ -287,44 +287,44 @@ class IdaType(object):
             possible this will create an error prone API. Instead types are
             handle by copy instead of by reference, and interface with other
             bip object take this into account. For creating an object of the
-            correct class without a copy the :func:`~IdaType.GetIdaTypeNoCopy`
+            correct class without a copy the :func:`~BipType.GetBipTypeNoCopy`
             can be used by is subject to the above problems.
     
             :param tinfo: A ``tinfo_t`` from ida.
             :return: The equivalent object to the ``tinfo_t`` for bip. This
-                will be an object which inherit from :class:`IdaType` .
+                will be an object which inherit from :class:`BipType` .
         """
-        return IdaType._GetClassIdaType(tinfo)(tinfo_t(tinfo))
+        return BipType._GetClassBipType(tinfo)(tinfo_t(tinfo))
 
 
     @staticmethod
-    def GetIdaTypeNoCopy(tinfo):
+    def GetBipTypeNoCopy(tinfo):
         """
             Function which convert a ``tinfo_t`` object from ida to one of the
-            child object of :class:`IdaType` .
+            child object of :class:`BipType` .
     
-            If no :class:`IdaType` child object supports the ``tinfo_t`` a
+            If no :class:`BipType` child object supports the ``tinfo_t`` a
             ``ValueError`` exception will be raised. Internally this use
-            the :func:`~IdaType._GetClassIdaType` function.
+            the :func:`~BipType._GetClassBipType` function.
             
             .. warning::
             
                 This function does **not** create a copy of the underlying
                 ``tinfo_t`` object which can create several problems when
                 using the GUI or the IdaPython/IDC API. For creating a copy
-                of the object use the :func:`~IdaType.GetIdaType` instead.
+                of the object use the :func:`~BipType.GetBipType` instead.
     
             :param tinfo: A ``tinfo_t`` from ida.
             :return: The equivalent object to the ``tinfo_t`` for bip. This
-                will be an object which inherit from :class:`IdaType` .
+                will be an object which inherit from :class:`BipType` .
         """
-        return IdaType._GetClassIdaType(tinfo)(tinfo)
+        return BipType._GetClassBipType(tinfo)(tinfo)
 
     @staticmethod
     def FromC(cstr, flags=0x401):
         """
             Function which convert a C string declaration into a object which
-            inherit from a :class:`IdaType` . If there is no ``;`` at the end
+            inherit from a :class:`BipType` . If there is no ``;`` at the end
             of the string provided, one will be added automatically.
 
             This is made for parsing **one** declaration and can create
@@ -336,7 +336,7 @@ class IdaType(object):
             :param int flags: ``PT_*`` flags from IDA (see typeinf.hpp).
                 The default is ``0x401`` (``PT_RAWARGS | PT_SIL``) should be
                 enough in most case.
-            :return: An object which inherit from :class:`IdaType` equivalent
+            :return: An object which inherit from :class:`BipType` equivalent
                 to the C declaration.
         """
         tif = tinfo_t()
@@ -344,20 +344,20 @@ class IdaType(object):
         if cstr[-1] != ';':
             cstr += ';'
         if parse_decl(tif, None, cstr, flags) is None:
-            raise RuntimeError("Unable to create a IdaType from declaration {}".format(repr(cstr)))
-        return IdaType.GetIdaTypeNoCopy(tif)
+            raise RuntimeError("Unable to create a BipType from declaration {}".format(repr(cstr)))
+        return BipType.GetBipTypeNoCopy(tif)
 
 
     @staticmethod
-    def _GetClassIdaType(tinfo):
+    def _GetClassBipType(tinfo):
         """
             Internal function which allow to recuperate the correct child
-            class of :class:`IdaType` corresponding to  ``tinfo_t`` object
+            class of :class:`BipType` corresponding to  ``tinfo_t`` object
             from ida. This is used internally for converting the type from IDA
             into their correct object for bip.
             This function is used as an interface with the IDA object.
     
-            If no :class:`IdaType` child object supports the ``tinfo_t`` a
+            If no :class:`BipType` child object supports the ``tinfo_t`` a
             ``ValueError`` exception will be raised.
     
             .. todo:: maybe return None instead of raising an exception ?
@@ -365,10 +365,10 @@ class IdaType(object):
             :param tinfo: A ``tinfo_t`` from ida.
             :return: The bip class which should be used as equivalent for
                 the ``tinfo_t`` provided as argument. This
-                will be an object which inherit from :class:`IdaType` .
+                will be an object which inherit from :class:`BipType` .
         """
         done = set()
-        todo = set(IdaType.__subclasses__())
+        todo = set(BipType.__subclasses__())
         while len(todo) != 0:
             cl = todo.pop()
             if cl in done:
@@ -384,7 +384,7 @@ class IdaType(object):
         """
             Return a copy of the ida type (``tinfo_t``) represented by this
             object. This is an internal function which is used as an helper
-            for setting the types of an element from a :class:`IdaType`
+            for setting the types of an element from a :class:`BipType`
 
             :return: A copy of the ``tinfo_t`` represented by this object.
         """
@@ -393,9 +393,9 @@ class IdaType(object):
 
 # TODO: unknown type
 
-class ITypePartial(IdaType):
+class BTypePartial(BipType):
     """
-        Class which represent the :class:`IdaType` for a partial type: when
+        Class which represent the :class:`BipType` for a partial type: when
         only the size is known but no other information is available.
 
         .. todo:: test everything for this.
@@ -406,9 +406,9 @@ class ITypePartial(IdaType):
     def is_handling_type(cls, tinfo):
         return tinfo.is_partial()
 
-class ITypeVoid(IdaType):
+class BTypeVoid(BipType):
     """
-        Class which represent the :class:`IdaType` for a void. 
+        Class which represent the :class:`BipType` for a void. 
 
         .. todo:: test this more.
     """
@@ -417,10 +417,10 @@ class ITypeVoid(IdaType):
     def is_handling_type(cls, tinfo):
         return tinfo.is_void()
 
-class ITypeInt(IdaType):
+class BTypeInt(BipType):
     """
-        Class which represent the :class:`IdaType` for an integer, it can be
-        signed or unsigned and may have different :meth:`~IdaType.size`.
+        Class which represent the :class:`BipType` for an integer, it can be
+        signed or unsigned and may have different :meth:`~BipType.size`.
 
         .. todo:: natural size integer
     """
@@ -445,19 +445,19 @@ class ITypeInt(IdaType):
     def is_handling_type(cls, tinfo):
         return tinfo.is_int()
 
-class ITypeBool(IdaType):
+class BTypeBool(BipType):
     """
-        Class which represent the :class:`IdaType` for a boolean (``bool``).
-        All boolean do not have the same :meth:`~IdaType.size` .
+        Class which represent the :class:`BipType` for a boolean (``bool``).
+        All boolean do not have the same :meth:`~BipType.size` .
     """
 
     @classmethod
     def is_handling_type(cls, tinfo):
         return tinfo.is_bool()
 
-class ITypeFloat(IdaType):
+class BTypeFloat(BipType):
     """
-        Class which represent the :class:`IdaType` for a float or a double.
+        Class which represent the :class:`BipType` for a float or a double.
 
         .. todo::
             
@@ -490,9 +490,9 @@ class ITypeFloat(IdaType):
     def is_handling_type(cls, tinfo):
         return tinfo.is_floating()
 
-class ITypePtr(IdaType):
+class BTypePtr(BipType):
     """
-        Class which represent the :class:`IdaType` for a pointer. This is a
+        Class which represent the :class:`BipType` for a pointer. This is a
         recursive type, it is possible to have the pointed type with the
         property :meth:`pointed` .
 
@@ -505,9 +505,9 @@ class ITypePtr(IdaType):
             Property which return the type pointed by this type.
 
             :return: An object which inherit from
-                :class:`IdaType` class.
+                :class:`BipType` class.
         """
-        return IdaType.GetIdaType(self._tinfo.get_pointed_object())
+        return BipType.GetBipType(self._tinfo.get_pointed_object())
 
     @property
     def is_pvoid(self):
@@ -535,9 +535,9 @@ class ITypePtr(IdaType):
     def is_handling_type(cls, tinfo):
         return tinfo.is_ptr()
 
-class ITypeArray(IdaType):
+class BTypeArray(BipType):
     """
-        Class which represent the :class:`IdaType` for an array (a *static*
+        Class which represent the :class:`BipType` for an array (a *static*
         array: ``int[8]`` for example). This is a
         recursive type, it is poissible to have the type of the elements with
         the property :meth:`elt_type` .
@@ -547,7 +547,7 @@ class ITypeArray(IdaType):
             The array (and in particular the ``array_type_data_t`` from IDA)
             have a ``base`` property. Not really sure what that is, when or
             how it is used. It is possible to access it using
-            :meth:`~ITypeArray._array_info` then accessing the property
+            :meth:`~BTypeArray._array_info` then accessing the property
             ``base`` if needed.
     """
 
@@ -559,7 +559,7 @@ class ITypeArray(IdaType):
             IDA and should probably not be used directly from bip.
 
             This is used by the other method/property of
-            :class:`ITypeArray` .
+            :class:`BTypeArray` .
         """
         atd = array_type_data_t()
         self._tinfo.get_array_details(atd)
@@ -571,9 +571,9 @@ class ITypeArray(IdaType):
             Property which returns the type of the elements in the type array.
 
             :return: An object which inherit from
-                :class:`IdaType` class.
+                :class:`BipType` class.
         """
-        return IdaType.GetIdaType(self._array_info.elem_type)
+        return BipType.GetBipType(self._array_info.elem_type)
 
     @property
     def nb_elts(self):
@@ -592,16 +592,16 @@ class ITypeArray(IdaType):
     def is_handling_type(cls, tinfo):
         return tinfo.is_array()
 
-class ITypeFunc(IdaType):
+class BTypeFunc(BipType):
     """
-        Class which represent the :class:`IdaType` for a function. This is a
+        Class which represent the :class:`BipType` for a function. This is a
         recursive type, it is poissible to have the type of the return value
-        using the :meth:`~ITypeFunc.return_type` property and the type of the
-        arguments using the method :meth:`~ITypeFunc.get_arg_type` or the
-        property :meth:`~ITypeFunc.args_type`.
+        using the :meth:`~BTypeFunc.return_type` property and the type of the
+        arguments using the method :meth:`~BTypeFunc.get_arg_type` or the
+        property :meth:`~BTypeFunc.args_type`.
 
         Other methods are available allowing to access the name of the
-        arguments (:meth:`~ITypeFunc.get_arg_name`).
+        arguments (:meth:`~BTypeFunc.get_arg_name`).
         
         .. todo:: complete description when more is implemented.
 
@@ -652,16 +652,16 @@ class ITypeFunc(IdaType):
 
     def get_arg_type(self, pos):
         """
-            Get the :class:`IdaType` object corresponding to the type of an
+            Get the :class:`BipType` object corresponding to the type of an
             argument.
             
             .. todo:: handle the recuperation of an argument by name ?
 
-            :return: An object which inherit from :class:`IdaType` class.
+            :return: An object which inherit from :class:`BipType` class.
         """
         # This does not work, don't know why
-        #return IdaType.GetIdaType(self._ida_func_type_data[pos].type)
-        return IdaType.GetIdaType(self._tinfo.get_nth_arg(pos))
+        #return BipType.GetBipType(self._ida_func_type_data[pos].type)
+        return BipType.GetBipType(self._tinfo.get_nth_arg(pos))
 
     @property
     def nb_args(self):
@@ -679,10 +679,10 @@ class ITypeFunc(IdaType):
     @property
     def args_type(self):
         """
-            Property which return a list of the :class:`IdaType` object for 
+            Property which return a list of the :class:`BipType` object for 
             the argument of this function.
 
-            :return: A list of objects which inherit from :class:`IdaType`
+            :return: A list of objects which inherit from :class:`BipType`
                 class.
         """
         return [self.get_arg_type(i) for i in range(self.nb_args)]
@@ -690,24 +690,24 @@ class ITypeFunc(IdaType):
     @property
     def return_type(self):
         """
-            Property which return the :class:`IdaType` object corresponding
+            Property which return the :class:`BipType` object corresponding
                 to the type of the return of this function.
 
-            :return: An object which inherit from :class:`IdaType` class.
+            :return: An object which inherit from :class:`BipType` class.
         """
-        return IdaType.GetIdaType(self._ida_func_type_data.rettype)
+        return BipType.GetBipType(self._ida_func_type_data.rettype)
 
     @property
     def childs(self):
         """
             Property which return a list of childs types. All elements of this
-            list will be object which inherit from :class:`IdaType`.
+            list will be object which inherit from :class:`BipType`.
 
             First element is the return type followed by the argument types.
             The length of this property is variable depending of the function
             type but will always be equal to ``nb_args + 1`` .
 
-            :return: A list of object inheriting from :class:`IdaType`
+            :return: A list of object inheriting from :class:`BipType`
                 which are "child" of this type.
         """
         return [self.return_type] + [self.get_arg_type(i) for i in range(self.nb_args)]
@@ -717,9 +717,9 @@ class ITypeFunc(IdaType):
         return tinfo.is_func()
 
 
-class ITypeStruct(IdaType):
+class BTypeStruct(BipType):
     """
-        Class which represent the :class:`IdaType` for a structure. This is a
+        Class which represent the :class:`BipType` for a structure. This is a
         recursive type, each member of the struct posess its own types.
         
         It is possible to get the name of the member using the
@@ -761,7 +761,7 @@ class ITypeStruct(IdaType):
 
             :param int num: The number corresponding to the member. This is
                 not the offset of the member but its index in the struct, this
-                index start at 0 up to the :meth:`~ITypeStruct.nb_members`
+                index start at 0 up to the :meth:`~BTypeStruct.nb_members`
                 minus one.
             :return: The name of the ``num`` member for this struct type.
         """
@@ -769,18 +769,18 @@ class ITypeStruct(IdaType):
 
     def get_member_type(self, num):
         """
-            Get the :class:`IdaType` object corresponding to the type of a
+            Get the :class:`BipType` object corresponding to the type of a
             member.
 
             .. todo:: handle the recuperation of a member by name ?
 
             :param int num: The number corresponding to the member. This is
                 not the offset of the member but its index in the struct, this
-                index start at 0 up to the :meth:`~ITypeStruct.nb_members`
+                index start at 0 up to the :meth:`~BTypeStruct.nb_members`
                 minus one.
-            :return: An object which inherit from :class:`IdaType` class.
+            :return: An object which inherit from :class:`BipType` class.
         """
-        return IdaType.GetIdaType(self._ida_udt_type_data[num].type)
+        return BipType.GetBipType(self._ida_udt_type_data[num].type)
 
     @property
     def nb_members(self):
@@ -795,10 +795,10 @@ class ITypeStruct(IdaType):
     @property
     def members_type(self):
         """
-            Property which return a list of the :class:`IdaType` object for 
+            Property which return a list of the :class:`BipType` object for 
             the members of this struct.
 
-            :return: A list of objects which inherit from :class:`IdaType`
+            :return: A list of objects which inherit from :class:`BipType`
                 class.
         """
         return [self.get_member_type(i) for i in range(self.nb_members)]
@@ -808,7 +808,7 @@ class ITypeStruct(IdaType):
         """
             Property which return a dict providing information about the
             members of this struct. The keys of the dict correspond to their
-            name (str) and the values to their type (:class:`IdaType`).
+            name (str) and the values to their type (:class:`BipType`).
         """
         d = {}
         for i in range(self.nb_members):
@@ -820,12 +820,12 @@ class ITypeStruct(IdaType):
     def childs(self):
         """
             Property which return a list of childs types. All elements of this
-            list will be object which inherit from :class:`IdaType`.
+            list will be object which inherit from :class:`BipType`.
 
             This contain the type of the members and is equivalent to
-            :meth:`~ITypeStruct.members_type`
+            :meth:`~BTypeStruct.members_type`
 
-            :return: A list of object inheriting from :class:`IdaType`
+            :return: A list of object inheriting from :class:`BipType`
                 which are "child" of this type.
         """
         return self.members_type
@@ -834,13 +834,13 @@ class ITypeStruct(IdaType):
     def is_handling_type(cls, tinfo):
         return tinfo.is_struct()
 
-class ITypeUnion(IdaType):
+class BTypeUnion(BipType):
     """
-        Class which represent the :class:`IdaType` for an union, this is a
+        Class which represent the :class:`BipType` for an union, this is a
         recursive type which can have several members.
 
         .. todo:: at the exception of the doc this is duplicate code for most
-            of the methods with :class:`ITypeStruct`, this should be fix. The
+            of the methods with :class:`BTypeStruct`, this should be fix. The
             simplest way would be to create a common parent class.
     """
 
@@ -863,24 +863,24 @@ class ITypeUnion(IdaType):
 
             :param int num: The number corresponding to the member. This is
                 its index in the enum, this index start at 0 up to
-                the :meth:`~ITypeStruct.nb_members` minus one.
+                the :meth:`~BTypeStruct.nb_members` minus one.
             :return: The name of the ``num`` member for this struct type.
         """
         return self._ida_udt_type_data[num].name
 
     def get_member_type(self, num):
         """
-            Get the :class:`IdaType` object corresponding to the type of a
+            Get the :class:`BipType` object corresponding to the type of a
             member.
 
             .. todo:: handle the recuperation of a member by name ?
 
             :param int num: The number corresponding to the member. This is
                 the index in the enum, this index start at 0 up to the
-                :meth:`~ITypeStruct.nb_members` minus one.
-            :return: An object which inherit from :class:`IdaType` class.
+                :meth:`~BTypeStruct.nb_members` minus one.
+            :return: An object which inherit from :class:`BipType` class.
         """
-        return IdaType.GetIdaType(self._ida_udt_type_data[num].type)
+        return BipType.GetBipType(self._ida_udt_type_data[num].type)
 
     @property
     def nb_members(self):
@@ -894,10 +894,10 @@ class ITypeUnion(IdaType):
     @property
     def members_type(self):
         """
-            Property which return a list of the :class:`IdaType` object for 
+            Property which return a list of the :class:`BipType` object for 
             the members of this enum.
 
-            :return: A list of objects which inherit from :class:`IdaType`
+            :return: A list of objects which inherit from :class:`BipType`
                 class.
         """
         return [self.get_member_type(i) for i in range(self.nb_members)]
@@ -907,7 +907,7 @@ class ITypeUnion(IdaType):
         """
             Property which return a dict providing information about the
             members of this enum. The keys of the dict correspond to their
-            name (str) and the values to their type (:class:`IdaType`).
+            name (str) and the values to their type (:class:`BipType`).
         """
         d = {}
         for i in range(self.nb_members):
@@ -919,12 +919,12 @@ class ITypeUnion(IdaType):
     def childs(self):
         """
             Property which return a list of childs types. All elements of this
-            list will be object which inherit from :class:`IdaType`.
+            list will be object which inherit from :class:`BipType`.
 
             This contain the type of the members and is equivalent to
-            :meth:`~ITypeEnum.members_type`
+            :meth:`~BTypeEnum.members_type`
 
-            :return: A list of object inheriting from :class:`IdaType`
+            :return: A list of object inheriting from :class:`BipType`
                 which are "child" of this type.
         """
         return self.members_type
@@ -934,9 +934,9 @@ class ITypeUnion(IdaType):
     def is_handling_type(cls, tinfo):
         return tinfo.is_union()
 
-class ITypeEnum(IdaType):
+class BTypeEnum(BipType):
     """
-        Class which represent the :class:`IdaType` for an enum.
+        Class which represent the :class:`BipType` for an enum.
 
         .. todo:: IDA BUG: its not possible to get the info about the enum
             members because the ``enum_type_data_t`` type which should be a
@@ -962,7 +962,7 @@ class ITypeEnum(IdaType):
         return tinfo.is_enum()
 
 # Not sure the bitfield exist in practice, it seems to be considered as enum
-#class ITypeBitfield(IdaType):
+#class BTypeBitfield(BipType):
 #   pass TODO
 
 

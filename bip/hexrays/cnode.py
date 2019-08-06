@@ -5,7 +5,7 @@
 """
 import idc
 from hx_citem import AbstractCItem, HxCType, HxCItem, HxCExpr, HxCStmt
-from bip.base.type import IdaType
+from bip.base.type import BipType
 
 class CNode(AbstractCItem):
     """
@@ -246,16 +246,16 @@ class CNodeExpr(CNode):
     @property
     def type(self):
         """
-            Property which return the type (:class:`IdaType`) of this
+            Property which return the type (:class:`BipType`) of this
             expression.
 
             .. todo:: implement setter
 
-            :return: An object which inherit from :class:`IdaType` which
+            :return: An object which inherit from :class:`BipType` which
                 correspond to the type of this object. Change to this type
                 object will not change the type of this expression.
         """
-        return IdaType.GetIdaType(self._cexpr.type)
+        return BipType.GetBipType(self._cexpr.type)
 
     ################################### HELPERS ##############################
 

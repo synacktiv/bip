@@ -156,10 +156,10 @@ def get_struct_from_lvar(lvar):
         
         .. todo:: This should probaly be added into the hexrays API.
 
-        :rtype: A bip :class:`~bip.base.Struct` object or ``None`` on error
+        :rtype: A bip :class:`~bip.base.BipStruct` object or ``None`` on error
     """
 
-    from bip.base import IdaStruct
+    from bip.base import BipStruct
     
     t = lvar.type()
     
@@ -167,7 +167,7 @@ def get_struct_from_lvar(lvar):
         s = t.get_pointed_object()
         if s.is_struct():
             try:
-                struct = bstruct.IdaStruct.get(s.get_type_name())
+                struct = BipStruct.get(s.get_type_name())
                 return struct
             except ValueError:
                 return None

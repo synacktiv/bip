@@ -166,35 +166,35 @@ class HxLvar(object):
     def type(self):
         """
             Property which return the object, which inherit from
-            :class:`IdaType`, corresponding to the type of this local
+            :class:`BipType`, corresponding to the type of this local
             variable.
             
             Because of the handling of the type in IDA the object
             returned is a copy of the type of this local variable. For
             changing the type of this variable it is necessary to use the
             setter of this property. For more information about this problem
-            see :class:`IdaType` .
+            see :class:`BipType` .
 
-            :return: An object which inherit from :class:`IdaType` and
+            :return: An object which inherit from :class:`BipType` and
                 represent the type of this local variable.
         """
-        return biptype.IdaType.GetIdaType(self._ida_tinfo)
+        return biptype.BipType.GetBipType(self._ida_tinfo)
 
     @type.setter
     def type(self, value):
         """
             Property setter which take an object inherited from
-            :class:`IdaType` and set the type of this local variable to this
+            :class:`BipType` and set the type of this local variable to this
             new type.
             
             This will create a copy of the type provided in argument
             for avoiding problem with the IDA type system. For more
-            informaiton see :class:`IdaType` .
+            informaiton see :class:`BipType` .
 
-            :param value: An object which inherit from :class:`IdaType` .
+            :param value: An object which inherit from :class:`BipType` .
         """
-        if not isinstance(value, biptype.IdaType):
-            raise TypeError("HxLvar type setter expect an object which inherit from IdaType")
+        if not isinstance(value, biptype.BipType):
+            raise TypeError("HxLvar type setter expect an object which inherit from BipType")
         if not self._lvar.set_lvar_type(value._get_tinfo_copy()):
             raise RuntimeError("Unable to set the type {} for this lvar {}".format(value.str, self.name))
         self._lvar.set_user_type()

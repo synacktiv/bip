@@ -19,7 +19,7 @@ def define_vtables_struct(vtables=None):
 
 		classname = name.replace("<", "_").replace(">", "").replace(',', '').replace(' ', '_').replace('*', '')
 		
-		s = IdaStruct.create("%sVTable" % classname)
+		s = BipStruct.create("%sVTable" % classname)
 					
 		while Ptr(ea):
 			# if i in (1,2) and GetFunctionName(Ptr(ea)):

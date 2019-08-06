@@ -28,7 +28,7 @@ class XrefTypes(object):
     XREF_MASK = 0x1F # Mask to get xref type. 
     XREF_PASTEND = 0x100
 
-class IdaXref(object):
+class BipXref(object):
     """
         Base class for representing an xref between two elements.
 
@@ -83,7 +83,7 @@ class IdaXref(object):
             the source address.
 
             :return: An object representing the element at the source address.
-            :rtypes: An :class:`IdaRefElt` or one of its subclasses. See 
+            :rtypes: An :class:`BipBaseElt` or one of its subclasses. See 
                 :func:`GetElt`.
         """
         return idaelt.GetElt(self.src_ea)
@@ -104,7 +104,7 @@ class IdaXref(object):
 
             :return: An object representing the element at the destination
                 address.
-            :rtypes: An :class:`IdaRefElt` or one of its subclasses. See 
+            :rtypes: An :class:`BipBaseElt` or one of its subclasses. See 
                 :func:`GetElt`.
         """
         return idaelt.GetElt(self.dst_ea)

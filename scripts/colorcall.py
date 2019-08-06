@@ -15,7 +15,7 @@ def colorcall(color=0xFFAA55):
                     break
 
 def colorcall_in_func(color=0xFFAA55):
-    for f in IdaFunction.iter_all():
+    for f in BipFunction.iter_all():
         for i in f.instr:
             if i.is_call:
                 i.color = color

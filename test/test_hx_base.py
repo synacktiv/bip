@@ -39,14 +39,14 @@ def pr(e):
 # visit all statement and expression for all functions and print them.
 # not included in the test because way too long
 def visit_all_function00():
-    for f in IdaFunction.iter_all():
+    for f in BipFunction.iter_all():
         try:
             f.hxfunc.hx_visit_all(pr)
         except DecompilationFailure: # ida hexrays error
             pass # we ignore it
 
 def visit_all_function01():
-    for f in IdaFunction.iter_all():
+    for f in BipFunction.iter_all():
         try:
             f.hxfunc.visit_cnode(pr)
         except DecompilationFailure: # ida hexrays error

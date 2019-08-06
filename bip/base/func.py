@@ -8,7 +8,7 @@ import ida_bytes
 import ida_typeinf
 import ida_kernwin
 
-from idaelt import IdaElt, GetElt
+from idaelt import BipElt, GetElt
 import instr
 import block
 import xref
@@ -22,7 +22,7 @@ except Exception:
     print("WARNING: unable to import hexrays")
     hexrays = None
 
-class IdaFuncFlags(object):
+class BipFuncFlags(object):
     """
         Enum for the function flags from IDA. ``FUNC_*`` flags. Documentation
         of the flags is from the IDA documentation
@@ -59,7 +59,7 @@ class IdaFuncFlags(object):
 
     FUNCATTR_FLAGS      = idc.FUNCATTR_FLAGS
 
-class IdaFlowChartFlag(object):
+class BipFlowChartFlag(object):
     """
         Enum for the flag of the flow chart. ``FC_*`` constant. Documentation
         of the flags is from the IDA documentation.
@@ -78,7 +78,7 @@ class IdaFlowChartFlag(object):
     #: build_qflow_chart() may be aborted by user
     FC_CHKBREAK = ida_gdl.FC_CHKBREAK
 
-class IdaFunction(object):
+class BipFunction(object):
     """
         Class for representing and manipulating function in IDA.
 
@@ -98,7 +98,7 @@ class IdaFunction(object):
 
     def __init__(self, ea=None):
         """
-            Constructor for a :class:`IdaFunction` object.
+            Constructor for a :class:`BipFunction` object.
 
             This function will raise a ``ValueError`` if the address ``ea``
             is not in the function.
@@ -196,13 +196,13 @@ class IdaFunction(object):
     
     def __cmp__(self, other):
         """
-            Compare with another IdaFunction. Will return 0 if the functions
+            Compare with another BipFunction. Will return 0 if the functions
             have the same address, and -1 or 1 depending on the other function
             position. This will raise a ``TypeError`` exception if the
-            argument is not a :class:`IdaFunction` .
+            argument is not a :class:`BipFunction` .
         """
-        if not isinstance(other, IdaFunction):
-            raise TypeError("Not an IdaFunction")
+        if not isinstance(other, BipFunction):
+            raise TypeError("Not a BipFunction")
         
         if self.ea < other.ea:
             return -1
@@ -214,7 +214,7 @@ class IdaFunction(object):
     def __hash__(self):
         """
             Compute a unique hash for this ida function. The produce hash is
-            dependant of the type of the object (:class:`IdaFunction`) and
+            dependant of the type of the object (:class:`BipFunction`) and
             of its address. This allow to create container using the hash
             of the object for matching an object of a defined type and with
             a particular address.
@@ -232,19 +232,19 @@ class IdaFunction(object):
             Allow to check if an element is included inside this function. It
             accepts the following in arguments:
 
-            * :class:`IdaElt` (including :class:`Instr`)
-            * :class:`IdaBlock`
+            * :class:`BipElt` (including :class:`Instr`)
+            * :class:`BipBlock`
             * An integer corresponding to an address.
 
             In all those case the address of the element is used for testing
             if it is present in the function.
         """
-        if isinstance(value, (IdaElt, block.IdaBlock)):
+        if isinstance(value, (BipElt, block.BipBlock)):
             ea = value.ea
         elif isinstance(value, (int, long)):
             ea = value
         else:
-            raise TypeError("Unknown type comparaison for {} with IdaFunction.".format(value))
+            raise TypeError("Unknown type comparaison for {} with BipFunction.".format(value))
         return ea >= self.ea and ea < self.end
 
     ######################## Hexrays ###############################
@@ -279,14 +279,14 @@ class IdaFunction(object):
             :return int: The flags for this function.
         """
         #idc.GetFunctionFlags(self.ea) # deprecated
-        return idc.get_func_attr(self.ea, IdaFuncFlags.FUNCATTR_FLAGS)
+        return idc.get_func_attr(self.ea, BipFuncFlags.FUNCATTR_FLAGS)
 
     @flags.setter
     def flags(self, value):
         """
             Setter which allow to modify the functions flags.
         """
-        idc.set_func_attr(self.ea, IdaFuncFlags.FUNCATTR_FLAGS, flags)
+        idc.set_func_attr(self.ea, BipFuncFlags.FUNCATTR_FLAGS, flags)
 
     @property
     def does_return(self):
@@ -299,7 +299,7 @@ class IdaFunction(object):
 
     def is_inside(self, o):
         """
-            Allow to check if an address or an :class:`IdaElt` object (or
+            Allow to check if an address or an :class:`BipElt` object (or
             inherited) is included in this function. In particular it
             allow to check if an :class:`Instr` is included in a function.
 
@@ -308,11 +308,11 @@ class IdaFunction(object):
 
             :param o: The address or object to test for inclusion.
             :type o: ``int`` coresponding to an address or an object inherited
-                from :class:`IdaElt` .
+                from :class:`BipElt` .
         """
         if isinstance(o, (long, int)):
             return self._funct.contains(o)
-        elif isinstance(o, IdaElt):
+        elif isinstance(o, BipElt):
             return self._funct.contains(o.ea)
         else:
             raise TypeError("Object {} is not of a valid type".format(o))
@@ -325,7 +325,7 @@ class IdaFunction(object):
 
             .. todo:: Test
         """
-        return self.flags & IdaFuncFlags.FUNC_FAR != 0
+        return self.flags & BipFuncFlags.FUNC_FAR != 0
 
     @property
     def is_lib(self):
@@ -335,7 +335,7 @@ class IdaFunction(object):
 
             .. todo:: Test
         """
-        return self.flags & IdaFuncFlags.FUNC_LIB != 0
+        return self.flags & BipFuncFlags.FUNC_LIB != 0
 
     @property
     def is_static(self):
@@ -345,7 +345,7 @@ class IdaFunction(object):
 
             .. todo:: Test
         """
-        return self.flags & IdaFuncFlags.FUNC_STATICDEF != 0
+        return self.flags & BipFuncFlags.FUNC_STATICDEF != 0
 
     @property
     def use_frame(self):
@@ -355,7 +355,7 @@ class IdaFunction(object):
 
             .. todo:: Test
         """
-        return self.flags & IdaFuncFlags.FUNC_FRAME != 0
+        return self.flags & BipFuncFlags.FUNC_FRAME != 0
 
     @property
     def is_userfar(self):
@@ -366,7 +366,7 @@ class IdaFunction(object):
 
             .. todo:: Test
         """
-        return self.flags & IdaFuncFlags.FUNC_USERFAR != 0
+        return self.flags & BipFuncFlags.FUNC_USERFAR != 0
 
     @property
     def is_hidden(self):
@@ -375,7 +375,7 @@ class IdaFunction(object):
 
             .. todo:: Test
         """
-        return self.flags & IdaFuncFlags.FUNC_HIDDEN != 0
+        return self.flags & BipFuncFlags.FUNC_HIDDEN != 0
 
     @property
     def is_thunk(self):
@@ -384,7 +384,7 @@ class IdaFunction(object):
 
             .. todo:: Test
         """
-        return self.flags & IdaFuncFlags.FUNC_THUNK != 0
+        return self.flags & BipFuncFlags.FUNC_THUNK != 0
 
 
     ############################ COMMENT ##############################
@@ -437,13 +437,13 @@ class IdaFunction(object):
             .. note::
             
                 Internally this is compute with the flags
-                ``IdaFlowChartFlag.FC_PREDS`` and
-                ``IdaFlowChartFlag.FC_NOEXT`` .
+                ``BipFlowChartFlag.FC_PREDS`` and
+                ``BipFlowChartFlag.FC_NOEXT`` .
 
             :return: An ``idaapi.FlowChart`` object.
         """
         return idaapi.FlowChart(self._funct,
-                flags=(IdaFlowChartFlag.FC_PREDS|IdaFlowChartFlag.FC_NOEXT))
+                flags=(BipFlowChartFlag.FC_PREDS|BipFlowChartFlag.FC_NOEXT))
 
     @property
     def nb_blocks(self):
@@ -455,34 +455,34 @@ class IdaFunction(object):
     @property
     def blocks(self):
         """
-            Return a list of :class:`IdaBlock` corresponding to the
+            Return a list of :class:`BipBlock` corresponding to the
             BasicBlocks in this function.
 
-            :return: A list of object :class:`IdaBlock`
+            :return: A list of object :class:`BipBlock`
         """
         fc = self._flowchart
-        return [block.IdaBlock(b) for b in fc]
+        return [block.BipBlock(b) for b in fc]
 
     
     @property
     def blocks_iter(self):
         """
-            Return a generator of :class:`IdaBlock` corresponding to the
+            Return a generator of :class:`BipBlock` corresponding to the
             BasicBlocks in this function. This implementation will be just
             a little more performant than the :meth:`blocks` property.
 
-            :return: A generator of object :class:`IdaBlock`
+            :return: A generator of object :class:`BipBlock`
         """
         fc = self._flowchart
         for b in fc:
-            yield block.IdaBlock(b) 
+            yield block.BipBlock(b) 
 
     ############################# INSTR & ITEMS ############################
 
     @property
     def items(self):
         """
-            Return a list of :class:`IdaElt` corresponding to the items of 
+            Return a list of :class:`BipElt` corresponding to the items of 
             the functions.
 
             .. todo:: Test
@@ -492,7 +492,7 @@ class IdaFunction(object):
                 This should mainly be :class:`Instr` but possible in theory
                 to be other kind of data ?
 
-            :return: A list of object :class:`IdaElt`.
+            :return: A list of object :class:`BipElt`.
         """
         return [GetElt(e) for e in idautils.FuncItems(self.ea)]
 
@@ -618,10 +618,10 @@ class IdaFunction(object):
 
             .. todo:: Test
 
-            :return: A list of :class:`IdaXref` with the ``dst`` being this
+            :return: A list of :class:`BipXref` with the ``dst`` being this
                 element.
         """
-        return [xref.IdaXref(x) for x in idautils.XrefsTo(self.ea)]
+        return [xref.BipXref(x) for x in idautils.XrefsTo(self.ea)]
 
     @property
     def xEaTo(self):
@@ -643,8 +643,8 @@ class IdaFunction(object):
 
             .. todo:: Test
 
-            :return: A list of :class:`IdaElt` (or subclasses
-                of :class:`IdaElt`).
+            :return: A list of :class:`BipBaseElt` (or subclasses
+                of :class:`BipBaseElt`).
         """
         return [x.src for x in self.xTo]
 
@@ -672,9 +672,9 @@ class IdaFunction(object):
 
             .. todo:: Test
 
-            :return: A list of :class:`IdaFunction` which call this function.
+            :return: A list of :class:`BipFunction` which call this function.
         """
-        return [IdaFunction(ea) for ea in set([x.src_ea for x in self.xTo if x.is_call])]
+        return [BipFunction(ea) for ea in set([x.src_ea for x in self.xTo if x.is_call])]
 
     @property
     def callees(self):
@@ -687,14 +687,14 @@ class IdaFunction(object):
 
             .. todo:: Test
 
-            :return: A list of :class:`IdaFunction` which are called by this
+            :return: A list of :class:`BipFunction` which are called by this
                 function.
         """
         l = []
         for i in self.instr_iter:
             for x in i.xFrom:
                 if x.is_call:
-                    l.append(IdaFunction(x.dst_ea))
+                    l.append(BipFunction(x.dst_ea))
         return l
 
     
@@ -705,8 +705,8 @@ class IdaFunction(object):
     @classmethod
     def ByOrdinal(cls, ordinal):
         """
-            Get an :class:`IdaFunction` from its ordinal, there is between
-            ``0`` and ``IdaFunction.Count()`` function in an IDB.
+            Get an :class:`BipFunction` from its ordinal, there is between
+            ``0`` and ``BipFunction.Count()`` function in an IDB.
 
             .. todo:: Test
         """
@@ -720,7 +720,7 @@ class IdaFunction(object):
 
             .. todo:: Test
 
-            :return: A generator of :class:`IdaFunction` allowing to iter on
+            :return: A generator of :class:`BipFunction` allowing to iter on
                 all the functions define in the idb.
         """
         for ea in idautils.Functions():
@@ -759,7 +759,7 @@ class IdaFunction(object):
                 address of the function. If is is not provided (None, default
                 value) it will try to create a function using the
                 auto-analysis of IDA.
-            :return: A new :class:`IdaFunction` object corresponding to the
+            :return: A new :class:`BipFunction` object corresponding to the
                 function create. If this function was not able to create the
                 new function a ``BipError`` will be raised.
         """
@@ -785,24 +785,24 @@ class IdaFunction(object):
 
             .. todo:: make unit test
 
-            :return: A list of :class:`IdaFunction` which are entry points
+            :return: A list of :class:`BipFunction` which are entry points
                 of the binary currently analyzed.
         """
-        return [IdaFunction(elt[2]) for elt in idautils.Entries()]
+        return [BipFunction(elt[2]) for elt in idautils.Entries()]
 
     @staticmethod
     def Entries_iter():
         """
             Get an generator on the functions which are entry points of the
-            binary. This should be faster than :meth:`~IdaFunction.Entries` .
+            binary. This should be faster than :meth:`~BipFunction.Entries` .
 
             .. todo:: make unit test
 
-            :return: A generator on :class:`IdaFunction` which are entry
+            :return: A generator on :class:`BipFunction` which are entry
                 points of the binary currently analyzed.
         """
         for elt in idautils.Entries():
-            yield IdaFunction(elt[2]) 
+            yield BipFunction(elt[2]) 
     
 
 

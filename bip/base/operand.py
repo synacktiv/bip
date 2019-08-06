@@ -169,38 +169,38 @@ class Operand(object):
         """
             Property which allow to get the information on the type of the
             operand if defined. This will return an object which inherit from
-            :class:`IdaType` if defined or ``None`` if not.
+            :class:`BipType` if defined or ``None`` if not.
 
             .. note:: By default this does not seems to be defined by IDA.
 
-            :return: A :class:`IdaType` object defined for this operand or
+            :return: A :class:`BipType` object defined for this operand or
                 ``None`` if it was not defined.
         """
         ti = tinfo_t()
         if not get_op_tinfo(self.ea, self.opnum, ti): # recuperation of the type failed
             return None
-        return biptype.IdaType.GetIdaType(ti)
+        return biptype.BipType.GetBipType(ti)
 
     @type_info.setter
     def type_info(self, value):
         """
-            Setter which allow to set the information type (:class:`IdaType`)
+            Setter which allow to set the information type (:class:`BipType`)
             of the operand. This is equivalent to using the
             ``Edit>Operand>Set Operand Type`` menu in IDA with an
-            :class:`IdaType` instead of a string.
+            :class:`BipType` instead of a string.
             
             This will create a copy of the type provided in argument
             for avoiding problem with the IDA type system. For more
-            informaiton see :class:`IdaType` .
+            informaiton see :class:`BipType` .
 
-            :param value: An object which inherit from :class:`IdaType` and
+            :param value: An object which inherit from :class:`BipType` and
                 will be set as the type of the current operand.
             :raise TypeError: If the argument does not inherit from
-                :class:`IdaType` .
+                :class:`BipType` .
             :raise RuntimeError: If the setting of the type is not a success.
         """
-        if not isinstance(value, biptype.IdaType):
-            raise TypeError("Operand.type_info expect an IdaType object.")
+        if not isinstance(value, biptype.BipType):
+            raise TypeError("Operand.type_info expect an BipType object.")
         if not set_op_tinfo(self.ea, self.opnum, value._get_tinfo_copy()):
             raise RuntimeError("Fail to set the type ({}) of the operand {}".format(value, self))
 

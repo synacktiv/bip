@@ -13,117 +13,117 @@ import idc
 
 ###################### IDAELT #########################
 
-def test_idaelt00():
-    assert IdaElt(0x01800D325A).ea == 0x01800D325A
+def test_bipelt00():
+    assert BipElt(0x01800D325A).ea == 0x01800D325A
 
-def test_idaelt01():
-    assert IdaElt(0x01800D325A).flags == idc.GetFlags(0x01800D325A)
+def test_bipelt01():
+    assert BipElt(0x01800D325A).flags == idc.GetFlags(0x01800D325A)
 
-def test_idaelt02():
-    assert IdaElt(0x01800D325A).size == 4
+def test_bipelt02():
+    assert BipElt(0x01800D325A).size == 4
 
-def test_idaelt03():
-    assert IdaElt(0x01800D325A).bytes == [0x48, 0x83, 0xC4, 0x60]
+def test_bipelt03():
+    assert BipElt(0x01800D325A).bytes == [0x48, 0x83, 0xC4, 0x60]
 
-def test_idaelt04():
-    assert IdaElt(0x01800D325A).name == 'loc_1800D325A'
+def test_bipelt04():
+    assert BipElt(0x01800D325A).name == 'loc_1800D325A'
 
-def test_idaelt04b():
+def test_bipelt04b():
     # name setter
-    ie = IdaElt(0x01800D325A)
+    ie = BipElt(0x01800D325A)
     prevname = ie.name
     ie.name = "idaelt_test"
     res = ie.name == "idaelt_test"
     ie.name = None
     assert res
 
-def test_idaelt05():
-    assert IdaElt(0x01800D325A).color == idc.GetColor(0x01800D325A, idc.CIC_ITEM)
+def test_bipelt05():
+    assert BipElt(0x01800D325A).color == idc.GetColor(0x01800D325A, idc.CIC_ITEM)
 
-def test_idaelt06():
-    ie = IdaElt(0x01800D325A)
+def test_bipelt06():
+    ie = BipElt(0x01800D325A)
     prevcolor = ie.color
     ie.color = 0xAABBCC
     res = ie.color == 0xAABBCC
     ie.color = prevcolor
     assert res
 
-def test_idaelt07():
-    assert IdaElt(0x01800D325A).comment is None
+def test_bipelt07():
+    assert BipElt(0x01800D325A).comment is None
 
-def test_idaelt08():
-    ie = IdaElt(0x01800D325A)
+def test_bipelt08():
+    ie = BipElt(0x01800D325A)
     ie.comment = "test"
     res = ie.comment == "test"
     ie.comment = None
     assert res
 
-def test_idaelt09():
-    assert IdaElt(0x01800D325A).rcomment is None
+def test_bipelt09():
+    assert BipElt(0x01800D325A).rcomment is None
 
-def test_idaelt0A():
-    ie = IdaElt(0x01800D325A)
+def test_bipelt0A():
+    ie = BipElt(0x01800D325A)
     ie.rcomment = "test"
     res = ie.rcomment == "test"
     ie.rcomment = None
     assert res
     
-def test_idaelt0B():
-    assert IdaElt(0x01800D325A).has_comment == False
+def test_bipelt0B():
+    assert BipElt(0x01800D325A).has_comment == False
 
-def test_idaelt0C():
-    ie = IdaElt(0x01800D325A)
+def test_bipelt0C():
+    ie = BipElt(0x01800D325A)
     ie.comment = "test"
     res = ie.has_comment
     ie.comment = ""
     assert res
 
-def test_idaelt0D():
-    assert IdaElt(0x01800D325A).is_code == True
+def test_bipelt0D():
+    assert BipElt(0x01800D325A).is_code == True
 
-def test_idaelt0E():
-    assert IdaElt(0x01800D325A).is_data == False
+def test_bipelt0E():
+    assert BipElt(0x01800D325A).is_data == False
 
-def test_idaelt0F():
-    assert IdaElt(0x01800D325A).is_unknown == False
+def test_bipelt0F():
+    assert BipElt(0x01800D325A).is_unknown == False
 
-def test_idaelt10():
-    assert IdaElt(0x01800D325A).is_head == True
+def test_bipelt10():
+    assert BipElt(0x01800D325A).is_head == True
 
-def test_idaelt11():
-    assert IdaElt(0x01800D325B).is_head == False
+def test_bipelt11():
+    assert BipElt(0x01800D325B).is_head == False
 
-def test_idaelt12():
-    assert IdaElt(0x018015D228).is_code == False
+def test_bipelt12():
+    assert BipElt(0x018015D228).is_code == False
 
-def test_idaelt13():
-    assert IdaElt(0x018015D228).is_data == True
+def test_bipelt13():
+    assert BipElt(0x018015D228).is_data == True
 
-def test_idaelt14():
-    assert IdaElt(0x018015D228).is_unknown == False
+def test_bipelt14():
+    assert BipElt(0x018015D228).is_unknown == False
 
-def test_idaelt15():
-    assert IdaElt(0x018015D228).is_head == True
+def test_bipelt15():
+    assert BipElt(0x018015D228).is_head == True
 
-def test_idaelt16():
-    assert IdaElt(0x018015D228).size == 8
+def test_bipelt16():
+    assert BipElt(0x018015D228).size == 8
 
-def test_idaelt17():
-    assert IdaElt(0x018015D260).is_head == False
+def test_bipelt17():
+    assert BipElt(0x018015D260).is_head == False
 
-def test_idaelt18():
-    assert IdaElt(0x018015D261).is_head == False
+def test_bipelt18():
+    assert BipElt(0x018015D261).is_head == False
 
-def test_idaelt19():
-    assert IdaElt(0x018015D260).size == 1
+def test_bipelt19():
+    assert BipElt(0x018015D260).size == 1
 
-def test_idaelt1A():
-    assert IdaElt(0x018015D260).is_unknown == True
+def test_bipelt1A():
+    assert BipElt(0x018015D260).is_unknown == True
 
-def test_idaelt1B():
-    assert GetElt(0x018015D228).__class__ == IdaElt
+def test_bipelt1B():
+    assert GetElt(0x018015D228).__class__ == BipData
 
-def test_idaelt1C():
+def test_bipelt1C():
     assert GetElt(0x01800D325A).__class__ == Instr
 
 ###################### INSTR #########################
@@ -189,56 +189,56 @@ def test_instr12():
 ###################### FUNC #########################
 
 def test_func0():
-    assert IdaFunction(0x01800D6B30).ea == IdaFunction(0x01800D6B39).ea
+    assert BipFunction(0x01800D6B30).ea == BipFunction(0x01800D6B39).ea
 
 def test_func1():
-    assert IdaFunction(0x01800D6B30).ea == 0x01800D6B30
+    assert BipFunction(0x01800D6B30).ea == 0x01800D6B30
 
 def test_func2():
-    assert IdaFunction(0x01800D6B30).name == "RtlWow64SetThreadContext"
+    assert BipFunction(0x01800D6B30).name == "RtlWow64SetThreadContext"
 
 # TODO: test name setter
 
 def test_func3():
-    assert IdaFunction(0x01800D6B30).end == 0x01800D6B43
+    assert BipFunction(0x01800D6B30).end == 0x01800D6B43
 
 def test_func4():
-    assert IdaFunction(0x01800D6B30).size == 0x13
+    assert BipFunction(0x01800D6B30).size == 0x13
 
 def test_func5():
-    assert IdaFunction(0x01800D6B30).ordinal == 0xb8b
+    assert BipFunction(0x01800D6B30).ordinal == 0xb8b
 
 def test_func6():
-    assert IdaFunction(0x01800D6B30).flags == 21504
+    assert BipFunction(0x01800D6B30).flags == 21504
 
 # TODO: test flags setter
 
 def test_func7():
-    assert IdaFunction(0x01800D6B30).does_return
+    assert BipFunction(0x01800D6B30).does_return
 
 def test_func8():
-    assert IdaFunction(0x01800D6B30).is_inside(0x01800D6B39)
+    assert BipFunction(0x01800D6B30).is_inside(0x01800D6B39)
 
 def test_func9():
-    assert IdaFunction(0x01800D6B30).is_inside(Instr(0x01800D6B39))
+    assert BipFunction(0x01800D6B30).is_inside(Instr(0x01800D6B39))
 
 def test_funcA():
-    assert IdaFunction(0x01800D6B30).is_inside(Instr(0x01800D6B50)) == False
+    assert BipFunction(0x01800D6B30).is_inside(Instr(0x01800D6B50)) == False
 
 def test_funcB():
-    assert IdaFunction(0x01800D6B30).guess_strtype == "__int64 __fastcall()"
+    assert BipFunction(0x01800D6B30).guess_strtype == "__int64 __fastcall()"
 
 def test_funcC():
-    assert IdaFunction(0x0180099990).nb_blocks == 3
+    assert BipFunction(0x0180099990).nb_blocks == 3
 
 def test_funcD():
-    blck = IdaFunction(0x0180099990).blocks
+    blck = BipFunction(0x0180099990).blocks
     assert blck[0].ea == 0x0180099990
     assert blck[1].ea == 0x01800999DC
     assert blck[2].ea == 0x01800999F0
 
 def test_funcE():
-    f = IdaFunction(0x0180099990)
+    f = BipFunction(0x0180099990)
     blck = f.blocks
     i = 0
     for b in f.blocks_iter:
@@ -246,53 +246,53 @@ def test_funcE():
         assert blck[i].end == b.end
         i += 1
 
-# TODO: finish IdaFunction test
+# TODO: finish BipFunction test
 
 ###################### BLOCK #########################
 
 def test_block0():
-    assert IdaBlock(0x0180099990).ea == IdaFunction(0x0180099990).ea
+    assert BipBlock(0x0180099990).ea == BipFunction(0x0180099990).ea
 
 def test_block1():
-    assert IdaBlock(0x0180099990).ea == IdaBlock(0x0180099992).ea
+    assert BipBlock(0x0180099990).ea == BipBlock(0x0180099992).ea
 
 def test_block2():
-    assert IdaBlock(0x0180099990).type == IdaBlockType.FCB_NORMAL
+    assert BipBlock(0x0180099990).type == BipBlockType.FCB_NORMAL
 
 def test_block3():
-    assert IdaBlock(0x0180099990).is_ret == False
+    assert BipBlock(0x0180099990).is_ret == False
 
 def test_block4():
-    assert IdaBlock(0x0180099990).is_noret == False
+    assert BipBlock(0x0180099990).is_noret == False
 
 def test_block5():
-    assert IdaBlock(0x0180099990).is_external == False
+    assert BipBlock(0x0180099990).is_external == False
 
 def test_block6():
-    assert IdaBlock(0x01800999F0).type == IdaBlockType.FCB_NORET
+    assert BipBlock(0x01800999F0).type == BipBlockType.FCB_NORET
 
 def test_block7():
-    assert IdaBlock(0x01800999F0).is_ret == False
+    assert BipBlock(0x01800999F0).is_ret == False
 
 def test_block8():
-    assert IdaBlock(0x01800999F0).is_noret == True
+    assert BipBlock(0x01800999F0).is_noret == True
 
 def test_block9():
-    assert IdaBlock(0x01800999F0).is_external == False
+    assert BipBlock(0x01800999F0).is_external == False
 
 def test_blockA():
-    assert IdaBlock(0x0180099990).end == 0x01800999DC
+    assert BipBlock(0x0180099990).end == 0x01800999DC
 
 def test_blockB():
-    assert len(IdaBlock(0x0180099990).succ) == 2
+    assert len(BipBlock(0x0180099990).succ) == 2
 
 def test_blockC():
-    ss = IdaBlock(0x0180099990).succ
+    ss = BipBlock(0x0180099990).succ
     assert ss[0].ea == 0x01800999DC
     assert ss[1].ea == 0x01800999F0
 
 def test_blockD():
-    b = IdaBlock(0x0180099990)
+    b = BipBlock(0x0180099990)
     ss = b.succ
     i = 0
     for bb in b.iter_succ:
@@ -300,19 +300,19 @@ def test_blockD():
         i += 1
 
 def test_blockE():
-    assert len(IdaBlock(0x01800999E4).succ) == 1
+    assert len(BipBlock(0x01800999E4).succ) == 1
 
 def test_blockF():
-    assert len(IdaBlock(0x01800999F0).succ) == 0
+    assert len(BipBlock(0x01800999F0).succ) == 0
 
 def test_block10():
-    assert len(IdaBlock(0x01800999F0).pred) == 2
+    assert len(BipBlock(0x01800999F0).pred) == 2
 
 def test_block11():
-    assert len(IdaBlock(0x0180099990).pred) == 0
+    assert len(BipBlock(0x0180099990).pred) == 0
 
 def test_block12():
-    b = IdaBlock(0x01800999F0)
+    b = BipBlock(0x01800999F0)
     ss = b.pred
     i = 0
     for bb in b.iter_pred:
@@ -320,26 +320,26 @@ def test_block12():
         i += 1
 
 def test_block13():
-    assert IdaBlock(0x01800999F0).func.ea == 0x0180099990
+    assert BipBlock(0x01800999F0).func.ea == 0x0180099990
 
 def test_block14():
-    assert len(IdaBlock(0x01800999DC).items) == 4
+    assert len(BipBlock(0x01800999DC).items) == 4
 
 def test_block15():
-    for i in IdaBlock(0x01800999DC).items:
+    for i in BipBlock(0x01800999DC).items:
         assert i.__class__ == Instr
 
 def test_block16():
-    assert len(IdaBlock(0x01800999DC).instr) == 4
+    assert len(BipBlock(0x01800999DC).instr) == 4
 
 def test_block17():
-    for i in IdaBlock(0x01800999DC).instr:
+    for i in BipBlock(0x01800999DC).instr:
         assert i.__class__ == Instr
 
 def test_block18():
-    assert IdaBlock(0x01800999DC).instr[-1].ea == 0x01800999EE
+    assert BipBlock(0x01800999DC).instr[-1].ea == 0x01800999EE
 
 def test_block19():
-    assert IdaBlock(0x01800999DC).bytes == [0x48, 0x8D, 0x94, 0x24, 0xC0, 0x00, 0x00, 0x00, 0x48, 0x8D, 0x4C, 0x24, 0x20, 0xE8, 0xD2, 0xCE, 0xF6, 0xFF, 0x84, 0xDB]
+    assert BipBlock(0x01800999DC).bytes == [0x48, 0x8D, 0x94, 0x24, 0xC0, 0x00, 0x00, 0x00, 0x48, 0x8D, 0x4C, 0x24, 0x20, 0xE8, 0xD2, 0xCE, 0xF6, 0xFF, 0x84, 0xDB]
 
 

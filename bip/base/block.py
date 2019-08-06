@@ -8,7 +8,7 @@ import idaelt
 import func
 import instr
 
-class IdaBlockType(object):
+class BipBlockType(object):
     """
         Enum for the type of basic block. This come from the
         ``fc_block_type_t`` enum (``gdl.hpp``) not exposed to the python API.
@@ -22,7 +22,7 @@ class IdaBlockType(object):
     FCB_EXTERN  = 6     #: external normal block
     FCB_ERROR   = 7     #: block passes execution past the function end
 
-class IdaBlock(object):
+class BipBlock(object):
     """
         Class for representing and manipulating basic blocks in IDA.
 
@@ -45,7 +45,7 @@ class IdaBlock(object):
 
     def __init__(self, val):
         """
-            Constructor for an :class:`IdaBlock` object.
+            Constructor for an :class:`BipBlock` object.
 
             This function may raise a ``TypeError`` if the argument is not
             of a type supported or a ``ValueError`` if the address pass in
@@ -67,14 +67,14 @@ class IdaBlock(object):
             # for getting the basic block we need to get the flowchart for the
             # function
             # this may raise a ValueError if val is not a function
-            fc = func.IdaFunction(val)._flowchart
+            fc = func.BipFunction(val)._flowchart
             for i in range(fc.size):
                 if val >= fc[i].start_ea and val < fc[i].end_ea: # we found it
                     self._bb = fc[i]
                     break
 
         if self._bb is None:
-            raise TypeError("IdaBlock expect a ida_gdl.BasicBlock or the address of an instruction inside a function in input.")
+            raise TypeError("BipBlock expect a ida_gdl.BasicBlock or the address of an instruction inside a function in input.")
 
 
     @property
@@ -104,7 +104,7 @@ class IdaBlock(object):
         """
             Property which allow access to the type of basic block.
 
-            :return: One of the :class:`IdaBlockType` enum.
+            :return: One of the :class:`BipBlockType` enum.
         """
         return self._bb.type
 
@@ -113,14 +113,14 @@ class IdaBlock(object):
         """
             Property which return True if the block can return.
 
-            Internally this test the type for ``IdaBlockType.FCB_RET`` and
-            ``IdaBlockType.FCB_CNDRET``. It is the equivalent of
+            Internally this test the type for ``BipBlockType.FCB_RET`` and
+            ``BipBlockType.FCB_CNDRET``. It is the equivalent of
             ``ida_gdl.is_ret_block`` in the standard idapython.
 
             :return: True if the block return, False otherwise.
         """
-        return (self.type == IdaBlockType.FCB_RET or 
-                self.type == IdaBlockType.FCB_CNDRET)
+        return (self.type == BipBlockType.FCB_RET or 
+                self.type == BipBlockType.FCB_CNDRET)
 
     @property
     def is_noret(self):
@@ -129,14 +129,14 @@ class IdaBlock(object):
             will be True if the block terminate by a call to a function which
             will never return (``abort``, ...)
 
-            Internally this test the type for ``IdaBlockType.FCB_NORET``
-            and ``IdaBlockType.FCB_ENORET``. It is the equivalent of
+            Internally this test the type for ``BipBlockType.FCB_NORET``
+            and ``BipBlockType.FCB_ENORET``. It is the equivalent of
             ``ida_gdl.is_noret_block`` in the standard idapython.
 
             :return: True if the block never return, False otherwise.
         """
-        return (self.type == IdaBlockType.FCB_NORET or 
-                self.type == IdaBlockType.FCB_ENORET)
+        return (self.type == BipBlockType.FCB_NORET or 
+                self.type == BipBlockType.FCB_ENORET)
 
     @property
     def is_external(self):
@@ -149,84 +149,84 @@ class IdaBlock(object):
             
             .. note::
                 
-                This should never be True if this :class:`IdaBlock` was
-                provided by a :class:`IdaFunction`, it can be True if the
+                This should never be True if this :class:`BipBlock` was
+                provided by a :class:`BipFunction`, it can be True if the
                 block provided at the initialization was recuperated from an
                 other source.
 
             :return: True if the block is not included in the function from
                 which the flowgraph was created, False otherwise.
         """
-        return (self.type == IdaBlockType.FCB_EXTERN or 
-                self.type == IdaBlockType.FCB_ENORET)
+        return (self.type == BipBlockType.FCB_EXTERN or 
+                self.type == BipBlockType.FCB_ENORET)
 
     ########################### Control Flow ###########################
 
     @property
     def succ(self):
         """
-            Return a list of :class:`IdaBlock` which are successor of this
+            Return a list of :class:`BipBlock` which are successor of this
             block. This follow the potential execution pass.
 
-            :return: A list of :class:`IdaBlock` successor of this block.
+            :return: A list of :class:`BipBlock` successor of this block.
         """
-        return [IdaBlock(bb) for bb in self._bb.succs()]
+        return [BipBlock(bb) for bb in self._bb.succs()]
 
     @property
     def iter_succ(self):
         """
-            Return a generator of the :class:`IdaBlock` following this one.
+            Return a generator of the :class:`BipBlock` following this one.
             This is equivalent to :meth:`succ` and will probably be a little
             faster.
 
-            :return: A generator of :class:`IdaBlock` successor of this block.
+            :return: A generator of :class:`BipBlock` successor of this block.
         """
         for b in self._bb.succs():
-            yield IdaBlock(b)
+            yield BipBlock(b)
 
     @property
     def pred(self):
         """
-            Return a list of :class:`IdaBlock` which are predecessor of this
+            Return a list of :class:`BipBlock` which are predecessor of this
             block. This provide the basicblock which can lead to this block
             followin the execution pass.
 
-            :return: A list of :class:`IdaBlock` predecessor of this block.
+            :return: A list of :class:`BipBlock` predecessor of this block.
         """
-        return [IdaBlock(bb) for bb in self._bb.preds()]
+        return [BipBlock(bb) for bb in self._bb.preds()]
 
     @property
     def iter_pred(self):
         """
-            Return a generator of the :class:`IdaBlock` predecessor of this
+            Return a generator of the :class:`BipBlock` predecessor of this
             one. This is equivalent to :meth:`pred` and will probably be a
             little faster.
 
-            :return: A generator of :class:`IdaBlock` predecessor of this
+            :return: A generator of :class:`BipBlock` predecessor of this
                 block.
         """
         for b in self._bb.preds():
-            yield IdaBlock(b)
+            yield BipBlock(b)
 
     ############################### FUNCTION ###############################
 
     @property
     def func(self):
         """
-            Return the :class:`IdaFunction` object corresponding to this
+            Return the :class:`BipFunction` object corresponding to this
             block.
 
             .. note::
 
-                Internally this will return the :class:`IdaFunction` which is
+                Internally this will return the :class:`BipFunction` which is
                 present at the start address of the block. In particular in
                 case of external blocks this will return the function in which
                 the block are included and not the one from which they came
                 from.
 
-            :return: The :class:`IdaFunction` in which this block is included.
+            :return: The :class:`BipFunction` in which this block is included.
         """
-        return func.IdaFunction(self.ea)
+        return func.BipFunction(self.ea)
 
 
     ############################# INSTR & ITEMS ############################
@@ -234,10 +234,10 @@ class IdaBlock(object):
     @property
     def items(self):
         """
-            Return a list of :class:`IdaElt` corresponding to the items
+            Return a list of :class:`BipElt` corresponding to the items
             included in the basic block (between ``ea`` and ``end``).
 
-            :return: A list of object :class:`IdaElt`.
+            :return: A list of object :class:`BipElt`.
         """
         return [idaelt.GetElt(h) for h in idautils.Heads(self.ea, self.end)]
 

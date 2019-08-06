@@ -9,20 +9,20 @@ from biperror import BipError
 
 # TODO:
 #   * make a iter_all for elements
-#   * for IdaElt object maybe return True only if mapped ?
+#   * for BipElt object maybe return True only if mapped ?
 #   * create a special object for error address instead of the ugly test in
 #       GetElt ?
 
-class IdaBaseElt(object):
+class BipBaseElt(object):
     """
         Base class for representing an element in IDA which is identified by
         an id, this should be used as an abstract class and no object of this
         class should be instantiated.
         
         This is a really generic class which only support the constructor
-        taking an id and the :meth:`IdaBaseElt._is_this_elt` for used in
+        taking an id and the :meth:`BipBaseElt._is_this_elt` for used in
         conjonction with :func:`GetElt`. Child classes should reimplement the
-        :meth:`IdaBaseElt._is_this_elt` and call the constructor.
+        :meth:`BipBaseElt._is_this_elt` and call this constructor.
 
         .. todo:: make list of subclasses in this doc. Add to doc a descision
             tree for which classes should be return by the GetElt.
@@ -30,16 +30,17 @@ class IdaBaseElt(object):
 
     def __init__(self, idelt):
         """
-            Consctructor for an IdaElt.
+            Consctructor for a :class:`BipBaseElt` object.
             
             .. note:: There is no reason to use this constructor, the
-                :func:`GetElt` function should be used.
+                :func:`GetElt` or :func:`GetEltByName` functions should be
+                used.
 
             :param int idelt: The id for representing the IDA element. In most
                 case this will be the address of the element.
         """
         if not isinstance(idelt, (int, long)):
-            raise TypeError("IdaBaseElt.__init__ : idelt should be an integer")
+            raise TypeError("BipBaseElt.__init__ : idelt should be an integer")
         #: The id which represent the element in IDA, this will typically
         #:  be an address.
         self._idelt = idelt
@@ -51,7 +52,7 @@ class IdaBaseElt(object):
             Class method which allow the function :func:`GetElt` to know if
             this the correct type for an address. Only subclasses of an
             element which return True will be tested by :func:`GetElt`,
-            :class:`IdaBaseElt` return always True except if ``idelt`` is not
+            :class:`BipBaseElt` return always True except if ``idelt`` is not
             of the correct type.
 
             :param int idelt: An id representing the element, typically an
@@ -63,7 +64,7 @@ class IdaBaseElt(object):
             return False
         return True
 
-class IdaRefElt(IdaBaseElt):
+class BipRefElt(BipBaseElt):
     """
         Class which represent element which can be reference through a xref.
         This include data, instruction and structures. This class provide
@@ -82,10 +83,10 @@ class IdaRefElt(IdaBaseElt):
             Property which allow to get all xrefs generated (from) by the
             element. This is the equivalent to ``XrefsFrom`` from idapython.
 
-            :return: A list of :class:`IdaXref` with the ``src`` being this
+            :return: A list of :class:`BipXref` with the ``src`` being this
                 element.
         """
-        return [xref.IdaXref(x) for x in idautils.XrefsFrom(self._idelt)]
+        return [xref.BipXref(x) for x in idautils.XrefsFrom(self._idelt)]
 
     @property
     def xTo(self):
@@ -93,10 +94,10 @@ class IdaRefElt(IdaBaseElt):
             Property which allow to get all xrefs pointing to (to) this
             element. This is the equivalent to ``XrefsTo`` from idapython.
 
-            :return: A list of :class:`IdaXref` with the ``dst`` being this
+            :return: A list of :class:`BipXref` with the ``dst`` being this
                 element.
         """
-        return [xref.IdaXref(x) for x in idautils.XrefsTo(self._idelt)]
+        return [xref.BipXref(x) for x in idautils.XrefsTo(self._idelt)]
 
     @property
     def xEaFrom(self):
@@ -124,8 +125,8 @@ class IdaRefElt(IdaBaseElt):
             Property which allow to get all elements referenced (by a xref)
             by (from) this element.
 
-            :return: A list of :class:`IdaBaseElt` (or subclasses
-                of :class:`IdaBaseElt`).
+            :return: A list of :class:`BipBaseElt` (or subclasses
+                of :class:`BipBaseElt`).
         """
         return [x.dst for x in self.xFrom]
 
@@ -135,8 +136,8 @@ class IdaRefElt(IdaBaseElt):
             Property which allow to get all elements which referenced this
             element (xref to).
 
-            :return: A list of :class:`IdaBaseElt` (or subclasses
-                of :class:`IdaBaseElt`).
+            :return: A list of :class:`BipBaseElt` (or subclasses
+                of :class:`BipBaseElt`).
         """
         return [x.src for x in self.xTo]
 
@@ -163,7 +164,7 @@ class IdaRefElt(IdaBaseElt):
         return [x.src for x in self.xTo if ('is_code' in dir(x.src) and x.src.is_code)]
 
 
-class IdaElt(IdaRefElt):
+class BipElt(BipRefElt):
     """
         Base class for representing an element in IDA which have an address.
         This is the basic element on top of which access to instruction and
@@ -178,7 +179,7 @@ class IdaElt(IdaRefElt):
 
     def __init__(self, ea=None):
         """
-            Consctructor for an IdaElt.
+            Consctructor for a :class:`BipElt` object.
 
             .. note:: There is no reason to use this constructor, the
                 :func:`GetElt` function should be used.
@@ -190,11 +191,11 @@ class IdaElt(IdaRefElt):
         """
         if ea is None:
             ea = ida_kernwin.get_screen_ea()
-        super(IdaElt, self).__init__(ea)
+        super(BipElt, self).__init__(ea)
         if ea == idc.BADADDR:
             raise ValueError("Invalid address pass as arguemnt for element")
         if not isinstance(ea, (int, long)):
-            raise TypeError("IdaElt.__init__ : ea should be an integer")
+            raise TypeError("BipElt.__init__ : ea should be an integer")
         self.ea = ea #: The address of the element in the IDA database
 
     ################### BASE ##################
@@ -254,7 +255,7 @@ class IdaElt(IdaRefElt):
                 ida_bytes.patch_byte(self.ea + i, e)
                 i += 1
         else:
-            raise TypeError("Invalid arg {} for IdaElt.bytes setter".format(value))
+            raise TypeError("Invalid arg {} for BipElt.bytes setter".format(value))
 
     ################### NAME ##################
     # All element do not have one
@@ -279,7 +280,7 @@ class IdaElt(IdaRefElt):
             Setter which allow to set the name of this element.
 
             This setter will fail if the element is not an head, see
-            :meth:`IdaElt.is_head` for testing it. In case of failure a
+            :meth:`BipElt.is_head` for testing it. In case of failure a
             BipError will be raised
 
             .. todo::
@@ -465,11 +466,11 @@ class IdaElt(IdaRefElt):
 
 def GetElt(ea=None):
     """
-        Return an object inherithed from :class:`IdaBaseElt` which correspond
+        Return an object inherithed from :class:`BipBaseElt` which correspond
         to the element at an id.
         
-        Internally this function parcours subclasses of :class:`IdaBaseElt`
-        and call the :meth:`~IdaBaseElt._is_this_elt` and return the one which
+        Internally this function parcours subclasses of :class:`BipBaseElt`
+        and call the :meth:`~BipBaseElt._is_this_elt` and return the one which
         match.
 
         .. warning::
@@ -481,13 +482,13 @@ def GetElt(ea=None):
             screen address is used.
         :raise RuntimeError: If the address correspond to the error value.
         :return: An object representing the element.
-        :rtype: Subclass of :class:`IdaBaseElt`.
+        :rtype: Subclass of :class:`BipBaseElt`.
     """
     if ea is None:
         ea = ida_kernwin.get_screen_ea()
     if ea == idc.BADADDR:
         raise RuntimeError("Trying to get element for error address")
-    cls = IdaBaseElt
+    cls = BipBaseElt
     sbcls = cls.__subclasses__()
     while len(sbcls) != 0:
         cl = sbcls.pop()
@@ -504,7 +505,7 @@ def GetEltByName(name):
             (``byte_xxxx``, ...) is provided the database is not consulted.
         :return: An object representing the element or ``None`` if the name
             was not found.
-        :rtype: Subclass of :class:`IdaBaseElt`.
+        :rtype: Subclass of :class:`BipBaseElt`.
     """
     ea = ida_name.get_name_ea(idc.BADADDR, name)
     if ea is None or ea == idc.BADADDR:

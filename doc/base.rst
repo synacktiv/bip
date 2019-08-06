@@ -25,7 +25,7 @@ Structure API
 IDA Element
 ===========
 
-.. autoclass:: IdaElt
+.. autoclass:: BipElt
     :members:
     :member-order: bysource
 

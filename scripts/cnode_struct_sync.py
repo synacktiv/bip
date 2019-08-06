@@ -11,13 +11,13 @@ from idc import *
 from idc import GetCommentEx, op_stroff
 import ida_hexrays
 
-# TODO: integrate in IdaType
+# TODO: integrate in BipType
 def get_struct_from_tinfo(t):
     if t.is_ptr():
         s = t.get_pointed_object()
         if s.is_struct():
             try: # TODO this does not work correctly with typedef for struct
-                struct = IdaStruct.get(s.get_type_name())
+                struct = BipStruct.get(s.get_type_name())
                 return struct
             except ValueError:
                 print("could not find struct for {}".format(s.get_type_name()))
@@ -36,7 +36,7 @@ def get_struct_from_lvar_local(lvar):
 
 # TODO: integrate in bip
 def get_struct_from_addr(go):
-    return get_struct_from_tinfo(IdaType.get_at(go)._tinfo)
+    return get_struct_from_tinfo(BipType.get_at(go)._tinfo)
 
 def visit_propag(cn, num_ops=2, set_all_operand=False):
     ea = cn.closest_ea
@@ -99,12 +99,12 @@ def visit_propag(cn, num_ops=2, set_all_operand=False):
 
 
 def propagate_for_func(ea):
-    f = IdaFunction(ea)
+    f = BipFunction(ea)
     f.hxfunc.visit_cnode_filterlist(visit_propag, [CNodeExprMemref, CNodeExprMemptr])
 
 
 def propagate_all_func():
-    for f in IdaFunction.iter_all():
+    for f in BipFunction.iter_all():
         try:
             f.hxfunc.visit_cnode_filterlist(visit_propag, [CNodeExprMemref, CNodeExprMemptr])
         except ida_hexrays.DecompilationFailure:

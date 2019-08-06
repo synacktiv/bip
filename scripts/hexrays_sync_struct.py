@@ -1,4 +1,4 @@
-from bip.base import IdaStruct
+from bip.base import BipStruct
 from bip.hexrays import HexRaysEvent
 
 from ida_hexrays import *
@@ -16,7 +16,7 @@ def get_struct_from_lvar(lvar):
         s = t.get_pointed_object()
         if s.is_struct():
             try:
-                struct = IdaStruct.get(s.get_type_name())
+                struct = BipStruct.get(s.get_type_name())
                 return struct
             except ValueError:
                 return None
