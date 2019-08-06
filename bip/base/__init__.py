@@ -8,4 +8,4 @@ from xref import XrefTypes, BipXref
 from biperror import BipError
 from func import BipFuncFlags, BipFunction
 from block import BipBlockType, BipBlock
-from .type import BipType, BTypePartial, BTypeVoid, BTypeInt, BTypeBool, BTypeFloat, BTypePtr, BTypeArray, BTypeFunc, BTypeStruct, BTypeUnion, BTypeEnum
+from biptype import BipType, BTypePartial, BTypeVoid, BTypeInt, BTypeBool, BTypeFloat, BTypePtr, BTypeArray, BTypeFunc, BTypeStruct, BTypeUnion, BTypeEnum

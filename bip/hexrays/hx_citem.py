@@ -1,4 +1,4 @@
-from bip.base.type import BipType
+from bip.base.biptype import BipType
 
 
 class HxCType(object):

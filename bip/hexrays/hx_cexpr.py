@@ -1,6 +1,6 @@
 
 from hx_citem import HxCType, HxCItem, HxCExpr
-from bip.base import type as biptype
+from bip.base import biptype
 
 # TODO: this file should probably be split
 

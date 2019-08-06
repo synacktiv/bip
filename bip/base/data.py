@@ -3,7 +3,7 @@ import ida_bytes
 import ida_kernwin
 
 from idaelt import BipElt
-from type import BipType
+from biptype import BipType
 from biperror import BipError
 
 # TODO:

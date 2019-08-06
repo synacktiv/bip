@@ -1,6 +1,6 @@
 import idaapi
 import idc
-import type as biptype
+import biptype
 from ida_typeinf import tinfo_t
 from ida_nalt import get_op_tinfo, set_op_tinfo, del_op_tinfo
 

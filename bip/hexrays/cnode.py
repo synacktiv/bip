@@ -5,7 +5,7 @@
 """
 import idc
 from hx_citem import AbstractCItem, HxCType, HxCItem, HxCExpr, HxCStmt
-from bip.base.type import BipType
+from bip.base.biptype import BipType
 
 class CNode(AbstractCItem):
     """

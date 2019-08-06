@@ -3,7 +3,7 @@ import idautils
 import ida_struct
 import ida_typeinf
 
-from .type import BipType
+from biptype import BipType
 from bip.base import get_ptr_size
 from idaelt import BipRefElt
 from biperror import BipError
