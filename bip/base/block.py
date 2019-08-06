@@ -3,6 +3,7 @@ import idc
 import idautils
 import ida_bytes
 import ida_kernwin
+import ida_graph
 
 import idaelt
 import func
@@ -96,6 +97,15 @@ class BipBlock(object):
         """
         return self._bb.end_ea
 
+    @property
+    def _id(self):
+        """
+            Property returning the ID of the basic block. This is use in
+            particular for manipulating the block using the graph functions.
+
+            :return int: The ID of this basic block.
+        """
+        return self._bb.id
 
     ############################ TYPE & INFO #############################
 
@@ -274,4 +284,58 @@ class BipBlock(object):
             :rtype: list(int)
         """
         return [ida_bytes.get_wide_byte(i) for i in range(self.ea, self.end)]
+
+    ########################### COLOR #####################################
+
+    @property
+    def color(self):
+        """
+            Property for accessing the color of this basic block.
+
+            :raise RuntimeError: If this function was not able to get the
+                information about the graph node.
+            :return int: The integer representing the color of this block in
+                the BGR format.
+        """
+        ni = ida_graph.node_info_t()
+        if not ida_graph.get_node_info(ni, self.func.ea, self._id):
+            # In that case information about the node has not been
+            #   recuperated, in practice this seems to mean that no
+            #   node_info_t have, been defined for this node including the
+            #   color, which means it should have the default color
+            #   corresponding to the one set by default when creating a
+            #   node_info_t. So we just ignore.
+            pass
+        return ni.bg_color
+
+    @color.setter
+    def color(self, value):
+        """
+            Property setter for changing the color of this basic block.
+
+            .. warning:: This will **not** set correctly the color for a block
+                which color has already been change using the GUI. Probably a
+                bug in IDA or another item on top of it ?
+
+            :param value: An integer representing the color to set at the BGR
+                format.
+        """
+        ni = ida_graph.node_info_t()
+        ni.bg_color = value
+        ida_graph.set_node_info(self.func.ea, self._id, ni, ida_graph.NIF_BG_COLOR)
+        ida_kernwin.refresh_idaview_anyway()
+
+    @color.deleter
+    def color(self):
+        """
+            Property deleter for removing the color of this basicblock.
+
+            .. warning:: This will **not** clear the color set by the GUI.
+                Probably a bug in IDA. However this will clear the color set
+                using the setter of this property.
+        """
+        ida_graph.clr_node_info(self.func.ea, self._id, ida_graph.NIF_BG_COLOR)
+        ida_kernwin.refresh_idaview_anyway()
+
+
 
