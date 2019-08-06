@@ -6,6 +6,7 @@ import ida_name
 import ida_gdl
 import ida_bytes
 import ida_typeinf
+import ida_kernwin
 
 from idaelt import IdaElt, GetElt
 import instr
@@ -95,7 +96,7 @@ class IdaFunction(object):
 
     ################################# BASE #################################
 
-    def __init__(self, ea):
+    def __init__(self, ea=None):
         """
             Constructor for a :class:`IdaFunction` object.
 
@@ -103,8 +104,10 @@ class IdaFunction(object):
             is not in the function.
 
             :param ea: An address included in the function, it does not need
-                to be the first one.
+                to be the first one. If ``None`` the screen address is used.
         """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
         #: Internal func_t object from IDA
         self._funct = idaapi.get_func(ea)
         if self._funct is None:

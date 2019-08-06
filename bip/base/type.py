@@ -42,12 +42,7 @@
 
 from ida_typeinf import tinfo_t, array_type_data_t, func_type_data_t, udt_type_data_t, enum_type_data_t, apply_tinfo, guess_tinfo, GUESS_FUNC_OK, parse_decl
 import ida_nalt
-
-
-# The tinfo_t class will have to be recursive...
-# Need to allow to create tinfo "by hand" and to create them from a C string.
-
-# Example for getting a tinfo_t is the HxLvar._ida_tinfo property
+import ida_kernwin
 
 class IdaType(object):
     """
@@ -185,7 +180,7 @@ class IdaType(object):
         return ida_nalt.get_tinfo(ea, tif)
 
     @staticmethod
-    def get_at(ea):
+    def get_at(ea=None):
         """
             Function which will create an object which inherit from
             :class:`IdaType` representing the type at the current address.
@@ -209,12 +204,15 @@ class IdaType(object):
                 future as by default a tinfo_t ``empty`` is true (but not the
                 tinfo_t.is_unknown).
 
-            :param ea: The address at which to get the type.
+            :param ea: The address at which to get the type. If ``None``
+                the screen address will be used.
             :return: An object which inherit from :class:`IdaType`
                 representing the type at the address given in argument.
                 ``None`` will be return if no type is define and ida was not
                 able to guess it .
         """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
         tif = tinfo_t()
         # try to get the define type
         # this seems to be define in ida_nalt...
@@ -235,8 +233,11 @@ class IdaType(object):
         """
             Function which delete the type set at a particular address.
 
-            :param ea: The address at which to get the type.
+            :param ea: The address at which to delete the type. If ``None``
+                the screen address will be used.
         """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
         ida_nalt.del_tinfo(ea)
 
     ############################# CHILDS ##############################

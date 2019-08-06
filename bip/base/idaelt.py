@@ -1,7 +1,9 @@
 import idc
+import ida_kernwin
 import idautils
 import ida_bytes
 import ida_name
+
 import xref
 from biperror import BipError
 
@@ -174,16 +176,23 @@ class IdaElt(IdaRefElt):
         .. todo:: Make comparaison possible between 2 objections
     """
 
-    def __init__(self, ea):
+    def __init__(self, ea=None):
         """
             Consctructor for an IdaElt.
 
             .. note:: There is no reason to use this constructor, the
                 :func:`GetElt` function should be used.
 
-            :param int ea: The address of the element in IDA.
+            :param int ea: The address of the element in IDA. If ``None`` the
+                screen address is taken.
+            :raise ValueError: If the address given in argument is a bad
+                address (idc.BADADDR)
         """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
         super(IdaElt, self).__init__(ea)
+        if ea == idc.BADADDR:
+            raise ValueError("Invalid address pass as arguemnt for element")
         if not isinstance(ea, (int, long)):
             raise TypeError("IdaElt.__init__ : ea should be an integer")
         self.ea = ea #: The address of the element in the IDA database
@@ -441,16 +450,20 @@ class IdaElt(IdaRefElt):
     #################### STATIC METHOD ######################
 
     @staticmethod
-    def is_mapped(ea):
+    def is_mapped(ea=None):
         """
             Static method which allow to know if an address is mapped or not.
 
+            :param ea: The address to test for being mapped or not. If
+                ``None`` the screen address will be used.
             :return: True if the address is mapped, False otherwise.
         """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
         return ida_bytes.is_mapped(ea)
 
 
-def GetElt(ea):
+def GetElt(ea=None):
     """
         Return an object inherithed from :class:`IdaBaseElt` which correspond
         to the element at an id.
@@ -464,11 +477,14 @@ def GetElt(ea):
             There is a problem if two functions of a sublcass level can
             return True on the same element.
 
-        :param int ea: An address at which to get an element.
+        :param int ea: An address at which to get an element. If ``None`` the
+            screen address is used.
         :raise RuntimeError: If the address correspond to the error value.
         :return: An object representing the element.
         :rtype: Subclass of :class:`IdaBaseElt`.
     """
+    if ea is None:
+        ea = ida_kernwin.get_screen_ea()
     if ea == idc.BADADDR:
         raise RuntimeError("Trying to get element for error address")
     cls = IdaBaseElt

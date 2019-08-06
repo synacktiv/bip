@@ -1,5 +1,7 @@
 import idc
 import ida_bytes
+import ida_kernwin
+
 from idaelt import IdaElt
 from type import IdaType
 from biperror import BipError
@@ -25,11 +27,14 @@ class IdaData(IdaElt):
         .. todo:: precise this doc
     """
 
-    def __init__(self, ea):
+    def __init__(self, ea=None):
         """
             Constructor for :class:`IdaData`, take the address of the
             data in IDA in parameter.
 
+
+            :param int ea: The address of the element in IDA. If ``None`` the
+                screen address is taken.
             :raise BipError: If address do not correspond to data
         """
         super(IdaData, self).__init__(ea)
@@ -337,15 +342,18 @@ class IdaData(IdaElt):
     ######################## STATIC METHOD ##############################
 
     @staticmethod
-    def get_byte(ea, original=False):
+    def get_byte(ea=None, original=False):
         """
             Static method allowing to get the value of one byte at an address.
 
-            :param ea: The address at which recuperating the value.
+            :param ea: The address at which recuperating the value. If
+                ``None`` the screen address is used.
             :param original: If True the value recuperated will be the
                 original one (before a patch). Default: False.
             :return: An integer corresponding to the value at the address.
         """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
         if original:
             return ida_bytes.get_original_byte(ea)
         else:
@@ -364,15 +372,18 @@ class IdaData(IdaElt):
             raise RuntimeError("Unable to set value {} at {}".format(ea, value))
 
     @staticmethod
-    def get_word(ea, original=False):
+    def get_word(ea=None, original=False):
         """
             Static method allowing to get the value of one word at an address.
 
-            :param ea: The address at which recuperating the value.
+            :param ea: The address at which recuperating the value. If
+                ``None`` the screen address is used.
             :param original: If True the value recuperated will be the
                 original one (before a patch). Default: False.
             :return: An integer corresponding to the value at the address.
         """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
         if original:
             return ida_bytes.get_original_word(ea)
         else:
@@ -391,15 +402,18 @@ class IdaData(IdaElt):
             raise RuntimeError("Unable to set value {} at {}".format(ea, value))
 
     @staticmethod
-    def get_dword(ea, original=False):
+    def get_dword(ea=None, original=False):
         """
             Static method allowing to get the value of one dword at an address.
 
-            :param ea: The address at which recuperating the value.
+            :param ea: The address at which recuperating the value. If
+                ``None`` the screen address is used.
             :param original: If True the value recuperated will be the
                 original one (before a patch). Default: False.
             :return: An integer corresponding to the value at the address.
         """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
         if original:
             return ida_bytes.get_original_dword(ea)
         else:
@@ -418,15 +432,18 @@ class IdaData(IdaElt):
             raise RuntimeError("Unable to set value {} at {}".format(ea, value))
 
     @staticmethod
-    def get_qword(ea, original=False):
+    def get_qword(ea=None, original=False):
         """
             Static method allowing to get the value of one qword at an address.
 
-            :param ea: The address at which recuperating the value.
+            :param ea: The address at which recuperating the value. If
+                ``None`` the screen address is used.
             :param original: If True the value recuperated will be the
                 original one (before a patch). Default: False.
             :return: An integer corresponding to the value at the address.
         """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
         if original:
             return ida_bytes.get_original_qword(ea)
         else:

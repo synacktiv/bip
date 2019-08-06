@@ -14,7 +14,8 @@ import func
 
 class Instr(IdaElt):
     """
-        Class for representing and manipulating an instruction in IDA.
+        Class for representing and manipulating a assembleur instruction in
+        IDA.
 
         .. todo:: make test
         .. todo:: equality and inclusion operator
@@ -22,9 +23,12 @@ class Instr(IdaElt):
     #UA_MAXOP = idaapi.UA_MAXOP #: Maximum number of operands for one instruction
     UA_MAXOP = 8 #: Maximum number of operands for one instruction
 
-    def __init__(self, ea):
+    def __init__(self, ea=None):
         """
-            Constructor for an instruction in IDA, take the address of the instruction in parameter.
+            Constructor for an instruction in IDA.
+
+            :param int ea: The address of the instruction in IDA. If
+                ``None`` the screen address is taken.
         """
         super(Instr, self).__init__(ea)
         if not self.is_code:

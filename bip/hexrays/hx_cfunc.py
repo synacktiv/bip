@@ -1,9 +1,10 @@
+import ida_hexrays
+import ida_kernwin
+
 from hx_lvar import HxLvar
 from hx_visitor import _hx_visitor_expr, _hx_visitor_list_expr, _hx_visitor_stmt, _hx_visitor_list_stmt, _hx_visitor_all, _hx_visitor_list_all
 from cnode import CNode
 from cnode_visitor import visit_dfs_cnode, visit_dfs_cnode_filterlist
-import ida_hexrays
-
 
 class HxCFunc(object):
     """
@@ -350,7 +351,7 @@ class HxCFunc(object):
     ############################### CLASS METHOD ############################
 
     @classmethod
-    def from_addr(cls, ea):
+    def from_addr(cls, ea=None):
         """
             Class method which return a :class:`HxFunc` object corresponding
             to the function at a particular address.
@@ -360,9 +361,12 @@ class HxCFunc(object):
             .. todo:: test
 
             :param int ea: An address inside the function for which we want
-                an :class:`HxFunc`.
+                an :class:`HxFunc`. If ``None`` the screen address will be
+                used.
             :return: A :class:`HxFunc` object.
         """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
         return cls(ida_hexrays.decompile(ea))
 
 

@@ -2,6 +2,7 @@ import ida_gdl
 import idc
 import idautils
 import ida_bytes
+import ida_kernwin
 
 import idaelt
 import func
@@ -52,7 +53,10 @@ class IdaBlock(object):
 
             :param val: A value used for creating a basic block. This can be
                 an address (int or long) or a ``ida_gdl.BasicBlock`` object.
+                If ``None`` the screen address is used.
         """
+        if val is None:
+            val = ida_kernwin.get_screen_ea()
         #: Internal ida_gdl.BasicBlock object representing this block in IDA
         self._bb = None
         if isinstance(val, ida_gdl.BasicBlock):
