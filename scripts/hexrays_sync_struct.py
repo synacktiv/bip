@@ -5,7 +5,7 @@ from ida_hexrays import *
 from idaapi import ctree_visitor_t, CV_FAST, CV_PARENTS
 import idc
 from idc import *
-from idc import GetCommentEx, op_stroff
+from idc import op_stroff
 
 # TODO: this will be change when a proper hexrays api as been integrated in bip
 

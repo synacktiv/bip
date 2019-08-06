@@ -3,7 +3,7 @@ from bip.hexrays import HexRaysEvent
 from ida_hexrays import *
 from idaapi import ctree_visitor_t, CV_FAST
 from idc import *
-from idc import GetCommentEx
+import ida_bytes
 
 def hexrays_propagate_comments(event, *args):
     if event == HexRaysEvent.hxe_func_printed:
@@ -11,7 +11,7 @@ def hexrays_propagate_comments(event, *args):
         cmts = f.user_cmts
 
         for c in cmts:
-            ida_cmt = GetCommentEx(c.ea, 0)
+            ida_cmt = ida_bytes.get_cmt(c.ea, 0)
             if not ida_cmt or ida_cmt.startswith('HR: '):
                 MakeComm(c.ea, 'HR: '+f.get_user_cmt(c, 1))
 
