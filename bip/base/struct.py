@@ -5,7 +5,7 @@ import ida_typeinf
 
 from biptype import BipType
 from bip.base import get_ptr_size
-from idaelt import BipRefElt
+from bipelt import BipRefElt
 from biperror import BipError
 
 class BipStruct(BipRefElt):

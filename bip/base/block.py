@@ -5,7 +5,7 @@ import ida_bytes
 import ida_kernwin
 import ida_graph
 
-import idaelt
+import bipelt
 import func
 import instr
 
@@ -252,7 +252,7 @@ class BipBlock(object):
 
             :return: A list of object :class:`BipElt`.
         """
-        return [idaelt.GetElt(h) for h in idautils.Heads(self.ea, self.end)]
+        return [bipelt.GetElt(h) for h in idautils.Heads(self.ea, self.end)]
 
     @property
     def instr(self):

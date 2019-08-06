@@ -1,4 +1,4 @@
-import idaelt
+import bipelt
 
 class XrefTypes(object):
     """
@@ -86,7 +86,7 @@ class BipXref(object):
             :rtypes: An :class:`BipBaseElt` or one of its subclasses. See 
                 :func:`GetElt`.
         """
-        return idaelt.GetElt(self.src_ea)
+        return bipelt.GetElt(self.src_ea)
 
     @property
     def dst_ea(self):
@@ -107,7 +107,7 @@ class BipXref(object):
             :rtypes: An :class:`BipBaseElt` or one of its subclasses. See 
                 :func:`GetElt`.
         """
-        return idaelt.GetElt(self.dst_ea)
+        return bipelt.GetElt(self.dst_ea)
 
     ######### PROPERTY FOR CODE FLOW XREF ###########
 

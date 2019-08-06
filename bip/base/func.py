@@ -8,7 +8,7 @@ import ida_bytes
 import ida_typeinf
 import ida_kernwin
 
-from idaelt import BipElt, GetElt
+from bipelt import BipElt, GetElt
 import instr
 import block
 import xref

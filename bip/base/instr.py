@@ -1,12 +1,10 @@
-#from idaapi import *
-#from idc import *
-#from idautils import *
 import idc
 import ida_bytes
 import ida_ua
 import idautils
 import idaapi
-from idaelt import BipElt
+
+from bipelt import BipElt
 from operand import Operand, OpType
 from biperror import BipError
 import block

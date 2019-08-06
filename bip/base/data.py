@@ -2,7 +2,7 @@ import idc
 import ida_bytes
 import ida_kernwin
 
-from idaelt import BipElt
+from bipelt import BipElt
 from biptype import BipType
 from biperror import BipError
 
