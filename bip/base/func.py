@@ -274,11 +274,11 @@ class BipFunction(object):
     def flags(self):
         """
             Property which return the function flags as returned by
-            ``idc.GetFunctionFlags`` .
+            ``idc.GetFunctionFlags`` (old) or
+            ``idc.get_func_attr(ea, FUNCATTR_FLAGS)`` (new).
 
             :return int: The flags for this function.
         """
-        #idc.GetFunctionFlags(self.ea) # deprecated
         return idc.get_func_attr(self.ea, BipFuncFlags.FUNCATTR_FLAGS)
 
     @flags.setter
@@ -396,7 +396,7 @@ class BipFunction(object):
 
             .. todo:: Test
         """
-        return idc.GetFunctionCmt(self.ea, False)
+        return idc.get_func_cmt(self.ea, False)
 
     @comment.setter
     def comment(self, value):
@@ -405,7 +405,7 @@ class BipFunction(object):
 
             .. todo:: Test
         """
-        return idc.SetFunctionCmt(self.ea, value, False)
+        return idc.set_func_cmt(self.ea, value, False)
 
     @property
     def rcomment(self):
@@ -414,7 +414,7 @@ class BipFunction(object):
 
             .. todo:: Test
         """
-        return idc.GetFunctionCmt(self.ea, True)
+        return idc.get_func_cmt(self.ea, True)
 
     @rcomment.setter
     def rcomment(self, value):
@@ -423,7 +423,7 @@ class BipFunction(object):
 
             .. todo:: Test
         """
-        return idc.SetFunctionCmt(self.ea, value, True)
+        return idc.set_func_cmt(self.ea, value, True)
 
     ######################## FLOWCHART & BASICBLOCK #########################
 
@@ -534,7 +534,7 @@ class BipFunction(object):
             :return: A list of the bytes forming the element.
             :rtype: list(int)
         """
-        return [idc.Byte(i) for i in range(self.ea, self.end)]
+        return [ida_bytes.get_wide_byte(i) for i in range(self.ea, self.end)]
 
 
     ############################ TYPE, ARGS, .... #########################
@@ -765,7 +765,7 @@ class BipFunction(object):
         """
         if end is None:
             end = 0xffffffffffffffff # default IDA value meaning auto analysis
-        if not idc.MakeFunction(start, end):
+        if not idc.add_func(start, end):
             raise BipError("Unable to create function at 0x{:X}".format(start))
         return cls(start)
 

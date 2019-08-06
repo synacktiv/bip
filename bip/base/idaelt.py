@@ -219,7 +219,7 @@ class BipElt(BipRefElt):
             :return: The size in bytes of the element.
             :rtype: int
         """
-        return idc.ItemEnd(self.ea) - self.ea
+        return idc.get_item_end(self.ea) - self.ea
 
 
     @property
@@ -233,7 +233,7 @@ class BipElt(BipRefElt):
             :return: A list of the bytes forming the element.
             :rtype: list(int)
         """
-        return [idc.Byte(i) for i in range(self.ea, idc.ItemEnd(self.ea))]
+        return [ida_bytes.get_wide_byte(i) for i in range(self.ea, idc.get_item_end(self.ea))]
 
     @bytes.setter
     def bytes(self, value):
@@ -272,7 +272,7 @@ class BipElt(BipRefElt):
             :return: The name of an element or an empty string if no name.
             :rtype: :class:`str`
         """
-        return idc.Name(self.ea)
+        return idc.get_name(self.ea, ida_name.GN_VISIBLE)
 
     @name.setter
     def name(self, value):
@@ -293,7 +293,7 @@ class BipElt(BipRefElt):
         """
         if value is None:
             value = ""
-        if not idc.MakeName(self.ea, value):
+        if not idc.set_name(self.ea, value, idc.SN_CHECK):
             raise BipError("Unable to set name")
 
 
@@ -307,7 +307,7 @@ class BipElt(BipRefElt):
             :return: The coloration of the element in IDA.
             :rtype: int
         """
-        return idc.GetColor(self.ea, idc.CIC_ITEM)
+        return idc.get_color(self.ea, idc.CIC_ITEM)
 
     @color.setter
     def color(self, value):
@@ -316,7 +316,7 @@ class BipElt(BipRefElt):
 
             :param int value: the color to which set the item.
         """
-        idc.SetColor(self.ea, idc.CIC_ITEM, value)
+        idc.set_color(self.ea, idc.CIC_ITEM, value)
 
     ################### COMMENT ##################
 
@@ -329,7 +329,7 @@ class BipElt(BipRefElt):
                 comment.
             :rtype: :class:`str`
         """
-        return idc.GetCommentEx(self.ea, 0)
+        return ida_bytes.get_cmt(self.ea, 0)
 
     @comment.setter
     def comment(self, value):
@@ -341,7 +341,7 @@ class BipElt(BipRefElt):
         """
         if value is None:
             value = ""
-        idc.MakeComm(self.ea, value)
+        idc.set_cmt(self.ea, value, 0)
 
     @property
     def rcomment(self):
@@ -352,7 +352,7 @@ class BipElt(BipRefElt):
                 repeatable comment.
             :rtype: :class:`str`
         """
-        return idc.GetCommentEx(self.ea, 1)
+        return ida_bytes.get_cmt(self.ea, 1)
 
     @rcomment.setter
     def rcomment(self, value):
@@ -364,7 +364,7 @@ class BipElt(BipRefElt):
         """
         if value is None:
             value = ""
-        idc.MakeRptCmt(self.ea, value)
+        ida_bytes.set_cmt(self.ea, value, 1)
 
     @property
     def has_comment(self):
@@ -383,34 +383,34 @@ class BipElt(BipRefElt):
     def is_code(self):
         """
             Property indicating if this element is some code.
-            Wrapper on ``idc.isCode`` .
+            Wrapper on ``idc.is_code`` .
             
             :return: True if current element is code, False otherwise.
             :rtype: bool
         """
-        return idc.isCode(self.flags)
+        return idc.is_code(self.flags)
 
     @property
     def is_data(self):
         """
             Property indicating if this element is considered as data.
-            Wrapper on ``idc.isData`` .
+            Wrapper on ``idc.is_data`` .
             
             :return: True if current element is data, False otherwise.
             :rtype: bool
         """
-        return idc.isData(self.flags)
+        return idc.is_data(self.flags)
 
     @property
     def is_unknown(self):
         """
             Property indicating if this element is considered as unknwon.
-            Wrapper on ``idc.isUnknown`` .
+            Wrapper on ``idc.is_unknown`` .
             
             :return: True if current element is unknwon, False otherwise.
             :rtype: bool
         """
-        return idc.isUnknown(self.flags)
+        return idc.is_unknown(self.flags)
 
     @property
     def is_head(self):
@@ -418,12 +418,12 @@ class BipElt(BipRefElt):
             Property indicating if the element is an *head* in IDA. An *head*
             element is the beggining of an element in IDA (such as the
             beginning of an instruction) and can be named.
-            Wrapper on ``idc.isHead`` .
+            Wrapper on ``idc.is_head`` .
 
             :return: True if the current element is an head, False otherwise.
             :rtype: bool
         """
-        return idc.isHead(self.flags)
+        return idc.is_head(self.flags)
 
     # no is_tail because counter intuitive as it is only a ``not is_head`` 
 
@@ -444,9 +444,9 @@ class BipElt(BipRefElt):
     def goto(self):
         """
             Method which allow to move the screen to the position of this
-            element. Wrapper on ``idc.Jump`` .
+            element. Wrapper on ``ida_kernwin.jumpto`` (old ``idc.Jump``).
         """
-        idc.Jump(self.ea)
+        ida_kernwin.jumpto(self.ea)
 
     #################### STATIC METHOD ######################
 

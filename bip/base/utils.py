@@ -9,6 +9,7 @@ from re import match
 
 import idaapi
 import idc
+import ida_bytes
 import idautils
 import ida_kernwin
 
@@ -47,11 +48,11 @@ def Ptr(ea):
     info = idaapi.get_inf_structure()
 
     if info.is_64bit():
-        return idc.Qword(ea)
+        return ida_bytes.get_qword(ea)
     elif info.is_32bit():
-        return idc.Dword(ea)
+        return ida_bytes.get_wide_dword(ea)
     else:
-        return idc.Word(ea)
+        return ida_bytes.get_wide_word(ea)
 
 def get_ptr_size():
     """
@@ -109,7 +110,7 @@ def get_addr_by_name(name):
         :return: The relative address corresponding to name.
         :rtype: int
     """
-    ea = idc.LocByName(name)
+    ea = idc.get_name_ea_simple(name)
     if ea == 0xffffffffffffffff:
         return 0
     return relea(ea)
@@ -120,7 +121,7 @@ def get_name_by_addr(offset):
 
         .. todo:: Remove the print and raise an exception if an error occur
     """
-    s = idc.GetFuncOffset(absea(offset))
+    s = idc.get_func_off_str(absea(offset))
     if not s:
         nn = idaapi.NearestName({k:v for k,v in idautils.Names()})
         if nn is None:
@@ -142,7 +143,7 @@ def get_name_by_addr(offset):
     # FFS IDA
     name = name.replace('__', '::')
     if not get_addr_by_name(name):
-        print "[!] WUT WUT WUT '%s' returned by GetFuncOffset doesnt exist" % name
+        print "[!] WUT WUT WUT '%s' returned by get_func_off_str doesnt exist" % name
 
     print name, offset
     return name, offset

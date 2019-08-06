@@ -55,7 +55,9 @@ class Instr(BipElt):
             :return: The mnemonic of the instruction
             :rtype: :class:`str`
         """
-        return idc.GetMnem(self.ea)
+        #return idc.GetMnem(self.ea) # old version
+        # idc.print_insn_mnem does not print but return the str, because why not ?
+        return idc.print_insn_mnem(self.ea)
 
     @property
     def _insn(self):
@@ -116,9 +118,9 @@ class Instr(BipElt):
     def has_prev_instr(self):
         """
             Property indicating if this instruction follow an other normal
-            instruction (part of its flow). Wrapper on ``idc.isFlow`` .
+            instruction (part of its flow). Wrapper on ``idc.is_flow`` .
         """
-        return idc.isFlow(self.flags)
+        return idc.is_flow(self.flags)
 
     @property
     def is_call(self):
@@ -179,7 +181,7 @@ class Instr(BipElt):
 
     @classmethod
     def _is_this_elt(cls, ea):
-        return idc.isCode(ida_bytes.get_full_flags(ea))
+        return idc.is_code(ida_bytes.get_full_flags(ea))
 
     # TODO:
     # * flags: different type of flag and property for knowing if the instruction is 

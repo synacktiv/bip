@@ -11,9 +11,9 @@ import socket
 import os
 from json import loads, dumps
 
-from ida_kernwin import MFF_READ, execute_sync
+from ida_kernwin import MFF_READ, execute_sync, jumpto
 
-from idc import GetInputFile
+from idc import get_root_filename
 
 def to_dict(self):
     """
@@ -71,7 +71,7 @@ def search_offset(data):
     return {'function':name, 'offset':offset}
 
 def get_module(data):
-    return {'module': GetInputFile()}
+    return {'module': get_root_filename()}
 
 def get_breakpoints(data):
     bpts = bpt_vec_t()
@@ -93,7 +93,7 @@ def rpc_goto(data):
     if not 'offset' in data:
         return
     
-    Jump(relea(data['offset']))
+    jumpto(relea(data['offset']))
     
 
 def handle_rpc(data):

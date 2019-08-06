@@ -122,12 +122,12 @@ class Operand(object):
         """
             Property allowing to get the representation of the operand as a
             string.
-            Wrapper on ``idc.GetOpnd`` .
+            Wrapper on ``idc.GetOpnd`` (old) or ``idc.print_operand`` (new) .
 
             :return: The representation of the operand.
             :rtype: :class:`str`
         """
-        return idc.GetOpnd(self.ea, self.opnum)
+        return idc.print_operand(self.ea, self.opnum)
 
     @property
     def _op_t(self):
@@ -143,12 +143,13 @@ class Operand(object):
         """
             Property allowing to get the type of the operand. This type
             correspond to the :class:`OpType` value .
-            Wrapper on ``idc.GetOpType`` .
+            Wrapper on ``idc.GetOpType`` (old) or ``idc.get_operand_type``
+            (new).
 
             :return: The type of the operand as defined in :class:`OpType` .
             :rtype: int
         """
-        return idc.GetOpType(self.ea, self.opnum)
+        return idc.get_operand_type(self.ea, self.opnum)
 
     @property
     def dtype(self):
@@ -216,7 +217,8 @@ class Operand(object):
         """
             Property allowing to get the value of an operand. Depending of the
             type of the operand this value can means different things.
-            Wrapper on ``idc.GetOperandValue`` .
+            Wrapper on ``idc.get_operand_value`` (new, old one was
+            ``idc.GetOperandValue``).
 
             .. todo::
 
@@ -226,7 +228,7 @@ class Operand(object):
             :return: The value of the operand.
             :rtype: int
         """
-        return idc.GetOperandValue(self.ea, self.opnum)
+        return idc.get_operand_value(self.ea, self.opnum)
 
     @property
     def value(self):

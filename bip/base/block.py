@@ -273,5 +273,5 @@ class BipBlock(object):
             :return: A list of the bytes forming the element.
             :rtype: list(int)
         """
-        return [idc.Byte(i) for i in range(self.ea, self.end)]
+        return [ida_bytes.get_wide_byte(i) for i in range(self.ea, self.end)]
 
