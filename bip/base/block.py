@@ -44,7 +44,7 @@ class BipBlock(object):
 
     ################################# BASE #################################
 
-    def __init__(self, val):
+    def __init__(self, val=None):
         """
             Constructor for an :class:`BipBlock` object.
 
@@ -96,6 +96,9 @@ class BipBlock(object):
             :return int: The first address at the end of the basicblock.
         """
         return self._bb.end_ea
+
+    def __str__(self):
+        return "BipBlock: 0x{:X} (from {})".format(self.ea, self.func)
 
     @property
     def _id(self):
