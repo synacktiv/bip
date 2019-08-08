@@ -378,7 +378,7 @@ class BipType(object):
             else:
                 done.add(cl)
                 todo |= set(cl.__subclasses__())
-        raise ValueError("GetHxCItem could not find an object matching the tinfo_t type provided ({})".format(tinfo))
+        raise ValueError("GetHxCItem could not find an object matching the tinfo_t type provided ({}: {})".format(tinfo, tinfo.dstr()))
 
     def _get_tinfo_copy(self):
         """
@@ -392,6 +392,22 @@ class BipType(object):
 
 
 # TODO: unknown type
+
+class BTypeEmpty(BipType):
+    """
+        Class which represent the :class:`BipType` for a type with no
+        information (empty). This is apparently different from unknown. This
+        is really used by IDA including in structures and so on.
+
+        .. todo:: test everything for this.
+        .. todo:: check for collision with other types!
+
+    """
+
+    @classmethod
+    def is_handling_type(cls, tinfo):
+        return tinfo.empty()
+
 
 class BTypePartial(BipType):
     """
@@ -730,6 +746,8 @@ class BTypeStruct(BipType):
         value.
 
         .. todo:: test
+        .. todo:: seems there may be a problem when getting the type of the
+            struct members
 
         .. todo:: link to struct in bip
         .. todo:: anonymous udt ?
@@ -813,7 +831,7 @@ class BTypeStruct(BipType):
         d = {}
         for i in range(self.nb_members):
             utd = self._ida_udt_type_data[i]
-            d[utd.name] = udt.type
+            d[utd.name] = BipType.GetBipType(utd.type)
         return d
 
     @property
@@ -912,7 +930,7 @@ class BTypeUnion(BipType):
         d = {}
         for i in range(self.nb_members):
             utd = self._ida_udt_type_data[i]
-            d[utd.name] = udt.type
+            d[utd.name] = BipType.GetBipType(utd.type)
         return d
 
     @property
