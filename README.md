@@ -9,7 +9,8 @@ API and a *real* documentation.
 
 This code is not complete and a lot of features are still missing. Development
 is prioritize on what people ask for and what the developers use, so do not
-hesitate to make PR and Issue (including feature request :).
+hesitate to make PR, Feature Request and Issues (including for the
+documentation).
 
 The documentation is available in the RST format (and can be compile using
 sphinx) in the `doc/` directory.
@@ -20,8 +21,10 @@ TODO (this is a classic IDA plugin install, no setup.py yet)
 
 ## Overview
 
-This overview has for goal to show how the most
-usual operations can be done, it is far from being complete. 
+This overview has for goal to show how the most usual operations can be done,
+it is far from being complete. All functions and objects in Bip are documented
+using doc string so just use `help(BipClass)` and `help(obj.bipmethod)` for
+getting the doc in your shell.
 
 ### Base
 
@@ -198,6 +201,7 @@ to access xrefs. They are represented by the `BipXref` object which have a
 `src` (origin of the xref) and a `dst` (destination of the xref).
 
 ``` python
+>>> from bip.base import *
 >>> i = Instr(0x01800D3063)
 >>> i # exemple with instruction but works the same with BipData
 Instr: 0x1800D3063 (cmp     r15, [rsp+98h+var_58])
@@ -241,6 +245,124 @@ Func: RtlQueryProcessLockInformation (0x1800D2FF0)
 >>> f.xCodeTo # but only one instruction
 [<bip.base.instr.Instr object at 0x000001D95529EC88>]
 ```
+
+#### Struct
+
+Manipulating struct and members:
+
+``` python
+>>> from bip.base import *
+>>> st = BipStruct.get("EXCEPTION_RECORD") # Struct are access by using get and their name
+>>> st # BipStruct object
+Struct: EXCEPTION_RECORD (size=0x98)
+>>> st.comment = "struct comment"
+>>> st.comment
+struct comment
+>>> st.name
+EXCEPTION_RECORD
+>>> st.size
+152
+>>> st["ExceptionFlags"] # access to the BStructMember by their name
+Member: EXCEPTION_RECORD.ExceptionFlags (offset=0x4, size=0x4)
+>>> st[8] # or by their offset, this is *not* the entry number 8!!!
+Member: EXCEPTION_RECORD.ExceptionRecord (offset=0x8, size=0x8)
+>>> st[2] # offset does not need to be the first one
+Member: EXCEPTION_RECORD.ExceptionCode (offset=0x0, size=0x4)
+>>> st.members # list of members
+[<bip.base.struct.BStructMember object at 0x000001D95529EEF0>, ..., <bip.base.struct.BStructMember object at 0x000001D95536DF28>]
+>>> st[0].name
+ExceptionCode
+>>> st[0].fullname
+EXCEPTION_RECORD.ExceptionCode
+>>> st[0].size
+4
+>>> st[0].struct
+Struct: EXCEPTION_RECORD (size=0x98)
+>>> st[0].comment = "member comment"
+>>> st[0].comment
+member comment
+>>> st[8].xEltTo # BStructMember et BipStruct have xrefs
+[<bip.base.instr.Instr object at 0x000001D95536DD30>, <bip.base.instr.Instr object at 0x000001D95536D9E8>]
+>>> st[8].xEltTo[0]
+Instr: 0x1800A0720 (mov     [rsp+538h+ExceptionRecord.ExceptionRecord], r10)
+```
+
+Creating struct, adding member and nested structure:
+
+``` python
+>>> from bip.base import *
+>>> st = BipStruct.create("NewStruct") # create a new structure
+>>> st
+Struct: NewStruct (size=0x0)
+>>> st.add("NewField", 4) # add a new member named "NewField" of size 4 
+Member: NewStruct.NewField (offset=0x0, size=0x4)
+>>> st.add("NewQword", 8)
+Member: NewStruct.NewQword (offset=0x4, size=0x8)
+>>> st
+Struct: NewStruct (size=0xC)
+>>> st.add("struct_nested", 1)
+Member: NewStruct.struct_nested (offset=0xC, size=0x1)
+>>> st["struct_nested"].type = BipType.FromC("EXCEPTION_RECORD") # changing the type of member struct_nested as struct EXCEPTION_RECORD
+>>> st["struct_nested"]
+Member: NewStruct.struct_nested (offset=0xC, size=0x98)
+>>> st["struct_nested"].is_nested # is this a nested structure ?
+True
+>>> st["struct_nested"].nested_struct # getting the nested structure
+Struct: EXCEPTION_RECORD (size=0x98)
+```
+#### Types
+
+IDA use extensively types in hexrays but also in the base API for defining
+types of data, variables and so on. In Bip the different types inherit from 
+the same class `BipType`. This class propose some basic methods common to all
+types and subclasses (class starting by `BType`) can define more specifics
+ones.
+
+The types should be seen as a recursive structure: a ``void *`` is a
+`BTypePtr` containing a `BTypeVoid` structure. For a list of the different
+types implemented in Bip see TODO.
+
+``` python
+>>> pv = BipType.FromC("void *") # FromC is the easiest way to create a type
+>>> pv
+<bip.base.biptype.BTypePtr object at 0x000001D95536DDD8>
+>>> pv.size # ptr on x64 is 8 bytes
+8
+>>> pv.str # C string representation
+void *
+>>> pv.is_named # this type is not named
+False
+>>> pv.pointed # type bellow the pointer (recursive)
+<bip.base.biptype.BTypeVoid object at 0x000001D95536DF60>
+>>> pv.childs # list of type pointed
+[<bip.base.biptype.BTypeVoid object at 0x000001D95536DEB8>]
+>>> d = BipData(0x000180110068)
+>>> d.type # access directly to the type at the address
+<bip.base.biptype.BTypePtr object at 0x000001D95536D9E8>
+>>> d.type.str
+void *
+>>> ps = BipType.FromC("EXCEPTION_RECORD *")
+>>> ps.pointed # type for struct EXCEPTION_RECORD
+<bip.base.biptype.BTypeStruct object at 0x000001D95536DD30>
+>>> ps.pointed.is_named # this one is named
+True
+>>> ps.pointed.name
+EXCEPTION_RECORD
+>>> ps.set_at(d.ea) # set the type ps at address d.ea
+>>> d.type.str # the type has indeed change
+EXCEPTION_RECORD *
+>>> d.type = pv # rolling it back
+>>> d.type.str
+void *
+>>> BipType.get_at(d.ea) Possible to directly recuperating the type with get_at(address)
+<bip.base.biptype.BTypePtr object at 0x000001D95536DEB8>
+```
+
+
+
+
+
+
 
 
 
