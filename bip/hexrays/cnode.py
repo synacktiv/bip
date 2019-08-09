@@ -129,6 +129,7 @@ class CNode(AbstractCItem):
             :return: A :class:`HxCFunc` object corresponding to the function
                 associated with this node.
         """
+        return self._hxcfunc
 
     ########################### CNODE CREATION #############################
 
