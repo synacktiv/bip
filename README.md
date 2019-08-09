@@ -29,8 +29,9 @@ getting the doc in your shell.
 ### Base
 
 The module `bip.base` contains most of the *basic* features for interfacing
-with IDA. This includes: manipulation of instruction, functions, basic blocks,
-operands, data, xrefs, structures, types, ...
+with IDA. In practice this is mainly the disasmbleur part of IDA, this
+includes: manipulation of instruction, functions, basic blocks, operands,
+data, xrefs, structures, types, ...
 
 #### Instructions / Operands
 
@@ -354,13 +355,158 @@ EXCEPTION_RECORD *
 >>> d.type = pv # rolling it back
 >>> d.type.str
 void *
->>> BipType.get_at(d.ea) Possible to directly recuperating the type with get_at(address)
+>>> BipType.get_at(d.ea) # Possible to directly recuperating the type with get_at(address)
 <bip.base.biptype.BTypePtr object at 0x000001D95536DEB8>
 ```
 
+### Hexrays
 
+The module `bip.hexrays` contains the features link to the decompiler
+provided by IDA.
 
+#### Functions / local variables
 
+``` python
+>>> HxCFunc.from_addr() # HxCFunc represent a decompiled function
+<bip.hexrays.hx_cfunc.HxCFunc object at 0x00000278AE80C860>
+>>> hf = BipFunction().hxfunc # accessible from a "normal function"
+>>> hex(hf.ea) # address of the functions
+0x1800d2ff0L
+>>> hf.args # list of the arguments as HxLvar objects
+[<bip.hexrays.hx_lvar.HxLvar object at 0x00000278AFDAACF8>]
+>>> hf.lvars # list of all local variable (including args)
+[<bip.hexrays.hx_lvar.HxLvar object at 0x00000278AFDAAB70>, ..., <bip.hexrays.hx_lvar.HxLvar object at 0x00000278AFDAF4E0>]
+>>> lv = hf.lvars[0] # getting the first one
+>>> lv
+LVAR(name=a1, size=8, type=<bip.base.biptype.BTypeInt object at 0x00000278AFDAAFD0>)
+>>> lv.name # getting name of lvar
+a1
+>>> lv.is_arg # is this variable an argument ?
+True
+>>> lv.name = "thisisthefirstarg" # changing name of the lvar
+>>> lv
+>>> lv.type = BipType.FromC("void *") # changing the type
+>>> lv.comment = "new comment" # adding a comment
+>>> lv.size # getting the size
+8
+```
+
+#### CNode / Visitors
+
+Hexrays allow to manipulate the AST it produces, this is a particularly
+usefull feature as it allow to make static analysis at a way higher level.
+Bip define `CNode` which represent a node of the AST, each type of node is
+represented by a subclass of `CNode`. All types of node have child nodes except
+`CNodeExprFinal` which are the leaf of the AST. Two *main* types of nodes
+exist `CNodeExpr` (expressions) and `CNodeStmt` (statements). Statements
+correspond to the C Statements: if, while, ... , expressions are everything
+else. Statements can have childs statements or expressions while expressions
+can only have expressions child.
+
+A list of all the different types of node and more details on what they do and
+how to write visitor is present in TODO.
+
+Directly accessing the nodes:
+
+``` python
+>>> hf = HxCFunc.from_addr() # get the HxCFunc
+>>> rn = hf.root_node # accessing the root node of the function
+>>> rn # root node is always a CNodeStmtBlock
+CNodeStmtBlock(ea=0x1800D3006, st_childs=[<bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278AFDAADD8>, ..., <bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16355F8>])
+>>> hex(rn.ea) # address of the root node, after the function prolog
+0x1800d3006L
+>>> rn.has_parent # root node does not have parent
+False
+>>> rn.expr_childs # this node does not have expression statements
+[]
+>>> ste = rn.st_childs[0] # getting the first statement childs
+>>> ste # CNodeStmtExpr contain one child expression
+CNodeStmtExpr(ea=0x1800D3006, value=CNodeExprAsg(ea=0x1800D3006, ops=[<bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8>, <bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1637080>]))
+>>> ste.parent # the parent is the root node
+CNodeStmtBlock(ea=0x1800D3006, st_childs=[<bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278B1637048>, ..., <bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16376D8>])
+>>> a = ste.value # getting the expression of the node
+>>> a # Asg is an assignement
+CNodeExprAsg(ea=0x1800D3006, ops=[<bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8>, <bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1637080>])
+>>> a.first_op # first operand of the assignement is a lvar, lvar are leaf
+CNodeExprVar(ea=0xFFFFFFFFFFFFFFFF, value=1)
+>>> a.first_op.lvar # recuperate the lvar object
+LVAR(name=v1, size=8, type=<bip.base.biptype.BTypeInt object at 0x00000278B16390B8>)
+>>> a.ops # list all operands of the expression
+[<bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8>, <bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1639080>]
+>>> a.ops[1] # getting the second operand, also a lvar
+CNodeExprVar(ea=0xFFFFFFFFFFFFFFFF, value=0)
+>>> hex(a.ops[1].closest_ea) # lvar have no position in the ASM, but possible to take the one of the parents
+0x1800d3006L
+```
+
+The previous code show how to get value and manipulate quickly nodes. For
+making analysis it is easier to use visitor on the complete function.
+`hf.visit_cnode` allow to visit all the nodes in a function with a callback,
+`hf.visit_cnode_filterlist` allow to visit only node of a certain type by
+passing a list of the node.
+
+This script is an exemple for visiting a function and recuperating the
+format string pass to a `printk` function. It locates the call to `printk`,
+recuperate the address of the first argument, get the string and add a comment
+in the hexrays:
+
+``` python
+from bip.base import *
+from bip.hexrays import *
+from bip.hexrays.cnode import *
+
+"""
+    Search for all call to printk, if possible recuperate the string and add
+    it in comments in hexrays view at the call level.
+"""
+
+def ignore_cast_ref(cn):
+    # ignore cast and ref (``&`` operator in C) node
+    #   ignoring cast is a common problem, ignoring ref can be a really bad
+    #   idea
+    if isinstance(cn, (CNodeExprCast, CNodeExprRef)):
+        return ignore_cast_ref(cn.ops[0])
+    return cn
+
+def visit_call(cn):
+    c = ignore_cast_ref(cn.caller)
+    if not isinstance(c, CNodeExprObj):
+        # if it is not an object just ignore it, object are for everything
+        # which has an address, including functions
+        return
+    try:
+        # check if it calls to printk
+        # For more perf. we would want to use xref to printk and checks of
+        #   the address of the node
+        if BipFunction(c.value).name != "printk":
+            return
+        if cn.number_args < 1: # if we don't have a first argument ignore
+            print("Call to printk without arg at 0x{:X}".format(cn.ea))
+            return
+        
+        # lets get the address of the structure in first arg
+        karg = ignore_cast_ref(cn.args[0])
+        if not isinstance(karg, (CNodeExprNum, CNodeExprObj)):
+            # we check for Num in case hexrays have failed, do not handle
+            #   lvar and so on
+            print("Call to printk with unhandle argument type ({}) at 0x{:X}".format(karg, cn.ea))
+            return 
+        ea = karg.value
+        s = BipData.get_cstring(ea + 2) # get the string
+        if s is None or s == "": # sanity check
+            print("Invalid string at 0x{:X}".format(cn.ea))
+            return
+        s = s.strip() # remove space and \n
+		# CNode.cfunc is the HxCFunc object
+        cn.cfunc.add_cmt(cn.ea, s) # add a comment on the hexrays function
+    except Exception: 
+        print("Exception at 0x{:X}".format(cn.ea))
+        return
+
+def printk_handler(eafunc):
+    hf = HxCFunc.from_addr(eafunc) # get the hexrays function
+    hf.visit_cnode_filterlist(visit_call, [CNodeExprCall]) # visit only the call nodes
+```
 
 
 
