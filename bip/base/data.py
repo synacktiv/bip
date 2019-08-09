@@ -461,4 +461,18 @@ class BipData(BipElt):
         if not ida_bytes.patch_qword(ea, value):
             raise RuntimeError("Unable to set value {} at {}".format(ea, value))
 
+    @staticmethod
+    def get_cstring(ea=None, size=-1):
+        """
+            Static method for getting a C string from an address.
+
+            :param ea: The address of the string. If
+                ``None`` the screen address is used.
+            :param size: The size of the string. If ``-1`` (default), until a
+                ``\0`` is found.
+        """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
+        return idc.get_strlit_contents(ea, length=size)
+
 
