@@ -154,6 +154,42 @@ class BipPluginManager(idaapi.plugin_t):
             return
         self.load_one(name, forced=forced, ifneeded=ifneeded)
 
+    def get_plugin(self, name):
+        """
+            Get a plugin instance from its name. The plugin must be loaded
+            for this method to work.
+            
+            :param name: A string representing the :class:`BipPlugin` name
+                or a subclass of :class:`BipPlugin`.
+            :return: An object (instance) which inherit from
+                :class:`BipPlugin` or ``None`` if not found.
+        """
+        if isinstance(name, type): # a class was given in parameter
+            name = name.__name__
+        if name in self._loaded:
+            return self._loaded[name]
+        return None
+
+    def __getitem__(self, key):
+        """
+            Get a plugin instance from its name or class. This is a wrapper
+            on :meth:`get_plugin` but it will raise a ``KeyError`` in case
+            the plugin was not found.
+        """
+        p = self.get_plugin(key)
+        if p is None:
+            raise KeyError("Plugin {} instance was not found".format(key))
+        return p
+
+    def __contains__(self, key):
+        """
+            Check if a plugin was loaded by the :class:`BipPluginManager` and
+            can be access through it.
+        """
+        if isinstance(key, type):
+            key = key.__name__
+        return key in self._loaded
+
     def run(self, arg):
         # TODO: this should allow to see and manage plugins
         #   IDA action, mapped on Ctrl-0
