@@ -1,9 +1,6 @@
-import sys
-
+import pluginmanager
 from actions import BipAction
 from activity import BipActivity, BipActivityContainer
-
-_BIP_PLUGINS_LIST = {} # dict of bip plugin for plugin manager
 
 class MetaBipPlugin(type):
     """
@@ -22,17 +19,19 @@ class MetaBipPlugin(type):
     """
 
     def __init__(cls, name, bases, dct):
-        # Add plugin to the plugin list
-        global _BIP_PLUGINS_LIST
-        if name in _BIP_PLUGINS_LIST:
-            raise RuntimeError("Plugin already registered")
-        _BIP_PLUGINS_LIST[name] = cls
         # Add activity in the class list
         cls._activities = {}
-        for name, value in dct.items():
+        for na, value in dct.items():
             if isinstance(value, BipActivity):
-                cls._activities[name] = value
-        return super(MetaBipPlugin, cls).__init__(name, bases, dct) 
+                cls._activities[na] = value
+        super(MetaBipPlugin, cls).__init__(name, bases, dct) 
+        # Add plugin to the plugin list
+        #global _BIP_PLUGINS_LIST
+        #if name in _BIP_PLUGINS_LIST:
+        #    raise RuntimeError("Plugin already registered")
+        #_BIP_PLUGINS_LIST[name] = cls
+        bpm = pluginmanager.get_plugin_manager()
+        bpm.addld_plugin(name, cls, ifneeded=True) # do not reload if already done
 
 class BipPlugin(object):
     """
@@ -55,6 +54,11 @@ class BipPlugin(object):
             corresponding to a dict of ``name`` (corresponding to the orginal
             name of the method) as key and with objects which inherit from
             :class:`BipActivity`
+
+        .. todo:: singleton ?
+
+        .. todo:: should support to not automatically load plugin (doable with
+            to_load but a more "standard way could be done")
 
         .. todo:: doc
     """
@@ -101,6 +105,8 @@ class BipPlugin(object):
             At that point the plugin object has not been loaded yet, this
             allow to test if the plugin is made for working in this
             environment (python version, OS, IDA version, ...).
+
+            This method can be called several time.
 
             By default always return ``True``.
 

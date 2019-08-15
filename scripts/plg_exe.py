@@ -2,11 +2,12 @@ from bip.gui import *
 
 class ExPlugin(BipPlugin):
 
-    def to_load(self):
+    @classmethod
+    def to_load(cls):
         return True # always loading
 
     @shortcut("Ctrl-H")
-    @shortcut("Ctrl-0")
+    @shortcut("Ctrl-5")
     @menu("Edit/Plugins/", "ExPlugin Action!")
     def action_with_shortcut(self):
         print(self)
