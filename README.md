@@ -194,6 +194,29 @@ True
 False
 ```
 
+Some static function are provided for searching the next (or previous) element
+of a cerain type:
+
+``` python
+>>> from bip.base import *
+>>> GetElt()
+Instr: 0x1800D3248 (mov     rdx, r14)
+>>> BipElt.next_code() # find next code element
+Instr: 0x1800D324B (mov     rcx, r13)
+>>> BipElt.next_code(down=False) # find prev code element
+Instr: 0x1800D3242 (mov     r8d, 8)
+>>> BipElt.next_data() # find next data element
+BipData at 0x1800D3284 = 0xCC
+>>> BipElt.next_data(down=False) # find previous data element
+BipData at 0x1800D2FE1 = 0xCC
+>>> hex(BipElt.next_data_addr(down=False)) # find address of the previous data element
+0x1800d2fe1L
+>>> BipElt.next_unknown() # same for unknown, which are not typed element of IDA and are considered data by Bip
+BipData at 0x180110000 = 0xE
+>>> BipElt.next_defined() # opposite of unknown: data or code
+Instr: 0x1800D324B (mov     rcx, r13)
+```
+
 #### Xref
 
 All elements which inherit from `BipRefElt` (`Instr`, `BipData`, `BipStruct`,
