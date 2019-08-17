@@ -680,6 +680,84 @@ class BipElt(BipRefElt):
         else:
             return GetElt(r)
 
+    @staticmethod
+    def search_bytes_addr(byt, start_ea=None, end_ea=None, down=True, nxt=True):
+        """
+            Static method for searching a sequence of bytes. This will search
+            for the bytes which ever the data type is.
+
+            This is a wrapper on the ``ida_search.find_binary`` (previously
+            ``FindBinary``) function from IDA with a radix of 16.
+
+            The byte should be represented in hexadecimal seperated by space.
+            A ``?`` can be put for replacing a byte, for exemple:
+            ``41 8B 44 ? 20``.
+
+            :param byt: A string representing a sequence of byte.
+            :param start_ea: The address at which to start the search, if 
+                ``None`` the current address will be used.
+            :param end_ea: The address at which to stop the search, if
+                ``None`` the maximum or minimum (depending of searching up or
+                down) will be used.
+            :param down: If True (the default) search bellow the given
+                address, if False search above.
+            :param nxt: If True (the default) the current element will not
+                be included in the search.
+            :return: The address at which the byte sequence is present or
+                ``None`` if no element were found during the search.
+        """
+        if start_ea is None:
+            start_ea = ida_kernwin.get_screen_ea()
+        if down:
+            fl = ida_search.SEARCH_DOWN
+            if end_ea is None:
+                end_ea = idc.get_inf_attr(idc.INF_MAX_EA)
+        else:
+            fl = ida_search.SEARCH_UP
+            if end_ea is None:
+                end_ea = idc.get_inf_attr(idc.INF_MIN_EA)
+        if nxt:
+            fl |= ida_search.SEARCH_NEXT
+        r = ida_search.find_binary(start_ea, end_ea, byt, 16, fl)
+        if r == idc.BADADDR:
+            return None
+        else:
+            return r
+
+    @staticmethod
+    def search_bytes(byt, start_ea=None, end_ea=None, down=True, nxt=True):
+        """
+            Static method for searching a sequence of bytes. This will search
+            for the bytes which ever the data type is.
+
+            This is a wrapper on the ``ida_search.find_binary`` (previously
+            ``FindBinary``) function from IDA with a radix of 16.
+
+            The byte should be represented in hexadecimal seperated by space.
+            A ``?`` can be put for replacing a byte, for exemple:
+            ``41 8B 44 ? 20``.
+
+            :param byt: A string representing a sequence of byte.
+            :param start_ea: The address at which to start the search, if 
+                ``None`` the current address will be used.
+            :param end_ea: The address at which to stop the search, if
+                ``None`` the maximum or minimum (depending of searching up or
+                down) will be used.
+            :param down: If True (the default) search bellow the given
+                address, if False search above.
+            :param nxt: If True (the default) the current element will not
+                be included in the search.
+            :return: An object which inherit from :class:`BipBaseElt`
+                representing the element at the address at which the byte
+                sequence is present or ``None`` if no element were found
+                during the search.
+        """
+        r = BipElt.search_bytes_addr(byt, start_ea=start_ea, end_ea=end_ea, down=down, nxt=nxt)
+        if r is None:
+            return r
+        else:
+            return GetElt(r)
+
 def GetElt(ea=None):
     """
         Return an object inherithed from :class:`BipBaseElt` which correspond
