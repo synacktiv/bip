@@ -512,8 +512,9 @@ def printk_handler(eafunc):
 
 Plugins using Bip should all inherit from the class `BipPlugin`. Those plugin
 are different from the IDA plugin and are loaded and called by the
-`BipPluginManager` (TODO: implement this). For more information about plugins
-and internals see TODO.
+`BipPluginManager`. Each plugin is identified by its class name and those
+should be unique. For more information about plugins and internals see
+TODO.
 
 Here is a simple plugin exemple:
 
@@ -524,11 +525,12 @@ class ExPlugin(BipPlugin):
  	# inherit from BipPlugin, all plugin should be instantiated only once
 	# this should be done by the plugin manager, not "by hand"
 
-    def to_load(self): # allow to test if the plugin apply
+    @classmethod
+    def to_load(cls): # allow to test if the plugin apply, this MUST be a classmethod
         return True # always loading
 
     @shortcut("Ctrl-H") # add a shortcut as a decorator, will call the method bellow
-    @shortcut("Ctrl-0") # add an other one
+    @shortcut("Ctrl-5") # add an other one
     @menu("Edit/Plugins/", "ExPlugin Action!") # add a menu entry named "ExPlugin Action!", default is the method name
     def action_with_shortcut(self):
         print(self) # this is the ExPlugin object
@@ -537,11 +539,32 @@ class ExPlugin(BipPlugin):
 
 TODO: make a more "real-life" plugin with printk for exemple
 
+A plugin can expose methods which another plugin wants to call or directly
+from the console. A plugin should not be directly instantiated, it is the
+`BipPluginManager` which is in charge of loading it. For recuperating a
+`BipPlugin` object it should be requested to the plugin manager:
+
+``` python
+>>> from bip.gui import *
+>>> bpm = get_plugin_manager() # recuperate the BipPluginManager object
+>>> bpm
+<bip.gui.pluginmanager.BipPluginManager object at 0x000001EFE42D68D0>
+>>> tp = bpm["TstPlugin"] # recuperate the plugin object name TstPlugin
+>>> tp # can also be recuperated by passing directly the class
+<__plugins__tst_plg.TstPlugin object at 0x000001EFE42D69B0>
+>>> tp.hello() # calling a method of TstPlugin
+hello
+```
+
+## Similar projects
+
+* [sark](https://sark.readthedocs.io/en/latest/): "an object-oriented scripting layer written on top of IDAPython".
+
 ## Thanks
 
 Some people to thanks:
 
-* Clément Berthaux: for starting this project.
-* Clément Rouault: for the inspiration on the projet and its insights on designing this project.
-* Synacktiv and its amazing teams: for providing beta-testers, time for developments and fun problems.
+* [saph](https://twitter.com/_saph_): for starting this project.
+* [hakril](https://twitter.com/hakril): for the inspiration on the projet and its insights on designing it.
+* [Synacktiv](https://twitter.com/Synacktiv) and its amazing teams: for providing beta-testers, time for developments and fun problems.
 
