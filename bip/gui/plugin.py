@@ -2,6 +2,8 @@ import pluginmanager
 from actions import BipAction
 from activity import BipActivity, BipActivityContainer
 
+import sys
+
 class MetaBipPlugin(type):
     """
         Metaclass for :class:`BipPlugin`.
@@ -26,11 +28,17 @@ class MetaBipPlugin(type):
                 cls._activities[na] = value
         super(MetaBipPlugin, cls).__init__(name, bases, dct) 
         # Add plugin to the plugin list
-        #global _BIP_PLUGINS_LIST
-        #if name in _BIP_PLUGINS_LIST:
-        #    raise RuntimeError("Plugin already registered")
-        #_BIP_PLUGINS_LIST[name] = cls
+        # getting the plugin manager
         bpm = pluginmanager.get_plugin_manager()
+        # black magic for the method of the plugin to be able to call super
+        # we add the class to the module for it to be accessible
+        # this is a hack but this should work in most case, it will be
+        #   rewritten by python just after. There may be a problem in case the
+        #   class is register inside a function or something
+        mod_name = dct["__module__"]
+        mod = sys.modules[mod_name]
+        mod.__dict__[name] = cls
+        # adding the plugin to the plugin manager
         bpm.addld_plugin(name, cls, ifneeded=True) # do not reload if already done
 
 class BipPlugin(object):
@@ -138,8 +146,14 @@ class BipPlugin(object):
             .. note:: This method is in charge of calling
                 :meth:`~BipPlugin._register_activities` which allow to
                 activate the :class:`BipActivity` link to this plugin.
+                A plugin should ensure to call this method using ``super``.
 
             .. todo:: link to the plugin manager
+
+            .. todo:: bug in sublcasses here when this method try to use its
+                own class name, doc this or make something better. or maybe
+                delete this method and do everythin in main ? or call register
+                activities in the plugin manager ?
         """
         self._register_activities()
 
