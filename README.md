@@ -194,8 +194,7 @@ True
 False
 ```
 
-Some static function are provided for searching the next (or previous) element
-of a cerain type:
+Some static function are provided for searching element in the database:
 
 ``` python
 >>> from bip.base import *
@@ -214,6 +213,8 @@ BipData at 0x1800D2FE1 = 0xCC
 >>> BipElt.next_unknown() # same for unknown, which are not typed element of IDA and are considered data by Bip
 BipData at 0x180110000 = 0xE
 >>> BipElt.next_defined() # opposite of unknown: data or code
+Instr: 0x1800D324B (mov     rcx, r13)
+>>> BipElt.search_bytes("49 ? CD", 0x1800D3248) # search for byte sequence (ignore the current position by default)
 Instr: 0x1800D324B (mov     rcx, r13)
 ```
 
