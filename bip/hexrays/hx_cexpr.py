@@ -1135,9 +1135,39 @@ class HxCExprCall(HxCExpr):
     def ops(self):
         return [self.caller] + self.args
 
+@cnode.buildCNode
+class HxCExprMemAccess(HxCExpr):
+    """
+        Abstract class for representing a :class:`HxCExpr` corresponding to
+        a memory access. This include access in an array (``obj[off]``,
+        a memory reference (``obj.off``) or a memory pointer (``obj->off``).
+
+        Provide the properties: :meth:`~HxCExprMemAccess.obj` and
+        :meth:`~HxCExprMemAccess.off`.
+    """
+
+    @property
+    def obj(self):
+        """
+            Property which return a :class:`HxCExpr` representing the base
+            memory location.
+            :return: An operand of the expression, an object which
+                inherit from :class:`HxCExpr` .
+        """
+        pass # abstract
+
+    @property
+    def off(self):
+        """
+            Property which return the offset of the memory location.
+
+            :return: An object which inherit from :class:`HxCExpr` or an
+                integer.
+        """
+        pass # abstract
 
 @cnode.buildCNode
-class HxCExprIdx(HxCExpr):
+class HxCExprIdx(HxCExprMemAccess):
     """
         Class for representing access to an index in an array
         (``array[index]``). The :meth:`array` is a :class:`HxCExpr`
@@ -1169,12 +1199,20 @@ class HxCExprIdx(HxCExpr):
         return self._createChild(self._cexpr.y)
 
     @property
+    def obj(self):
+        return self.array
+
+    @property
+    def off(self):
+        return self.index
+
+    @property
     def ops(self):
         return [self.array, self.index]
 
 
 @cnode.buildCNode
-class HxCExprMemref(HxCExpr):
+class HxCExprMemref(HxCExprMemAccess):
     """
         Class for representing a memory reference
         (``mem.off``). The :meth:`mem` is a :class:`HxCExpr`
@@ -1195,6 +1233,10 @@ class HxCExprMemref(HxCExpr):
         return self._createChild(self._cexpr.x)
 
     @property
+    def obj(self):
+        return self.mem
+
+    @property
     def off(self):
         """
             Property which return the memory offset which is access by this
@@ -1211,7 +1253,7 @@ class HxCExprMemref(HxCExpr):
         return [self.mem]
 
 @cnode.buildCNode
-class HxCExprMemptr(HxCExpr):
+class HxCExprMemptr(HxCExprMemAccess):
     """
         Class for representing a memory access using a pointer
         (``ptr->off``). The :meth:`ptr` is a :class:`HxCExpr`
@@ -1231,6 +1273,10 @@ class HxCExprMemptr(HxCExpr):
                 inherit from :class:`HxCExpr` .
         """
         return self._createChild(self._cexpr.x)
+
+    @property
+    def obj(self):
+        return self.ptr
 
     @property
     def off(self):
