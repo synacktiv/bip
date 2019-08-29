@@ -17,7 +17,11 @@ sphinx) in the `doc/` directory.
 
 ## Installation
 
-TODO (this is a classic IDA plugin install, no setup.py yet)
+TODO: setup.py
+
+1. Take the bip folder and put it in the `python` directory in your IDA installation path.
+2. Take the content of the install foler and put it in the `plugins` directory  in your IDA installation path (necessary for using `BipPlugin`).
+3. Put every plugin you want to use in the IDA installation path.
 
 ## Overview
 
