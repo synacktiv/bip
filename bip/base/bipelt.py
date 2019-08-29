@@ -65,6 +65,13 @@ class BipBaseElt(object):
             return False
         return True
 
+    def __eq__(self, other):
+        """
+            Compare the id of 2 :class:`BipBaseElt` and return ``True`` if
+            they are equal.
+        """
+        return self._idelt == other._idelt
+
 class BipRefElt(BipBaseElt):
     """
         Class which represent element which can be reference through a xref.
