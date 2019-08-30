@@ -244,7 +244,7 @@ class BipStruct(BipRefElt):
         flags |= d[size]
 
         # create member
-        r = ida_struct.add_struc_member(self._struct, name, -1, flags, None, size)
+        r = ida_struct.add_struc_member(self._struct, name, idc.BADADDR, flags, None, size)
         if r != 0:
             raise ValueError("Unable to add member {} (size={}) in {}".format(name, size, self))
 
@@ -336,7 +336,7 @@ class BipStruct(BipRefElt):
         if sid != idc.BADADDR:
             raise ValueError('Struct {} already exists'.format(name))
 
-        sid = ida_struct.add_struc(-1, name, 0)
+        sid = ida_struct.add_struc(idc.BADADDR, name, 0)
         if sid == idc.BADADDR:
             raise BipError("Impossible to create structure with name={}".format(name))
         return cls(ida_struct.get_struc(sid))
