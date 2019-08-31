@@ -813,3 +813,11 @@ def GetEltByName(name):
         return None
     return GetElt(ea)
 
+def Here():
+    """
+        Return current screen address.
+
+        :return: The current address.
+    """
+    return ida_kernwin.get_screen_ea()
+
