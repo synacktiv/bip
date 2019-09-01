@@ -76,13 +76,13 @@ class BipPluginManager(idaapi.plugin_t):
             :meth:`addld_plugin` .
 
             For a plugin this means: it will be check if the
-            :classmeth:`~BipPlugin.to_load` return True and if it so an object
+            :meth:`~BipPlugin.to_load` return True and if it so an object
             will be created, and the :meth:`~BipPlugin.load` method will be
             called.
 
             :param name: The name of the plugin to load.
             :param forced: If True (default False) the call to
-                :classmeth:`~BipPlugin.to_load` will be skipped.
+                :meth:`~BipPlugin.to_load` will be skipped.
             :param ifneeded: If True will load the plugin
                 only if not already loaded, by default (False) will raise an
                 exception.
@@ -143,7 +143,7 @@ class BipPluginManager(idaapi.plugin_t):
                 instantiate it itself.
             :param forced: If True (default False) it will not check if the
                 :class:BipPluginManager` as been loaded by IDA, nor will it
-                call the :classmeth:`~BipPlugin.to_load` of the plugin.
+                call the :meth:`~BipPlugin.to_load` of the plugin.
             :param ifneeded: If True (default False) will add and load the
                 plugin only if not already present internally.
             :raise RuntimeError: If the plugin is already registered or

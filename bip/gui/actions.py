@@ -10,10 +10,8 @@ class BipAction(BipActivity):
         is the equivalent of the ``idaapi.action_handler_t`` for Bip.
 
         The main use of this class can be made through decorator which should
-        allow to simplify the life of the developer. See TODO.
-
-        .. todo:: doc
-        .. todo:: everything
+        allow to simplify the life of the developer.
+        See :ref:`gui-plugin-activity-decorators`.
 
         .. todo:: allow to unregister
         .. todo:: handle ctx and access to it

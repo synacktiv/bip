@@ -10,10 +10,8 @@ class MetaBipPlugin(type):
 
         This metaclass has two main usage. The first is for interfacing
         with the plugin manager: it is used for checking no colision are made
-        between the plugins and to allow the plugin manager to register all 
-        the plugins.
-
-        .. todo:: Link to the plugin manager
+        between the plugins and to allow the :class:`BipPluginManager` to
+        register all  the plugins.
 
         The second usage is to create a dict of :class:`BipActivity`
         associated with a plugin. Those are stored in a dict with the name
@@ -137,8 +135,8 @@ class BipPlugin(object):
 
     def load(self):
         """
-            Method which will be called by the PluginManager when the plugin
-            must be loaded.
+            Method which will be called by the :class:`BipPluginManager` when
+            the plugin must be loaded.
             
             This method can be surcharge by a Plugin for allowing to take
             actions at the moment where it will be loaded.
@@ -147,13 +145,6 @@ class BipPlugin(object):
                 :meth:`~BipPlugin._register_activities` which allow to
                 activate the :class:`BipActivity` link to this plugin.
                 A plugin should ensure to call this method using ``super``.
-
-            .. todo:: link to the plugin manager
-
-            .. todo:: bug in sublcasses here when this method try to use its
-                own class name, doc this or make something better. or maybe
-                delete this method and do everythin in main ? or call register
-                activities in the plugin manager ?
         """
         self._register_activities()
 

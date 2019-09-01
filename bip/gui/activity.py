@@ -5,56 +5,17 @@ class BipActivity(object):
     """
         Class allowing to make the link between the IDA API and a
         :class:`BipPlugin` . In particular this will allow to define
-        :class:`BipAction` (including shortcut and menu entry) or callbacks.
+        :class:`BipAction` (including :func:`shortcut` and :func:`menu` entry)
+        or callbacks.
 
         .. todo:: put link to callbacks when realized
 
         All :class:`BipActivity` object link to a :class:`BipPlugin` have a
         property ``plugin`` which give them access to the plugin object.
 
-        All :class:`BipActivity` subclasses should implement the methods:
-
-        * :meth:`~BipActivity.register`: register the interface with IDA. This
-          will be called when a plugin is loaded.
-        * :meth:`~BipActivity.unregister`: register the interface with IDA.
-          This is the oposite of :meth:`~BipActivity.register`, it will be
-          called when a plugin is unloaded.
-        * :meth:`~BipActivity.handler`: the handler function of the activity
-          which actually does the action. It is not necessary to implement
-          this function if the ``handler`` parameter for the constructor is
-          defined.
-
         Activities have for main goal to be used as decorator when writing
         a plugin and as such are *callable* object. *Calling* this object
         will triger a call to the :meth:`~BipActivity.handler` method.
-
-        .. todo:: relocate this note in the main doc.
-
-        .. note:: **Activity and decorator**
-
-            Some decorators are define for being use inside a
-            :class:`BipPlugin` class for defining interactions with IDA. Those
-            decorators will dynamically create :class:`BipActivity` objects.
-
-            When a :class:`BipPlugin` class is create the metaclass
-            :class:`MetaBipPlugin` of the :class:`BipPlugin` will create a
-            list of the :class:`BipActivity` associtated with the plugin
-            (stored in ``_activities``) and when the plugin object is created
-            it will set itself in the :attr:`BipActivity.plugin` of each
-            :class:`BipActivity` it contains.
-
-            For allowing several :class:`BipActivity` decorators to be used
-            on the same method the :class:`BipActivityContainer` class is
-            defined. The decorator will still need to be able to define the
-            handler function for the new :class:`BipActivity` decorators
-            after the first one, this is done by storing the function in the
-            :class:`BipActivityContainer` which is accessible through the
-            :meth:`~BipActivityContainer.get_original_method` method.
-
-            All decorators should return a :class:`BipActivityContainer` which
-            will contain the :class:`BipActivity` to define. If the container
-            was already defined it should simply add the new one using the 
-            :meth:`~BipActivityContainer.add_activity` method.
     """
     #: :class:`BipPlugin` object if this activity is link to a plugin. This
     #:  will be set automatically by the constructor of the
