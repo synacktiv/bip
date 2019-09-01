@@ -800,7 +800,7 @@ def GetElt(ea=None):
 
 def GetEltByName(name):
     """
-        Same as :func:`GetElt`but using a name and not an address.
+        Same as :func:`GetElt` but using a name and not an address.
 
         :param str name: The name of the element to get. If a "dummy" name
             (``byte_xxxx``, ...) is provided the database is not consulted.
