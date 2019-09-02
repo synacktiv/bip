@@ -35,7 +35,6 @@ class BipBlock(object):
             on this object.
 
         .. todo:: test (nothing as been tested)
-        .. todo:: color
         .. todo:: pretty printer (__str__ func)
         .. todo:: equality and inclusion operator
         .. todo:: more functions for testing type (abstraction on .type

@@ -82,13 +82,9 @@ class BipFunction(object):
     """
         Class for representing and manipulating function in IDA.
 
-        .. todo:: test
         .. todo:: provide interface for flowgraph and allow to get all basicblocks and not only the one included in the function (external block: without FC_NOEXT flag)
-        .. todo:: equality and inclusion operator
-        .. todo:: pretty printer (__str__ func)
         .. todo:: Interface with stack
         .. todo:: color
-        .. todo:: hexray interface
         .. todo:: get/set calling convention (hexray)
         .. todo:: get/set arguments/ret type (hexray)
         .. todo:: frame ?
