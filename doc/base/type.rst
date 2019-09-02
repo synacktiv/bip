@@ -25,6 +25,15 @@ using :func:`GetElt`. This is made using the static method
 :func:`BipType.GetBipType` and the class method for determining the correct
 class is :meth:`BipType.is_handling_type`.
 
+.. warning:: **Modifying types**
+
+    Modifying types can have unexpected side effects. In particular the object
+    recuperated through the API (Bip or IDAPython) may not be the one
+    currently used. For avoiding those problems types are copied before
+    setting them in most case by the Bip API. However recuperating a type
+    while it is changed by another script or the IDA GUI will still make
+    manipulation invalid.
+
 Here is a quick descriptions of the different types implemented in Bip:
 
 ======================= =======================================================================================================================================
