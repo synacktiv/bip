@@ -16,18 +16,18 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
 
-autodoc_mock_imports = ["idaapi", "idc", "idautils", "ida_hexrays", "ida_bytes", "ida_ua", "ida_gdl", "ida_funcs", "ida_name", "ida_struct", "ida_typeinf", "ida_nalt"]
+autodoc_mock_imports = ["idaapi", "idc", "idautils", "ida_hexrays", "ida_bytes", "ida_ua", "ida_gdl", "ida_funcs", "ida_name", "ida_struct", "ida_typeinf", "ida_nalt", "ida_graph", "ida_kernwin", "ida_search"]
 
 # -- Project information -----------------------------------------------------
 
 project = u'Bip'
-copyright = u'2019, saph'
-author = u'saph'
+copyright = u'2019'
+author = u''
 
 # The short X.Y version
-version = u''
+version = u'0.1'
 # The full version, including alpha/beta/rc tags
-release = u'1.0'
+release = u'0.1beta'
 
 
 # -- General configuration ---------------------------------------------------

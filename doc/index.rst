@@ -4,18 +4,103 @@
    contain the root `toctree` directive.
 
 Welcome to Bip's documentation!
-===============================
+###############################
+
+Bip is a project which aimed to simplify the usage of python for interacting
+with IDA. Its main goals are to facilitate the usage of python in the
+interactive console of IDA and for writting plugins. In a more general way
+the goal is to automate the recurent task done through the python API. Bip is
+also developped for providing a more oriented object, a "python-like" API and
+a real documentation.
+
+This code is not complete and a lot of features are still missing. Development
+is prioritize on what people ask for and what the developers use, so do not
+hesitate to make PR, Feature Request and Issues (including for the
+documentation).
+
+This documentation is split in several parts. The `General`_ part should allow
+you to start with the project including the install (:ref:`general-install`)
+and an overview (:ref:`general-overview`) which explain how to use it.
+For getting how the project is developped and having a better understanding of
+it an architecture part (:ref:`general-archi`) is present.
+
+The main part of the documentation is split in the three parts of
+bip: :ref:`index-base`
+containing the basic interfaces, the :ref:`index-hexrays` for manipulating
+hexrays functions and the :ref:`index-gui` containing interface with the
+graphics and explaining how to developped plugins. This is mainly
+autodocumentation of bip objects with precisions about usage and potentially
+internals when necessary.
+
+Finally the last part :ref:`index-bipplugins` contains information about the
+plugins included in Bip.
+
+General
+=======
 
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
 
-    base.rst
-    hexrays.rst
+    general/install
+    general/overview
+    general/archi
 
+.. _index-base:
+
+Base interface with IDA (``bip.base``)
+======================================
+
+This regroup the part about the base interface on top of the IDA basic API.
+All classes in this part are regroup in the ``bip.base`` module.
+
+.. toctree::
+    :maxdepth: 2
+
+    base/elt
+    base/instr
+    base/data
+    base/func
+    base/xref
+    base/struct
+    base/type
+    base/util
+
+.. _index-hexrays:
+
+Hexrays interface with IDA (``bip.hexrays``)
+============================================
+
+.. toctree::
+    :maxdepth: 2
+
+    hexrays/cfunc
+    hexrays/lvar
+    hexrays/visitors
+    hexrays/cnode
+    hexrays/visit_hx
+
+.. _index-gui:
+
+GUI & Plugins interface with IDA (``bip.gui``)
+==============================================
+
+.. toctree::
+    :maxdepth: 2
+
+    gui/plugin
+    gui/plgmanager
+    gui/activity
+
+.. _index-bipplugins:
+
+BipPlugins
+==========
+
+.. toctree::
+    :maxdepth: 2
 
 Indices and tables
-==================
+##################
 
 * :ref:`genindex`
 * :ref:`modindex`
