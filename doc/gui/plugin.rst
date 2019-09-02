@@ -23,8 +23,8 @@ A typicall implementation of a plugin will:
   loaded in IDA.
 * use some `activity decorators`_ for declaring actions.
 
-For example of a plugin you can check the overview (TODO: link) or look at the
-printk plugin (TODO: link).
+For example of a plugin you can check the :ref:`general-overview` or look at
+the printk plugin.
 
 .. _gui-plugin-internals:
 

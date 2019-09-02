@@ -99,6 +99,8 @@ BipPlugins
 .. toctree::
     :maxdepth: 2
 
+    bippluginlist
+
 Indices and tables
 ##################
 
