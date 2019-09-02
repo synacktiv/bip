@@ -109,10 +109,16 @@ class PrintkComs(BipPlugin):
 
     @shortcut("Ctrl-H")
     def printk_current(self):
+        """
+            Add comment for the current function.
+        """
         self.printk_handler(Here())
 
     @menu("Edit/Plugins/", "Comment all printk")
     def printk_all(self):
+        """
+            Add comment for the all the functions in the IDB.
+        """
         # get the function which call printk
         f = BipFunction.get_by_name("printk")
         if f is None:
