@@ -1,3 +1,5 @@
+.. _doc-hexrays-cnode:
+
 CNode & visitors
 ################
 

@@ -348,7 +348,7 @@ ones.
 
 The types should be seen as a recursive structure: a ``void *`` is a
 :class:`BTypePtr` containing a :class:`BTypeVoid` structure. For a list of the
-different types implemented in Bip see TODO.
+different types implemented in Bip see :ref:`doc-bip-base-type`.
 
 .. code-block:: python
 
@@ -439,7 +439,7 @@ else. Statements can have childs statements or expressions while expressions
 can only have expressions child.
 
 A list of all the different types of node and more details on what they do and
-how to write visitor is present in TODO.
+how to write visitor is present in :ref:`doc-hexrays-cnode`.
 
 Directly accessing the nodes:
 
@@ -553,7 +553,7 @@ Plugins using Bip should all inherit from the class :class:`BipPlugin`. Those pl
 are different from the IDA plugin and are loaded and called by the
 :class:`BipPluginManager`. Each plugin is identified by its class name and those
 should be unique. For more information about plugins and internals see
-TODO.
+:ref:`gui-plugins`.
 
 Here is a simple plugin exemple:
 

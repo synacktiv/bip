@@ -1,3 +1,5 @@
+.. _doc-bip-base-type:
+
 Type
 ####
 
