@@ -1151,6 +1151,7 @@ class HxCExprMemAccess(HxCExpr):
         """
             Property which return a :class:`HxCExpr` representing the base
             memory location.
+
             :return: An operand of the expression, an object which
                 inherit from :class:`HxCExpr` .
         """
