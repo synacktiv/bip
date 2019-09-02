@@ -35,8 +35,10 @@ class BipXref(object):
         .. todo::
 
             * property on data xref
+            * property on struct xref
             * property on dst and src
             * classmethod allowing to create xref
+            * classmethod allowing to destroy xref
 
 
         .. note:: *Hexray documentation*
@@ -193,6 +195,5 @@ class BipXref(object):
 
 
     # TODO: struct
-    # get_stru(ea) marche que si tu lui donnes une adresse de debut de structure, tu as is_member_id(ea) qui te retourne un boolean, et tu as get_member_by_id qui te permet de le retrouver
 
 
