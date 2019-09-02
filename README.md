@@ -45,7 +45,7 @@ data, xrefs, structures, types, ...
 >>> i # by default the address on the screen is taken
 Instr: 0x1800D324B (mov     rcx, r13)
 >>> i2 = Instr(0x01800D3242) # pass the address in argument
->>>> i2
+>>> i2
 Instr: 0x1800D3242 (mov     r8d, 8)
 >>> i2.next # access next instruction, preivous with i2.prev
 Instr: 0x1800D3248 (mov     rdx, r14)
