@@ -147,9 +147,9 @@ True
 0x180110de0L
 >>> hex(d.ea) # address
 0x180110068L
->>> d.comment = "exemple" # comment as before
+>>> d.comment = "example" # comment as before
 >>> d.comment
-exemple
+example
 >>> d.value = 0xAABBCCDD # change the value 
 >>> hex(d.value)
 0xaabbccddL
@@ -194,6 +194,8 @@ Instr: 0x1800D2FF0 (mov     rax, rsp)
 BipData at 0x180110068 = 0x44332211
 >>> isinstance(GetElt(0x1800D2FF0), Instr) # test if that element is an instruction ?
 True
+>>> GetElt(0x1800D2FF0).is_code # are we on code ? same for is_data; do not work for struct
+True
 >>> isinstance(GetElt(0x1800D2FF0), BipData) # or data ?
 False
 ```
@@ -204,11 +206,11 @@ Some static function are provided for searching element in the database:
 >>> from bip.base import *
 >>> GetElt()
 Instr: 0x1800D3248 (mov     rdx, r14)
->>> BipElt.next_code() # find next code element
+>>> BipElt.next_code() # find next code elt from current addres or addr passed as arg
 Instr: 0x1800D324B (mov     rcx, r13)
 >>> BipElt.next_code(down=False) # find prev code element
 Instr: 0x1800D3242 (mov     r8d, 8)
->>> BipElt.next_data() # find next data element
+>>> BipElt.next_data() # find next data elt from current address or addr passed as arg
 BipData at 0x1800D3284 = 0xCC
 >>> BipElt.next_data(down=False) # find previous data element
 BipData at 0x1800D2FE1 = 0xCC
@@ -232,7 +234,7 @@ to access xrefs. They are represented by the `BipXref` object which have a
 ``` python
 >>> from bip.base import *
 >>> i = Instr(0x01800D3063)
->>> i # exemple with instruction but works the same with BipData
+>>> i # example with instruction but works the same with BipData
 Instr: 0x1800D3063 (cmp     r15, [rsp+98h+var_58])
 >>> i.xTo # List of xref which point on this instruction
 [<bip.base.xref.BipXref object at 0x0000022B04544438>, <bip.base.xref.BipXref object at 0x0000022B045447F0>]
@@ -352,6 +354,7 @@ The types should be seen as a recursive structure: a ``void *`` is a
 types implemented in Bip see TODO.
 
 ``` python
+>>> from bip.base import *
 >>> pv = BipType.FromC("void *") # FromC is the easiest way to create a type
 >>> pv
 <bip.base.biptype.BTypePtr object at 0x000001D95536DDD8>
@@ -473,10 +476,10 @@ making analysis it is easier to use visitor on the complete function.
 `hf.visit_cnode_filterlist` allow to visit only node of a certain type by
 passing a list of the node.
 
-This script is an exemple for visiting a function and recuperating the
+This script is an example for visiting a function and recuperating the
 format string pass to a `printk` function. It locates the call to `printk`,
 recuperate the address of the first argument, get the string and add a comment
-in the hexrays:
+in the hexrays (a real plugin documented exist in ``scripts/printk_com.py``):
 
 ``` python
 from bip.base import *
@@ -531,6 +534,8 @@ def visit_call(cn):
         print("Exception at 0x{:X}".format(cn.ea))
         return
 
+# Final function which take the address of a function and comment the call
+#   to printk
 def printk_handler(eafunc):
     hf = HxCFunc.from_addr(eafunc) # get the hexrays function
     hf.visit_cnode_filterlist(visit_call, [CNodeExprCall]) # visit only the call nodes
@@ -544,7 +549,7 @@ are different from the IDA plugin and are loaded and called by the
 should be unique. For more information about plugins and internals see
 TODO.
 
-Here is a simple plugin exemple:
+Here is a simple plugin example:
 
 ``` python
 from bip.gui import * # BipPlugin is define in the bip.gui module
@@ -565,7 +570,8 @@ class ExPlugin(BipPlugin):
         print("In ExPlugin action !")# code here
 ```
 
-TODO: make a more "real-life" plugin with printk for exemple
+A real plugin for adding comment to printk function exist in
+`scripts/printk_com.py` and can be used as example.
 
 A plugin can expose methods which another plugin wants to call or directly
 from the console. A plugin should not be directly instantiated, it is the
