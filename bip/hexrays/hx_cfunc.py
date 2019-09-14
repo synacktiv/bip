@@ -5,6 +5,7 @@ from hx_lvar import HxLvar
 from hx_visitor import _hx_visitor_expr, _hx_visitor_list_expr, _hx_visitor_stmt, _hx_visitor_list_stmt, _hx_visitor_all, _hx_visitor_list_all
 from cnode import CNode
 from cnode_visitor import visit_dfs_cnode, visit_dfs_cnode_filterlist
+import bip.base as bbase
 
 class HxCFunc(object):
     """
@@ -75,6 +76,16 @@ class HxCFunc(object):
                 function.
         """
         return str(self._cfunc)
+
+    @property
+    def bfunc(self):
+        """
+            Property which return the :class:`BipFunction` associated with
+            this cfunc.
+
+            :return: The :class:`BipFunction` associated with this object.
+        """
+        return bbase.BipFunction(self.ea)
 
     ################################ CMT ###########################
 
