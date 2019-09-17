@@ -134,7 +134,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Bip.tex', u'Bip Documentation',
-     u'saph', 'manual'),
+     u'', 'manual'),
 ]
 
 

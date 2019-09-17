@@ -47,8 +47,8 @@ General
 
 .. _index-base:
 
-Base interface with IDA (``bip.base``)
-======================================
+Base interface (``bip.base``)
+=============================
 
 This regroup the part about the base interface on top of the IDA basic API.
 All classes in this part are regroup in the ``bip.base`` module.
@@ -67,8 +67,12 @@ All classes in this part are regroup in the ``bip.base`` module.
 
 .. _index-hexrays:
 
-Hexrays interface with IDA (``bip.hexrays``)
-============================================
+Hexrays interface (``bip.hexrays``)
+===================================
+
+This regroup the interface on top of the IDA Hexrays API, in particular it
+allows to visit the AST generated for the functions. This module will be
+usefull only if the decompiler for the binary exist and is installed.
 
 .. toctree::
     :maxdepth: 2
@@ -81,8 +85,12 @@ Hexrays interface with IDA (``bip.hexrays``)
 
 .. _index-gui:
 
-GUI & Plugins interface with IDA (``bip.gui``)
-==============================================
+GUI & Plugins interface (``bip.gui``)
+=====================================
+
+This part regroup all the functions and classes made for interfacing with the
+UI and events of IDA. The most important part of this module is probably the
+:class:`BipPlugin` which allow to create plugins and to define actions in IDA.
 
 .. toctree::
     :maxdepth: 2
@@ -95,6 +103,9 @@ GUI & Plugins interface with IDA (``bip.gui``)
 
 BipPlugins
 ==========
+
+This part regroup a list of different :class:`BipPlugin` integrated in Bip and
+maintain by the developpers.
 
 .. toctree::
     :maxdepth: 2

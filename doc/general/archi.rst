@@ -7,6 +7,11 @@ This part describe the main architecture of Bip. It is a good read for
 understanding the global design of Bip, however for starting reading the
 :ref:`general-overview` is probably simpler.
 
+The `Module architecture`_ part describes how the different modules and
+classes are interfaced together, the `common code patterns`_ part explains how
+Bip was developped for being used, finally the `interfacing with IDA`_ part
+explains how the interface with IDA is made and problems link to that design.
+
 Module architecture
 ===================
 
@@ -66,6 +71,8 @@ manipulated using Bip. Several *building blocks* exist inside this module:
 Hexrays
 -------
 
+.. module:: bip.hexrays
+
 The module ``bip.hexrays`` contains the interfaces for manipulating the
 hexrays decompiler from IDA. This module will not provide anything if an
 hexrays decompiler for the current architecture is not set. The following
@@ -73,10 +80,63 @@ schematic represent the architecture of this module:
 
 .. figure:: /_static/img/bip_hexrays_cnode.png
 
-TODO: doc, auto generated, other schematic ?
+The central part of the ``bip.hexrays`` module is the :class:`HxCFunc`
+which is used for representing a C function as decompiled by HexRays.
+A :class:`HxCFunc` allows to access local storage of the function *lvar*
+represented by :class:`HxLvar` which have a name, a type and may or not be
+arguments of the function. The second interesting part about :class:`HxCFunc`
+is they allow access to the AST created by HexRays, this AST represent a
+subset of C and it is possible to use visitors for inspecting the nodes from
+which it is composed.
+
+:class:`CNode` is an abstract class (all class are abstract for the CNode
+except the leaf of the inheritance tree) which represent a node of the AST,
+two main types of node exist: :class:`CNodeStmt` which represent a C
+statement (*if*, *for*, *while*, *block*, *goto*, *continue*, *return*, ...)
+and :class:`CNodeExpr` which represent C expressions (arithmetic and logic
+operations, function calls, cast, memory access, ...). As an AST is a tree
+most nodes will have children: :class:`CNodeStmt` can have :class:`CNodeExpr`
+or :class:`CNodeStmt` as children, while :class:`CNodeExpr` can only have
+other :class:`CNodeExpr` as children. For helping to manipulate those objects
+some intermediate abstract class are define such as :class:`CNodeExprFinal`
+which represent all expressions without child.
+
+For more information about the usage and implementation of hexrays see
+:ref:`index-hexrays`.
+
+.. note:: **CNode and HxCItem**
+
+    It is expected of a Bip user to use :class:`CNode` for manipulating
+    AST nodes but in practice two different implementations of the hexrays AST
+    nodes exist in Bip: the :class:`CNode` and the :class:`HxCItem`. Those two
+    implementations are in fact exactly the same with the only difference
+    that the :class:`CNode` objects have a link to their :class:`HxCFunc`
+    and there parent :class:`CNode` object in the AST (at the exception of
+    the root node which does not have a parent).
+    
+    This difference in implementation allow to travel more easilly the AST and
+    to make efficient link with other components, the simplest exemple is the
+    possibility to create a link between the :class:`CNodeExprVar` object
+    and the corresponding :class:`HxLvar` object, while it is not possible
+    using the :class:`HxCExprVar` object (this may have change since IDA 7.3
+    with the access to the microcode API in IdaPython).
+
+    For avoiding code duplication all the :class:`CNode` classes are
+    automatically generated from their equivalent :class:`HxCItem` classes at
+    the exception of :class:`CNode` (equivalent to :class:`HxCItem`),
+    :class:`CNodeExpr` (:class:`HxCExpr`) and :class:`CNodeStmt`
+    (:class:`HxCStmt`). Every change in the :class:`HxCItem` classes will
+    also change the comportement of the equivalent :class:`CNode` classes. The
+    methods unique to the :class:`CNode` classes are present in the
+    ``cnode.py`` file and use the ``@addCNodeMethod`` decorator.
+
+    For more information about the internal implementation of :class:`CNode`
+    see TODO.
 
 Gui
 ---
+
+.. module:: bip.gui
 
 Finally the ``bip.gui`` module is the smallest module, it contains the
 interfaces for the user interfaces and the plugins. Its architecture is
@@ -84,7 +144,32 @@ represented by this schematic:
 
 .. figure:: /_static/img/bip_gui.png
 
-TODO: classes and interactions
+The most important part define in this module for a user is the
+:class:`BipPlugin` system. Bip defines its own plugin system which is
+separated from the one of IDA, each plugin should inherit from the class
+:class:`BipPlugin` (directly or indirectly) and will be loaded by the
+:class:`~bip.gui.pluginmanager.BipPluginManager` . Each Bip plugin should
+be a singleton and can be recuperated using the
+:class:`~bip.gui.pluginmanager.BipPluginManager`, which is itself a singleton
+and a *real* IDA Plugin (recuperated using :func:`get_plugin_manager`).
+
+Activities are objects made for interfacing with different part of
+IDA, and in particular for being able to be used as decorator of methods of a
+:class:`BipPlugin`. The :class:`BipActivity` is an abstract class which is a
+callable and expect a handler and a way to register with the IDA interface.
+The simplest exemple of Activity are the :class:`BipAction` which allow to
+define menu entry or shortcut (*hot-key*) in IDA, as a general rule their
+are made to being used as decorator which are made for working the same way
+than the ``property`` decorator of Python.
+
+.. note:: **BipActivityContainer**
+
+    The :class:`BipActivityContainer` is a particular activity containing
+    several activities and which does not do any action by it-self. It is made
+    for allowing to chain decorators on the same method.
+
+For more information about writting plugins and there internals
+see :ref:`gui-plugins`.
 
 Common code patterns
 ====================
