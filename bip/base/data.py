@@ -141,11 +141,11 @@ class BipData(BipElt):
     def __str__(self):
         if self.has_data:
             if self.is_numerable:
-                return "{} at 0x{:X} = 0x{:X}".format(self.__class__.__name__, self.ea, self.value)
+                return "{} at 0x{:X} = 0x{:X} (size={})".format(self.__class__.__name__, self.ea, self.value, self.size)
             else:
-                return "{} at 0x{:X} = {}".format(self.__class__.__name__, self.ea, repr("".join([chr(i) for i in self.bytes])))
+                return "{} at 0x{:X} = {} (size={})".format(self.__class__.__name__, self.ea, repr("".join([chr(i) for i in self.bytes])), self.size)
         else:
-            return "{} at 0x{:X} without value".format(self.__class__.__name__, self.ea)
+            return "{} at 0x{:X} without value (size={})".format(self.__class__.__name__, self.ea, self.size)
 
     ########################## TYPE ################################
 
