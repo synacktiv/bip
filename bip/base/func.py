@@ -670,7 +670,17 @@ class BipFunction(object):
 
             :return: A list of :class:`BipFunction` which call this function.
         """
-        return list(set([BipFunction(ea) for ea in [x.src_ea for x in self.xTo if x.is_call]]))
+        s = set()
+        for x in self.xTo:
+            if not x.is_call:
+                continue
+            ea = x.src_ea
+            try:
+                f = BipFunction(ea)
+            except ValueError:
+                continue
+            s.add(f)
+        return list(s)
 
     @property
     def callees(self):
@@ -690,7 +700,11 @@ class BipFunction(object):
         for i in self.instr_iter:
             for x in i.xFrom:
                 if x.is_call:
-                    l.append(BipFunction(x.dst_ea))
+                    try:
+                        f = BipFunction(x.dst_ea)
+                    except ValueError:
+                        continue
+                    l.append(f)
         return l
 
     
