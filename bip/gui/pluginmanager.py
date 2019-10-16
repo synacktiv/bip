@@ -1,4 +1,5 @@
 import idaapi
+from menutb import add_top_menu
 
 #: Global object :class:`BipPluginManager` which should be use by everybody
 #:  access is made through :func:`get_plugin_manager`.
@@ -9,16 +10,16 @@ class BipPluginManager(idaapi.plugin_t):
         Class for the plugin manager of Bip. This class represent the object
         in charge of loading all of the :class:`BipPlugin`. For accessing the
         plugin manager use :func:`get_plugin_manager`.
+
+        This class also create the ``Bip`` directory as a top level menu
+        entry. It is expected that plugins should add their menu actions in
+        this directory (using the :func:`menu` decorator).
         
         This object should not be instantiated by the user but should already
         be created when IDA load the plugin. This is a *real* IDAPython plugin
         as understood by IDA.
 
-        .. todo:: Should provide a way to add a plugin object
-
         .. todo:: this should handle load order and plugin dependency
-
-        .. todo:: getter for a plugin
     """
     flags = 0
     comment = "Bip plugin manager, managed bip plugins"
@@ -45,8 +46,10 @@ class BipPluginManager(idaapi.plugin_t):
     def init(self):
         """
             Init method called by IDA. This will instantiate and load all
-            plugins already registered at this point.
+            plugins already registered at this point. This is also the
+            function in charge of creating the top level menu ``Bip``.
         """
+        add_top_menu("Bip", before="Help")
         self.load_all()
         self._is_loaded = True
         return idaapi.PLUGIN_KEEP
