@@ -158,7 +158,7 @@ class Instr(BipElt):
             :rtype: :class:`Instr` or None
         """
         if self.has_prev_instr:
-            return Instr(idc.PrevHead(self.ea))
+            return Instr(idc.prev_head(self.ea))
         return None
 
     @property
@@ -175,7 +175,7 @@ class Instr(BipElt):
             :return: The next instruction.
             :rtype: class:`Instr`
         """
-        return Instr(idc.NextHead(self.ea))
+        return Instr(idc.next_head(self.ea))
 
     @classmethod
     def _is_this_elt(cls, ea):

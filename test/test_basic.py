@@ -4,6 +4,7 @@ sys.path.append(r"E:\bip")
 from bip.base import *
 
 import idc
+import ida_bytes
 
 # TODO:
 #   * Operand
@@ -17,7 +18,7 @@ def test_bipelt00():
     assert BipElt(0x01800D325A).ea == 0x01800D325A
 
 def test_bipelt01():
-    assert BipElt(0x01800D325A).flags == idc.GetFlags(0x01800D325A)
+    assert BipElt(0x01800D325A).flags == ida_bytes.get_full_flags(0x01800D325A)
 
 def test_bipelt02():
     assert BipElt(0x01800D325A).size == 4
@@ -38,7 +39,7 @@ def test_bipelt04b():
     assert res
 
 def test_bipelt05():
-    assert BipElt(0x01800D325A).color == idc.GetColor(0x01800D325A, idc.CIC_ITEM)
+    assert BipElt(0x01800D325A).color == idc.get_color(0x01800D325A, idc.CIC_ITEM)
 
 def test_bipelt06():
     ie = BipElt(0x01800D325A)
