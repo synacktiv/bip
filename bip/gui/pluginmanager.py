@@ -125,6 +125,15 @@ class BipPluginManager(idaapi.plugin_t):
         """
         if name in self._plugins:
             if ifneeded:
+                if name not in self._loaded:
+                    # this is for the particular case where a plugin class is
+                    #   defined again before being loaded by the plugin
+                    #   manager. This will trigger a problem because of an
+                    #   incoherance between the class stored in the plugin
+                    #   manager and in the module. The underlying problem
+                    #   come from the fact that IDA load the plugins several
+                    #   time
+                    self._plugins[name] = cls
                 return
             else:
                 raise RuntimeError("Plugin {} is already registered!".format(name))
