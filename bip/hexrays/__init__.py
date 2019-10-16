@@ -1,4 +1,13 @@
 
+def _init_hx():
+    from ida_hexrays import init_hexrays_plugin
+    init_hexrays_plugin()
+
+try:
+    _init_hx()
+except Exception:
+    pass
+
 from event import HexRaysEvent
 from hx_lvar import HxLvar
 from hx_cfunc import HxCFunc

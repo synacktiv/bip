@@ -14,13 +14,7 @@ import block
 import xref
 from biperror import BipError
 
-try:
-    import bip.hexrays as hexrays
-except Exception:
-#except ImportError: # fix build of the doc for this and support the correct exception
-    # TODO change this by a real log system ?
-    print("WARNING: unable to import hexrays")
-    hexrays = None
+hexrays = None
 
 class BipFuncFlags(object):
     """
@@ -259,8 +253,14 @@ class BipFunction(object):
 
             :return: A :class:`HxCFunc` object equivalent to this function.
         """
+        global hexrays
         if hexrays is None:
-            raise NotImplemented("It appears the hexrays API is not available")
+            try:
+                import bip.hexrays as hexrays
+            except ImportError:
+                hexrays = None
+            if hexrays is None:
+                raise NotImplemented("It appears the hexrays API is not available")
         return hexrays.HxCFunc.from_addr(self.ea)
 
 
