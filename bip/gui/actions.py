@@ -1,4 +1,5 @@
 import idaapi
+import ida_kernwin
 
 from bip.base import *
 from activity import BipActivity
@@ -13,7 +14,6 @@ class BipAction(BipActivity):
         allow to simplify the life of the developer.
         See :ref:`gui-plugin-activity-decorators`.
 
-        .. todo:: allow to unregister
         .. todo:: handle ctx and access to it
 
         .. todo:: Make properties for every attribute...
@@ -70,15 +70,16 @@ class BipAction(BipActivity):
 
         # Handling for params at None
         if self._name is None:
-            self._name = self.__class__.__name__ # TODO: check for not already registered
+            self._name = self.__class__.__name__
         if self._label is None:
             self._label = self._name # if no label use the name
 
     def _activate(self, action_handler, ctx):
         """
-            Use for idaapi.action_handler_t.activate function.
+            Intenal function which is used for 
+            the idaapi.action_handler_t.activate function.
 
-            Intenal
+            This only call the :meth:`handler` method.
 
             .. todo:: doc
             .. todo:: be smart here.
@@ -87,9 +88,10 @@ class BipAction(BipActivity):
 
     def _update(self, action_handler, ctx):
         """
-            Use for idaapi.action_handler_t.update function.
-
-            Intenal
+            Intenal function which is used for the
+            idaapi.action_handler_t.update function.
+            
+            This is always ``AST_ENABLE_ALWAYS``.
 
             .. todo:: doc
             .. todo:: be smart here.
@@ -99,11 +101,11 @@ class BipAction(BipActivity):
 
     def _create_action_handler(self):
         """
-            Internal function which will create the idaapi.action_handler_t
-            object.
+            Internal function which will create the
+            ``idaapi.action_handler_t`` object.
 
-            Will set it in :attr:`BipAction._ida_action_handler` and return
-            it.
+            Will set it in :attr:`BipAction._ida_action_handler` attribute and
+            return it.
             
             .. todo:: Should check if already created ?
         """
@@ -118,8 +120,12 @@ class BipAction(BipActivity):
 
     def handler(self, *args, **kwargs):
         """
-            Call the handler pass as argument if defined or raise a
-            ``RuntimeError`` if it is not defined.
+            Call the handler pass as argument of the constructor if defined or
+            raise a ``RuntimeError`` if it is not defined. The arguments are
+            passed to the internal handler, as is the return value.
+
+            This is the main method of the :class:`BipAction` and the one
+            which will be called one the action is triggered.
         """
         if self._internal_handler is not None:
             return self._internal_handler(self, *args, **kwargs)
@@ -128,9 +134,12 @@ class BipAction(BipActivity):
 
     def register(self):
         """
-            Register the action in IDA.
+            Register the action in IDA and attach it to a menu if needed.
 
-            .. todo:: this should be called by the plugin manager
+            Internally this will create the action handler if needed, then
+            the action descriptor and register it in IDA. If a ``path_menu``
+            argument as been define in the constructor it will also perform
+            the attachement to the menu (using :meth:`attach_to_menu`.
         """
         if self._ida_action_handler is not None:
             aht = self._ida_action_handler
@@ -139,9 +148,13 @@ class BipAction(BipActivity):
         adt = idaapi.action_desc_t(
             self._name, self._label, aht, self._shortcut,
             None, -1) # TODO: handle tooltip & icon
-        idaapi.register_action(adt) # TODO: handle failure to register
+        if not ida_kernwin.register_action(adt):
+            print("Unable to register action for {}".format(self._name))
+            self.is_register = False
+            return
         if self._path_menu is not None:
-            self.attach_to_menu(self._path_menu)
+            if not self.attach_to_menu(self._path_menu):
+                print("Unable to attach to menu: {}".format(self._path_menu))
         self.is_register = True
 
     def attach_to_menu(self, path, flags=idaapi.SETMENU_APP):
@@ -154,10 +167,20 @@ class BipAction(BipActivity):
             is :meth:`~BipAction.register` if the path is provided in argument
             of the constructor as ``path_menu``.
 
-            .. todo:: handler error case
+            :return: ``True`` if the action succeded, ``False`` otherwise.
         """
         # by default, add menu item after the specified path (can also be SETMENU_INS)
-        idaapi.attach_action_to_menu(path, self._name, flags)
+        return ida_kernwin.attach_action_to_menu(path, self._name, flags)
 
+    def unregister(self):
+        """
+            Unregister the action in IDA, if this action was not register this
+            function does nothing. Unregistering should also delete the entry
+            from the menu if any.
+        """
+        if not self.is_register:
+            return # nothing to do
+        ida_kernwin.unregister_action(self._name)
+        self.is_register = False
 
 
