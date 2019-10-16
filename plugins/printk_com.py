@@ -108,13 +108,14 @@ class PrintkComs(BipPlugin):
         hf.visit_cnode_filterlist(visit_call_printk, [CNodeExprCall]) # visit only on the call
 
     @shortcut("Ctrl-H")
+    @menu("Bip/PrintkCom/", "Comment printk in current function")
     def printk_current(self):
         """
             Add comment for the current function.
         """
         self.printk_handler(Here())
 
-    @menu("Edit/Plugins/", "Comment all printk")
+    @menu("Bip/PrintkCom/", "Comment all printk")
     def printk_all(self):
         """
             Add comment for the all the functions in the IDB.
