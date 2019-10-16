@@ -167,6 +167,11 @@ class BipAction(BipActivity):
             is :meth:`~BipAction.register` if the path is provided in argument
             of the constructor as ``path_menu``.
 
+            Attaching into the ``Edit/Plugins`` menu when IDA is loading may
+            create problem as this menu seems to be remade later and the entry
+            may be overwritten (this seems to depend of IDA version and how
+            early this method is called).
+
             :return: ``True`` if the action succeded, ``False`` otherwise.
         """
         # by default, add menu item after the specified path (can also be SETMENU_INS)

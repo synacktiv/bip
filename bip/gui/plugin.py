@@ -209,7 +209,15 @@ def menu(menu_path, menu_entry=None):
         Decorator for defining a method of a :class:`BipPlugin` as an entry
         in the menu of IDA. This decorator expect a string in argument
         representing the path in the menu it wants to register
-        (ex.: ``Edit/Plugins/``).
+        (ex.: ``Options/``).
+
+        .. warning::
+
+            Using this decorator for registering an entry in ``Edit/Plugins/``
+            may create problems if the plugin is loaded during IDA
+            initialisation and the entry may not be present in IDA. For more
+            information see the documentation of
+            :meth:`~BipAction.attach_to_menu`.
 
         The method which is decorated should only take ``self`` in argument
         which will be the :class:`BipPlugin` object. Internally this will
