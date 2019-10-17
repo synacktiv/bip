@@ -15,6 +15,8 @@ documentation).
 The documentation is available in the RST format (and can be compile using
 sphinx) in the `doc/` directory.
 
+Current IDA version: 7.4
+
 ## Installation
 
 TODO: setup.py
@@ -136,7 +138,8 @@ False
 ``` python
 >>> from bip.base import *
 >>> d = BipData(0x000180110068) # .rdata:0000000180110068 bip_ex          dq offset unk_180110DE0
-BipData at 0x180110068 = 0x180110DE0
+>>> d
+BipData at 0x180110068 = 0x180110DE0 (size=8)
 >>> d.name # Name of the symbol if any
 bip_ex
 >>> d.is_word # is it a word
@@ -185,13 +188,13 @@ a location in the binary.
 ``` python
 >>> from bip.base import *
 >>> GetElt() # get the element at current address, in that case return a BipData object
-BipData at 0x180110068 = 0x44332211
+BipData at 0x180110068 = 0xAABBCCDD (size=8)
 >>> GetElt(0x00180110078) # get the element at the address 0x00180110078
-BipData at 0x180110078 = 0xAA
+BipData at 0x180110078 = 0xAA (size=1)
 >>> GetElt(0x1800D2FF0) # in that case it return an Instr object because this is code
 Instr: 0x1800D2FF0 (mov     rax, rsp)
 >>> GetEltByName("bip_ex") # Get using a name and not an address
-BipData at 0x180110068 = 0x44332211
+BipData at 0x180110068 = 0xAABBCCDD (size=8)
 >>> isinstance(GetElt(0x1800D2FF0), Instr) # test if that element is an instruction ?
 True
 >>> GetElt(0x1800D2FF0).is_code # are we on code ? same for is_data; do not work for struct
@@ -211,13 +214,13 @@ Instr: 0x1800D324B (mov     rcx, r13)
 >>> BipElt.next_code(down=False) # find prev code element
 Instr: 0x1800D3242 (mov     r8d, 8)
 >>> BipElt.next_data() # find next data elt from current address or addr passed as arg
-BipData at 0x1800D3284 = 0xCC
+BipData at 0x1800D3284 = 0xCC (size=1)
 >>> BipElt.next_data(down=False) # find previous data element
-BipData at 0x1800D2FE1 = 0xCC
+BipData at 0x1800D2FE1 = 0xCC (size=1)
 >>> hex(BipElt.next_data_addr(down=False)) # find address of the previous data element
 0x1800d2fe1L
 >>> BipElt.next_unknown() # same for unknown, which are not typed element of IDA and are considered data by Bip
-BipData at 0x180110000 = 0xE
+BipData at 0x180110000 = 0xE (size=1)
 >>> BipElt.next_defined() # opposite of unknown: data or code
 Instr: 0x1800D324B (mov     rcx, r13)
 >>> BipElt.search_bytes("49 ? CD", 0x1800D3248) # search for byte sequence (ignore the current position by default)
@@ -564,14 +567,18 @@ class ExPlugin(BipPlugin):
 
     @shortcut("Ctrl-H") # add a shortcut as a decorator, will call the method bellow
     @shortcut("Ctrl-5") # add an other one
-    @menu("Edit/Plugins/", "ExPlugin Action!") # add a menu entry named "ExPlugin Action!", default is the method name
+    @menu("Bip/MyPluginExemple/", "ExPlugin Action!") # add a menu entry named "ExPlugin Action!" (default is the method name)
     def action_with_shortcut(self):
         print(self) # this is the ExPlugin object
         print("In ExPlugin action !")# code here
 ```
 
 A real plugin for adding comment to printk function exist in
-`scripts/printk_com.py` and can be used as example.
+`scripts/printk_com.py` and can be used as example. The `menu` decorator will
+automatically create the `MyPluginExemple` menu entry in the `Bip` top level
+menu entry (which is created by the `BipPluginManager`), creating an entry
+in the `Edit/Plugins/` directory may not work because of how the entry of
+this submenu are created by IDA.
 
 A plugin can expose methods which another plugin wants to call or directly
 from the console. A plugin should not be directly instantiated, it is the
@@ -599,6 +606,6 @@ hello
 Some people to thanks:
 
 * [saph](https://twitter.com/_saph_): for starting this project.
-* [hakril](https://twitter.com/hakril): for the inspiration on the projet and its insights on designing it.
+* [hakril](https://twitter.com/hakril): for the inspiration on the projet and his insights on designing it.
 * [Synacktiv](https://twitter.com/Synacktiv) and its amazing teams: for providing beta-testers, time for developments and fun problems.
 
