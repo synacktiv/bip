@@ -177,7 +177,7 @@ class BipType(object):
                 argument, False otherwise.
         """
         tif = tinfo_t()
-        return ida_nalt.get_tinfo(ea, tif)
+        return ida_nalt.get_tinfo(tif, ea)
 
     @staticmethod
     def get_at(ea=None):
@@ -216,7 +216,7 @@ class BipType(object):
         tif = tinfo_t()
         # try to get the define type
         # this seems to be define in ida_nalt...
-        if ida_nalt.get_tinfo(ea, tif):
+        if ida_nalt.get_tinfo(tif, ea):
             # no need to make a copy in this case
             return BipType.GetBipTypeNoCopy(tif)
         
