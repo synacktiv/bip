@@ -3,7 +3,7 @@ from bipelt import BipBaseElt, BipRefElt, BipElt, GetElt, GetEltByName, Here
 from instr import Instr
 from data import BipData
 from operand import OpType, Operand
-from struct import BipStruct, BStructMember
+from bipstruct import BipStruct, BStructMember
 from xref import XrefTypes, BipXref
 from biperror import BipError
 from func import BipFuncFlags, BipFunction
