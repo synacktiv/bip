@@ -1,6 +1,7 @@
 import idc
 import ida_bytes
 import ida_kernwin
+import idautils
 
 from bipelt import BipElt
 from biptype import BipType
