@@ -204,3 +204,11 @@ def bip_exec_sync(func, *args, **kwargs):
     ida_kernwin.execute_sync(handle, MFF_FLAG)
     return ret["ret"]
 
+def min_ea():
+    return idc.get_inf_attr(idc.INF_MIN_EA)
+
+def max_ea():
+    return idc.get_inf_attr(idc.INF_MAX_EA)
+
+
+
