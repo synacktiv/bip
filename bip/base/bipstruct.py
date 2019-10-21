@@ -240,7 +240,7 @@ class BipStruct(BipRefElt):
             raise TypeError("Invalid type for adding in {}".format(self))
         # compute flags
         flags = idc.FF_DATA
-        d= {8:idc.FF_QWRD, 4:idc.FF_DWRD, 2:idc.FF_WORD, 1:idc.FF_BYTE}
+        d= {8:idc.FF_QWORD, 4:idc.FF_DWORD, 2:idc.FF_WORD, 1:idc.FF_BYTE}
         flags |= d[size]
 
         # create member
