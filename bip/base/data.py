@@ -261,7 +261,7 @@ class BipData(BipElt):
                 to correctly set the type for current item.
         """
         if value:
-            if not ida_bytes.create_data(self.ea, ida_bytes.FF_DWORD, 4, idc.BADADDR):
+            if not ida_bytes.create_data(self.ea, ida_bytes.FF_QWORD, 4, idc.BADADDR):
                 raise RuntimeError("Unable to set type for {}".format(self))
         else:
             del self.type
