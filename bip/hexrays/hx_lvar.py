@@ -41,7 +41,7 @@
 #    CVAR_FORCED  0x00010000 #: variable was created by an explicit request otherwise we could reuse an existing var  
 
 from bip.base import biptype
-from ida_hexrays import lvar_saved_info_t, lvar_uservec_t, save_user_lvar_settings
+from ida_hexrays import lvar_saved_info_t, lvar_uservec_t, save_user_lvar_settings, restore_user_lvar_settings
 
 
 class HxLvar(object):
@@ -200,6 +200,22 @@ class HxLvar(object):
         if self._persistent:
             self.save()
 
+    def _to_saved_info(self):
+        """
+            Internal function for interface with IDA. This function return
+            an ``ida_hexrays.lvar_saved_info_t`` object corresponding to this
+            variable.
+        """
+        # object needed for containing the information to save about the lvar
+        lsi = lvar_saved_info_t()
+        # set everything which need to be save
+        lsi.ll = self._lvar
+        lsi.name = self.name
+        lsi.type = self._lvar.tif
+        lsi.size = self.size
+        lsi.cmt = self.comment
+        return lsi
+
     def save(self):
         """
             Function which allow to save the change made to the local variable
@@ -225,6 +241,8 @@ class HxLvar(object):
         lsi.cmt = self.comment
         # create the object which is used for saving in the idb
         lvuv = lvar_uservec_t()
+        # get the info from the previously modify lvar
+        restore_user_lvar_settings(lvuv, self._hxcfunc.ea)
         if not lvuv.lvvec.add_unique(lsi): # adding this var to save
             raise RuntimeError("Unable to create object for saving the variable")
         # saving in the idb
