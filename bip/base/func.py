@@ -26,7 +26,7 @@ class BipFuncFlags(object):
     FUNC_NORET          = idaapi.FUNC_NORET         # function doesn't return
     FUNC_FAR            = idaapi.FUNC_FAR           # far function
     FUNC_LIB            = idaapi.FUNC_LIB           # library function
-    FUNC_STATIC         = idaapi.FUNC_STATICDEF     # static function
+    FUNC_STATICDEF      = idaapi.FUNC_STATICDEF     # static function
     FUNC_FRAME          = idaapi.FUNC_FRAME         # function uses frame pointer (BP)
     FUNC_USERFAR        = idaapi.FUNC_USERFAR       # user has specified far-ness
                                                     # of the function
@@ -284,7 +284,7 @@ class BipFunction(object):
         """
             Setter which allow to modify the functions flags.
         """
-        idc.set_func_attr(self.ea, BipFuncFlags.FUNCATTR_FLAGS, flags)
+        idc.set_func_attr(self.ea, BipFuncFlags.FUNCATTR_FLAGS, value)
 
     @property
     def does_return(self):
@@ -325,6 +325,26 @@ class BipFunction(object):
         """
         return self.flags & BipFuncFlags.FUNC_FAR != 0
 
+    @is_far.setter
+    def is_far(self, value):
+        """
+            Setter for is_far flag. No change are performed if it is already
+            at the correct value. This will failed silently if an error occur.
+
+            .. todo:: Test
+
+            :param bool value: if ``True`` the flag will be set, otherwise it
+                will be removed.
+        """
+        if value == self.is_far: # already correctly set
+            return
+        # do not use bitfield op. for setting flags because we don't actually
+        #   now its size (and it seems to change if 32 or 64bits)
+        if value:
+            self.flags = self.flags + BipFuncFlags.FUNC_FAR
+        else:
+            self.flags = self.flags - BipFuncFlags.FUNC_FAR
+
     @property
     def is_lib(self):
         """
@@ -334,6 +354,26 @@ class BipFunction(object):
             .. todo:: Test
         """
         return self.flags & BipFuncFlags.FUNC_LIB != 0
+
+    @is_lib.setter
+    def is_lib(self, value):
+        """
+            Setter for is_lib flag. No change are performed if it is already
+            at the correct value. This will failed silently if an error occur.
+
+            .. todo:: Test
+
+            :param bool value: if ``True`` the flag will be set, otherwise it
+                will be removed.
+        """
+        if value == self.is_lib: # already correctly set
+            return
+        # do not use bitfield op. for setting flags because we don't actually
+        #   now its size (and it seems to change if 32 or 64bits)
+        if value:
+            self.flags = self.flags + BipFuncFlags.FUNC_LIB
+        else:
+            self.flags = self.flags - BipFuncFlags.FUNC_LIB
 
     @property
     def is_static(self):
@@ -345,6 +385,26 @@ class BipFunction(object):
         """
         return self.flags & BipFuncFlags.FUNC_STATICDEF != 0
 
+    @is_static.setter
+    def is_static(self, value):
+        """
+            Setter for is_static flag. No change are performed if it is already
+            at the correct value. This will failed silently if an error occur.
+
+            .. todo:: Test
+
+            :param bool value: if ``True`` the flag will be set, otherwise it
+                will be removed.
+        """
+        if value == self.is_static: # already correctly set
+            return
+        # do not use bitfield op. for setting flags because we don't actually
+        #   now its size (and it seems to change if 32 or 64bits)
+        if value:
+            self.flags = self.flags + BipFuncFlags.FUNC_STATICDEF
+        else:
+            self.flags = self.flags - BipFuncFlags.FUNC_STATICDEF
+
     @property
     def use_frame(self):
         """
@@ -354,6 +414,26 @@ class BipFunction(object):
             .. todo:: Test
         """
         return self.flags & BipFuncFlags.FUNC_FRAME != 0
+
+    @use_frame.setter
+    def use_frame(self, value):
+        """
+            Setter for use_frame flag. No change are performed if it is already
+            at the correct value. This will failed silently if an error occur.
+
+            .. todo:: Test
+
+            :param bool value: if ``True`` the flag will be set, otherwise it
+                will be removed.
+        """
+        if value == self.use_frame: # already correctly set
+            return
+        # do not use bitfield op. for setting flags because we don't actually
+        #   now its size (and it seems to change if 32 or 64bits)
+        if value:
+            self.flags = self.flags + BipFuncFlags.FUNC_FRAME
+        else:
+            self.flags = self.flags - BipFuncFlags.FUNC_FRAME
 
     @property
     def is_userfar(self):
@@ -366,6 +446,29 @@ class BipFunction(object):
         """
         return self.flags & BipFuncFlags.FUNC_USERFAR != 0
 
+    @is_userfar.setter
+    def is_userfar(self, value):
+        """
+            Setter for is_userfar flag. No change are performed if it is
+            already at the correct value. This will failed silently if an
+            error occur.
+
+            .. todo:: Test
+
+            .. todo:: does not seems to work, is_far works however
+
+            :param bool value: if ``True`` the flag will be set, otherwise it
+                will be removed.
+        """
+        if value == self.is_userfar: # already correctly set
+            return
+        # do not use bitfield op. for setting flags because we don't actually
+        #   now its size (and it seems to change if 32 or 64bits)
+        if value:
+            self.flags = self.flags + BipFuncFlags.FUNC_USERFAR
+        else:
+            self.flags = self.flags - BipFuncFlags.FUNC_USERFAR
+
     @property
     def is_hidden(self):
         """
@@ -374,6 +477,29 @@ class BipFunction(object):
             .. todo:: Test
         """
         return self.flags & BipFuncFlags.FUNC_HIDDEN != 0
+
+    @is_hidden.setter
+    def is_hidden(self, value):
+        """
+            Setter for is_hidden flag. No change are performed if it is
+            already at the correct value. This will failed silently if an
+            error occur.
+
+            .. todo:: Test
+
+            .. todo:: Not sure if this works ?
+
+            :param bool value: if ``True`` the flag will be set, otherwise it
+                will be removed.
+        """
+        if value == self.is_hidden: # already correctly set
+            return
+        # do not use bitfield op. for setting flags because we don't actually
+        #   now its size (and it seems to change if 32 or 64bits)
+        if value:
+            self.flags = self.flags + BipFuncFlags.FUNC_HIDDEN
+        else:
+            self.flags = self.flags - BipFuncFlags.FUNC_HIDDEN
 
     @property
     def is_thunk(self):
@@ -384,6 +510,26 @@ class BipFunction(object):
         """
         return self.flags & BipFuncFlags.FUNC_THUNK != 0
 
+    @is_thunk.setter
+    def is_thunk(self, value):
+        """
+            Setter for is_thunk flag. No change are performed if it is
+            already at the correct value. This will failed silently if an
+            error occur.
+
+            .. todo:: Test
+
+            :param bool value: if ``True`` the flag will be set, otherwise it
+                will be removed.
+        """
+        if value == self.is_thunk: # already correctly set
+            return
+        # do not use bitfield op. for setting flags because we don't actually
+        #   now its size (and it seems to change if 32 or 64bits)
+        if value:
+            self.flags = self.flags + BipFuncFlags.FUNC_THUNK
+        else:
+            self.flags = self.flags - BipFuncFlags.FUNC_THUNK
 
     ############################ COMMENT ##############################
 
