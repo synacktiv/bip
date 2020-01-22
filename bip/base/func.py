@@ -155,9 +155,11 @@ class BipFunction(object):
             Setter for changing the name of the function.
 
             :param str value: The new name of the function, if an empty string
-                is provided it will revert to the default name provided by
-                IDA (``sub_...``).
+                or ``None`` is provided it will revert to the default name
+                provided by IDA (``sub_...``).
         """
+        if value is None:
+            value = ""
         idc.set_name(self.ea, value, idc.SN_CHECK)
 
     @property
