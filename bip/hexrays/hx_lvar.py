@@ -95,6 +95,8 @@ class HxLvar(object):
 
             :param str value: The new name of this local variable.
         """
+        if value == self._lvar.name: # nothing to do
+            return
         self._lvar.name = value
         self._lvar.set_user_name()
         if self._persistent:
@@ -244,7 +246,9 @@ class HxLvar(object):
         # get the info from the previously modify lvar
         restore_user_lvar_settings(lvuv, self._hxcfunc.ea)
         if not lvuv.lvvec.add_unique(lsi): # adding this var to save
-            raise RuntimeError("Unable to create object for saving the variable")
+            # this is actually not an error but simply means the lvar
+            #   was already at the same state
+            return
         # saving in the idb
         save_user_lvar_settings(self._hxcfunc.ea, lvuv)
 
