@@ -765,6 +765,88 @@ class BipElt(BipRefElt):
         else:
             return GetElt(r)
 
+    @staticmethod
+    def search_str_addr(s, start_ea=None, end_ea=None, down=True, nxt=True):
+        """
+            Static method for searching a string. In practice this perform
+            a search_bytes on the binary by encoding correctly the string
+            passed in argument and returning only reference to data elements.
+
+            .. warning::
+
+                This is different from idapython ``FindText`` method as this
+                will only search for bytes in the binary (and more precisely
+                the data)! It should also be way faster.
+
+            .. todo:: this should allow to handle encoding.
+
+            :param str s: The C string for which to search. If the string
+                is NULL terminated the NULL byte must be included.
+            :param start_ea: The address at which to start the search, if 
+                ``None`` the current address will be used.
+            :param end_ea: The address at which to stop the search, if
+                ``None`` the maximum or minimum (depending of searching up or
+                down) will be used.
+            :param down: If True (the default) search bellow the given
+                address, if False search above.
+            :param nxt: If True (the default) the current element will not
+                be included in the search.
+            :return: The address at which the string was found.  It will
+                always be data. If no matching element was found None will be
+                return.
+        """
+        # lets encode the string
+        byt = " ".join(["{:X}".format(ord(c)) for c in s])
+        # we want to skip everything which is not data without making the
+        #   search, this should be faster
+        curr_addr = BipElt.next_data_addr(start_ea, down=down)
+        while curr_addr is not None:
+            curr_addr = BipElt.search_bytes_addr(byt, start_ea=curr_addr, end_ea=end_ea,
+                    down=down, nxt=nxt)
+            if curr_addr is None:
+                return None # not found
+            if idc.is_data(ida_bytes.get_full_flags(curr_addr)):
+                return curr_addr # found!
+            # lets continue
+            curr_addr = BipElt.next_data_addr(curr_addr, down=down)
+        return None # not found
+
+
+    @staticmethod
+    def search_str(s, start_ea=None, end_ea=None, down=True, nxt=True):
+        """
+            Static method for searching a string. In practice this perform
+            a search_bytes on the binary by encoding correctly the string
+            passed in argument and returning only reference to data elements.
+
+            .. warning::
+
+                This is different from idapython ``FindText`` method as this
+                will only search for bytes in the binary (and more precisely
+                the data)! It should also be way faster.
+
+            .. todo:: this should allow to handle encoding.
+
+            :param str s: The C string for which to search. If the string
+                is NULL terminated the NULL byte must be included.
+            :param start_ea: The address at which to start the search, if 
+                ``None`` the current address will be used.
+            :param end_ea: The address at which to stop the search, if
+                ``None`` the maximum or minimum (depending of searching up or
+                down) will be used.
+            :param down: If True (the default) search bellow the given
+                address, if False search above.
+            :param nxt: If True (the default) the current element will not
+                be included in the search.
+            :return: An object which inherit from :class:`BipBaseElt`
+                representing the element at the address at which the string
+                was found. The element will always have :meth:`BipElt.is_data`
+                as True. If no matching element was found None will be return.
+        """
+        r = BipElt.search_str_addr(s, start_ea=start_ea, end_ea=end_ea,
+                down=down, nxt=nxt)
+        return r if r is None else GetElt(r)
+
 def GetElt(ea=None):
     """
         Return an object inherithed from :class:`BipBaseElt` which correspond
