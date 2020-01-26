@@ -235,6 +235,28 @@ class HxCFunc(object):
         self.visit_cnode(_app_filt)
         return l
 
+    def get_cnode_filter_type(self, type_filter):
+        """
+            Method which return a list of :class:`CNode` of a particular
+            type(s). Internally this use the :meth:`~HxCFunc.visit_cnode`
+            method which visit all nodes of the function, this is just a
+            usefull wrapper.
+
+            :param type_filter: The type(s) of :class:`CNode` to get. Only
+                :class:`CNode` matching the isinstance of this type will
+                be returned. This can be a type, a class or a tuple of class
+                and type.
+            :return: A list of :class:`CNode` which have match the type.
+                This list is order in which the node have been visited (see
+                :meth:`~HxCFunc.visit_cnode` for more information).
+        """
+        l = []
+        def _app_filt(cn):
+            if isinstance(cn, type_filter):
+                l.append(cn)
+        self.visit_cnode(_app_filt)
+        return l
+
     ############################ HX VISITOR METHODS ##########################
 
 # todo: 
