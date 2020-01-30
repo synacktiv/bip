@@ -222,7 +222,7 @@ class BipType(object):
         
         # no type define, try to guess it 
         # don't know when GUESS_FUNC_TRIVIAL is return so consider failure 
-        if guess_tinfo(ea, tif) == GUESS_FUNC_OK:
+        if guess_tinfo(tif, ea) == GUESS_FUNC_OK:
             return BipType.GetBipTypeNoCopy(tif)
         
         # not able to guess, this should be a tinfo_t empty ? (tif.empty() ?)
