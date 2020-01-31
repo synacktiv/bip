@@ -206,6 +206,40 @@ class BipElt(BipRefElt):
             raise TypeError("BipElt.__init__ : ea should be an integer")
         self.ea = ea #: The address of the element in the IDA database
 
+    ################## COMPARE #############################
+    
+    def __cmp__(self, other):
+        """
+            Compare with another BipElt. Will return 0 if the two :class:`BipElt`
+            have the same address, and -1 or 1 depending on the other element
+            position. This will raise a ``TypeError`` exception if the
+            argument is not a :class:`BipElt` .
+        """
+        if not isinstance(other, BipElt):
+            raise TypeError("Not a BipElt")
+        if self.ea < other.ea:
+            return -1
+        elif self.ea > other.ea:
+            return 1
+        else:
+            return 0
+
+    def __hash__(self):
+        """
+            Compute a unique hash for this ida function. The produce hash is
+            dependant of the type of this object and of its address. This
+            allow to create container using the hash
+            of the object for matching an object of a defined type and with
+            a particular address.
+
+            Calculation made is: ``hash(type(self)) ^ self.ea``, in particular
+            it means than child classes will not have the same hash as a
+            parrent classes even if the compare works.
+
+            :return: An integer corresponding to the hash for this object.
+        """
+        return hash(type(self)) ^ self.ea
+
     ################### BASE ##################
 
     @property
