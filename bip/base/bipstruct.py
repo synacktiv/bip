@@ -178,14 +178,14 @@ class BipStruct(BipRefElt):
             even if the offset is not aligned.
 
             :param int off: The offset of the member to get.
-            :raise ValueError: If the member was not found (offset bigger than
+            :raise IndexError: If the member was not found (offset bigger than
                 the struct).
             :return: An :class:`BStructMember` object corresponding to the
                 member.
         """
         mm = ida_struct.get_member(self._struct, off)
         if mm is None:
-            raise ValueError("Member at offset {} does not seems to exist in {}".format(off, self))
+            raise IndexError("Member at offset {} does not seems to exist in {}".format(off, self))
         return BStructMember(mm, self)
 
     def member_by_name(self, name):
@@ -194,13 +194,13 @@ class BipStruct(BipRefElt):
             name.
 
             :param str name: The name of the member to get.
-            :raise ValueError: If the member was not found.
+            :raise KeyError: If the member was not found.
             :return: An :class:`BStructMember` object corresponding to the
                 member.
         """
         mm = ida_struct.get_member_by_name(self._struct, name)
         if mm is None:
-            raise ValueError("Member {} does not seems to exist in {}".format(name, self))
+            raise KeyError("Member {} does not seems to exist in {}".format(name, self))
         return BStructMember(mm, self)
 
     def __getitem__(self, key):
@@ -220,6 +220,23 @@ class BipStruct(BipRefElt):
             return self.member_by_name(key)
         else:
             raise TypeError("BipStruct.__getitem__ expect a integer or a string as key, got: {}".format(key))
+
+    def __iter__(self):
+        """
+            Iter method for accessing the members as a list. This is
+            equivalent to :meth:`~BipStruct.members_iter`.
+
+            .. note::
+            
+                By default python will try to use the __getitem__ method
+                which is not what we want because the __getitem__ method takes
+                offset.
+
+            :return: An iterator on the :class:`BStructMember` object of this
+                struct.
+        """
+        for i in range(self.nb_members):
+            yield BStructMember(self._struct.get_member(i), self)
 
     def add(self, name, size, comment=None):
         """
