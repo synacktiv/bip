@@ -238,15 +238,17 @@ class BipStruct(BipRefElt):
         for i in range(self.nb_members):
             yield BStructMember(self._struct.get_member(i), self)
 
-    def add(self, name, size, comment=None):
+    def add(self, name, size, comment=None, offset=None):
         """
-            Add a new member at the end of the structure.
+            Add a new member to the structure (at the end by default).
 
             :param str name: The name of the field to add.
             :param int size: The size of the field to add in bytes,
                 can be 1, 2, 4 or 8.
             :param str comment: Optional parameter which allow to add a
                 comment associated with the new member.
+            :param int offset: The offset at which to add the new member, by
+                default (None) it will be added at the end.
             :raise TypeError: If one argument is not of the correct type or
                 with the correct value.
             :raise ValueError: If an error occur when adding the member.
@@ -255,13 +257,15 @@ class BipStruct(BipRefElt):
         """
         if size not in (1, 2, 4, 8) or not isinstance(name, (str, unicode)):
             raise TypeError("Invalid type for adding in {}".format(self))
+        if offset is None:
+            offset = idc.BADADDR
         # compute flags
         flags = idc.FF_DATA
         d= {8:idc.FF_QWORD, 4:idc.FF_DWORD, 2:idc.FF_WORD, 1:idc.FF_BYTE}
         flags |= d[size]
 
         # create member
-        r = ida_struct.add_struc_member(self._struct, name, idc.BADADDR, flags, None, size)
+        r = ida_struct.add_struc_member(self._struct, name, offset, flags, None, size)
         if r != 0:
             raise ValueError("Unable to add member {} (size={}) in {}".format(name, size, self))
 
