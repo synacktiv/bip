@@ -470,7 +470,7 @@ def buildCNode(cls):
     # creating the dictionnary of attributes
     attr = dict(cls.__dict__) # create a copy of the dict
     attr["__module__"] = __name__ # change module to cnode
-    attr["__doc__"] = "Copy of :class:`{}` but which inherit from :class:`CNode`.\nAutomatically created by :func:`~cnode.buildCNode.`".format(cls.__name__)# change doc
+    attr["__doc__"] = "Copy of :class:`{}` but which inherit from :class:`CNode`.\nAutomatically created by :func:`~bip.hexrays.cnode.buildCNode`".format(cls.__name__)# change doc
 
     # getting the name of the new class
     cn_cls_nm = cls.__name__.replace("HxC", "CNode")
