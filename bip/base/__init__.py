@@ -5,7 +5,7 @@ from data import BipData
 from operand import OpType, Operand
 from bipstruct import BipStruct, BStructMember
 from xref import XrefTypes, BipXref
-from biperror import BipError
+from biperror import BipError, BipDecompileError
 from func import BipFuncFlags, BipFunction
 from block import BipBlockType, BipBlock
 from biptype import BipType, BTypeEmpty, BTypePartial, BTypeVoid, BTypeInt, BTypeBool, BTypeFloat, BTypePtr, BTypeArray, BTypeFunc, BTypeStruct, BTypeUnion, BTypeEnum

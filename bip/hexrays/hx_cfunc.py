@@ -400,6 +400,13 @@ class HxCFunc(object):
         """
         if ea is None:
             ea = ida_kernwin.get_screen_ea()
-        return cls(ida_hexrays.decompile(ea))
+        try:
+            idaobj = ida_hexrays.decompile(ea)
+        except ida_hexrays.DecompilationFailure:
+            # IDA could not decompile the function
+            raise bbase.BipDecompileError("Hexrays failed to decompile function at 0x{:X}".format(ea))
+        if idaobj is None:
+            raise bbase.BipDecompileError("Decompilation failed for {}: address was probably not in a function ?".format(ea))
+        return cls(idaobj)
 
 
