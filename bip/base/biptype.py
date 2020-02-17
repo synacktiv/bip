@@ -766,6 +766,17 @@ class BTypeStruct(BipType):
             Internal property which allow to get the ``udt_type_data_t`` for
             this type structure.
 
+            .. warning::
+                
+                Carefull to this! The information contain in this
+                object (such as the types) do not reference
+                the ``udt_type_data_t`` object. Meaning that as soon as the
+                ``udt_type_data_t`` object is delete by python, all the
+                subobject will be deleted. All of those should be copied
+                before the python object is destroyed or we may trigger
+                use-after-free. For problematic of swig and memory management
+                see http://www.swig.org/Doc1.3/Python.html#Python_nn30.
+
             :return: the ``ida_typeinf.udt_type_data_t`` for this object.
         """
         utd = udt_type_data_t()
@@ -783,7 +794,9 @@ class BTypeStruct(BipType):
                 minus one.
             :return: The name of the ``num`` member for this struct type.
         """
-        return self._ida_udt_type_data[num].name
+        iutd = self._ida_udt_type_data
+        s = str(iutd[num].name)
+        return s
 
     def get_member_type(self, num):
         """
@@ -798,7 +811,9 @@ class BTypeStruct(BipType):
                 minus one.
             :return: An object which inherit from :class:`BipType` class.
         """
-        return BipType.GetBipType(self._ida_udt_type_data[num].type)
+        iutd = self._ida_udt_type_data
+        t = BipType.GetBipType(iutd[num].type)
+        return t
 
     @property
     def nb_members(self):
@@ -829,9 +844,10 @@ class BTypeStruct(BipType):
             name (str) and the values to their type (:class:`BipType`).
         """
         d = {}
+        iutd = self._ida_udt_type_data
         for i in range(self.nb_members):
-            utd = self._ida_udt_type_data[i]
-            d[utd.name] = BipType.GetBipType(utd.type)
+            utd = iutd[i]
+            d[str(utd.name)] = BipType.GetBipType(utd.type)
         return d
 
     @property
@@ -868,6 +884,17 @@ class BTypeUnion(BipType):
             Internal property which allow to get the ``udt_type_data_t`` for
             this union.
 
+            .. warning::
+                
+                Carefull to this! The information contain in this
+                object (such as the types) do not reference
+                the ``udt_type_data_t`` object. Meaning that as soon as the
+                ``udt_type_data_t`` object is delete by python, all the
+                subobject will be deleted. All of those should be copied
+                before the python object is destroyed or we may trigger
+                use-after-free. For problematic of swig and memory management
+                see http://www.swig.org/Doc1.3/Python.html#Python_nn30.
+
             :return: the ``ida_typeinf.udt_type_data_t`` for this object.
         """
         utd = udt_type_data_t()
@@ -884,7 +911,7 @@ class BTypeUnion(BipType):
                 the :meth:`~BTypeStruct.nb_members` minus one.
             :return: The name of the ``num`` member for this struct type.
         """
-        return self._ida_udt_type_data[num].name
+        s = str(self._ida_udt_type_data[num].name)
 
     def get_member_type(self, num):
         """
@@ -898,7 +925,9 @@ class BTypeUnion(BipType):
                 :meth:`~BTypeStruct.nb_members` minus one.
             :return: An object which inherit from :class:`BipType` class.
         """
-        return BipType.GetBipType(self._ida_udt_type_data[num].type)
+        iutd = self._ida_udt_type_data
+        t = BipType.GetBipType(iutd[num].type)
+        return t
 
     @property
     def nb_members(self):
@@ -928,9 +957,10 @@ class BTypeUnion(BipType):
             name (str) and the values to their type (:class:`BipType`).
         """
         d = {}
+        iutd = self._ida_udt_type_data
         for i in range(self.nb_members):
-            utd = self._ida_udt_type_data[i]
-            d[utd.name] = BipType.GetBipType(utd.type)
+            utd = iutd[i]
+            d[str(utd.name)] = BipType.GetBipType(utd.type)
         return d
 
     @property
