@@ -9,7 +9,7 @@ understanding the global design of Bip, however for starting reading the
 
 The `Module architecture`_ part describes how the different modules and
 classes are interfaced together, the `common code patterns`_ part explains how
-Bip was developped for being used, finally the `interfacing with IDA`_ part
+Bip was developped for being used, finally the `interfacing with IDA & limitations`_ part
 explains how the interface with IDA is made and problems link to that design.
 
 Module architecture
@@ -144,7 +144,7 @@ represented by this schematic:
 
 .. figure:: /_static/img/bip_gui.png
 
-The most important part define in this module for a user is the
+The most important part of this module for a user is the
 :class:`BipPlugin` system. Bip defines its own plugin system which is
 separated from the one of IDA, each plugin should inherit from the class
 :class:`BipPlugin` (directly or indirectly) and will be loaded by the
@@ -153,14 +153,14 @@ be a singleton and can be recuperated using the
 :class:`~bip.gui.pluginmanager.BipPluginManager`, which is itself a singleton
 and a *real* IDA Plugin (recuperated using :func:`get_plugin_manager`).
 
-Activities are objects made for interfacing with different part of
+Activities are objects made for interfacing with different parts of
 IDA, and in particular for being able to be used as decorator of methods of a
 :class:`BipPlugin`. The :class:`BipActivity` is an abstract class which is a
 callable and expect a handler and a way to register with the IDA interface.
-The simplest example of Activity are the :class:`BipAction` which allow to
-define menu entry or shortcut (*hot-key*) in IDA, as a general rule their
-are made to being used as decorator which are made for working the same way
-than the ``property`` decorator of Python.
+The simplest example of Activity is the :class:`BipAction` which allows to
+define menu entry or shortcuts (*hot-key*) in IDA, as a general rule they
+are made to being used as decorator in a similar way as the ``property``
+decorator of Python.
 
 .. note:: **BipActivityContainer**
 
@@ -168,7 +168,7 @@ than the ``property`` decorator of Python.
     several activities and which does not do any action by it-self. It is made
     for allowing to chain decorators on the same method.
 
-For more information about writting plugins and there internals
+For more information about writing plugins and their internal
 see :ref:`gui-plugins`.
 
 Common code patterns
@@ -180,18 +180,19 @@ Bip class identification
 Bip provide an abstraction in top of several objects in IDA, several different
 classes in Bip can be used for representing the same IDA objects (ex.:
 :class:`~bip.hexrays.CNode`, :class:`~bip.base.BipType`, ...). Each different
-class will provide different functionnalities depending on attribute(s) of the
-underlying IDA object, this allow to avoid to try to use features which are
-not set or invalid in the IDA object and to clarify the usage of those object.
+class will provide different functionalities depending on attribute(s) of the
+underlying IDA object, this allows to avoid trying to use features which are
+not set or invalid in the IDA object and to clarify the usage of those
+objects.
 
 In most cases Bip will provide one static function or one static method which
-allow to get the object of the correct class (ex: :func:`~bip.base.GetElt`,
+allows to get the object of the correct class (ex: :func:`~bip.base.GetElt`,
 :func:`~bip.base.GetEltByName`, :meth:`~bip.hexrays.CNode.GetCNode`, ...).
 Most parent classes of the objects provide ways to test which kind of object
-will be produce, however the intended way to check for the object type is
+will be produced. However, the intended way to check for the object type is
 to use the ``isinstance`` function with the object type being tested.
 
-Here is a few examples of how it was intended to be used. In this first
+Here are a few examples of how it was intended to be used. In this first
 example the first instruction of a function is recuperated using
 :func:`~bip.base.GetEltByName`, in this case we know it is an instruction
 (:class:`~bip.base.Instr`) but the function can return other subclasses
@@ -229,13 +230,13 @@ IDA (which is used for all different types). In most cases there is no need
 to go through this method, Bip objects which are typed should have a ``type``
 property which should allow to get their type and
 the methods :meth:`~bip.base.BipType.FromC` and
-:meth:`~bip.base.BipType.get_at` should allow to get easily the correct value.
-However when scriptting it is often interesting to look at the type of an
+:meth:`~bip.base.BipType.get_at` should allow to get the correct value easily.
+However when scripting it is often interesting to look at the type of an
 object, more information about types and the different classes which represent
 them can be found in the :ref:`doc-bip-base-type` documentation. Here is a
 small example of how to look at the types, we start with a
-:class:`~bip.base.BTypeStruct` and look at the members, if a member is pointer
-(:class:`~bip.base.BTypePtr`) we look at the subtype pointed.
+:class:`~bip.base.BTypeStruct` and look at the members, if a member is a
+pointer (:class:`~bip.base.BTypePtr`) we look at the subtype pointed.
 
 .. code-block:: pycon
 
@@ -255,25 +256,82 @@ small example of how to look at the types, we start with a
     We have a ptr for member e! Type pointed is: char
     We have a ptr for member f! Type pointed is: void *__stdcall(int i)
 
-This is also the case when using visitors in hexrays. The Bip visitor return
+This is also the case when using visitors in hexrays. The Bip visitors return
 objects which inherit from the :class:`~bip.hexrays.CNode` class. As
-in the other example the easiest way to determine which types of node is to
+in the other example, the easiest way to determine which types of node is to
 use ``isinstance``. An example of this can simply be found in the overview in
 the part :ref:`general-overview-cnode-visit` in the ``visit_call`` functions,
-it is also shown inderectly through the usage of the method
+it is also shown indirectly through the usage of the method
 :meth:`~bip.hexrays.HxCFunc.visit_cnode_filterlist` which takes a list of
 class in argument, under the hood this function will visit all nodes and call
 the callback only for the one being instance of one of the class passed in the
 second argument.
 
-It is worth noticing that in most case the underlying object or identifier
-used by IDA will be kept in reference in one of the private attribute of the
+It is worth noticing that in most cases the underlying object or identifier
+used by IDA will be kept in reference in one of the private attributes of the
 object.
 
-Interfacing with IDA
-====================
+Interfacing with IDA & limitations
+==================================
 
-TODO: problem of the fact we keep ref. on the IDA C++ object.
+This part of the documentation describe some limitations of Bip and some
+problems and limitations which can occur because of the interface with IDA.
+Basic usage of the API for recuperating should not create many of those
+problems, one noticeable exception is when modifying the database using the
+GUI and reusing objects which have been kept from before the modification,
+this, of course, include the *undo* feature of IDA. More "advanced" usage and
+developers should consider being careful about those. 
+
+In a lot of case IDA provides API which allows to recuperate the information
+necessary, however, in some cases the IDAPython API do not offer such
+useful wrappers and for being able to get the full benefits of the available
+API it is necessary to recuperate reference to the underlying objects. Those
+objects are available in Python through the swig interface (part of IDAPython)
+build by IDA on top of their C++ API. As a general rule, people from hexrays
+encourage avoiding keeping references on those objects, but as said earlier
+there is not always a choice. Because of this several problems exist.
+
+The first is a really simple problem but hard to solve: when keeping an object
+of a type in Bip the underlying IDB can be changed (using the API or the GUI).
+This can make the current object of Bip invalid. A simple example of this
+will be to recuperate an :class:`~bip.base.Instr` object
+using :func:`~bip.base.GetElt` and then to undefine this element using the GUI.
+If :func:`~bip.base.GetElt` is called again a  :class:`~bip.base.BipData`
+object will be returned, which is the object expected. However, if the previous
+object is used, it can lead to unexpected behavior because this address is
+not an instruction anymore, for example the
+property :class:`~bip.base.Instr.mnem` will return an empty string. 
+
+For avoiding this problem as much as possible, Bip tries to avoid keeping
+references to the IDA objects or to memoize information, but often this is not
+possible and it has an overall cost in performance. As a general rule when
+doing modifications to the IDB the user should be careful to fetch again the
+object instead of re-using them. Sadly there is actually no solution
+implemented in Bip for solving this problem. In theory it could be implemented
+using the event API of hexrays but this may create several other complex
+problems if it is even possible.
+
+Another common problem of using the IDA objects is that
+`wrappers are only wrappers <https://www.hex-rays.com/blog/idapython-wrappers-are-only-wrappers/>`_ .
+What this basically said is that we have to handle the management of our
+objects in python as they are in C++, with SWIG in the middle. This include
+the example in the blogpost but also several others, such as for example
+the ones link to the :ref:`doc-bip-base-type` API (look for the warning). As
+a rule, having problem with the memory management when using the Bip
+standard (not private) API is not considered normal and can be
+reported as a bug. However this can force development to make some
+particular choice for enforcing this.
+
+Finally, the *undo* feature provided in IDA may invalidate any or all of the
+internal object use by IDA ("The simplest approach is to assume that the
+database has completely changed and to re-read information from the database
+to the memory." and "Plugins in general should not cache and reuse pointers to
+kernel objects (like func_t, segment_t). These pointers may change between
+plugins invocations."
+from `Undo: IDA can do it <https://www.hex-rays.com/products/ida/7_3/undo/>`_).
+As there is nothing really possible to do at that point for supporting such
+a thing and trying to actualize all possible objects when an *undo* or *redo*
+is simply not acceptable it is advice to simply disable this feature.
 
 
 
