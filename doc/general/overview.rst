@@ -428,6 +428,8 @@ variable by the :class:`HxLvar` objects:
     lv.size # getting the size
     # 8
 
+.. _general-overview-cnode-visit:
+
 CNode / Visitors
 ----------------
 

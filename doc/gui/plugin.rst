@@ -94,7 +94,7 @@ of choices for having such a design is limited.
     the scope of the module before calling the constructor and
     :meth:`BipPlugin.load` method. This should work in most case however it
     can create problem in case the plugins are define in a different scope
-    than the one of their module (for exemple inside a function).
+    than the one of their module (for example inside a function).
 
 Registering activities
 ----------------------

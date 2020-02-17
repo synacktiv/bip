@@ -115,7 +115,7 @@ For more information about the usage and implementation of hexrays see
     the root node which does not have a parent).
     
     This difference in implementation allow to travel more easilly the AST and
-    to make efficient link with other components, the simplest exemple is the
+    to make efficient link with other components, the simplest example is the
     possibility to create a link between the :class:`CNodeExprVar` object
     and the corresponding :class:`HxLvar` object, while it is not possible
     using the :class:`HxCExprVar` object (this may have change since IDA 7.3
@@ -157,7 +157,7 @@ Activities are objects made for interfacing with different part of
 IDA, and in particular for being able to be used as decorator of methods of a
 :class:`BipPlugin`. The :class:`BipActivity` is an abstract class which is a
 callable and expect a handler and a way to register with the IDA interface.
-The simplest exemple of Activity are the :class:`BipAction` which allow to
+The simplest example of Activity are the :class:`BipAction` which allow to
 define menu entry or shortcut (*hot-key*) in IDA, as a general rule their
 are made to being used as decorator which are made for working the same way
 than the ``property`` decorator of Python.
@@ -174,9 +174,101 @@ see :ref:`gui-plugins`.
 Common code patterns
 ====================
 
-Bip provide an abstraction in top of the 
+Bip class identification
+------------------------
 
-TODO: functions which return the correct element and usage of isinstance
+Bip provide an abstraction in top of several objects in IDA, several different
+classes in Bip can be used for representing the same IDA objects (ex.:
+:class:`~bip.hexrays.CNode`, :class:`~bip.base.BipType`, ...). Each different
+class will provide different functionnalities depending on attribute(s) of the
+underlying IDA object, this allow to avoid to try to use features which are
+not set or invalid in the IDA object and to clarify the usage of those object.
+
+In most cases Bip will provide one static function or one static method which
+allow to get the object of the correct class (ex: :func:`~bip.base.GetElt`,
+:func:`~bip.base.GetEltByName`, :meth:`~bip.hexrays.CNode.GetCNode`, ...).
+Most parent classes of the objects provide ways to test which kind of object
+will be produce, however the intended way to check for the object type is
+to use the ``isinstance`` function with the object type being tested.
+
+Here is a few examples of how it was intended to be used. In this first
+example the first instruction of a function is recuperated using
+:func:`~bip.base.GetEltByName`, in this case we know it is an instruction
+(:class:`~bip.base.Instr`) but the function can return other subclasses
+of :class:`~bip.base.BipElt`. We then look at the :class:`~bip.base.BipElt`
+which reference this address, some are :class:`~bip.base.Instr` and some
+are :class:`~bip.base.BipData`, for knowing which is which we
+use ``isinstance``.
+
+.. code-block:: pycon
+
+    >>> from bip import *
+    >>> elt = GetEltByName("RtlQueryProcessLockInformation")
+    >>> elt # first instruction of RtlQueryProcessLockInformation
+    Instr: 0x1800D2FF0 (mov     rax, rsp)
+    >>> elt.is_code # this are common property to BipElt which are used to get the correct object
+    True
+    >>> elt.is_data
+    False
+    >>> for e in elt.xEltTo: # here we get the Elt xref, elements can be Instr or BipData
+    ...   if isinstance(e, Instr): # in case of instr we want to print the mnemonic
+    ...     print("Found instr at 0x{:X} which ref function, with mnemonic: {}".format(e.ea, e.mnem))
+    ...   elif isinstance(e, BipData): # for BipData there is no mnemonic available and so we just want the address
+    ...     print("Found data ref at 0x{:x}".format(e.ea))
+    ...   else:
+    ...     print("Something else ?? {}".format(e))
+    Found instr at 0x1800C12A2 which ref function, with mnemonic: call
+    Found data ref at 0x1801136d7
+    Found data ref at 0x1801434a8
+    Found data ref at 0x18016c7fc
+
+This next example show how to check for types. All types in Bip inherit from 
+:class:`~bip.base.BipType`, the :meth:`~bip.base.BipType.GetBipType` method
+allow to get the correct Bip object from the ``tinfo_t`` object used by
+IDA (which is used for all different types). In most cases there is no need
+to go through this method, Bip objects which are typed should have a ``type``
+property which should allow to get their type and
+the methods :meth:`~bip.base.BipType.FromC` and
+:meth:`~bip.base.BipType.get_at` should allow to get easily the correct value.
+However when scriptting it is often interesting to look at the type of an
+object, more information about types and the different classes which represent
+them can be found in the :ref:`doc-bip-base-type` documentation. Here is a
+small example of how to look at the types, we start with a
+:class:`~bip.base.BTypeStruct` and look at the members, if a member is pointer
+(:class:`~bip.base.BTypePtr`) we look at the subtype pointed.
+
+.. code-block:: pycon
+
+    >>> from bip import *
+    >>> tst = BipType.FromC("struct {char a; int b; void *c; __int64 d; char *e; void *(*f)(int i);}")
+    >>> tst.members_info
+    {'a': <bip.base.biptype.BTypeInt object at 0x0000029B22C24160>, 'c': <bip.base.biptype.BTypePtr object at 0x0000029B22C24128>, 'b': <bip.base.biptype.BTypeInt object at 0x0000029B22C24390>, 'e': <bip.base.biptype.BTypePtr object at 0x0000029B22C244A8>, 'd': <bip.base.biptype.BTypeInt object at 0x0000029B22C24438>, 'f': <bip.base.biptype.BTypePtr object at 0x0000029B22C24048>}
+    >>> for i in range(tst.nb_members):
+    ...     if isinstance(tst.get_member_type(i), BTypePtr):
+    ...        print("We have a ptr for member {}! Type pointed is: {}".format(tst.get_member_name(i), tst.get_member_type(i).pointed.str))
+    ...     else:
+    ...        print("Not a pointer for member {}, type is: {}".format(tst.get_member_name(i), tst.get_member_type(i).str))
+    Not a pointer for member a, type is: char
+    Not a pointer for member b, type is: int
+    We have a ptr for member c! Type pointed is: void
+    Not a pointer for member d, type is: __int64
+    We have a ptr for member e! Type pointed is: char
+    We have a ptr for member f! Type pointed is: void *__stdcall(int i)
+
+This is also the case when using visitors in hexrays. The Bip visitor return
+objects which inherit from the :class:`~bip.hexrays.CNode` class. As
+in the other example the easiest way to determine which types of node is to
+use ``isinstance``. An example of this can simply be found in the overview in
+the part :ref:`general-overview-cnode-visit` in the ``visit_call`` functions,
+it is also shown inderectly through the usage of the method
+:meth:`~bip.hexrays.HxCFunc.visit_cnode_filterlist` which takes a list of
+class in argument, under the hood this function will visit all nodes and call
+the callback only for the one being instance of one of the class passed in the
+second argument.
+
+It is worth noticing that in most case the underlying object or identifier
+used by IDA will be kept in reference in one of the private attribute of the
+object.
 
 Interfacing with IDA
 ====================
