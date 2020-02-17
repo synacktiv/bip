@@ -2,10 +2,11 @@ List of BipPlugin
 #################
 
 ======================================= =================== ================================================================================================================================
-Name                File                Description
+Name                                    File                Description
 ======================================= =================== ================================================================================================================================
 :class:`~plugins.printk_com.PrintkComs` printk_com.py       Add the format string used by a called to ``printk`` in comment at the level of the call.
 :class:`~plugins.colorcall.ColorCall`   colorcall.py        Allow to color call instruction and jump outside a function.
+:class:`~plugins.unklibfix.UnkLibFix`   unklibfix.py        Allow to remove the ``unknown_libname_*`` functions named when applying FLIRT signature.
 ======================================= =================== ================================================================================================================================
 
 PrintkComs API
@@ -31,5 +32,16 @@ ColorCall API
     .. autoattribute:: color_call
     .. autoattribute:: color_calljmp
     .. autoattribute:: colorcalljmp_in_func
+
+UnkLibFix API
+=============
+
+.. autoclass:: plugins.unklibfix.UnkLibFix
+    :members:
+    :member-order: bysource
+
+    .. autoattribute:: rm_unk_func
+    .. autoattribute:: rm_unk_func_comm
+
 
 

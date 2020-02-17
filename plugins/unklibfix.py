@@ -14,7 +14,9 @@ class UnkLibFix(BipPlugin):
         Main methods are:
 
         * ``rm_unk_func``: remove name and library flag.
-        * ``rm_unk_func_comm``: remove name, library flag and repeatable comment.
+        * ``rm_unk_func_comm``: remove name, library flag and repeatable
+          comment, if comments have been change by the user they will also
+          be deleted.
 
         This plugin export entries in ``Bip/UnkLibFix/``
     """
