@@ -42,14 +42,14 @@ def visit_all_function00():
     for f in BipFunction.iter_all():
         try:
             f.hxfunc.hx_visit_all(pr)
-        except DecompilationFailure: # ida hexrays error
+        except BipDecompileError: # ida hexrays error
             pass # we ignore it
 
 def visit_all_function01():
     for f in BipFunction.iter_all():
         try:
             f.hxfunc.visit_cnode(pr)
-        except DecompilationFailure: # ida hexrays error
+        except BipDecompileError: # ida hexrays error
             pass # we ignore it
 
 # TODO: should make all those test with verification that the class is well

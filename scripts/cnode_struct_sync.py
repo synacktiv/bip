@@ -107,7 +107,7 @@ def propagate_all_func():
     for f in BipFunction.iter_all():
         try:
             f.hxfunc.visit_cnode_filterlist(visit_propag, [CNodeExprMemref, CNodeExprMemptr])
-        except ida_hexrays.DecompilationFailure:
+        except BipDecompileError:
             print("Decompile failure at 0x{:X}".format(f.ea))
             continue
 
