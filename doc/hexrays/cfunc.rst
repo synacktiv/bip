@@ -56,7 +56,6 @@ HxCFunc API
 .. autoclass:: HxCFunc
     :members:
     :member-order: bysource
-    :special-members:
-    :private-members:
 
+    .. automethod:: __init__
 
