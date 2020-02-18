@@ -663,9 +663,14 @@ Other leaf Statement API
     :special-members:
     :private-members:
 
+.. _doc-hexrays-ida-visitor-internal:
+
 Internal Hexrays Visitor API
 ============================
 
 .. automodule:: bip.hexrays.hx_visitor
-   :members:
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
 

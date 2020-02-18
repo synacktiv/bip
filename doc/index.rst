@@ -39,7 +39,7 @@ General
 =======
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
 
     general/install
     general/overview
@@ -79,7 +79,7 @@ usefull only if the decompiler for the binary exist and is installed.
 
     hexrays/cfunc
     hexrays/lvar
-    hexrays/visitors
+    hexrays/astnodes
     hexrays/cnode
     hexrays/visit_hx
 

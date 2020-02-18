@@ -131,7 +131,7 @@ For more information about the usage and implementation of hexrays see
     ``cnode.py`` file and use the ``@addCNodeMethod`` decorator.
 
     For more information about the internal implementation of :class:`CNode`
-    see TODO.
+    see :ref:`doc-hexrays-cnode-generation-internal`.
 
 Gui
 ---

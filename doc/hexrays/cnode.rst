@@ -8,6 +8,7 @@ CNode & visitors
 TODO
 
 GetCNode
+Schematic
 
 CNode API
 =========
@@ -665,10 +666,21 @@ Other leaf Statement API
     :special-members:
     :private-members:
 
+.. _doc-hexrays-cnode-visitor-api:
+
 Internal Hexrays Visitor API
 ============================
 
 .. automodule:: bip.hexrays.cnode_visitor
    :members:
+
+.. _doc-hexrays-cnode-generation-internal:
+
+CNode generation and internals
+==============================
+
+.. todo:: Description of what is done for generating cnode and doc of methods
+    and decorator.
+
 
 
