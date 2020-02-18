@@ -1,14 +1,46 @@
 .. _doc-hexrays-cnode:
 
-CNode & visitors
-################
+CNode
+#####
 
 .. module:: bip.hexrays
 
-TODO
+The :class:`~bip.hexrays.CNode` API is one of the representation in Bip for
+the AST nodes of an Hexrays decompiled function. Of the two representations,
+it is the one which is prefered. The class :class:`~bip.hexrays.CNode` is an
+abstract class which is used as parent for the actual classes representing the
+nodes. For more informations about AST nodes and their different types see
+:ref:`doc-hexrays-astnodes`.
 
-GetCNode
-Schematic
+For recuperating the :class:`~bip.hexrays.CNode` objects for a particular
+function several methods of :class:`~bip.hexrays.HxCFunc` can be used:
+
+* the :meth:`~bip.hexrays.HxCFunc.root_node` property for getting the root of
+  the AST for a particular function;
+* the :meth:`~bip.hexrays.HxCFunc.get_cnode_filter` and
+  :meth:`~bip.hexrays.HxCFunc.get_cnode_filter_type` methods provide list of
+  the nodes in the functions (those are based on the visitors);
+* the :meth:`~bip.hexrays.HxCFunc.visit_cnode` 
+  and :meth:`~bip.hexrays.HxCFunc.visit_cnode_filterlist` methods which allow
+  to visit the AST using a Deep-First Search (DFS) algorithm
+  with preorder-traversal.
+
+For a list of possible node type see :ref:`doc-hexrays-astnodes-nodetype`.
+
+Two internal mechanisms are important to understand
+the :class:`~bip.hexrays.CNode` implementation:
+
+* all :class:`~bip.hexrays.CNode` are generated from a ``citem_t`` object in
+  IDA, the correct classes is determine depending of the type of
+  the ``citem_t`` (:class:`~bip.hexrays.HxCType`). The
+  :meth:`~bip.hexrays.CNode.GetCNode` static method exist for finding the
+  correct child class of :class:`~bip.hexrays.CNode` corresponding to the
+  ``citem_t`` and creating it, as a general rule the constructors should not
+  be called directly.
+* most of the :class:`~bip.hexrays.CNode` subclasses are created dynamically
+  from their equivalent :class:`~bip.hexrays.HxCType`, this is for avoiding
+  code duplicate. For more information
+  see :ref:`doc-hexrays-cnode-generation-internal`.
 
 CNode API
 =========

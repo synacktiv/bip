@@ -46,6 +46,8 @@ have no impact for the user, but when looking at the code of Bip it is normal
 to not find anywhere the subclasses of :class:`~bip.hexrays.CNode`.  For more
 information see :ref:`doc-hexrays-cnode-generation-internal`.
 
+.. _doc-hexrays-astnodes-nodetype:
+
 AST Node types
 ==============
 

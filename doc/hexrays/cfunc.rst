@@ -43,7 +43,7 @@ the :class:`~bip.hexrays.CNode` for a particular function:
   or :meth:`~bip.hexrays.HxCFunc.visit_cnode_filterlist` and providing a
   callback, those visitors use a Deep-First Search (DFS) algorithm;
 * by using helper methods :meth:`~bip.hexrays.HxCFunc.get_cnode_filter` or
-  :meth:`~bip.hexrays.HxCFunc.get_cnode_filter_type` which provides list of
+  :meth:`~bip.hexrays.HxCFunc.get_cnode_filter_type` which provide list of
   the resulting nodes, those helpers are based on the visitors.
 
 It is also possible to use the visitor on the first level of abstraction
