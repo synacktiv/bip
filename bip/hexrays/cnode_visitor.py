@@ -94,7 +94,10 @@ def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
                 ch.reverse()
                 stack += ch
         elif isinstance(elt, CNodeStmt):
-            ch = list(elt.expr_childs)
+            if visit_expr:
+                ch = list(elt.expr_childs)
+            else:
+                ch = []
             ch += list(elt.st_childs)
             ch.reverse()
             stack += ch
