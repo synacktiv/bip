@@ -1,13 +1,13 @@
 """
     Implement visitor in top of the hexrays ctree visitor API. Those classes
     are define only for internal used and should probably be not used
-    directly.
-
-    .. todo:: add support for prune and stoping the visitor
-
-    .. todo:: some of those classes should inherit from each other.
-
-    .. todo:: make link on our visitor implementation once it it finish.
+    directly. Those are accessible through the methods
+    of :class:`~bip.hexrays.HxCFunc` starting with ``hx_visit_``. Another
+    implementation of visitors exist in Bip which does not rely on the
+    ``ctree_visitor_t`` from IDA and which allow to visit
+    on :class:`~bip.hexrays.CNode`, this is usually the prefered way to
+    visit nodes using Bip. See :ref:`doc-hexrays-astnodes-visitors` for more
+    information.
 """
 from idaapi import ctree_visitor_t, CV_FAST
 from hx_citem import HxCItem
