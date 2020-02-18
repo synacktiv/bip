@@ -410,9 +410,20 @@ def addCNodeMethod(cnode_name, func_name=None):
             @addCNodeMethod(myclassname)
             @property #order of those decorator is important
             def my_new_property(self):
+                \"\"\"
+                    Documentation will be correctly seen when generating
+                    the doc.
+                \"\"\"
                 pass # THE CODE
 
         .. todo:: correctly handle all property decorators
+
+        .. warning::
+        
+            All methods/properties decorated by this functions should be
+            defined before the creation of the corresponding CNode! Currently
+            the simplest way to do this is by adding it at the end of the
+            ``cnode.py`` files.
 
         :param str cnode_name: The name of the CNode class to which add the
             property.
