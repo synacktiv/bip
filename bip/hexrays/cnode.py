@@ -501,6 +501,16 @@ def buildCNode(cls):
 @addCNodeMethod("CNodeExprVar")
 @property
 def lvar(self):
+    """
+        Property which allow direct access to the :class:`~bip.hexrays.HxLvar`
+        object referenced by this node.
+
+        This method exist only for the :class:`~bip.hexrays.CNode`
+        implementation.
+
+        :return: the :class:`~bip.hexrays.HxLvar` object referenced by this
+            node.
+    """
     return self._hxcfunc.lvar_at(self.index)
 
 
