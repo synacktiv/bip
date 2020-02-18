@@ -346,10 +346,48 @@ class HxCExprComma(HxCExprDoubleOperation):
 # TODO: clean this
 
 @cnode.buildCNode
-class HxCExprAsg(HxCExprDoubleOperation):
+class HxCExprAssignment(HxCExprDoubleOperation):
+    """
+        Abstract class for representing a :class:`HxCExpr` where the left
+        operand is the destination of an assignment. This inherit from
+        :class:`HxCExprDoubleOperation` and include not only the simple
+        assignment operation but also the one which include another operation
+        such as ``+=`` (:class:`HxCExprAsgadd`), ``^=``
+        (:class:`HxCExprAsgxor`), ...
+    """
+
+    @property
+    def src(self):
+        """
+            Helper property which return the source of the assignment.
+
+            This is just a wrapper on top of
+            :meth:`~bip.hexrays.HxCExprDoubleOperation.second_op`.
+            
+            :return: The second operand of the expression, an object which
+                inherit from :class:`HxCExpr` .
+        """
+        return self.second_op
+
+    @property
+    def dst(self):
+        """
+            Helper property which return the destination of the assignment.
+
+            This is just a wrapper on top of
+            :meth:`~bip.hexrays.HxCExprDoubleOperation.first_op`.
+            
+            :return: The first operand of the expression, an object which
+                inherit from :class:`HxCExpr` .
+        """
+        return self.first_op
+
+@cnode.buildCNode
+class HxCExprAsg(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -357,10 +395,11 @@ class HxCExprAsg(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgbor(HxCExprDoubleOperation):
+class HxCExprAsgbor(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -368,10 +407,11 @@ class HxCExprAsgbor(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgxor(HxCExprDoubleOperation):
+class HxCExprAsgxor(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -379,10 +419,11 @@ class HxCExprAsgxor(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgband(HxCExprDoubleOperation):
+class HxCExprAsgband(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -390,10 +431,11 @@ class HxCExprAsgband(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgadd(HxCExprDoubleOperation):
+class HxCExprAsgadd(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -401,10 +443,11 @@ class HxCExprAsgadd(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgsub(HxCExprDoubleOperation):
+class HxCExprAsgsub(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -412,10 +455,11 @@ class HxCExprAsgsub(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgmul(HxCExprDoubleOperation):
+class HxCExprAsgmul(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -423,10 +467,11 @@ class HxCExprAsgmul(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgsshr(HxCExprDoubleOperation):
+class HxCExprAsgsshr(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -434,10 +479,11 @@ class HxCExprAsgsshr(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgushr(HxCExprDoubleOperation):
+class HxCExprAsgushr(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -445,10 +491,11 @@ class HxCExprAsgushr(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgshl(HxCExprDoubleOperation):
+class HxCExprAsgshl(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -456,10 +503,11 @@ class HxCExprAsgshl(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgsdiv(HxCExprDoubleOperation):
+class HxCExprAsgsdiv(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -467,10 +515,11 @@ class HxCExprAsgsdiv(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgudiv(HxCExprDoubleOperation):
+class HxCExprAsgudiv(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -478,10 +527,11 @@ class HxCExprAsgudiv(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgsmod(HxCExprDoubleOperation):
+class HxCExprAsgsmod(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
@@ -489,10 +539,11 @@ class HxCExprAsgsmod(HxCExprDoubleOperation):
 
 
 @cnode.buildCNode
-class HxCExprAsgumod(HxCExprDoubleOperation):
+class HxCExprAsgumod(HxCExprAssignment):
     """
         See :class:`HxCType` for description.
-        Inherited from :class:`HxCExprDoubleOperation`.
+        Inherited from :class:`HxCExprAssignment` (indirectly from
+        :class:`HxCExprDoubleOperation`).
 
         .. todo:: make better description
     """
