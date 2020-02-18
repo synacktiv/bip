@@ -304,7 +304,7 @@ class BipFunction(object):
             If if it not possible to import the hexrays API an NotImplemented
             error will be raised.
 
-            This may raise an ``ida_hexrays.DecompilationFailure`` if the
+            This may raise a :class:`~bip.base.BipDecompileError` if the
             decompilation failed.
 
             :return: A :class:`HxCFunc` object equivalent to this function.

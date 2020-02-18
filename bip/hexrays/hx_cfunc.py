@@ -393,6 +393,11 @@ class HxCFunc(object):
 
             .. todo:: test
 
+
+            This may raise a :class:`~bip.base.BipDecompileError` if the
+            decompilation failed or if the address provided is not in a
+            function.
+            
             :param int ea: An address inside the function for which we want
                 an :class:`HxFunc`. If ``None`` the screen address will be
                 used.
