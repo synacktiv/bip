@@ -273,111 +273,11 @@ Double Operation Expression API
     :special-members:
     :private-members:
 
-
 .. autoclass:: CNodeExprComma
     :members:
     :member-order: bysource
     :special-members:
     :private-members:
-
-
-.. autoclass:: CNodeExprAsg
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgbor
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgxor
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgband
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgadd
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgsub
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgmul
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgsshr
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgushr
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgshl
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgsdiv
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgudiv
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgsmod
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeExprAsgumod
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
 
 .. autoclass:: CNodeExprLor
     :members:
@@ -385,13 +285,11 @@ Double Operation Expression API
     :special-members:
     :private-members:
 
-
 .. autoclass:: CNodeExprLand
     :members:
     :member-order: bysource
     :special-members:
     :private-members:
-
 
 .. autoclass:: CNodeExprBor
     :members:
@@ -399,13 +297,11 @@ Double Operation Expression API
     :special-members:
     :private-members:
 
-
 .. autoclass:: CNodeExprXor
     :members:
     :member-order: bysource
     :special-members:
     :private-members:
-
 
 .. autoclass:: CNodeExprBand
     :members:
@@ -580,6 +476,100 @@ Double Operation Expression API
     :member-order: bysource
     :special-members:
     :private-members:
+
+Assignment
+----------
+
+.. autoclass:: CNodeExprAssignment
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsg
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgbor
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgxor
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgband
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgadd
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgsub
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgmul
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgsshr
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgushr
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgshl
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgsdiv
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgudiv
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgsmod
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeExprAsgumod
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
 
 Other leaf Expressions API
 ==========================

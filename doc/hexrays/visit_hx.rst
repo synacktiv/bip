@@ -252,106 +252,7 @@ Double Operation Expression API
     :special-members:
     :private-members:
 
-
 .. autoclass:: HxCExprComma
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsg
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgbor
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgxor
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgband
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgadd
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgsub
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgmul
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgsshr
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgushr
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgshl
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgsdiv
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgudiv
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgsmod
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: HxCExprAsgumod
     :members:
     :member-order: bysource
     :special-members:
@@ -559,6 +460,113 @@ Double Operation Expression API
     :member-order: bysource
     :special-members:
     :private-members:
+
+Assignment
+----------
+
+.. autoclass::  HxCExprAssignment
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: HxCExprAsg
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgbor
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgxor
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgband
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgadd
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgsub
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgmul
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgsshr
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgushr
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgshl
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgsdiv
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgudiv
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgsmod
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+
+.. autoclass:: HxCExprAsgumod
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
 
 Other leaf Expressions API
 ==========================
