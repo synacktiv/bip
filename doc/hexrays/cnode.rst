@@ -711,8 +711,25 @@ Internal Hexrays Visitor API
 CNode generation and internals
 ==============================
 
+TODO
+
 .. todo:: Description of what is done for generating cnode and doc of methods
     and decorator.
+
+
+Those functions are not currently exported by Bip, and are documented for
+internal use only:
+
+.. autofunction:: bip.hexrays.cnode.buildCNode
+
+.. autofunction:: bip.hexrays.cnode.addCNodeMethod
+
+.. autodata:: bip.hexrays.cnode._cnodeMethods
+    :annotation:
+
+.. autodata:: bip.hexrays.cnode._citem2cnode
+    :annotation:
+
 
 
 
