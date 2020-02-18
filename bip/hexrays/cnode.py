@@ -4,7 +4,8 @@
     :class:`HxCItem` equivalent.
 """
 import idc
-from hx_citem import AbstractCItem, HxCType, HxCItem, HxCExpr, HxCStmt
+from astnode import AbstractCItem, HxCType
+from hx_citem import HxCItem, HxCExpr, HxCStmt
 from bip.base.biptype import BipType
 
 class CNode(AbstractCItem):
