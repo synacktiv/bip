@@ -1,11 +1,25 @@
-Hexrays visitors
-################
+HxCItem
+#######
 
 .. module:: bip.hexrays
 
-TODO
+The :class:`~bip.hexrays.HxCItem` API is one of the way to represent AST nodes
+of an Hexrays decompiled function at the level of Bip. This API is the closest
+of the one provided by IDAPython, however this is not the prefered way to view
+AST nodes in Bip, :ref:`doc-hexrays-cnode` for the prefered way and 
+:ref:`doc-hexrays-astnodes` for more general information.
 
-GetHxCItem
+The simplest way to access :class:`~bip.hexrays.HxCItem` elements is through
+the usage of the visitorm methods starting with ``hx_visit_`` in
+:class:`~bip.hexrays.HxCFunc`
+
+This API is based on the :class:`~bip.hexrays.HxCItem` abstract class, each
+AST nodes are represented by a subclass of this object which are determine
+by its type. For more information of the different type of nodes see 
+:ref:`doc-hexrays-astnodes-nodetype`. The method
+:meth:`~bip.hexrays.HxCItem.GetHxCItem` allow to recuperate an object of the
+correct class (which inherit from :class:`~bip.hexrays.HxCItem`) for a
+particular ``citem_t`` object from IDA.
 
 HxCItem API
 ===========
