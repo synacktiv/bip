@@ -149,6 +149,19 @@ class HxCFunc(object):
         for l in self._cfunc.get_lvars():
             yield HxLvar(l, self)
 
+    def lvar_by_name(self, name):
+        """
+            Return a lvar with a particular name in this function.
+            
+            :param str name: The name of the lvar to search for.
+            :return: A :class:`HxLvar` object or None if the lvar was
+                not found.
+        """
+        for l in self.lvars_iter:
+            if l.name == name:
+                return l
+        return None
+
     @property
     def args(self):
         """
