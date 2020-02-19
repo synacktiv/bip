@@ -89,6 +89,13 @@ is they allow access to the AST created by HexRays, this AST represent a
 subset of C and it is possible to use visitors for inspecting the nodes from
 which it is composed.
 
+.. warning::
+
+    When asking the hexrays decompiler to decompile again a function (``F5``)
+    a new object representing the decompiled function will be created, if a
+    :class:`HxCFunc` was recuperated before that it will not use the
+    correct object which can lead to wierd behavior.
+
 :class:`CNode` is an abstract class (all class are abstract for the CNode
 except the leaf of the inheritance tree) which represent a node of the AST,
 two main types of node exist: :class:`CNodeStmt` which represent a C
