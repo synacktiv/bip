@@ -289,6 +289,26 @@ class HxLvar(object):
         else:
             self._lvar.clr_arg_var()
 
+    @property
+    def is_reg(self):
+        """
+            Property for checking if this local variable is located in a
+            register.
+
+            :return: bool
+        """
+        return self._lvar.is_reg_var()
+
+    @property
+    def is_stk(self):
+        """
+            Property for checking if this local variable is located on the
+            stack.
+
+            :return: bool
+        """
+        return self._lvar.is_stk_var()
+
 
 
 
