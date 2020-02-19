@@ -394,6 +394,23 @@ class HxCFunc(object):
         """
         self.hx_visit_generic(_hx_visitor_list_all, item_list, func_visit)
 
+    ############################## CMP METHODS ###########################
+
+    def __eq__(self, other):
+        """
+            Compare with a :class:`HxCFunc` or :class:`BipFunction` object.
+
+            .. warning:: This compare only the address of those object! If
+                the function has been decompiled again this may return true
+                while the two underlying object are different
+
+            :raise TypeError: If the argument is not a :class:`HxCFunc` or a
+                :class:`~bip.base.BipFunction`.
+        """
+        if not isinstance(other, (HxCFunc, bbase.BipFunction)):
+            raise TypeError("Not a HxCFunc or BipFunction")
+        return self.ea == other.ea
+
     ############################### CLASS METHOD ############################
 
     @classmethod

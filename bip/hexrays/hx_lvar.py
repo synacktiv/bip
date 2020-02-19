@@ -309,7 +309,22 @@ class HxLvar(object):
         """
         return self._lvar.is_stk_var()
 
+    ############################### CMP METHODS ############################
 
+    def __eq__(self, other):
+        """
+            Equality with another :class:`HxLvar` object.
 
+            .. note:: This use the ``lvar_t`` compare which comes from the
+                ``lvar_locator_t`` struct. This seems to work fine and be
+                unique however for being sure would need to look at the
+                implementation. For avoiding this function check also that
+                this lvar as the same :class:`HxCFunc`.
+
+            :raise TypeError: If the argument is not a :class:`HxLvar` object.
+        """
+        if not isinstance(other, HxLvar):
+            raise TypeError("Not a HxLvar")
+        return self._lvar == other._lvar and self._hxcfunc == other._hxcfunc
 
 
