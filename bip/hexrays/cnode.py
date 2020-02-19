@@ -523,6 +523,19 @@ def lvar(self):
     """
     return self._hxcfunc.lvar_at(self.index)
 
+@addCNodeMethod("CNodeExprVar")
+@property
+def lvar_name(self):
+    """
+        Property which allow to get the name of the
+        :class:`~bip.hexrays.HxLvar` referenced by this node.
+
+        This method exist only for the :class:`~bip.hexrays.CNode`
+        implementation.
+
+        :return: The name of the lvar as a string.
+    """
+    return self._hxcfunc.lvar_at(self.index).name
 
 
 
