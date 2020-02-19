@@ -17,10 +17,9 @@ class CNode(AbstractCItem):
         not the :class:`HxCItem` is the additional features which it provides,
         such as:
 
-        * access to the parent node
-        * TODO
-
-        .. todo:: complement this list.
+        * access to the parent node,
+        * access to the parent :class:`HxCFunc`,
+        * direct access to :class:`HxLvar` for :class:`~bip.hexrays.CNodeExprVar`.
 
         The parrent class :class:`AbstractCItem` also provides common
         functionnality with the :class:`HxCItem` objects.
