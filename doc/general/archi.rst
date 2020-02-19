@@ -140,6 +140,78 @@ For more information about the usage and implementation of hexrays see
     For more information about the internal implementation of :class:`CNode`
     see :ref:`doc-hexrays-cnode-generation-internal`.
 
+Example of AST
+~~~~~~~~~~~~~~
+
+As an illustration of the AST view, lets look at a really simple function with
+the following code decompiled:
+
+.. code-block:: C
+
+    // this is a simple example written by hand for explaining how this works,
+    //   hexrays may optimize this equivalent code differently.
+    int f(int a1, int *a2) {
+        int v1;
+
+        v1 = a1 + 2; // (1)
+        if (a2) // (2)
+            return v1 + 3; // (3)
+        return v1; // (4)
+    }
+
+.. note::
+
+    All the class given there after are the one for the
+    :class:`~bip.hexrays.CNode` implementation but it works exactly the same
+    for the :class:`~bip.hexrays.HxCItem` implementation.
+
+.. note::
+
+    Depending on the IDA version, the tree structure may change however the
+    idea how the AST works should stay the same.
+
+A :class:`~bip.hexrays.HxCFunc` :meth:`~bip.hexrays.HxCFunc.root_node` should
+always be a :class:`~bip.hexrays.CNodeStmtBlock`. This node will contain a
+list of other statments representing the content of the function.
+
+The first statement (1) contained in the :meth:`~bip.hexrays.HxCFunc.root_node`
+will be a :class:`~bip.hexrays.CNodeStmtExpr` which is just a statement
+containing an expression. This expression will be
+a :class:`~bip.hexrays.CNodeExprAsg` which represent an assignment, this
+expression contains two operands and inherit from the
+:class:`~bip.hexrays.CNodeExprDoubleOperation` abstract class. The first
+operand (:meth:`~bip.hexrays.CNodeExprDoubleOperation.first_op`) will be the
+left part of the assignment: a local variable (``v1``) which is represented by
+the :class:`~bip.hexrays.CNodeExprVar` with a value of ``2``, this value
+correspond to the index in the local variable array and arguments of the
+function counts also (so ``a1`` will be at index ``0``), its possible to
+directly get the :class:`~bip.hexrays.HxLvar` object corresponding using the
+:meth:`~bip.hexrays.CNodeExprVar.lvar` property. The right part of the
+assignment will be a :class:`~bip.hexrays.CNodeExprAdd` node with 2 childs
+himself: a :class:`~bip.hexrays.CNodeExprVar` again for ``a1`` and a
+:class:`~bip.hexrays.CNodeExprNum` for the number ``2``.
+
+The second statement (2) contained in the
+:meth:`~bip.hexrays.HxCFunc.root_node` will be
+a :class:`~bip.hexrays.CNodeStmtIf` which contains 2 childs: an expression
+for the condition and a statement for the content of the ``if``, if
+an ``else`` was present a third child will be present (a statement again).
+The expression for the condition will once again be a
+:class:`~bip.hexrays.CNodeExprVar`.
+
+The content of the ``if`` (3) will be a
+:class:`~bip.hexrays.CNodeStmtBlock` with only one statement in it a
+:class:`~bip.hexrays.CNodeStmtReturn` representing the ``return``, itself
+containing a :class:`~bip.hexrays.CNodeExprAdd` once again for the ``v1 + 3``.
+
+The last statement will be :class:`~bip.hexrays.CNodeStmtReturn` statement
+containing a :class:`~bip.hexrays.CNodeExprVar`.
+
+As can be seen in this simple example this is a pretty straight forward AST
+structures, however for being able to use it well a good understanding of 
+the node types is better. For a complete list of the different types of
+:class:`~bip.hexrays.CNode` see :ref:`doc-hexrays-astnodes-nodetype`.
+
 Gui
 ---
 
