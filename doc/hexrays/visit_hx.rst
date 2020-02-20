@@ -627,15 +627,14 @@ Final Statement API
     :special-members:
     :private-members:
 
-Other leaf Statement API
-========================
+Loop Statement API
+==================
 
-.. autoclass:: HxCStmtIf
+.. autoclass:: HxCStmtLoop
     :members:
     :member-order: bysource
     :special-members:
     :private-members:
-
 
 .. autoclass:: HxCStmtFor
     :members:
@@ -643,15 +642,22 @@ Other leaf Statement API
     :special-members:
     :private-members:
 
-
 .. autoclass:: HxCStmtWhile
     :members:
     :member-order: bysource
     :special-members:
     :private-members:
 
-
 .. autoclass:: HxCStmtDoWhile
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+Other leaf Statement API
+========================
+
+.. autoclass:: HxCStmtIf
     :members:
     :member-order: bysource
     :special-members:

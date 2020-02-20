@@ -630,6 +630,33 @@ Final Statement API
     :special-members:
     :private-members:
 
+Loop Statement API
+==================
+
+.. autoclass:: CNodeStmtLoop
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeStmtFor
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeStmtWhile
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
+.. autoclass:: CNodeStmtDoWhile
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
 Other leaf Statement API
 ========================
 
@@ -639,34 +666,11 @@ Other leaf Statement API
     :special-members:
     :private-members:
 
-
-.. autoclass:: CNodeStmtFor
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeStmtWhile
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
-.. autoclass:: CNodeStmtDoWhile
-    :members:
-    :member-order: bysource
-    :special-members:
-    :private-members:
-
-
 .. autoclass:: CNodeStmtSwitch
     :members:
     :member-order: bysource
     :special-members:
     :private-members:
-
 
 .. autoclass:: CNodeStmtContinue
     :members:
@@ -674,13 +678,11 @@ Other leaf Statement API
     :special-members:
     :private-members:
 
-
 .. autoclass:: CNodeStmtBreak
     :members:
     :member-order: bysource
     :special-members:
     :private-members:
-
 
 .. autoclass:: CNodeStmtBlock
     :members:
