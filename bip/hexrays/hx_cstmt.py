@@ -16,7 +16,6 @@ class HxCStmtFinal(HxCStmt):
         * :class:`HxCStmtGoto`
         * :class:`HxCStmtFinal`
         * :class:`HxCStmtReturn`
-        * :class:`HxCStmtEmtpy`
     """
 
     def __str__(self):

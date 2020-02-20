@@ -16,7 +16,6 @@ class HxCExprFinal(HxCExpr):
 
         This is used as a parent for:
 
-        * :class:`HxCExprEmpty`
         * :class:`HxCExprNum`
         * :class:`HxCExprFNum`
         * :class:`HxCExprStr`
@@ -42,18 +41,11 @@ class HxCExprFinal(HxCExpr):
         raise RuntimeError("Abstract property value access.")
 
 @cnode.buildCNode
-class HxCExprEmpty(HxCExprFinal):
+class HxCExprEmpty(HxCExpr):
     """
         Class for representing an empty CExpr (``HxCType.COT_EMPTY``).
     """
     TYPE_HANDLE = HxCType.COT_EMPTY
-
-    @property
-    def value(self):
-        """
-            Return ``None`` .
-        """
-        return None
 
 
 @cnode.buildCNode
