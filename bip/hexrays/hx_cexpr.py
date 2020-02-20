@@ -233,7 +233,7 @@ class HxCExprInsn(HxCExprFinal):
 
     @property
     def value(self):
-        raise NotImplemented("HxCInsn is not implemented")
+        raise NotImplemented("HxCExprInsn is not implemented")
 
 @cnode.buildCNode
 class HxCExprType(HxCExprFinal):
@@ -246,7 +246,7 @@ class HxCExprType(HxCExprFinal):
 
     @property
     def value(self):
-        raise NotImplemented("HxCInsn is not implemented")
+        raise NotImplemented("HxCExprType is not implemented")
 
 @cnode.buildCNode
 class HxCExprTernary(HxCExpr):
