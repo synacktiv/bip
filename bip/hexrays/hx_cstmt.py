@@ -258,7 +258,35 @@ class HxCStmtIf(HxCStmt):
         return [self.cond]
 
 @cnode.buildCNode
-class HxCStmtFor(HxCStmt):
+class HxCStmtLoop(HxCStmt):
+    """
+        Abstract class for representing the different C loop statement
+        (for, while, dowhile). All of those have at least an expression as a
+        condition (:meth:`~HxCStmtLoop.cond`) and a statement as body
+        (:meth:`~HxCStmtLoop.st_body`)
+    """
+
+    @property
+    def cond(self):
+        """
+            Property which return the expression used as a condition for
+            the loop.
+
+            :return: An object which inherits from :class:`HxCExpr` .
+        """
+        raise RuntimeError("Abstract property value access.")
+
+    @property
+    def st_body(self):
+        """
+            Property which return the statement used as a body for the loop.
+
+            :return: An object which inherits from :class:`HxCStmt` .
+        """
+        raise RuntimeError("Abstract property value access.")
+
+@cnode.buildCNode
+class HxCStmtFor(HxCStmtLoop):
     """
         Class for representing a C *for* statement (``HxCType.CIT_FOR``).
         This is a recursive statement which have 2 childs statement and
@@ -321,7 +349,7 @@ class HxCStmtFor(HxCStmt):
         return [self.init, self.cond, self.step]
 
 @cnode.buildCNode
-class HxCStmtWhile(HxCStmt):
+class HxCStmtWhile(HxCStmtLoop):
     """
         Class for representing a C *while* statement (``HxCType.CIT_WHILE``).
         This is a recursive statement.
@@ -357,7 +385,7 @@ class HxCStmtWhile(HxCStmt):
         return [self.cond]
 
 @cnode.buildCNode
-class HxCStmtDoWhile(HxCStmt):
+class HxCStmtDoWhile(HxCStmtLoop):
     """
         Class for representing a C *do-while* statement (``HxCType.CIT_DO``).
         This is a recursive statement.
