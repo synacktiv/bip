@@ -4,7 +4,7 @@ import ida_kernwin
 from hx_lvar import HxLvar
 from hx_visitor import _hx_visitor_expr, _hx_visitor_list_expr, _hx_visitor_stmt, _hx_visitor_list_stmt, _hx_visitor_all, _hx_visitor_list_all
 from cnode import CNode
-from cnode_visitor import visit_dfs_cnode, visit_dfs_cnode_filterlist
+#from cnode_visitor import visit_dfs_cnode, visit_dfs_cnode_filterlist
 import bip.base as bbase
 
 class HxCFunc(object):
@@ -197,14 +197,14 @@ class HxCFunc(object):
             a DFS algorithm. This does not use the hexrays visitor. For more
             information about the implementation see
             :func:`~cnode_visitor.visit_dfs_cnode` (this method is just a
-            wrapper).
+            wrapper on :meth:`~CNode.visit_cnode`).
 
             :param callback: A callable which will be called on all
                 :class:`CNode` in the function decompiled by hexrays. The call
                 should take only one argument which correspond to the
                 :class:`CNode` currently visited.
         """
-        visit_dfs_cnode(self.root_node, callback)
+        self.root_node(callback)
 
     def visit_cnode_filterlist(self, callback, filter_list):
         """
@@ -213,7 +213,7 @@ class HxCFunc(object):
             a DFS algorithm. This does not use the hexrays visitor. For more
             information about the implementation see
             :func:`~cnode_visitor.visit_dfs_cnode_filterlist` (this method is just
-            a wrapper).
+            a wrapper on :meth:`~CNode.visit_cnode_filterlist`).
 
             :param callback: A callable which will be called on all
                 :class:`CNode` in the function decompiled by hexrays. The call
@@ -223,7 +223,7 @@ class HxCFunc(object):
                 The callback will be called only for the node from a class in this
                 list.
         """
-        visit_dfs_cnode_filterlist(self.root_node, callback, filter_list)
+        self.root_node.visit_dfs_cnode_filterlist(callback, filter_list)
 
     def get_cnode_filter(self, cb_filter):
         """
@@ -241,12 +241,7 @@ class HxCFunc(object):
                 This list is order in which the node have been visited (see
                 :meth:`~HxCFunc.visit_cnode` for more information).
         """
-        l = []
-        def _app_filt(cn):
-            if cb_filter(cn):
-                l.append(cn)
-        self.visit_cnode(_app_filt)
-        return l
+        return self.root_node.get_cnode_filter(cb_filter)
 
     def get_cnode_filter_type(self, type_filter):
         """
@@ -257,18 +252,13 @@ class HxCFunc(object):
 
             :param type_filter: The type(s) of :class:`CNode` to get. Only
                 :class:`CNode` matching the isinstance of this type will
-                be returned. This can be a type, a class or a tuple of class
-                and type.
+                be returned. This can be a type, a class or a tuple (or list)
+                of class and type.
             :return: A list of :class:`CNode` which have match the type.
                 This list is order in which the node have been visited (see
                 :meth:`~HxCFunc.visit_cnode` for more information).
         """
-        l = []
-        def _app_filt(cn):
-            if isinstance(cn, type_filter):
-                l.append(cn)
-        self.visit_cnode(_app_filt)
-        return l
+        return self.root_node.get_cnode_filter_type(type_filter)
 
     ############################ HX VISITOR METHODS ##########################
 

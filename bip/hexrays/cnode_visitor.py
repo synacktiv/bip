@@ -1,4 +1,5 @@
-from cnode import CNodeExpr, CNodeStmt
+#from cnode import CNodeExpr, CNodeStmt
+import cnode as modcnode
 
 def visit_dfs_cnode(cnode, callback):
     """
@@ -37,13 +38,13 @@ def visit_dfs_cnode(cnode, callback):
     while len(stack) != 0:
         elt = stack.pop() # get the next element
         callback(elt) # call the callback before visiting the next
-        if isinstance(elt, CNodeExpr):
+        if isinstance(elt, modcnode.CNodeExpr):
             # if we have an expr just append all the child, we append them
             #   in reverse order.
             ch = list(elt.ops)
             ch.reverse()
             stack += ch
-        elif isinstance(elt, CNodeStmt):
+        elif isinstance(elt, modcnode.CNodeStmt):
             ch = list(elt.expr_childs)
             ch += list(elt.st_childs)
             ch.reverse()
@@ -64,37 +65,43 @@ def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
         statement (:class:`CNodeStmt`) the expression will not be visited at
         all, this should allow a little performance gain.
 
-        .. todo:: test
-
         :param cnode: An object which inherit from :class:`CNode`. This object
             and all its child will be visited.
         :param callback: A callable taking one argument which will be called
             on all the :class:`CNode` visited with the :class:`CNode` as
             argument.
-        :param filter_list: A list of class which inherit from :class:`CNode`.
-            The callback will be called only for the node from a class in this
-            list.
+        :param filter_list: A list or tuple of class or a class which inherit
+            from :class:`CNode`. The callback will be called only for the node
+            from a class in this list.
     """
-    if len(filter_list) == 0: # we don't visit anything
+    if isinstance(filter_list, (list, tuple)) and len(filter_list) == 0:
+        # we don't visit anything
         return
     # check if we need to visit the child of the expression
     vist_expr = False
-    for i in filter_list:
-        if issubclass(i, CNodeExpr):
-            vist_expr = True
-            break
+    if isinstance(filter_list, (list, tuple)):
+        for i in filter_list:
+            if issubclass(i, modcnode.CNodeExpr):
+                vist_expr = True
+                break
+    elif issubclass(filter_list, modcnode.CNodeExpr):
+        vist_expr = True
     stack = [cnode]
     while len(stack) != 0:
         elt = stack.pop() # get the next element
-        if elt.__class__ in filter_list: # check if we want the call
+        # check if we want the call
+        if ((isinstance(filter_list, list) and elt.__class__ in filter_list) or
+            (not isinstance(filter_list, list)
+                and isinstance(elt, filter_list))):
+            # check if we want the call
             callback(elt) # call the callback before visiting the next
-        if isinstance(elt, CNodeExpr):
+        if isinstance(elt, modcnode.CNodeExpr):
             if vist_expr:
                 ch = list(elt.ops)
                 ch.reverse()
                 stack += ch
-        elif isinstance(elt, CNodeStmt):
-            if visit_expr:
+        elif isinstance(elt, modcnode.CNodeStmt):
+            if vist_expr:
                 ch = list(elt.expr_childs)
             else:
                 ch = []

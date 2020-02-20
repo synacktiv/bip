@@ -7,6 +7,7 @@ import idc
 from astnode import AbstractCItem, HxCType
 from hx_citem import HxCItem, HxCExpr, HxCStmt
 from bip.base.biptype import BipType
+import cnode_visitor
 
 class CNode(AbstractCItem):
     """
@@ -19,24 +20,19 @@ class CNode(AbstractCItem):
 
         * access to the parent node,
         * access to the parent :class:`HxCFunc`,
+        * visitor for nodes bellow the current one,
         * direct access to :class:`HxLvar` for :class:`~bip.hexrays.CNodeExprVar`.
 
         The parrent class :class:`AbstractCItem` also provides common
-        functionnality with the :class:`HxCItem` objects.
-
-        .. todo:: precise that all subclasses have the same comportement but
-            just with the additional features.
+        functionnality with the :class:`HxCItem` objects. All subclasses of
+        this class have the same behavior as the one from :class:`HxCItem`
+        with just some aditional feature.
 
         .. todo:: implement low and high address ? (map ea from cfunc could may be help ?)
-
-        .. todo:: implement function for making more easy the iterations
 
         This is an abstract class and no object of this class should ever be
         created. The static method :meth:`GetCNode` allow to create object 
         of the correct subclass which inherit from :class:`CNode`.
-
-        .. todo:: document the auto generation of the sublcasses. (in a note
-            about implementation details)
     """
 
     ############################# ITEM CREATION #############################
@@ -130,6 +126,87 @@ class CNode(AbstractCItem):
                 associated with this node.
         """
         return self._hxcfunc
+
+    ########################### VISITOR METHODS ##############################
+
+    def visit_cnode(self, callback):
+        """
+            Method which allow to visit this :class:`CNode` elements and all
+            those bellow it. This is implemented using a DFS algorithm. This
+            does not use the hexrays visitor. For more information about the
+            implementation see :func:`~cnode_visitor.visit_dfs_cnode` (this
+            method is just a wrapper).
+
+            :param callback: A callable which will be called on this and all
+                :class:`CNode` bellow it. The call should take only one
+                argument which correspond to the :class:`CNode` currently
+                visited.
+        """
+        cnode_visitor.visit_dfs_cnode(self, callback)
+
+    def visit_cnode_filterlist(self, callback, filter_list):
+        """
+            Method which allow to visit :class:`CNode` elements which are
+            of a type present in a list. Start with the current :class:`CNode`
+            and look in all its children. This is implemented using
+            a DFS algorithm. This does not use the hexrays visitor. For more
+            information about the implementation see
+            :func:`~cnode_visitor.visit_dfs_cnode_filterlist` (this method is just
+            a wrapper).
+
+            :param callback: A callable which will be called on all
+                :class:`CNode` in the function decompiled by hexrays. The call
+                should take only one argument which correspond to the
+                :class:`CNode` currently visited.
+            :param filter_list: A list of class which inherit from :class:`CNode`.
+                The callback will be called only for the node from a class in this
+                list.
+        """
+        cnode_visitor.visit_dfs_cnode_filterlist(self, callback, filter_list)
+
+    def get_cnode_filter(self, cb_filter):
+        """
+            Method which return a list of :class:`CNode` for which a filter
+            return true. Internally this use the :meth:`~CNode.visit_cnode`
+            method which visit all nodes bellow (and including) the current
+            one, this is just a usefull wrapper.
+
+            :param cb_filter: A callable which take a :class:`CNode` in
+                parameter and return a boolean. This callback will be called
+                on all children nodes and all nodes for which it returns
+                true will be added in a list which will be returned by this
+                function.
+            :return: A list of :class:`CNode` which have match the filter.
+                This list is order in which the node have been visited (see
+                :meth:`~CNode.visit_cnode` for more information).
+        """
+        l = []
+        def _app_filt(cn):
+            if cb_filter(cn):
+                l.append(cn)
+        self.visit_cnode(_app_filt)
+        return l
+
+    def get_cnode_filter_type(self, type_filter):
+        """
+            Method which return a list of :class:`CNode` of a particular
+            type(s). Internally this use the :meth:`~HxCFunc.visit_cnode_filterlist`
+            method which visit all nodes bellow and including the current one,
+            this is just a usefull wrapper.
+
+            :param type_filter: The type(s) of :class:`CNode` to get. Only
+                :class:`CNode` matching the isinstance of this type will
+                be returned. This can be a type, a class or a tuple (or list)
+                of class and type.
+            :return: A list of :class:`CNode` which have match the type.
+                This list is order in which the node have been visited (see
+                :meth:`~HxCFunc.visit_cnode` for more information).
+        """
+        l = []
+        def _app_filt(cn):
+            l.append(cn)
+        self.visit_cnode_filterlist(_app_filt, type_filter)
+        return l
 
     ########################### CNODE CREATION #############################
 
