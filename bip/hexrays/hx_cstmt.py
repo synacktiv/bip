@@ -1,5 +1,6 @@
 from hx_citem import HxCType, HxCItem, HxCStmt
 import cnode
+import bip.base as bbase
 
 @cnode.buildCNode
 class HxCStmtFinal(HxCStmt):
@@ -116,10 +117,6 @@ class HxCStmtAsm(HxCStmtFinal):
 
         .. todo:: test this
 
-        .. todo:: this is currently not supported by hexrays
-
-        .. todo:: this should probably be link we the normal instruction ?
-
         .. todo:: this should be probably accessible as a list?
     """
     TYPE_HANDLE = HxCType.CIT_ASM
@@ -130,24 +127,35 @@ class HxCStmtAsm(HxCStmtFinal):
             Property which return a list of address corresponding to the ASM
             instruction which are inline.
 
-            .. todo:: check this
-
-            .. todo:: this is currently not supported by hexrays
-
             :return: A list of address (integer) representing the address of
                 the inline assembly instruction in the binary.
         """
-        return []#list(self._cinsn.casm)
+        return list(self._cinsn.casm)
+
+    @property
+    def length(self):
+        """
+            Property which return the number of instruction in this ASM
+            statement.
+        """
+        return self._cinsn.casm.size()
+
+    def __len__(self):
+        """
+            Return the number of instruction in this ASM statement. Same
+            as :meth:`~HxCStmtAsm.length`
+        """
+        return self.length
 
     @property
     def value(self):
         """
-            Return a list of address of the ASM instructions. See
-            :meth:`~HxCStmtAsm.addr_instr` .
+            Return a list of :class:`~bip.base.Instr` corresponding to the ASM
+            instructions in this ASM statement.
 
-            .. todo:: bug with hexrays see addr_instr
+            :return: A list of :class:`~bip.base.Instr`.
         """
-        return None#self.addr_instr
+        return [bbase.Instr(ea) for ea in self._cinsn.casm]
 
 @cnode.buildCNode
 class HxCStmtReturn(HxCStmtFinal):
