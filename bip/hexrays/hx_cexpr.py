@@ -238,15 +238,18 @@ class HxCExprInsn(HxCExprFinal):
 @cnode.buildCNode
 class HxCExprType(HxCExprFinal):
     """
-        Class for representing a type (``HxCType.COT_TYPE``). 
-        
-        .. todo:: implement this
+        Class for representing a type (``HxCType.COT_TYPE``). This can be used
+        for exemple as a Sizeof node.
     """
     TYPE_HANDLE = HxCType.COT_TYPE
 
     @property
     def value(self):
-        raise NotImplemented("HxCExprType is not implemented")
+        """
+            Return the :class:`BipType` which is represented by this node.
+            This is equivalent to the :meth:`~HxCExpr.type` property.
+        """
+        return self.type
 
 @cnode.buildCNode
 class HxCExprTernary(HxCExpr):
