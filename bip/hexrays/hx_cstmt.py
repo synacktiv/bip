@@ -100,7 +100,7 @@ class HxCStmtGoto(HxCStmtFinal):
 
             :return: An integer representing the label number.
         """
-        return self._cinsn.label_num
+        return self._cinsn.cgoto.label_num
     
     @property
     def value(self):
