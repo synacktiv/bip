@@ -21,8 +21,8 @@ documentation).
 This documentation is split in several parts. The `General`_ part should allow
 you to start with the project including the install (:ref:`general-install`)
 and an overview (:ref:`general-overview`) which explain how to use it.
-For getting how the project is developped and having a better understanding of
-it an architecture part (:ref:`general-archi`) is present.
+The :ref:`general-archi` allows to get a better understanding of how the
+project works and was intended to be used.
 
 The main part of the documentation is split in the three parts of
 bip: :ref:`index-base`
