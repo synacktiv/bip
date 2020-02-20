@@ -5,12 +5,13 @@ Ast Nodes & Visitors
 
 .. module:: bip.hexrays
 
-TODO: rewrite this intro
 
-This page explain some Bip internals and contains the API for two top level
-classes (:class:`~bip.hexrays.AbstractCItem` and
-:class:`~bip.hexrays.HxCType`) used internally. It also contains an array
-explaining the link between the classes and the C representation.
+This page explain in more details how the AST nodes from hexrays works in
+Bip (`Node representation in Bip`_), including the description of all possible
+nodes of the AST (`AST Node types`_) and some information about
+the `visitors in Bip`_. It also contains the API for two top level classes
+(:class:`~bip.hexrays.AbstractCItem` and :class:`~bip.hexrays.HxCType`) used
+internally.
 
 Node representation in Bip
 ==========================
