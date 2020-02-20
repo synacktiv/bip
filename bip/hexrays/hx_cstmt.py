@@ -35,20 +35,11 @@ class HxCStmtFinal(HxCStmt):
         raise RuntimeError("Abstract property value access.")
 
 @cnode.buildCNode
-class HxCStmtEmpty(HxCStmtFinal):
+class HxCStmtEmpty(HxCStmt):
     """
         Class for representing a statement which is empty.
     """
     TYPE_HANDLE = HxCType.CIT_EMPTY
-
-    @property
-    def value(self):
-        """
-            This is implemented only for inheritance of HxCStmtFinal.
-
-            :return: None
-        """
-        return None
 
 @cnode.buildCNode
 class HxCStmtExpr(HxCStmtFinal):
