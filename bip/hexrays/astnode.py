@@ -129,6 +129,8 @@ class AbstractCItem(object):
         #:  item types (such as :class:`HxCExpr` and :class:`HxCStmt`) .
         self._citem = citem
 
+    ############################ BASE METHODS ##########################
+
     @property
     def ea(self):
         """
@@ -173,6 +175,29 @@ class AbstractCItem(object):
         """
         return "{}(ea=0x{:X})".format(self.__class__.__name__, self.ea)
 
+    ########################### CMP METHODS ###############################
+
+    def __eq__(self, other):
+        """
+            Compare to AST node. This is base on the compare implemented by
+            hexrays and can return true for two different object including
+            for comparing object which inherit from :class:`HxCItem` and from
+            :class:`CNode`.
+
+            This seems to not work if the function has been recompiled.
+
+            :raise TypeError: if the element to compare does not inherit from
+                AbstractCItem
+        """
+        if not isinstance(other, AbstractCItem):
+            raise TypeError("Not a AbstractCItem")
+        return self._citem == other._citem
+
+
+
+
+    ############################ INHERITANCE METHODS #########################
+
     def _createChild(self, obj):
         """
             Abstract method which allow to create child element for this
@@ -181,6 +206,8 @@ class AbstractCItem(object):
             if not surcharge.
         """
         raise NotImplementedError("_createChild is an abstract method and should be surcharge by child class")
+
+    ############################ CLASS METHODS ##########################
 
     @classmethod
     def is_handling_type(cls, typ):
