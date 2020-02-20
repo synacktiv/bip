@@ -68,6 +68,8 @@ manipulated using Bip. Several *building blocks* exist inside this module:
   and callees. Finally they make the link between the ``bip.base`` module and
   the ``bip.hexrays`` module.
 
+.. _general-archi-hexrays:
+
 Hexrays
 -------
 
@@ -139,6 +141,8 @@ For more information about the usage and implementation of hexrays see
 
     For more information about the internal implementation of :class:`CNode`
     see :ref:`doc-hexrays-cnode-generation-internal`.
+
+.. _general-archi-hexrays-example-ast:
 
 Example of AST
 ~~~~~~~~~~~~~~
@@ -249,6 +253,8 @@ decorator of Python.
 
 For more information about writing plugins and their internal
 see :ref:`gui-plugins`.
+
+.. _general-archi-common-patterns:
 
 Common code patterns
 ====================
