@@ -208,6 +208,20 @@ class CNode(AbstractCItem):
         self.visit_cnode_filterlist(_app_filt, type_filter)
         return l
 
+    ########################### HELPER FUNCTIONS ############################
+
+    @property
+    def ignore_cast(self):
+        """
+            Property which return this node if it is not a cast or its child
+            if it is a cast. This is designed for allowing to quickly ignore
+            cast when going through some nodes.
+
+            :return: The first :class:`CNode` which is not a cast.
+        """
+        # default implem. return self, cast implem. return child.ignore_cast
+        return self
+
     ########################### CNODE CREATION #############################
 
     def _createChild(self, citem):
@@ -613,6 +627,20 @@ def lvar_name(self):
         :return: The name of the lvar as a string.
     """
     return self._hxcfunc.lvar_at(self.index).name
+
+@addCNodeMethod("CNodeExprCast")
+@property
+def ignore_cast(self):
+    """
+        Property which return the first child expression of this node cast
+        which is not a cast. This is implemented for all
+        :class:`~bip.hexrays.CNode` for allowing to quickly ignore cast (see
+        :meth:`~bip.hexrays.CNode.ignore_cast`). Multiple chained cast are
+        handle.
+
+        :return: A :class:`CNodeExpr` which is not a cast.
+    """
+    return self.operand.ignore_cast
 
 
 
