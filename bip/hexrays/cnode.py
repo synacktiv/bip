@@ -140,7 +140,8 @@ class CNode(AbstractCItem):
             :param callback: A callable which will be called on this and all
                 :class:`CNode` bellow it. The call should take only one
                 argument which correspond to the :class:`CNode` currently
-                visited.
+                visited. If this callback return False the visit is stoped,
+                all other result is ignored.
         """
         cnode_visitor.visit_dfs_cnode(self, callback)
 
@@ -157,7 +158,8 @@ class CNode(AbstractCItem):
             :param callback: A callable which will be called on all
                 :class:`CNode` in the function decompiled by hexrays. The call
                 should take only one argument which correspond to the
-                :class:`CNode` currently visited.
+                :class:`CNode` currently visited. If this callback return
+                False the visit is stoped, all other result is ignored.
             :param filter_list: A list of class which inherit from :class:`CNode`.
                 The callback will be called only for the node from a class in this
                 list.

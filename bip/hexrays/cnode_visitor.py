@@ -20,6 +20,9 @@ def visit_dfs_cnode(cnode, callback):
         the nodes in the same order as :meth:`~CNodeStmt.st_childs`
         (statements).
 
+        If the callback return ``False`` the visitor will stop. Every other
+        result is ignore.
+
         .. note:: This function will not visit a statement which is under a
             :class:`CNodeExprInsn` . Those should not be present in the last
             stage of a ctree and so this should not be a problem.
@@ -30,14 +33,15 @@ def visit_dfs_cnode(cnode, callback):
             and all its child will be visited.
         :param callback: A callable taking one argument which will be called
             on all the :class:`CNode` visited with the :class:`CNode` as
-            argument.
+            argument. If it returns False the visitor stops.
     """
     # implem using a stack for avoiding recursivity problems
     # this is a tree so no need to check if we have already treated a node.
     stack = [cnode]
     while len(stack) != 0:
         elt = stack.pop() # get the next element
-        callback(elt) # call the callback before visiting the next
+        if callback(elt) == False: # call the callback before visiting the next
+            return # if ret False: stop
         if isinstance(elt, modcnode.CNodeExpr):
             # if we have an expr just append all the child, we append them
             #   in reverse order.
@@ -65,6 +69,9 @@ def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
         statement (:class:`CNodeStmt`) the expression will not be visited at
         all, this should allow a little performance gain.
 
+        If the callback return ``False`` the visitor will stop. Every other
+        result is ignore.
+
         :param cnode: An object which inherit from :class:`CNode`. This object
             and all its child will be visited.
         :param callback: A callable taking one argument which will be called
@@ -72,7 +79,7 @@ def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
             argument.
         :param filter_list: A list or tuple of class or a class which inherit
             from :class:`CNode`. The callback will be called only for the node
-            from a class in this list.
+            from a class in this list. If it returns False the visitor stops.
     """
     if isinstance(filter_list, (list, tuple)) and len(filter_list) == 0:
         # we don't visit anything
@@ -94,7 +101,8 @@ def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
             (not isinstance(filter_list, list)
                 and isinstance(elt, filter_list))):
             # check if we want the call
-            callback(elt) # call the callback before visiting the next
+            if callback(elt) == False: # call the callback before visiting the next
+                return
         if isinstance(elt, modcnode.CNodeExpr):
             if vist_expr:
                 ch = list(elt.ops)
