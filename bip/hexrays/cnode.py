@@ -644,5 +644,14 @@ def ignore_cast(self):
     """
     return self.operand.ignore_cast
 
+@addCNodeMethod("CNodeStmtGoto")
+@property
+def cnode_dst(self):
+    """
+        Property which return the :class:`CNode` which is the destination of
+        the ``goto``. This is **not** a child node, but a link to on other
+        part of the AST.
+    """
+    return self._hxcfunc.get_cnode_label(self.value)
 
 
