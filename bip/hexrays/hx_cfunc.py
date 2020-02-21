@@ -202,7 +202,8 @@ class HxCFunc(object):
             :param callback: A callable which will be called on all
                 :class:`CNode` in the function decompiled by hexrays. The call
                 should take only one argument which correspond to the
-                :class:`CNode` currently visited.
+                :class:`CNode` currently visited. If this callback return
+                False the visit is stoped, all other result is ignored.
         """
         self.root_node.visit_cnode(callback)
 
@@ -218,7 +219,8 @@ class HxCFunc(object):
             :param callback: A callable which will be called on all
                 :class:`CNode` in the function decompiled by hexrays. The call
                 should take only one argument which correspond to the
-                :class:`CNode` currently visited.
+                :class:`CNode` currently visited. If this callback return
+                False the visit is stoped, all other result is ignored.
             :param filter_list: A list of class which inherit from :class:`CNode`.
                 The callback will be called only for the node from a class in this
                 list.
@@ -259,6 +261,41 @@ class HxCFunc(object):
                 :meth:`~HxCFunc.visit_cnode` for more information).
         """
         return self.root_node.get_cnode_filter_type(type_filter)
+
+    def get_cnode_label(self, label_num):
+        """
+            Method which return the :class:`CNode` which represents the start
+            of a specific label in the function.
+
+            :param int label_num: The label number for which to get the
+                :class:`CNode`.
+            :return: A :class:`CNode` which represent label location, or None
+                if the label number was not found.
+        """
+        # This is ugly
+        res = []
+        def _app_glbl(cn):
+            if cn.label_num == label_num:
+                res.append(cn)
+                return False
+            return True
+        self.visit_cnode(_app_glbl)
+        if len(res) == 0:
+            return None
+        return res[0]
+
+    @property
+    def cnodes_with_label(self):
+        """
+            Property which return a list of :class:`CNode` which represent the
+            start of the labels in the function.
+
+            It is necessary to visit all the AST for doing this, so it is
+            costly.
+
+            :return: A list of :class:`CNode` which have a label.
+        """
+        return self.get_cnode_filter(lambda cn: cn.has_label)
 
     ############################ HX VISITOR METHODS ##########################
 
