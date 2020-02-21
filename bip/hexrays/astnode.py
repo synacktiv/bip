@@ -175,6 +175,24 @@ class AbstractCItem(object):
         """
         return "{}(ea=0x{:X})".format(self.__class__.__name__, self.ea)
 
+    ########################## LABEL METHODS ###########################
+
+    @property
+    def has_label(self):
+        """
+            Property which return True if the node has a label number.
+        """
+        return self._citem.label_num != -1
+
+    @property
+    def label_num(self):
+        """
+            Property which return the label number of the node. If this node
+            has no label ``-1`` is return. :meth:`~AbstractCItem.has_label`
+            allows to check if the node has a label.
+        """
+        return self._citem.label_num
+
     ########################### CMP METHODS ###############################
 
     def __eq__(self, other):
