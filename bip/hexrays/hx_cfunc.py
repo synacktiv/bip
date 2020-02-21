@@ -204,7 +204,7 @@ class HxCFunc(object):
                 should take only one argument which correspond to the
                 :class:`CNode` currently visited.
         """
-        self.root_node(callback)
+        self.root_node.visit_cnode(callback)
 
     def visit_cnode_filterlist(self, callback, filter_list):
         """
