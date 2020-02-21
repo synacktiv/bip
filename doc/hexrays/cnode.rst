@@ -705,6 +705,7 @@ Classes                    Methods
 ========================   ===============================================
 :class:`CNodeExprVar`      :meth:`~bip.hexrays.CNodeExprVar.lvar`
 :class:`CNodeExprVar`      :meth:`~bip.hexrays.CNodeExprVar.lvar_name`
+:class:`CNodeExprCast`     :meth:`~bip.hexrays.CNodeExprCast.ignore_cast`
 ========================   ===============================================
 
 
