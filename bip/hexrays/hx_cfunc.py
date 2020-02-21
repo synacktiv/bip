@@ -384,6 +384,20 @@ class HxCFunc(object):
         """
         self.hx_visit_generic(_hx_visitor_list_all, item_list, func_visit)
 
+    def hx_get_label(self, label_num):
+        """
+            Allow to use the the hexrays API for finding the :class:`HxCItem`
+            which is reference by a label.
+
+            :param int label_num: The label number.
+            :return: A :class:`HxCItem` object or None if the label was not
+                found.
+        """
+        citem = self._cfunc.find_label(labelnum)
+        if citem is None:
+            return citem
+        return HxCItem.GetHxCItem(citem)
+
     ############################## CMP METHODS ###########################
 
     def __eq__(self, other):
