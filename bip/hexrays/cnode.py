@@ -224,6 +224,18 @@ class CNode(AbstractCItem):
         # default implem. return self, cast implem. return child.ignore_cast
         return self
 
+    @property
+    def ignore_cast_parent(self):
+        """
+            Property which return this node if it is not a cast or its parent
+            if it is a cast. This is designed for allowing to quickly ignore
+            cast when going backward through some nodes.
+
+            :return: The first :class:`CNode` which is not a cast.
+        """
+        # default implem. return self, cast implem. return child.ignore_cast
+        return self
+
     ########################### CNODE CREATION #############################
 
     def _createChild(self, citem):
@@ -643,6 +655,19 @@ def ignore_cast(self):
         :return: A :class:`CNodeExpr` which is not a cast.
     """
     return self.operand.ignore_cast
+
+@addCNodeMethod("CNodeExprCast")
+@property
+def ignore_cast_parent(self):
+    """
+        Property which return the first parent of this node which is not cast
+        This is designed for allowing to quickly ignore cast when going
+        backward through some nodes. Multiple chained cast are handle.
+
+        :return: The first :class:`CNode` which is not a cast.
+    """
+    # default implem. return self, cast implem. return child.ignore_cast
+    return self.parent.ignore_cast_parent
 
 @addCNodeMethod("CNodeStmtGoto")
 @property
