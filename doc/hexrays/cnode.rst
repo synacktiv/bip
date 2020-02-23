@@ -700,14 +700,15 @@ listed here only as an easy way to see functionnality which are
 :class:`~bip.hexrays.CNode` specific. Access to parent
 :class:`~bip.hexrays.HxCFunc` and parent node are not listed here.
 
-========================   ===============================================
+========================   ==========================================================
 Classes                    Methods
-========================   ===============================================
+========================   ==========================================================
 :class:`CNodeExprVar`      :meth:`~bip.hexrays.CNodeExprVar.lvar`
 :class:`CNodeExprVar`      :meth:`~bip.hexrays.CNodeExprVar.lvar_name`
 :class:`CNodeExprCast`     :meth:`~bip.hexrays.CNodeExprCast.ignore_cast`
+:class:`CNodeExprCast`     :meth:`~bip.hexrays.CNodeExprCast.ignore_cast_parent`
 :class:`CNodeStmtGoto`     :meth:`~bip.hexrays.CNodeStmtGoto.cnode_dst`
-========================   ===============================================
+========================   ==========================================================
 
 
 .. _doc-hexrays-cnode-visitor-api:
