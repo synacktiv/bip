@@ -327,4 +327,6 @@ class HxLvar(object):
             raise TypeError("Not a HxLvar")
         return self._lvar == other._lvar and self._hxcfunc == other._hxcfunc
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
 

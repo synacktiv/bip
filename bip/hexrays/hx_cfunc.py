@@ -452,6 +452,9 @@ class HxCFunc(object):
             raise TypeError("Not a HxCFunc or BipFunction")
         return self.ea == other.ea
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     ############################### CLASS METHOD ############################
 
     @classmethod

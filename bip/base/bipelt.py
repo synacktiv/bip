@@ -72,6 +72,9 @@ class BipBaseElt(object):
         """
         return self._idelt == other._idelt
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 class BipRefElt(BipBaseElt):
     """
         Class which represent element which can be reference through a xref.

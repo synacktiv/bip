@@ -211,8 +211,8 @@ class AbstractCItem(object):
             raise TypeError("Not a AbstractCItem")
         return self._citem == other._citem
 
-
-
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     ############################ INHERITANCE METHODS #########################
 
