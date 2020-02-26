@@ -127,6 +127,42 @@ class CNode(AbstractCItem):
         """
         return self._hxcfunc
 
+    ############################## COMMENTS #################################
+
+    @property
+    def comment(self):
+        """
+            Get the comment at the closest address of this node.
+
+            Note that two node with the same closest_ea will have the same
+            comment.
+
+            .. todo:: Default ITP will work only for expression, should make
+                another one for statement.
+
+            .. note:: This use the default itp (at the semi-colon level),
+                see :meth:`HxCFunc.get_cmt`.
+        """
+        return self.cfunc.get_cmt(self.closest_ea)
+
+    @comment.setter
+    def comment(self, value):
+        """
+            Set the comment at the closest address of this node.
+
+            Note that two node with the same closest_ea will have the same
+            comments.
+
+            .. todo:: Default ITP will work only for expression, should make
+                another one for statement.
+
+            .. note:: This use the default itp (at the semi-colon level),
+                see :meth:`HxCFunc.add_cmt`.
+
+            :param str value: The comment to add.
+        """
+        self.cfunc.add_cmt(self.closest_ea, value)
+
     ########################### VISITOR METHODS ##############################
 
     def visit_cnode(self, callback):

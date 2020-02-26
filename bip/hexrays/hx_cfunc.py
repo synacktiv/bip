@@ -89,9 +89,11 @@ class HxCFunc(object):
 
     ################################ CMT ###########################
 
-    def add_cmt(self, ea, value, itp=69):
+    def add_cmt(self, ea, value, itp=None):
         """
             Allow to add a comment in the hexrays interface view. 
+            If a comment at the same position (ea and itp) exist it will be
+            overwritten.
 
             .. todo: doc & better (in particular itp)
 
@@ -99,15 +101,40 @@ class HxCFunc(object):
                 address in the function will not be valid, only the one used
                 for items in the ctree seems to be. 
             :param str value: The comment value.
-            :param int itp: The position at which add the comment
-                (item_tree_position todo).
+            :param int itp: The position at which add the comment.
+                See ``item_tree_position`` in IDA, by default (None) at the
+                semi-colon
         """
+        if itp is None:
+            itp = ida_hexrays.ITP_SEMI
         tl = ida_hexrays.treeloc_t()
         tl.ea = ea
         tl.itp = itp
         self._cfunc.set_user_cmt(tl, value)
         self._cfunc.save_user_cmts()
         
+    def get_cmt(self, ea, itp=None):
+        """
+            Allow to get a comment in the hexrays interface view.
+
+            .. todo: doc & better (in particular itp)
+
+            :param int ea: The address at which is the comment.
+            :param int itp: The position at which the comment is.
+                See ``item_tree_position`` in IDA, by default (None) at the
+                semi-colon.
+            :return: None if no comment at that position, the comment as
+                a string if there is any
+        """
+        if itp is None:
+            itp = ida_hexrays.ITP_SEMI
+        tl = ida_hexrays.treeloc_t()
+        tl.ea = ea
+        tl.itp = itp
+        try:
+            return self._cfunc.user_cmts[tl].c_str()
+        except KeyError:
+            return None
 
     ################################ LVARS ###################################
 
