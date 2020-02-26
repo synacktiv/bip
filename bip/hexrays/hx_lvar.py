@@ -309,6 +309,16 @@ class HxLvar(object):
         """
         return self._lvar.is_stk_var()
 
+    @property
+    def has_user_name(self):
+        """
+            Property which return True if this variable has a user name.
+
+            :return: bool
+        """
+        return self._lvar.has_user_name
+
+
     ############################### CMP METHODS ############################
 
     def __eq__(self, other):
