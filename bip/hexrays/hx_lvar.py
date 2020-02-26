@@ -318,6 +318,14 @@ class HxLvar(object):
         """
         return self._lvar.has_user_name
 
+    @property
+    def has_user_type(self):
+        """
+            Property which return True if this variable has a user type.
+
+            :return: bool
+        """
+        return self._lvar.has_user_type
 
     ############################### CMP METHODS ############################
 
