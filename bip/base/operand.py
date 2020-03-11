@@ -302,7 +302,7 @@ class Operand(object):
             DISPL in OpType)
         """
         t = self.type 
-        return t == OpType.MEM or t == OpType.PHRASE or t == OpType.PHRASE
+        return t == OpType.MEM or t == OpType.PHRASE or t == OpType.DISPL
 
     @property
     def is_imm(self):
