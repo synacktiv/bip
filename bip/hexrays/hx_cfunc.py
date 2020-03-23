@@ -252,7 +252,7 @@ class HxCFunc(object):
                 The callback will be called only for the node from a class in this
                 list.
         """
-        self.root_node.visit_dfs_cnode_filterlist(callback, filter_list)
+        self.root_node.visit_cnode_filterlist(callback, filter_list)
 
     def get_cnode_filter(self, cb_filter):
         """
