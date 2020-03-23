@@ -4,6 +4,7 @@ from instr import Instr
 from data import BipData
 from operand import OpType, Operand
 from bipstruct import BipStruct, BStructMember
+from bipenum import BipEnum
 from xref import XrefTypes, BipXref
 from biperror import BipError, BipDecompileError
 from func import BipFuncFlags, BipFunction
