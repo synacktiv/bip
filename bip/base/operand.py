@@ -195,13 +195,17 @@ class Operand(object):
             informaiton see :class:`BipType` .
 
             :param value: An object which inherit from :class:`BipType` and
-                will be set as the type of the current operand.
+                will be set as the type of the current operand or a string
+                which represent the C type.
             :raise TypeError: If the argument does not inherit from
-                :class:`BipType` .
-            :raise RuntimeError: If the setting of the type is not a success.
+                :class:`BipType` or if the .
+            :raise RuntimeError: If the setting of the type is not a success
+                or if it was not able to create the BipType from the string.
         """
+        if isinstance(value, (str, unicode)):
+            value = biptype.BipType.FromC(value)
         if not isinstance(value, biptype.BipType):
-            raise TypeError("Operand.type_info expect an BipType object.")
+            raise TypeError("Operand.type_info expect a BipType object or a string representing the C type.")
         if not set_op_tinfo(self.ea, self.opnum, value._get_tinfo_copy()):
             raise RuntimeError("Fail to set the type ({}) of the operand {}".format(value, self))
 

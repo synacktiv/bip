@@ -186,16 +186,27 @@ class HxLvar(object):
         """
             Property setter which take an object inherited from
             :class:`BipType` and set the type of this local variable to this
-            new type.
+            new type. If a string is passed as the setter it will try to
+            be converted as a :class:`~bip.base.BipType`.
             
-            This will create a copy of the type provided in argument
-            for avoiding problem with the IDA type system. For more
-            informaiton see :class:`BipType` .
+            .. note::
 
-            :param value: An object which inherit from :class:`BipType` .
+                This will create a copy of the type provided in argument
+                for avoiding problem with the IDA type system. For more
+                informaiton see :class:`BipType` .
+
+            :param value: An object which inherit from :class:`BipType` or a
+                string representing a declaration in C.
+            :raise TypeError: If the value passed in argument is not a BipType
+                or a string.
+            :raise RuntimeError: If the type was not being able to be created
+                from the string or if it was not possible to set the lvar
+                type.
         """
+        if isinstance(value, (str, unicode)):
+            value = biptype.BipType.FromC(value)
         if not isinstance(value, biptype.BipType):
-            raise TypeError("HxLvar type setter expect an object which inherit from BipType")
+            raise TypeError("HxLvar type setter expect an object which inherit from BipType or a string representing the C type")
         if not self._lvar.set_lvar_type(value._get_tinfo_copy()):
             raise RuntimeError("Unable to set the type {} for this lvar {}".format(value.str, self.name))
         self._lvar.set_user_type()

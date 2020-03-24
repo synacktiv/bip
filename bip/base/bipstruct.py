@@ -618,14 +618,17 @@ class BStructMember(BipRefElt):
                 the IDA interface. See :class:`BipType` for more information.
 
             :param value: An object which inherit from :class:`BipType` which
-                represent the new type for this member.
+                represent the new type for this member or a string
+                representing a declaration in C.
             :raise RuntimeError: If setting the type failed.
-            :raise TypeError: If the argument is not None or an
+            :raise TypeError: If the argument is not None, a string or a
                 :class:`BipType` object.
         """
         if value is None:
             self.del_type()
             return
+        if isinstance(value, (str, unicode)):
+            value = BipType.FromC(value)
         self.set_type(value)
 
     @property

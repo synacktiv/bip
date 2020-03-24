@@ -155,7 +155,7 @@ class BipData(BipElt):
         """
             Property which allow to test if this object represent a byte
             (1 byte).
-            
+
             :return: True if this data object represent a byte, False
                 otherwise.
         """
@@ -184,7 +184,7 @@ class BipData(BipElt):
         """
             Property which allow to test if this object represent a word
             (2 bytes).
-            
+
             :return: True if this data object represent a word, False
                 otherwise.
         """
@@ -213,7 +213,7 @@ class BipData(BipElt):
         """
             Property which allow to test if this object represent a dword
             (4 bytes).
-            
+
             :return: True if this data object represent a dword, False
                 otherwise.
         """
@@ -242,7 +242,7 @@ class BipData(BipElt):
         """
             Property which allow to test if this object represent a qword
             (8 bytes).
-            
+
             :return: True if this data object represent a qword, False
                 otherwise.
         """
@@ -293,16 +293,29 @@ class BipData(BipElt):
     def type(self, value):
         """
             Property setter which allow to define the type for this data
-            element. This is a wrapper for :meth:`BipType.set_at` .
+            element.
+
+            This is basically a wrapper for :meth:`BipType.set_at` .
 
             :param value: An object which inherit from :class:`BipType`
-                corresponding to the new type for this data object. If
-                ``None`` is given in argument the type of the object is
-                deleted.
+                corresponding to the new type for this data object or a string
+                representing the type in C. If ``None`` is given in argument
+                the type of the object is deleted.
+            :raise TypeError: If the argument is not None, a string or a
+                :class:`BipType` object.
+            :raise RuntimeError: if the function was not able to create the
+                type, when a string was given in arguments.
         """
         if value is None:
             ida_bytes.del_items(self.ea)
-        value.set_at(self.ea)
+            return
+        if isinstance(value, BipType):
+            value.set_at(self.ea)
+        elif isinstance(value, (str, unicode)):
+            value = BipType.FromC(value)
+            value.set_at(self.ea)
+        else:
+            raise TypeError("Unhandle type for BipData.type setter")
 
     @type.deleter
     def type(self):
@@ -312,7 +325,6 @@ class BipData(BipElt):
         """
         ida_bytes.del_items(self.ea)
 
-        
 
     ###################### CLASS METHODS #############################
 

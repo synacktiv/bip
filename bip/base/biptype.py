@@ -328,9 +328,7 @@ class BipType(object):
             of the string provided, one will be added automatically.
 
             This is made for parsing **one** declaration and can create
-            problem if several declarations are in the string. This function
-            will raise a :class:`RuntimeError` if it was not able to create
-            the type.
+            problem if several declarations are in the string.
             
             :param str cstr: A string representing a declaration in C.
             :param int flags: ``PT_*`` flags from IDA (see typeinf.hpp).
@@ -338,6 +336,7 @@ class BipType(object):
                 enough in most case.
             :return: An object which inherit from :class:`BipType` equivalent
                 to the C declaration.
+            :raise RuntimeError: if the function was not able to create the type.
         """
         tif = tinfo_t()
         cstr = cstr.strip()
