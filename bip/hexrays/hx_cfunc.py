@@ -87,6 +87,26 @@ class HxCFunc(object):
         """
         return bbase.BipFunction(self.ea)
 
+    ############################### OTHER ################################
+
+    def invalidate_cache(self, close_window=False):
+        """
+            Allows to invalidate the cache for this hexray function. This will
+            remove information associated with this function, forcing IDA to
+            regenerate the view for the function next time it will be open.
+
+            .. warning::
+
+                This function may generate the same problem as decompiling
+                again the function, this has not been tested. See
+                :class:`HxCFunc` warning for more information about this
+                potential problem.
+
+            :param close_window: If true the window(s) showing the
+                disassembled function will be closed. False by default.
+        """
+        ida_hexrays.mark_cfunc_dirty(self.ea, close_window)
+
     ################################ CMT ###########################
 
     def add_cmt(self, ea, value, itp=None):
@@ -514,5 +534,21 @@ class HxCFunc(object):
         if idaobj is None:
             raise bbase.BipDecompileError("Decompilation failed for {}: address was probably not in a function ?".format(ea))
         return cls(idaobj)
+
+    @staticmethod
+    def invalidate_all_caches():
+        """
+            Static method for invalidating cache of all hexrays decompiled
+            functions. See :meth:`~HxCFunc.invalidate_cache` for invalidating
+            the cache of a specific function.
+
+            .. warning::
+
+                This function may generate the same problem as decompiling
+                again a function, this has not been tested. See
+                :class:`HxCFunc` warning for more information about this
+                potential problem.
+        """
+        ida_hexrays.clear_cached_cfuncs()
 
 
