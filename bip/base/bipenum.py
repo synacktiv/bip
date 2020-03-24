@@ -12,8 +12,6 @@ class BipEnum(object):
 
         The enum in IDA do not support xref, however the enum members do.
 
-        .. todo:: add to the doc
-
         .. todo:: allow to set an instruction operand as an enum
     """
 

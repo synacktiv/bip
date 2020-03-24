@@ -62,6 +62,7 @@ All classes in this part are regroup in the ``bip.base`` module.
     base/func
     base/xref
     base/struct
+    base/enum
     base/type
     base/util
 
