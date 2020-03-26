@@ -163,6 +163,15 @@ class BipFunction(object):
         idc.set_name(self.ea, value, idc.SN_CHECK)
 
     @property
+    def demangle_name(self):
+        """
+            Property which return the demangle name of the function.
+
+            :return str: The demangle name of the function.
+        """
+        return idc.demangle_name(self.name, idc.get_inf_attr(idc.INF_SHORT_DN))
+
+    @property
     def is_dummy_name(self):
         """
             Property for checking if the current name of this function is a
