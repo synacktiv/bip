@@ -19,7 +19,7 @@ class BipBaseElt(object):
         Base class for representing an element in IDA which is identified by
         an id, this should be used as an abstract class and no object of this
         class should be instantiated.
-        
+
         This is a really generic class which only support the constructor
         taking an id and the :meth:`BipBaseElt._is_this_elt` for used in
         conjonction with :func:`GetElt`. Child classes should reimplement the
@@ -32,7 +32,7 @@ class BipBaseElt(object):
     def __init__(self, idelt):
         """
             Consctructor for a :class:`BipBaseElt` object.
-            
+
             .. note:: There is no reason to use this constructor, the
                 :func:`GetElt` or :func:`GetEltByName` functions should be
                 used.
@@ -210,13 +210,15 @@ class BipElt(BipRefElt):
         self.ea = ea #: The address of the element in the IDA database
 
     ################## COMPARE #############################
-    
+
     def __cmp__(self, other):
         """
             Compare with another BipElt. Will return 0 if the two :class:`BipElt`
             have the same address, and -1 or 1 depending on the other element
-            position. This will raise a ``TypeError`` exception if the
-            argument is not a :class:`BipElt` .
+            position.
+
+            :raise TypeError: exception if the argument is not a
+                :class:`BipElt`.
         """
         if not isinstance(other, BipElt):
             raise TypeError("Not a BipElt")
@@ -229,7 +231,7 @@ class BipElt(BipRefElt):
 
     def __hash__(self):
         """
-            Compute a unique hash for this ida function. The produce hash is
+            Compute a unique hash for this ida element. The produce hash is
             dependant of the type of this object and of its address. This
             allow to create container using the hash
             of the object for matching an object of a defined type and with
@@ -329,7 +331,7 @@ class BipElt(BipRefElt):
             BipError will be raised
 
             .. todo::
-            
+
                 idc.set_name support flags so maybe make more advanced
                 functions ? (see include/name.hpp) And what about mangling.
 
@@ -349,7 +351,7 @@ class BipElt(BipRefElt):
             how to call an element) with a special prefix. This function will
             not recognize the ``aSTRING`` naming,
             see :meth:`~BipElt.is_auto_name`, and :meth:`~BipElt.is_ida_name`.
-            
+
             :return: ``True`` if the element has a dummy name, ``False``
                 otherwise.
         """
@@ -379,7 +381,7 @@ class BipElt(BipRefElt):
             This is still not perfect and name put some names put by IDA will
             not be recognize by this function (for exemple the global for the
             CFG and probably others).
-            
+
             :return: ``True`` if the element has a name provided by IDA,
                 ``False`` otherwise.
         """
@@ -427,7 +429,7 @@ class BipElt(BipRefElt):
     def comment(self):
         """
             Property which return the comment of the item.
-            
+
             :return: The value of the comment or ``None`` if there is no
                 comment.
             :rtype: :class:`str`
@@ -450,7 +452,7 @@ class BipElt(BipRefElt):
     def rcomment(self):
         """
             Property which return the repeatable comment of the item.
-            
+
             :return: The value of the comment or ``None`` if there is no
                 repeatable comment.
             :rtype: :class:`str`
@@ -487,7 +489,7 @@ class BipElt(BipRefElt):
         """
             Property indicating if this element is some code.
             Wrapper on ``idc.is_code`` .
-            
+
             :return: True if current element is code, False otherwise.
             :rtype: bool
         """
@@ -498,7 +500,7 @@ class BipElt(BipRefElt):
         """
             Property indicating if this element is considered as data.
             Wrapper on ``idc.is_data`` .
-            
+
             :return: True if current element is data, False otherwise.
             :rtype: bool
         """
@@ -509,7 +511,7 @@ class BipElt(BipRefElt):
         """
             Property indicating if this element is considered as unknwon.
             Wrapper on ``idc.is_unknown`` .
-            
+
             :return: True if current element is unknwon, False otherwise.
             :rtype: bool
         """
@@ -528,7 +530,7 @@ class BipElt(BipRefElt):
         """
         return idc.is_head(self.flags)
 
-    # no is_tail because counter intuitive as it is only a ``not is_head`` 
+    # no is_tail because counter intuitive as it is only a ``not is_head``
 
     @property
     def has_data(self):
@@ -541,7 +543,7 @@ class BipElt(BipRefElt):
             :return: True if the current element has a value, False otherwise.
         """
         return idc.has_value(self.flags)
-    
+
     ######################## GUI ############################
 
     def goto(self):
@@ -603,48 +605,6 @@ class BipElt(BipRefElt):
                 ``None`` if the search did not find any match.
         """
         r = BipElt.next_data_addr(ea=ea, down=down)
-        if r is None:
-            return r
-        else:
-            return GetElt(r)
-
-    @staticmethod
-    def next_code_addr(ea=None, down=True):
-        """
-            Static method which allow to find the address of the next code
-            element.
-
-            :param ea: The address at which to start the search. If ``None``
-                the screen address will be used.
-            :param down: If True (the default) search bellow the given
-                address, if False search above.
-            :return: The address of the next code or None if the search did
-                not find any match.
-        """
-        if ea is None:
-            ea = ida_kernwin.get_screen_ea()
-        if down:
-            fl = ida_search.SEARCH_DOWN
-        else:
-            fl = ida_search.SEARCH_UP
-        r = ida_search.find_code(ea, fl)
-        if r == idc.BADADDR: # no result found
-            return None
-        return r
-
-    @staticmethod
-    def next_code(ea=None, down=True):
-        """
-            Static method which allow to find the next code element.
-
-            :param ea: The address at which to start the search. If ``None``
-                the screen address will be used.
-            :param down: If True (the default) search bellow the given
-                address, if False search above.
-            :return: An object which ibherit from :class:`BipBaseElt` or
-                ``None`` if the search did not find any match.
-        """
-        r = BipElt.next_code_addr(ea=ea, down=down)
         if r is None:
             return r
         else:
@@ -796,7 +756,7 @@ class BipElt(BipRefElt):
             ``41 8B 44 ? 20``.
 
             :param byt: A string representing a sequence of byte.
-            :param start_ea: The address at which to start the search, if 
+            :param start_ea: The address at which to start the search, if
                 ``None`` the current address will be used.
             :param end_ea: The address at which to stop the search, if
                 ``None`` the maximum or minimum (depending of searching up or
@@ -840,7 +800,7 @@ class BipElt(BipRefElt):
             ``41 8B 44 ? 20``.
 
             :param byt: A string representing a sequence of byte.
-            :param start_ea: The address at which to start the search, if 
+            :param start_ea: The address at which to start the search, if
                 ``None`` the current address will be used.
             :param end_ea: The address at which to stop the search, if
                 ``None`` the maximum or minimum (depending of searching up or
@@ -877,7 +837,7 @@ class BipElt(BipRefElt):
 
             :param str s: The C string for which to search. If the string
                 is NULL terminated the NULL byte must be included.
-            :param start_ea: The address at which to start the search, if 
+            :param start_ea: The address at which to start the search, if
                 ``None`` the current address will be used.
             :param end_ea: The address at which to stop the search, if
                 ``None`` the maximum or minimum (depending of searching up or
@@ -924,7 +884,7 @@ class BipElt(BipRefElt):
 
             :param str s: The C string for which to search. If the string
                 is NULL terminated the NULL byte must be included.
-            :param start_ea: The address at which to start the search, if 
+            :param start_ea: The address at which to start the search, if
                 ``None`` the current address will be used.
             :param end_ea: The address at which to stop the search, if
                 ``None`` the maximum or minimum (depending of searching up or
@@ -946,19 +906,20 @@ def GetElt(ea=None):
     """
         Return an object inherithed from :class:`BipBaseElt` which correspond
         to the element at an id.
-        
+
         Internally this function parcours subclasses of :class:`BipBaseElt`
         and call the :meth:`~BipBaseElt._is_this_elt` and return the one which
         match.
 
         .. warning::
-            
+
             There is a problem if two functions of a sublcass level can
             return True on the same element.
 
         :param int ea: An address at which to get an element. If ``None`` the
             screen address is used.
-        :raise RuntimeError: If the address correspond to the error value.
+        :raise RuntimeError: If the address correspond to the error value or
+            if the address is not mapped.
         :return: An object representing the element.
         :rtype: Subclass of :class:`BipBaseElt`.
     """
@@ -966,6 +927,8 @@ def GetElt(ea=None):
         ea = ida_kernwin.get_screen_ea()
     if ea == idc.BADADDR:
         raise RuntimeError("Trying to get element for error address")
+    if not BipElt.is_mapped(ea):
+        raise RuntimeError("Trying to get an element for an unmapped address")
     cls = BipBaseElt
     sbcls = cls.__subclasses__()
     while len(sbcls) != 0:
