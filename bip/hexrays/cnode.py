@@ -7,7 +7,11 @@ import idc
 from astnode import AbstractCItem, HxCType
 from hx_citem import HxCItem, HxCExpr, HxCStmt
 from bip.base.biptype import BipType
+import bip.base as bipbase
 import cnode_visitor
+
+import ida_pro
+import ida_lines
 
 class CNode(AbstractCItem):
     """
@@ -92,6 +96,20 @@ class CNode(AbstractCItem):
             return None
         else:
             return ea
+
+    @property
+    def cstr(self):
+        """
+            Property which return the C code corresponding to the
+            decompilation of this :class:`CNode` as a onliner. This will
+            include the childs of this object.
+
+            :return str: The human readable C string corresponding to this
+                :class:`CNode` as a onliner.
+        """
+        s = self._citem.print1(self._hxcfunc._cfunc.__ref__())
+        return ida_pro.str2user(ida_lines.tag_remove(s))
+
 
     ########################### ACCESS PROPERTIES ############################
 
@@ -715,4 +733,44 @@ def cnode_dst(self):
     """
     return self._hxcfunc.get_cnode_label(self.value)
 
+@addCNodeMethod("CNodeExprCall")
+@property
+def caller_addr(self):
+    """
+        Property which return the address called by this
+        :class:`CNodeExprCall` if it exist.
+
+        This property ignore the cast.
+
+        :return: An integer corresponding to the address called or ``None``
+            if the caller is not a :class:`CNodeExprObj` node.
+    """
+    cn = self.caller.ignore_cast
+    if not isinstance(cn, CNodeExprObj):
+        return None
+    else:
+        return cn.value
+
+@addCNodeMethod("CNodeExprCall")
+@property
+def caller_func(self):
+    """
+        Property which return the :class:`BipFunction` called by this
+        :class:`CNodeExprCall` if it exist.
+
+        This property ignore the cast and works only for function in the
+        binary. If this function is not able to create the
+        :class:`BipFunction` ``None`` will be returned (in particular this
+        will not work for the imported function).
+
+        :return: The :class:`BipFunction` called by this node or None if it
+            was not able to get it.
+    """
+    ea = self.caller_addr
+    if ea is None:
+        return None
+    try:
+        return bipbase.BipFunction(ea)
+    except Exception:
+        return None
 
