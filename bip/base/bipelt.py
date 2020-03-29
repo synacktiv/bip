@@ -344,6 +344,16 @@ class BipElt(BipRefElt):
             raise BipError("Unable to set name")
 
     @property
+    def demangle_name(self):
+        """
+            Property which return the demangle name of the element.
+
+            :return str: The demangle name of the element or None if there is
+                no demangle version of the name.
+        """
+        return idc.demangle_name(self.name, idc.get_inf_attr(idc.INF_SHORT_DN))
+
+    @property
     def is_dummy_name(self):
         """
             Property for checking if the current name of this element is a

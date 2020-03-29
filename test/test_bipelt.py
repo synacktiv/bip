@@ -52,6 +52,8 @@ def test_bipelt00():
     assert BipElt(0x018014F7FF).is_auto_name
     assert not BipElt(0x018014F7FF).is_dummy_name
     assert BipElt(0x018014F7FF).is_ida_name
+    assert BipElt(0x0180125828).demangle_name is None
+    # TODO: need other binary for demangle name
     # color
     assert BipElt(0x01800D325A).color == idc.get_color(0x01800D325A, idc.CIC_ITEM)
     ie = BipElt(0x01800D325A)
