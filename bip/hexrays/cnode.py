@@ -775,7 +775,7 @@ def caller_func(self):
         return None
 
 @addCNodeMethod("CNodeExprCall")
-def get_arg_intvalue(self, argnum):
+def get_arg_intval(self, argnum):
     """
         Method for getting the integer value used for an argument at a given
         position. This allows to quickly get the value of an argument which
