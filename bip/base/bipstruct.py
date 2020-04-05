@@ -133,6 +133,29 @@ class BipStruct(BipRefElt):
         """
         ida_struct.set_struc_cmt(self._sid, value, 1)
 
+    ########################## GUI ###############################
+
+    @property
+    def is_hidden(self):
+        """
+            Property for knowing if a struct is fully shown in the gui.
+
+            :return: True if the structure is "collapsed", False if it is
+                shown.
+        """
+        return self._struct.is_hidden()
+
+
+    @is_hidden.setter
+    def is_hidden(self, value):
+        """
+            Property setter for setting if a struct is "collapsed" in the
+            GUI.
+
+            :param value: True for hidding the struct, false for showing it.
+        """
+        ida_struct.set_struc_hidden(self._struct, value)
+
     ############################ MEMBERS ###########################
 
     @property
