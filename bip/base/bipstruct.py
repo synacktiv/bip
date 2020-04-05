@@ -242,7 +242,8 @@ class BipStruct(BipRefElt):
         """
             Add a new member to the structure (at the end by default).
 
-            :param str name: The name of the field to add.
+            :param str name: The name of the field to add. If None or an empty
+                string the default name used by IDA will be used (``field_``).
             :param int size: The size of the field to add in bytes,
                 can be 1, 2, 4 or 8.
             :param str comment: Optional parameter which allow to add a
@@ -255,6 +256,8 @@ class BipStruct(BipRefElt):
             :return: An :class:`BStructMember` object corresponding to the
                 member added.
         """
+        if name is None:
+            name = ""
         if size not in (1, 2, 4, 8) or not isinstance(name, (str, unicode)):
             raise TypeError("Invalid type for adding in {}".format(self))
         if offset is None:
@@ -264,6 +267,8 @@ class BipStruct(BipRefElt):
         d= {8:idc.FF_QWORD, 4:idc.FF_DWORD, 2:idc.FF_WORD, 1:idc.FF_BYTE}
         flags |= d[size]
 
+        if len(name) == 0:
+            name = "field_{:X}".format(self.size if offset == idc.BADADDR else offset)
         # create member
         r = ida_struct.add_struc_member(self._struct, name, offset, flags, None, size)
         if r != 0:
