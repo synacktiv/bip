@@ -1145,13 +1145,13 @@ class HxCExprCall(HxCExpr):
             Function which return one of the argument of the call to a
             function. Each argument is also an expression.
 
-            This function will raise a :class:`ValueError` if ``num`` is
-            superior to the number of arguments in the call expression.
             
             :param int num: The argument number.
+            :raise ValueError: if ``num`` is superior to the number of
+                arguments in the call expression.
             :return: An object which inherit from :class:`HxCExpr` .
         """
-        if num > self.number_args:
+        if num >= self.number_args:
             raise ValueError("Trying to access arg {} when the call take only {} args".format(num, self.number_args))
         return self._createChild(self._get_carg(num))
 
