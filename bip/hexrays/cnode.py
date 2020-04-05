@@ -774,3 +774,26 @@ def caller_func(self):
     except Exception:
         return None
 
+@addCNodeMethod("CNodeExprCall")
+def get_arg_intvalue(self, argnum):
+    """
+        Method for getting the integer value used for an argument at a given
+        position. This allows to quickly get the value of an argument which
+        is an address (:class:`CNodeExprObj`) or an
+        integer (:class:`CNodeExprNum`), this function will return ``None``
+        for all other case.
+
+        This property ignore the cast.
+
+        :param int argnum: The argument number for which to get the value.
+        :raise ValueError: If argument at position ``argnum`` does not
+            exist.
+        :return: The number or address passed in that argument or None if
+            a number could not be found.
+    """
+    o = self.get_arg(argnum).ignore_cast # may raise ValueError
+    if not isinstance(o, (CNodeExprObj, CNodeExprNum)):
+        return None
+    return o.value
+
+
