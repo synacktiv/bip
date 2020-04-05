@@ -142,6 +142,20 @@ class BipType(object):
 
         return self._tinfo.get_type_name()
 
+    ############################ COMPARE ################################
+
+    def __eq__(self, other):
+        """
+            Compare two BipType. This is only based on the compare of the IDA
+            underlying object.
+        """
+        if not isinstance(other, BipType):
+            raise TypeError("Compare a BipType with something which is not a BipType")
+        return self._tinfo == other._tinfo
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     ########################## GENERAL TYPE SET/GET #########################
 
     def set_at(self, ea, flags=1):
