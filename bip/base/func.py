@@ -875,7 +875,8 @@ class BipFunction(object):
             function.
 
             This function will not take into account jmp or ordinary flow to
-            this function.
+            this function, see :meth:`~BipFunction.jcallers` property for
+            also getting the jmp and ordinary flow.
 
             .. todo:: Test
 
@@ -884,6 +885,28 @@ class BipFunction(object):
         s = set()
         for x in self.xTo:
             if not x.is_call:
+                continue
+            ea = x.src_ea
+            try:
+                f = BipFunction(ea)
+            except ValueError:
+                continue
+            s.add(f)
+        return list(s)
+
+    @property
+    def jcallers(self):
+        """
+            Property which return a list of all the functions which call,
+            jump or have an ordinary flow to this function.
+
+            .. todo:: Test
+
+            :return: A list of :class:`BipFunction` which call this function.
+        """
+        s = set()
+        for x in self.xTo:
+            if not x.is_codepath:
                 continue
             ea = x.src_ea
             try:
