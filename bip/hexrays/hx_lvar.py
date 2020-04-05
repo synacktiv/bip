@@ -207,7 +207,7 @@ class HxLvar(object):
             value = biptype.BipType.FromC(value)
         if not isinstance(value, biptype.BipType):
             raise TypeError("HxLvar type setter expect an object which inherit from BipType or a string representing the C type")
-        if not self._lvar.set_lvar_type(value._get_tinfo_copy()):
+        if not self._lvar.set_lvar_type(value._get_tinfo_copy(), True):
             raise RuntimeError("Unable to set the type {} for this lvar {}".format(value.str, self.name))
         self._lvar.set_user_type()
         if self._persistent:
