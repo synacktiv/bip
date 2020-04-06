@@ -8,6 +8,8 @@ import ida_bytes
 import ida_typeinf
 import ida_kernwin
 
+import re
+
 from bipelt import BipElt, GetElt
 import instr
 import block
@@ -974,22 +976,49 @@ class BipFunction(object):
     @classmethod
     def get_by_name(cls, name):
         """
-            .. todo:: doc
+            Class method allowing to get a function from its name.
 
-            .. todo:: there is something better to do for this
+            :return: A :class:`BipFunction` with the correct name or None
+                if the function was not found.
         """
-        for f in cls.iter_all():
-            if f.name == name:
-                return f
-
+        ea = ida_name.get_name_ea(idc.BADADDR, name)
+        if ea is None or ea == idc.BADADDR:
+            return None
+        try:
+            return cls(ea)
+        except ValueError:
+            return None
+        return None
 
     @classmethod
-    def get_by_prefix(cls, name):
+    def get_by_prefix(cls, prefix):
         """
             Class method allowing to get all the functions which are named
             with a particular prefix.
+
+            Internally this iterate on all functions.
+
+            :param str prefix: The prefix for which to get the function.
+            :return: A list of :class:`BipFunction` where their names start
+                with the prefix.
         """
-        return [f for f in cls.iter_all() if f.name.startswith(name)]
+        return [f for f in cls.iter_all() if f.name.startswith(prefix)]
+
+    @classmethod
+    def get_by_regex(cls, regex):
+        """
+            Class method allowing to get all functions matching a regex.
+
+            Internally this iterate on all functions and use the ``re.match``
+            function (it compiles the regex first) and return the function
+            if the match did not return None.
+
+            :param str regex: The regex used for finding the function.
+            :return: A list of :class:`BipFunction` where their names match
+                the regex.
+        """
+        rc = re.compile(regex)
+        return [f for f in cls.iter_all() if rc.match(f.name) is not None]
 
 
     @classmethod
