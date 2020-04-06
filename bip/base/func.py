@@ -253,12 +253,13 @@ class BipFunction(object):
         """
             Compare with another BipFunction. Will return 0 if the functions
             have the same address, and -1 or 1 depending on the other function
-            position. This will raise a ``TypeError`` exception if the
-            argument is not a :class:`BipFunction` .
+            position.
+
+            :raise NotImplemented: if the argument is not a :class:`BipFunction` .
         """
         if not isinstance(other, BipFunction):
-            raise TypeError("Not a BipFunction")
-        
+            raise NotImplemented("Compare a BipFunction with unhandle type")
+
         if self.ea < other.ea:
             return -1
         elif self.ea > other.ea:

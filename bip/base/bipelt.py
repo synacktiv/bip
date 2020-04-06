@@ -223,7 +223,7 @@ class BipElt(BipRefElt):
                 :class:`BipElt`.
         """
         if not isinstance(other, BipElt):
-            raise TypeError("Not a BipElt")
+            raise NotImplemented("Compare a BipElt with unhandle type")
         if self.ea < other.ea:
             return -1
         elif self.ea > other.ea:
