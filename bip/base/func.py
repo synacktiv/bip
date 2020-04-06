@@ -257,11 +257,10 @@ class BipFunction(object):
             have the same address, and -1 or 1 depending on the other function
             position.
 
-            :raise NotImplemented: if the argument is not a :class:`BipFunction` .
+            Return ``NotImplemented`` if the argument is not a :class:`BipFunction` .
         """
         if not isinstance(other, BipFunction):
-            raise NotImplemented("Compare a BipFunction with unhandle type")
-
+            return NotImplemented
         if self.ea < other.ea:
             return -1
         elif self.ea > other.ea:
@@ -313,7 +312,7 @@ class BipFunction(object):
             Property which return the hexrays C function (:class:`HxCFunc`)
             for this function.
 
-            If if it not possible to import the hexrays API an NotImplemented
+            If if it not possible to import the hexrays API an NotImplementedError
             error will be raised.
 
             This may raise a :class:`~bip.base.BipDecompileError` if the
@@ -328,7 +327,7 @@ class BipFunction(object):
             except ImportError:
                 hexrays = None
             if hexrays is None:
-                raise NotImplemented("It appears the hexrays API is not available")
+                raise NotImplementedError("It appears the hexrays API is not available")
         return hexrays.HxCFunc.from_addr(self.ea)
 
 

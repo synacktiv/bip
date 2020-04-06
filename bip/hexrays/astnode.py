@@ -204,11 +204,11 @@ class AbstractCItem(object):
 
             This seems to not work if the function has been recompiled.
 
-            :raise NotImplemented: if the element to compare does not inherit from
-                AbstractCItem
+            Return ``NotImplemented`` if the element to compare does not
+                inherit from AbstractCItem
         """
         if not isinstance(other, AbstractCItem):
-            raise NotImplemented("Compare a AbstractCItem with unhandle type")
+            return NotImplemented
         return self._citem == other._citem
 
     def __ne__(self, other):

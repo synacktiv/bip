@@ -71,7 +71,7 @@ class BipBaseElt(object):
             they are equal.
         """
         if not isinstance(other, BipBaseElt):
-            raise NotImplemented("Compare a BipBaseElt with unhandle type")
+            return NotImplemented
         return self._idelt == other._idelt
 
     def __ne__(self, other):
@@ -223,7 +223,7 @@ class BipElt(BipRefElt):
                 :class:`BipElt`.
         """
         if not isinstance(other, BipElt):
-            raise NotImplemented("Compare a BipElt with unhandle type")
+            return NotImplemented
         if self.ea < other.ea:
             return -1
         elif self.ea > other.ea:

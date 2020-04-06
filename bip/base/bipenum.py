@@ -36,7 +36,7 @@ class BipEnum(object):
         elif isinstance(other, (int, long)):
             return self._eid == other
         else:
-            raise NotImplemented("Compare BipEnum is only implemented with int and other BipEnum")
+            return NotImplemented
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -409,7 +409,7 @@ class BEnumMember(BipRefElt):
         elif isinstance(other, (int, long)):
             return self._mid == other
         else:
-            raise NotImplemented("Compare BEnumMember is only implemented with int and other BEnumMember")
+            return NotImplemented
 
     def __ne__(self, other):
         return not self.__eq__(other)

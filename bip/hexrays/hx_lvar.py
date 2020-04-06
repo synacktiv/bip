@@ -350,10 +350,10 @@ class HxLvar(object):
                 implementation. For avoiding this function check also that
                 this lvar as the same :class:`HxCFunc`.
 
-            :raise NotImplemented: If the argument is not a :class:`HxLvar` object.
+            Return ``NotImplemented`` if the argument is not a :class:`HxLvar` object.
         """
         if not isinstance(other, HxLvar):
-            raise NotImplemented("Compare a HxLvar with unhandle type")
+            return NotImplemented
         return self._lvar == other._lvar and self._hxcfunc == other._hxcfunc
 
     def __ne__(self, other):

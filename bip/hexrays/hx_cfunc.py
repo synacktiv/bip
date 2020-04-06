@@ -492,11 +492,11 @@ class HxCFunc(object):
                 the function has been decompiled again this may return true
                 while the two underlying object are different
 
-            :raise NotImplemented: If the argument is not a :class:`HxCFunc` or a
-                :class:`~bip.base.BipFunction`.
+            Return ``NotImplemented`` if the argument is not a
+                :class:`HxCFunc` or a :class:`~bip.base.BipFunction`.
         """
         if not isinstance(other, (HxCFunc, bbase.BipFunction)):
-            raise NotImplemented("Compare a HxCFunc with unhandle type")
+            return NotImplemented
         return self.ea == other.ea
 
     def __ne__(self, other):
