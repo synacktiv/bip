@@ -70,6 +70,8 @@ class BipBaseElt(object):
             Compare the id of 2 :class:`BipBaseElt` and return ``True`` if
             they are equal.
         """
+        if not isinstance(other, BipBaseElt):
+            raise NotImplemented("Compare a BipBaseElt with unhandle type")
         return self._idelt == other._idelt
 
     def __ne__(self, other):

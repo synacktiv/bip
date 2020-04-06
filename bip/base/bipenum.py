@@ -31,8 +31,12 @@ class BipEnum(object):
         """
             Compare two BipEnum.
         """
-        return ((isinstance(other, BipEnum) and self._eid == other._eid) or
-                isinstance(other, (int, long)) and self._eid == other)
+        if isinstance(other, BipEnum):
+            return self._eid == other._eid
+        elif isinstance(other, (int, long)):
+            return self._eid == other
+        else:
+            raise NotImplemented("Compare BipEnum is only implemented with int and other BipEnum")
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -400,8 +404,12 @@ class BEnumMember(BipRefElt):
         """
             Equality operator for two :class:`BEnumMember`.
         """
-        return ((isinstance(other, BEnumMember) and self._mid == other._mid) or
-                isinstance(other, (int, long)) and self._mid == other)
+        if isinstance(other, BEnumMember):
+            return self._mid == other._mid
+        elif isinstance(other, (int, long)):
+            return self._mid == other
+        else:
+            raise NotImplemented("Compare BEnumMember is only implemented with int and other BEnumMember")
 
     def __ne__(self, other):
         return not self.__eq__(other)

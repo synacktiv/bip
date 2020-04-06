@@ -150,7 +150,7 @@ class BipType(object):
             underlying object.
         """
         if not isinstance(other, BipType):
-            raise TypeError("Compare a BipType with something which is not a BipType")
+            raise NotImplemented("Compare a BipType with something which is not a BipType")
         return self._tinfo == other._tinfo
 
     def __ne__(self, other):
