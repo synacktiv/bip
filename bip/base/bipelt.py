@@ -62,6 +62,31 @@ class BipBaseElt(object):
             return False
         return True
 
+    @classmethod
+    def iter_heads(cls):
+        """
+            Class method allowing to iter on all the element **defined** in
+            the IDB. This means elements which are not defined (considered to
+            not *heads*) will not be returned by this function.
+
+            .. note::
+
+                Internally this function iterate on all the ``Heads`` and
+                create the object if the class which is used for it match
+                the element. For exemple calling ``BipData.iter_heads()`` will
+                return only the heads which are :class:`BipData` object or
+                their children.
+
+            .. note:: This function will work only on mapped object, it is not
+                possible to use it for getting :class:`BipStruct` for exemple.
+
+            :return: A generator of object child of :class:`BipBaseElt`
+                allowing to iter on all the elt define in the idb.
+        """
+        for h in idautils.Heads():
+            if cls._is_this_elt(h):
+                yield GetElt(h)
+
     def __eq__(self, other):
         """
             Compare the id of 2 :class:`BipBaseElt` and return ``True`` if

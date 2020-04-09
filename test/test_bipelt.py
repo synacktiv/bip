@@ -162,7 +162,7 @@ def test_bipelt05():
     assert BipElt.next_defined(ea=0x1800d324b, down=False).ea == 0x1800d3248
     assert BipElt.next_defined(ea=0x180110000, down=True).ea == 0x180110008
 
-def test_biptelt06():
+def test_bipelt06():
     ## static method of BipElt: search
     # search_bytes
     assert BipElt.search_bytes_addr("43 00 6F 00 6D 00 6D 00 6F 00 6E 00 50 00 72 00 6F 00 67 00 72 00 61 00 6D 00 46 00 69 00 6C 00  65 00 73 00 28 00 41 00 72 00 6D 00 29 00 00 00", start_ea=0x180000000) == 0x18011A808
@@ -187,7 +187,7 @@ def test_biptelt06():
     assert isinstance(BipElt.search_str("Wow64SuspendLocalThread\x00", start_ea=0x180000000), BipData)
     assert BipElt.search_str("Wow64SuspendLocalThreat", start_ea=0x180000000) is None
 
-def test_biptelt07():
+def test_bipelt07():
     # bipelt xref (just basic test, not the actual test for the BipXref obj)
     # this basiccally is the test for the BipRefElt
     assert len(BipElt(0x01800D3242).xFrom) == 1
@@ -202,4 +202,35 @@ def test_biptelt07():
     assert BipElt(0x01800D3242).xEaTo == [0x1800d323A]
     assert BipElt(0x01800D3242).xEltTo == [BipElt(0x01800D323A)]
     assert BipElt(0x01800D3242).xCodeTo == [Instr(0x1800D323A)]
+
+def test_bipelt08():
+    # test BipElt.iter_heads
+    gen = BipElt.iter_heads()
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x180001000
+    elt = gen.next()
+    assert elt.__class__ == Instr
+    assert elt.ea == 0x180001010
+    elt = gen.next()
+    assert elt.__class__ == Instr
+    assert elt.ea == 0x180001012
+    # BipData.iter_heads
+    gen = BipData.iter_heads()
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x180001000
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x180001307
+    # Instr.iter_heads
+    gen = Instr.iter_heads()
+    elt = gen.next()
+    assert elt.__class__ == Instr
+    assert elt.ea == 0x180001010
+    elt = gen.next()
+    assert elt.__class__ == Instr
+    assert elt.ea == 0x180001012
+
+
 

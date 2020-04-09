@@ -334,24 +334,6 @@ class BipData(BipElt):
                 and (idc.is_data(ida_bytes.get_full_flags(ea))
                 or idc.is_unknown(ida_bytes.get_full_flags(ea))))
 
-    @classmethod
-    def iter_heads(cls):
-        """
-            Class method allowing to iter on all the data **defined** in
-            the IDB. This means data which are not defined (considered to
-            not *heads*) will not be returned by this function.
-
-            .. note::
-                Internally this function iterate on all the ``Heads`` and
-                create the object if the ``idc.is_data`` function return True.
-
-            :return: A generator of :class:`BipData` allowing to iter on all
-                the instruction define in the idb.
-        """
-        for h in idautils.Heads():
-            if (idc.is_data(ida_bytes.get_full_flags(h))
-                    or idc.is_unknown(ida_bytes.get_full_flags(h))):
-                yield cls(h)
 
     ######################## STATIC METHOD ##############################
 
