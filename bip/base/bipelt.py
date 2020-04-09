@@ -10,9 +10,6 @@ from biperror import BipError
 
 # TODO:
 #   * make a iter_all for elements
-#   * for BipElt object maybe return True only if mapped ?
-#   * create a special object for error address instead of the ugly test in
-#       GetElt ?
 
 class BipBaseElt(object):
     """
@@ -930,17 +927,15 @@ def GetElt(ea=None):
 
         :param int ea: An address at which to get an element. If ``None`` the
             screen address is used.
-        :raise RuntimeError: If the address correspond to the error value or
-            if the address is not mapped.
-        :return: An object representing the element.
-        :rtype: Subclass of :class:`BipBaseElt`.
+        :raise RuntimeError: If the address correspond to the error value.
+        :return: An object (subclass of :class:`BipBaseElt`) representing the
+            element. If the address is not mapped a :class:`BipElt` will be
+            returned.
     """
     if ea is None:
         ea = ida_kernwin.get_screen_ea()
     if ea == idc.BADADDR:
         raise RuntimeError("Trying to get element for error address")
-    if not BipElt.is_mapped(ea):
-        raise RuntimeError("Trying to get an element for an unmapped address")
     cls = BipBaseElt
     sbcls = cls.__subclasses__()
     while len(sbcls) != 0:

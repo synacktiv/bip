@@ -330,8 +330,9 @@ class BipData(BipElt):
 
     @classmethod
     def _is_this_elt(cls, ea):
-        return (idc.is_data(ida_bytes.get_full_flags(ea))
-                or idc.is_unknown(ida_bytes.get_full_flags(ea)))
+        return (BipElt.is_mapped(ea)
+                and (idc.is_data(ida_bytes.get_full_flags(ea))
+                or idc.is_unknown(ida_bytes.get_full_flags(ea))))
 
     @classmethod
     def iter_heads(cls):
