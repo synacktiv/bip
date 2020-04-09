@@ -178,7 +178,7 @@ class Operand(object):
                 ``None`` if it was not defined.
         """
         ti = tinfo_t()
-        if not get_op_tinfo(self.ea, self.opnum, ti): # recuperation of the type failed
+        if not get_op_tinfo(ti, self.ea, self.opnum): # recuperation of the type failed
             return None
         return biptype.BipType.GetBipType(ti)
 
