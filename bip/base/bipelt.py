@@ -77,11 +77,9 @@ class BipBaseElt(object):
 class BipRefElt(BipBaseElt):
     """
         Class which represent element which can be reference through a xref.
-        This include data, instruction and structures. This class provide
-        methods for accessing the references to and from the element
-        represented by the object.
-
-        .. todo:: put name of the class in this doc.
+        This include data, instruction and structures. The :class:`BipRefElt`
+        class provide methods for accessing the references to and from the
+        element represented by the object.
     """
 
     ################################# XREFS ############################
@@ -179,12 +177,6 @@ class BipElt(BipRefElt):
         Base class for representing an element in IDA which have an address.
         This is the basic element on top of which access to instruction and
         data is built.
-
-        .. todo:: make test
-
-        .. todo:: Make an exception system
-
-        .. todo:: Make comparaison possible between 2 objections
     """
 
     def __init__(self, ea=None):
@@ -274,8 +266,6 @@ class BipElt(BipRefElt):
             Property returning the value of the bytes contain in the
             element.
 
-            .. todo:: make an orginal_bytes property
-
             :return: A list of the bytes forming the element.
             :rtype: list(int)
         """
@@ -303,11 +293,20 @@ class BipElt(BipRefElt):
         else:
             raise TypeError("Invalid arg {} for BipElt.bytes setter".format(value))
 
+    @property
+    def original_bytes(self):
+        """
+            Property returning the value of the bytes contain in the
+            element before their modification. This still use the size of
+            the current element definition.
+
+            :return: A list of the original bytes as integer forming the
+                element.
+        """
+        return [ida_bytes.get_original_byte(i) for i in range(self.ea, idc.get_item_end(self.ea))]
+
     ################### NAME ##################
     # All element do not have one
-
-    # TODO: add testing methods for if an element has a name or not, if it
-    #   is user defined, or auto generated and so on.
 
     @property
     def name(self):
@@ -332,7 +331,7 @@ class BipElt(BipRefElt):
             .. todo::
 
                 idc.set_name support flags so maybe make more advanced
-                functions ? (see include/name.hpp) And what about mangling.
+                functions ? (see include/name.hpp)
 
             :param value: The name to give to this element.
             :type value: :class:`str`
