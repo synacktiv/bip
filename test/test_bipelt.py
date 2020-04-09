@@ -116,14 +116,13 @@ def test_bipelt04():
     # GetElt class creation
     assert GetElt(0x018015D228).__class__ == BipData
     assert GetElt(0x01800D325A).__class__ == Instr
+    assert GetElt(0).__class__ == BipElt
+    assert GetElt(0xAAAAA).__class__ == BipElt
     with pytest.raises(RuntimeError):
         GetElt(idc.BADADDR)
-    with pytest.raises(RuntimeError):
-        GetElt(0)
-    with pytest.raises(RuntimeError):
-        GetElt(0xAAAAA)
     assert GetEltByName('loc_1800D325A') == GetElt(0x01800D325A)
     assert GetEltByName('donotexist') is None
+    # TODO: need test GetElt for other objects such as struct and struct member
 
 def test_bipelt05():
     ## static method of BipElt
