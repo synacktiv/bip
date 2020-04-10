@@ -61,7 +61,7 @@ class BipBaseElt(object):
         return True
 
     @classmethod
-    def iter_heads(cls):
+    def iter_heads(cls, start=None, end=None):
         """
             Class method allowing to iter on all the element **defined** in
             the IDB. This means elements which are not defined (considered to
@@ -78,10 +78,20 @@ class BipBaseElt(object):
             .. note:: This function will work only on mapped object, it is not
                 possible to use it for getting :class:`BipStruct` for exemple.
 
+            :param start: The address at which to start iterating. If this
+                parameter is None (the default) the minimum mapped address
+                will be used.
+            :param end: The address at which to stop iterating. If this
+                parameter is None (the default) the maximum mapped address
+                will be used.
             :return: A generator of object child of :class:`BipBaseElt`
                 allowing to iter on all the elt define in the idb.
         """
-        for h in idautils.Heads():
+        if start is None:
+            start = min_ea()
+        if end is None:
+            end = max_ea()
+        for h in idautils.Heads(start, end):
             if cls._is_this_elt(h):
                 yield GetElt(h)
 
@@ -597,6 +607,12 @@ class BipElt(BipRefElt):
             :class:`BipData` object or children of that class. This use
             :func:`GetElt` for determining the correct object to return.
 
+            :param start: The address at which to start iterating. If this
+                parameter is None (the default) the minimum mapped address
+                will be used.
+            :param end: The address at which to stop iterating. If this
+                parameter is None (the default) the maximum mapped address
+                will be used.
             :return: A generator of object child of :class:`BipBaseElt`
                 allowing to iter on all the elt in the idb.
         """
