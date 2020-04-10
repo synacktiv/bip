@@ -7,9 +7,7 @@ import ida_search
 
 import xref
 from biperror import BipError
-
-# TODO:
-#   * make a iter_all for elements
+from utils import min_ea, max_ea
 
 class BipBaseElt(object):
     """
@@ -585,6 +583,32 @@ class BipElt(BipRefElt):
             element. Wrapper on ``ida_kernwin.jumpto`` (old ``idc.Jump``).
         """
         ida_kernwin.jumpto(self.ea)
+
+    ########################## CLASS METHOD ##########################
+
+    @classmethod
+    def iter_all(cls, start=None, end=None):
+        """
+            Class method allowing to iter on all mapped elements of the IDB.
+
+            This will return only the elements which are handle by the class
+            or one of this subclasses. For exemple calling
+            ``BipData.iter_heads()`` will return only the heads which are
+            :class:`BipData` object or children of that class. This use
+            :func:`GetElt` for determining the correct object to return.
+
+            :return: A generator of object child of :class:`BipBaseElt`
+                allowing to iter on all the elt in the idb.
+        """
+        ea = min_ea() if start is None else start
+        if end is None:
+            end = max_ea()
+        while ea < end:
+            elt = GetElt(ea)
+            sz = elt.size
+            if cls._is_this_elt(ea):
+                yield elt
+            ea += sz
 
     #################### STATIC METHOD ######################
 
