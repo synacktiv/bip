@@ -215,6 +215,20 @@ def test_bipelt08():
     elt = gen.next()
     assert elt.__class__ == Instr
     assert elt.ea == 0x180001012
+    # with start
+    gen = BipElt.iter_heads(start=0x18012F16C)
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x18012F16C
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x18012F172
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x18012F180
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x18012F190
     # BipData.iter_heads
     gen = BipData.iter_heads()
     elt = gen.next()
@@ -253,6 +267,12 @@ def test_bipelt09():
     elt = gen.next()
     assert elt.__class__ == BipData
     assert elt.ea == 0x18012F172
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x18012F180
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x18012F184
     # BipData.iter_all
     gen = BipData.iter_all()
     elt = gen.next()
