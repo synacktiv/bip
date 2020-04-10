@@ -233,4 +233,41 @@ def test_bipelt08():
     assert elt.ea == 0x180001012
 
 
+def test_bipelt09():
+    # test BipElt.iter_all
+    gen = BipElt.iter_all()
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x180001000
+    elt = gen.next()
+    assert elt.__class__ == Instr
+    assert elt.ea == 0x180001010
+    elt = gen.next()
+    assert elt.__class__ == Instr
+    assert elt.ea == 0x180001012
+    # with start
+    gen = BipElt.iter_all(start=0x18012F16C)
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x18012F16C
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x18012F172
+    # BipData.iter_all
+    gen = BipData.iter_all()
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x180001000
+    elt = gen.next()
+    assert elt.__class__ == BipData
+    assert elt.ea == 0x180001307
+    # Instr.iter_all
+    gen = Instr.iter_all()
+    elt = gen.next()
+    assert elt.__class__ == Instr
+    assert elt.ea == 0x180001010
+    elt = gen.next()
+    assert elt.__class__ == Instr
+    assert elt.ea == 0x180001012
+
 
