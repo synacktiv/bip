@@ -44,7 +44,9 @@ class ColorCall(BipPlugin):
             if i.is_in_func:
                 f = i.func
                 for elt in i.xCfNext:
-                    if not f.is_inside(elt):
+                    # if the next instr is not in a function, or not the
+                    #   same function: color current
+                    if (not elt.is_in_func) or (elt.func != i.func):
                         i.color = self.color
                         break
 
@@ -57,7 +59,7 @@ class ColorCall(BipPlugin):
                     continue
                 # if the instr jump out of the func we color it
                 for elt in i.xCfNext:
-                    if not f.is_inside(elt):
+                    if (not elt.is_in_func) or (elt.func != i.func):
                         i.color = self.color
                         break
 
