@@ -366,12 +366,15 @@ class BipFunction(object):
             inherited) is included in this function. In particular it
             allow to check if an :class:`Instr` is included in a function.
 
-            This function will raise a ``TypeError`` exception if the
-            parameter ``o`` is not from a valid type.
+            This function is based on the ``func_t.contains`` function of
+            IDA, this function seems to check only the address compare to the
+            start and end address of a function and will return False for
+            function chunk.
 
             :param o: The address or object to test for inclusion.
             :type o: ``int`` coresponding to an address or an object inherited
                 from :class:`BipElt` .
+            :raise TypeError: if the parameter ``o`` is not from a valid type.
         """
         if isinstance(o, (long, int)):
             return self._funct.contains(o)
