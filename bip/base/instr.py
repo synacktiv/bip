@@ -167,15 +167,17 @@ class Instr(BipElt):
             The instruction following the current one. It is important to
             notice it will not always be the next instruction in the control
             flow.
+            
+            If the next element is not an instruction (for exemple at the end
+            of a function followed by data) ``None`` will be returned.
 
-            .. todo:: Make this the next instruction in the control flow ?
-
-            .. todo:: add check and failure case.
-
-            :return: The next instruction.
-            :rtype: class:`Instr`
+            :return: The next :class:`Instr` or None in case of error.
         """
-        return Instr(idc.next_head(self.ea))
+        try:
+            return Instr(idc.next_head(self.ea))
+        except BipError:
+            return None
+
 
     @classmethod
     def _is_this_elt(cls, ea):
