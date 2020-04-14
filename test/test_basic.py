@@ -14,66 +14,6 @@ import pytest
 #   * struct
 #   * utils
 
-###################### INSTR #########################
-
-def test_instr0():
-    assert Instr(0x01800D325A).mnem == "add"
-
-def test_instr1():
-    assert Instr(0x01800D325A).mnem != "xadd"
-
-def test_instr2():
-    assert Instr(0x01800D325A).str == 'add     rsp, 60h'
-
-def test_instr3():
-    assert Instr(0x01800D325A).countOperand == 2
-
-def test_instr4():
-    assert len(Instr(0x01800D325A).ops) == 2
-
-def test_instr5():
-    assert Instr(0x01800D325A).has_prev_instr == True
-
-def test_instr6():
-    assert Instr(0x01800D325A).ea == 0x01800D325A
-
-def test_instr7():
-    assert Instr(0x01800D325A).prev.ea == 0x01800D3253
-
-def test_instr8():
-    assert Instr(0x01800D325A).next.ea == 0x01800D325E
-
-def test_instr9():
-    assert Instr(0x01800D325A).xOrdinaryCfNext.ea == 0x01800D325E
-
-def test_instrA():
-    assert [x.ea for x in Instr(0x01800D325A).xCfNext] == [0x01800D325E]
-
-def test_instrB():
-    assert [x.ea for x in Instr(0x01800D325A).xCfPrev] == [0x01800D3253, 0x01800D3028]
-
-def test_instrC():
-    assert Instr(0x01800D3028).xOrdinaryCfNext is None
-
-def test_instrD():
-    assert [x.ea for x in Instr(0x01800D3028).xCfNext] == [0x01800D325A]
-
-def test_instrE():
-    assert [x.ea for x in Instr(0x01800D3028).xCfPrev] == [0x01800D3023]
-
-def test_instrF():
-    assert [x.ea for x in Instr(0x01800D324E).xCfNext] == [0x01800D3253, 0x01800D35E8]
-
-def test_instr10():
-    assert [x.ea for x in Instr(0x01800D323A).xCfNext] == [0x01800D323C, 0x01800D3242]
-
-def test_instr11():
-    assert Instr(0x01800D6B33).func.ea == 0x01800D6B30
-
-def test_instr12():
-    assert Instr(0x01800D323A).block.ea == 0x01800D3227
-
-
 ###################### FUNC #########################
 
 def test_func0():
