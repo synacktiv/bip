@@ -14,9 +14,6 @@ class Instr(BipElt):
     """
         Class for representing and manipulating a assembleur instruction in
         IDA.
-
-        .. todo:: make test
-        .. todo:: equality and inclusion operator
     """
     #UA_MAXOP = idaapi.UA_MAXOP #: Maximum number of operands for one instruction
     UA_MAXOP = 8 #: Maximum number of operands for one instruction
@@ -130,6 +127,52 @@ class Instr(BipElt):
         return idaapi.is_call_insn(self.ea)
 
     @property
+    def is_ret(self):
+        """
+            Property indicating if this instruction is a ret.
+
+            :return bool: True if this instruction is a ret, False otherwise.
+        """
+        return idaapi.is_ret_insn(self.ea)
+
+    @property
+    def is_indirect_jmp(self):
+        """
+            Property indicating if this instruction is an indirect jump (such
+            as on a register or from the value of memory).
+
+            :return bool: True if this instruction is a indirect jmp, False
+                otherwise.
+        """
+        return idaapi.is_indirect_jump_insn(self.ea)
+
+    @property
+    def is_end_block(self):
+        """
+            Property indicating if this instruction is the end of a basic block.
+            This property will return False if the instruction is a call which
+            does not end a block such as display by IDA, see
+            :meth:`is_end_block_call` for returning True on call.
+
+            :return bool: True if this instruction is the last one for a
+                block.
+        """
+        return idaapi.is_basic_block_end(self.ea, False)
+
+    @property
+    def is_end_block_call(self):
+        """
+            Property indicating if this instruction is the end of a basic
+            block. This property will return True if the instruction is a
+            call, see :meth:`is_end_block` for returning False on call which
+            are not at the end of a block.
+
+            :return bool: True if this instruction is the last one for a
+                block, including the case when it is a call.
+        """
+        return idaapi.is_basic_block_end(self.ea, True)
+
+    @property
     def is_in_func(self):
         """
             Property which return True if this instruction is inside a
@@ -182,10 +225,6 @@ class Instr(BipElt):
     @classmethod
     def _is_this_elt(cls, ea):
         return idc.is_code(ida_bytes.get_full_flags(ea))
-
-    # TODO:
-    # * flags: different type of flag and property for knowing if the instruction is 
-    #   a jmp/ret/call/...
 
     ####################### BASIC BLOCK & FUNCTION ##########################
 
