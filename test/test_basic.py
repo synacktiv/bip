@@ -14,68 +14,6 @@ import pytest
 #   * struct
 #   * utils
 
-###################### FUNC #########################
-
-def test_func0():
-    assert BipFunction(0x01800D6B30).ea == BipFunction(0x01800D6B39).ea
-
-def test_func1():
-    assert BipFunction(0x01800D6B30).ea == 0x01800D6B30
-
-def test_func2():
-    assert BipFunction(0x01800D6B30).name == "RtlWow64SetThreadContext"
-
-# TODO: test name setter
-
-def test_func3():
-    assert BipFunction(0x01800D6B30).end == 0x01800D6B43
-
-def test_func4():
-    assert BipFunction(0x01800D6B30).size == 0x13
-
-def test_func5():
-    assert BipFunction(0x01800D6B30).ordinal == 0xb8b
-
-def test_func6():
-    assert BipFunction(0x01800D6B30).flags == 21504
-
-# TODO: test flags setter
-
-def test_func7():
-    assert BipFunction(0x01800D6B30).does_return
-
-def test_func8():
-    assert BipFunction(0x01800D6B30).is_inside(0x01800D6B39)
-
-def test_func9():
-    assert BipFunction(0x01800D6B30).is_inside(Instr(0x01800D6B39))
-
-def test_funcA():
-    assert BipFunction(0x01800D6B30).is_inside(Instr(0x01800D6B50)) == False
-
-def test_funcB():
-    assert BipFunction(0x01800D6B30).guess_strtype == "__int64 __fastcall()"
-
-def test_funcC():
-    assert BipFunction(0x0180099990).nb_blocks == 3
-
-def test_funcD():
-    blck = BipFunction(0x0180099990).blocks
-    assert blck[0].ea == 0x0180099990
-    assert blck[1].ea == 0x01800999DC
-    assert blck[2].ea == 0x01800999F0
-
-def test_funcE():
-    f = BipFunction(0x0180099990)
-    blck = f.blocks
-    i = 0
-    for b in f.blocks_iter:
-        assert blck[i].ea == b.ea
-        assert blck[i].end == b.end
-        i += 1
-
-# TODO: finish BipFunction test
-
 ###################### BLOCK #########################
 
 def test_block0():
