@@ -79,11 +79,15 @@ class BipFunction(object):
         Class for representing and manipulating function in IDA.
 
         .. todo:: provide interface for flowgraph and allow to get all basicblocks and not only the one included in the function (external block: without FC_NOEXT flag)
+
         .. todo:: Interface with stack
+
         .. todo:: color
-        .. todo:: get/set calling convention (hexray)
-        .. todo:: get/set arguments/ret type (hexray)
+
         .. todo:: frame ?
+
+        .. todo:: setter for start ea (:meth:`BipFunction.ea`) and end ea
+            (:meth:`BipFunction.end`)
     """
 
     ################################# BASE #################################
@@ -115,8 +119,6 @@ class BipFunction(object):
         """
         return self._funct.start_ea
 
-    # TODO setter of start ea ?
-
     @property
     def end(self):
         """
@@ -127,8 +129,6 @@ class BipFunction(object):
                 not included in the function.
         """
         return self._funct.end_ea
-
-    # TODO setter of end ea ?
 
     @property
     def size(self):
@@ -145,7 +145,8 @@ class BipFunction(object):
             Property which return the name of the function as display in the
             IDA window.
 
-            .. todo:: this does not handle mangling
+            This function does not handle mangling,
+            see :meth:`~BipFunction.demangle_name`.
 
             :return str: The name of the function.
         """
@@ -330,6 +331,24 @@ class BipFunction(object):
                 raise NotImplementedError("It appears the hexrays API is not available")
         return hexrays.HxCFunc.from_addr(self.ea)
 
+    @property
+    def can_decompile(self):
+        """
+            Property which test if it is possible to get the hexrays
+            C function (:class:`HxCFunc`) for this function.
+
+            Internally this will just try to call :meth:`BipFunction.hxfunc`
+            and catch the error, this means calling this function will
+            actually perform the decompilation.
+
+            :return: True if its possible to get the :class:`HxCFunc` object
+                for this :class:`BipFunction`, False otherwise.
+        """
+        try:
+            self.hxfunc
+        except Exception:
+            return False
+        return True
 
     ####################### FLAGS & INFO ############################
 
