@@ -424,8 +424,6 @@ class BipFunction(object):
         """
             Check flags of this function for knowing if this is a far
             function.
-
-            .. todo:: Test
         """
         return self.flags & BipFuncFlags.FUNC_FAR != 0
 
@@ -434,8 +432,6 @@ class BipFunction(object):
         """
             Setter for is_far flag. No change are performed if it is already
             at the correct value. This will failed silently if an error occur.
-
-            .. todo:: Test
 
             :param bool value: if ``True`` the flag will be set, otherwise it
                 will be removed.
@@ -454,8 +450,6 @@ class BipFunction(object):
         """
             Check flags of this function for knowing if this is a library
             function.
-
-            .. todo:: Test
         """
         return self.flags & BipFuncFlags.FUNC_LIB != 0
 
@@ -464,8 +458,6 @@ class BipFunction(object):
         """
             Setter for is_lib flag. No change are performed if it is already
             at the correct value. This will failed silently if an error occur.
-
-            .. todo:: Test
 
             :param bool value: if ``True`` the flag will be set, otherwise it
                 will be removed.
@@ -484,8 +476,6 @@ class BipFunction(object):
         """
             Check flags of this function for knowing if this is a static
             function.
-
-            .. todo:: Test
         """
         return self.flags & BipFuncFlags.FUNC_STATICDEF != 0
 
@@ -494,8 +484,6 @@ class BipFunction(object):
         """
             Setter for is_static flag. No change are performed if it is already
             at the correct value. This will failed silently if an error occur.
-
-            .. todo:: Test
 
             :param bool value: if ``True`` the flag will be set, otherwise it
                 will be removed.
@@ -514,8 +502,6 @@ class BipFunction(object):
         """
             Check flags of this function for knowing if it is using the frame
             pointer.
-
-            .. todo:: Test
         """
         return self.flags & BipFuncFlags.FUNC_FRAME != 0
 
@@ -524,8 +510,6 @@ class BipFunction(object):
         """
             Setter for use_frame flag. No change are performed if it is already
             at the correct value. This will failed silently if an error occur.
-
-            .. todo:: Test
 
             :param bool value: if ``True`` the flag will be set, otherwise it
                 will be removed.
@@ -557,10 +541,6 @@ class BipFunction(object):
             already at the correct value. This will failed silently if an
             error occur.
 
-            .. todo:: Test
-
-            .. todo:: does not seems to work, is_far works however
-
             :param bool value: if ``True`` the flag will be set, otherwise it
                 will be removed.
         """
@@ -577,8 +557,6 @@ class BipFunction(object):
     def is_hidden(self):
         """
             Check flags of this function for knowing if its a hidden function.
-
-            .. todo:: Test
         """
         return self.flags & BipFuncFlags.FUNC_HIDDEN != 0
 
@@ -588,10 +566,6 @@ class BipFunction(object):
             Setter for is_hidden flag. No change are performed if it is
             already at the correct value. This will failed silently if an
             error occur.
-
-            .. todo:: Test
-
-            .. todo:: Not sure if this works ?
 
             :param bool value: if ``True`` the flag will be set, otherwise it
                 will be removed.
@@ -609,8 +583,6 @@ class BipFunction(object):
     def is_thunk(self):
         """
             Check flags of this function for knowing if its a thunk function.
-
-            .. todo:: Test
         """
         return self.flags & BipFuncFlags.FUNC_THUNK != 0
 
@@ -620,8 +592,6 @@ class BipFunction(object):
             Setter for is_thunk flag. No change are performed if it is
             already at the correct value. This will failed silently if an
             error occur.
-
-            .. todo:: Test
 
             :param bool value: if ``True`` the flag will be set, otherwise it
                 will be removed.
@@ -641,8 +611,6 @@ class BipFunction(object):
     def comment(self):
         """
             Property which allow access to the comment.
-
-            .. todo:: Test
         """
         return idc.get_func_cmt(self.ea, False)
 
@@ -650,17 +618,15 @@ class BipFunction(object):
     def comment(self, value):
         """
             Setter which allow to modify the comment.
-
-            .. todo:: Test
         """
+        if value is None:
+            value = ""
         return idc.set_func_cmt(self.ea, value, False)
 
     @property
     def rcomment(self):
         """
             Property which allow access to the repeatable comment.
-
-            .. todo:: Test
         """
         return idc.get_func_cmt(self.ea, True)
 
@@ -668,9 +634,9 @@ class BipFunction(object):
     def rcomment(self, value):
         """
             Setter which allow to modify the repeatable comment.
-
-            .. todo:: Test
         """
+        if value is None:
+            value = ""
         return idc.set_func_cmt(self.ea, value, True)
 
     ######################## FLOWCHART & BASICBLOCK #########################
