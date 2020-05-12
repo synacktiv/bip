@@ -370,15 +370,6 @@ class BipFunction(object):
         """
         idc.set_func_attr(self.ea, BipFuncFlags.FUNCATTR_FLAGS, value)
 
-    @property
-    def does_return(self):
-        """
-            Property which indicate if the function is expected to return.
-
-            :return boolean: True if the function is expected to return.
-        """
-        return self._funct.does_return()
-
     def is_inside(self, o):
         """
             Allow to check if an address or an :class:`BipElt` object (or
@@ -401,6 +392,32 @@ class BipFunction(object):
             return self._funct.contains(o.ea)
         else:
             raise TypeError("Object {} is not of a valid type".format(o))
+
+    @property
+    def does_return(self):
+        """
+            Property which indicate if the function is expected to return.
+
+            :return boolean: True if the function is expected to return.
+        """
+        #return self._funct.does_return()
+        return self.flags & BipFuncFlags.FUNC_NORET == 0
+
+    @does_return.setter
+    def does_return(self, value):
+        """
+            Setter for the function flag indicating if this function returns.
+            No change are performed if it is already at the correct value.
+            This will failed silently if an error occur.
+        """
+        if value == self.does_return: # already correctly set
+            return
+        # do not use bitfield op. for setting flags because we don't actually
+        #   now its size (and it seems to change if 32 or 64bits)
+        if value:
+            self.flags = self.flags - BipFuncFlags.FUNC_NORET
+        else:
+            self.flags = self.flags + BipFuncFlags.FUNC_NORET
 
     @property
     def is_far(self):
