@@ -39,7 +39,11 @@ class BipEnum(object):
             return NotImplemented
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        res = self.__eq__(other)
+        if res == NotImplemented:
+            return res
+        else:
+            return not res
 
     @classmethod
     def _is_this_elt(cls, idelt):

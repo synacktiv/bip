@@ -105,7 +105,11 @@ class BipBaseElt(object):
         return self._idelt == other._idelt
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        res = self.__eq__(other)
+        if res == NotImplemented:
+            return res
+        else:
+            return not res
 
 class BipRefElt(BipBaseElt):
     """

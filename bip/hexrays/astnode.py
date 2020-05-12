@@ -212,7 +212,11 @@ class AbstractCItem(object):
         return self._citem == other._citem
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        res = self.__eq__(other)
+        if res == NotImplemented:
+            return res
+        else:
+            return not res
 
     ############################ INHERITANCE METHODS #########################
 

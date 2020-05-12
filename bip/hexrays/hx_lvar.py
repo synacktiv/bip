@@ -357,5 +357,9 @@ class HxLvar(object):
         return self._lvar == other._lvar and self._hxcfunc == other._hxcfunc
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        res = self.__eq__(other)
+        if res == NotImplemented:
+            return res
+        else:
+            return not res
 

@@ -154,7 +154,11 @@ class BipType(object):
         return self._tinfo == other._tinfo
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        res = self.__eq__(other)
+        if res == NotImplemented:
+            return res
+        else:
+            return not res
 
     ########################## GENERAL TYPE SET/GET #########################
 
