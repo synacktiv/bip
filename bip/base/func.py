@@ -529,8 +529,6 @@ class BipFunction(object):
             Check flags of this function for knowing if the user as define
             the function as change the marking of the function being far or
             not.
-
-            .. todo:: Test
         """
         return self.flags & BipFuncFlags.FUNC_USERFAR != 0
 
@@ -699,12 +697,10 @@ class BipFunction(object):
             Return a list of :class:`BipElt` corresponding to the items of 
             the functions.
 
-            .. todo:: Test
-
             .. note::
                 
                 This should mainly be :class:`Instr` but possible in theory
-                to be other kind of data ?
+                to be other kind of data.
 
             :return: A list of object :class:`BipElt`.
         """
@@ -715,8 +711,6 @@ class BipFunction(object):
         """
             Return a list of :class:`Instr` corresponding to the instructions
             of the functions.
-
-            .. todo:: Test
 
             :return: A list of object :class:`Instr`
         """
@@ -729,8 +723,6 @@ class BipFunction(object):
             instructions of the functions. This implementation will be just
             a little more performant than the :meth:`instr` property.
 
-            .. todo:: Test
-
             :return: A generator of object :class:`Instr`
         """
         for h in idautils.Heads(self.ea, self.end):
@@ -741,9 +733,6 @@ class BipFunction(object):
     def bytes(self):
         """
             Property returning the value of the bytes contain in the function.
-
-            .. todo:: Test
-
 
             :return: A list of the bytes forming the element.
             :rtype: list(int)
