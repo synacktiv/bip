@@ -15,7 +15,7 @@ documentation).
 The documentation is available in the RST format (and can be compile using
 sphinx) in the `doc/` directory.
 
-Current IDA version: 7.4
+Current IDA version: IDA 7.5 and Python 2.7
 
 ## Installation
 
