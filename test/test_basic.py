@@ -1,5 +1,4 @@
 import sys
-sys.path.append(r"E:\bip")
 
 from bip.base import *
 

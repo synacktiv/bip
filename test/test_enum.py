@@ -1,5 +1,4 @@
 import sys
-sys.path.append(r"E:\bip")
 import pytest
 
 from bip.base import *

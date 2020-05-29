@@ -1,6 +1,4 @@
 import sys
-sys.path.append(r"E:\bip")
-
 
 from ida_hexrays import *
 from idaapi import ctree_visitor_t, CV_FAST, CV_PARENTS
@@ -9,6 +7,7 @@ from bip.hexrays.cnode import *
 from bip.base import *
 # TODO make this compatible with pytest
 
+# TODO: add test that ``HxCFunc.from_addr().lvars[0]._lvar.set_lvar_type(BipType.FromC("void *").pointed._get_tinfo_copy(), True)`` raise indeed a RuntimeError
 
 ## OLD
 #class visit(ctree_visitor_t):
