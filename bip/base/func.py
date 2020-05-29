@@ -967,6 +967,31 @@ class BipFunction(object):
             yield cls(ea)
 
     @classmethod
+    def Entries(cls):
+        """
+            Get the functions which are entry points of the binary.
+
+            :return: A list of :class:`BipFunction` which are entry points
+                of the binary currently analyzed.
+        """
+        return [elt for elt in cls.Entries_iter()]
+
+    @classmethod
+    def Entries_iter(cls):
+        """
+            Get an generator on the functions which are entry points of the
+            binary. This should be faster than :meth:`~BipFunction.Entries` .
+
+            :return: A generator on :class:`BipFunction` which are entry
+                points of the binary currently analyzed.
+        """
+        for elt in idautils.Entries():
+            try:
+                yield cls(elt[2]) 
+            except ValueError: # case where we are not in a function, but data
+                continue # we just ignore that case
+
+    @classmethod
     def get_by_name(cls, name):
         """
             Class method allowing to get a function from its name.
@@ -1044,32 +1069,5 @@ class BipFunction(object):
             Return the number of functions which are present in the idb.
         """
         return ida_funcs.get_func_qty()
-
-    @staticmethod
-    def Entries():
-        """
-            Get the functions which are entry points of the binary.
-
-            .. todo:: make unit test
-
-            :return: A list of :class:`BipFunction` which are entry points
-                of the binary currently analyzed.
-        """
-        return [BipFunction(elt[2]) for elt in idautils.Entries()]
-
-    @staticmethod
-    def Entries_iter():
-        """
-            Get an generator on the functions which are entry points of the
-            binary. This should be faster than :meth:`~BipFunction.Entries` .
-
-            .. todo:: make unit test
-
-            :return: A generator on :class:`BipFunction` which are entry
-                points of the binary currently analyzed.
-        """
-        for elt in idautils.Entries():
-            yield BipFunction(elt[2]) 
     
-
 
