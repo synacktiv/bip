@@ -531,6 +531,8 @@ class BStructMember(BipRefElt):
     def __str__(self):
         return "Member: {} (offset=0x{:X}, size=0x{:X})".format(self.fullname, self.offset, self.size)
 
+    ############################# COMMENTS ################################
+
     @property
     def comment(self):
         """
@@ -545,6 +547,8 @@ class BStructMember(BipRefElt):
 
             :param str value: The new comment for this member.
         """
+        if value is None:
+            value = ""
         ida_struct.set_member_cmt(self._member, value, 0)
 
     @property
@@ -562,7 +566,11 @@ class BStructMember(BipRefElt):
 
             :param str value: The new comment for this member.
         """
+        if value is None:
+            value = ""
         ida_struct.set_member_cmt(self._member, value, 1)
+
+    ################################ TYPES ################################
 
     @property
     def has_type(self):
@@ -687,6 +695,8 @@ class BStructMember(BipRefElt):
         if st is None:
             raise RuntimeError("{} does not represent a nested struct".format(self))
         return BipStruct(st)
+
+    ########################### STATIC METHODS #######################
 
     @staticmethod
     def _is_member_id(mid):
