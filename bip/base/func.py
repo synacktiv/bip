@@ -761,8 +761,6 @@ class BipFunction(object):
                 it may be a good idea to decompile the function before getting
                 the type.
 
-            .. todo:: add test on this
-
             :return: The ``ida_typeinf.tinfo_t`` object (swig proxy) provided
                 by IDA for this function.
         """
@@ -776,14 +774,6 @@ class BipFunction(object):
         """
             Property which return the type (prototype) of the function.
 
-            .. todo:: Test
-
-
-            .. todo::
-
-                Merge with guesstype if no type set ?
-                This could create problems...
-
             :return str: String representing the type of the function.
         """
         return idc.get_type(self.ea)
@@ -792,9 +782,6 @@ class BipFunction(object):
     def str_type(self, value):
         """
             Setter which allow to change the type (prototype) of the function.
-
-            .. todo:: Test
-
         """
         idc.SetType(self.ea, value)
 
@@ -819,8 +806,6 @@ class BipFunction(object):
             function. This is the equivalent to ``XrefsTo`` from idapython on
             the first instruction.
 
-            .. todo:: Test
-
             :return: A list of :class:`BipXref` with the ``dst`` being this
                 element.
         """
@@ -832,8 +817,6 @@ class BipFunction(object):
             Property which allow to get all addresses which referenced this
             function (xref to).
 
-            .. todo:: Test
-
             :return: A list of address.
         """
         return [x.src_ea for x in self.xTo]
@@ -843,8 +826,6 @@ class BipFunction(object):
         """
             Property which allow to get all elements which referenced this
             element (xref to).
-
-            .. todo:: Test
 
             :return: A list of :class:`BipBaseElt` (or subclasses
                 of :class:`BipBaseElt`).
@@ -857,8 +838,6 @@ class BipFunction(object):
             Property which return all instructions which referenced this
             element. This will take into account jmp, call, ordinary flow and
             "data" references.
-
-            .. todo:: Test
 
             :return: A list of :class:`Instr` referenced by this element.
         """
@@ -873,8 +852,6 @@ class BipFunction(object):
             This function will not take into account jmp or ordinary flow to
             this function, see :meth:`~BipFunction.jcallers` property for
             also getting the jmp and ordinary flow.
-
-            .. todo:: Test
 
             :return: A list of :class:`BipFunction` which call this function.
         """
@@ -895,8 +872,6 @@ class BipFunction(object):
         """
             Property which return a list of all the functions which call,
             jump or have an ordinary flow to this function.
-
-            .. todo:: Test
 
             :return: A list of :class:`BipFunction` which call this function.
         """
@@ -920,8 +895,6 @@ class BipFunction(object):
 
             Internally this function will iterate on all instruction for
             getting the call xref. This can be quite time consuming.
-
-            .. todo:: Test
 
             :return: A list of :class:`BipFunction` which are called by this
                 function.
@@ -947,8 +920,6 @@ class BipFunction(object):
         """
             Get an :class:`BipFunction` from its ordinal, there is between
             ``0`` and ``BipFunction.Count()`` function in an IDB.
-
-            .. todo:: Test
         """
         return cls(ida_funcs.getn_func(ordinal).start_ea)
 
@@ -957,8 +928,6 @@ class BipFunction(object):
         """
             Class method allowing to iter on all the functions define in
             the IDB.
-
-            .. todo:: Test
 
             :return: A generator of :class:`BipFunction` allowing to iter on
                 all the functions define in the idb.
@@ -1043,8 +1012,6 @@ class BipFunction(object):
     def create(cls, start, end=None):
         """
             Class method allowing to create a new function.
-
-            .. todo:: test
 
             :param int start: Start address for the function to create.
             :param int end: Facultative argument which indicate the end
