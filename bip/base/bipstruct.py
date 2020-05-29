@@ -113,6 +113,8 @@ class BipStruct(BipRefElt):
 
             :param str value: The new comment to associate with this object.
         """
+        if value is None:
+            value = ""
         ida_struct.set_struc_cmt(self._sid, value, 0)
 
     @property
@@ -131,6 +133,8 @@ class BipStruct(BipRefElt):
 
             :param str value: The new comment to associate with this object.
         """
+        if value is None:
+            value = ""
         ida_struct.set_struc_cmt(self._sid, value, 1)
 
     ########################## GUI ###############################
