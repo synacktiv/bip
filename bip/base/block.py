@@ -34,8 +34,6 @@ class BipBlock(object):
             function. Change to the flowgraph can be not directly repercuted
             on this object.
 
-        .. todo:: test (nothing as been tested)
-        .. todo:: pretty printer (__str__ func)
         .. todo:: equality and inclusion operator
         .. todo:: more functions for testing type (abstraction on .type
             property), property function starting with ``is_``
