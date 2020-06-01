@@ -116,6 +116,8 @@ class BipData(BipElt):
             :raise RuntimeError: If the setting of the value failed or if
                 the value could not be set because of an unknown type.
         """
+        if self.value == value: # case where we are setting at the same value
+            return
         if (not self.has_data) or self.is_unknown or self.is_byte:
             if not ida_bytes.patch_byte(self.ea, value):
                 raise RuntimeError("Unable to patch value: {}".format(self))
@@ -261,7 +263,7 @@ class BipData(BipElt):
                 to correctly set the type for current item.
         """
         if value:
-            if not ida_bytes.create_data(self.ea, ida_bytes.FF_QWORD, 4, idc.BADADDR):
+            if not ida_bytes.create_data(self.ea, ida_bytes.FF_QWORD, 8, idc.BADADDR):
                 raise RuntimeError("Unable to set type for {}".format(self))
         else:
             del self.type
