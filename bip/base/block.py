@@ -320,8 +320,12 @@ class BipBlock(object):
                 bug in IDA or another item on top of it ?
 
             :param value: An integer representing the color to set at the BGR
-                format.
+                format. If value is ``None`` delete the color.
         """
+        if value is None:
+            ida_graph.clr_node_info(self.func.ea, self._id, ida_graph.NIF_BG_COLOR)
+            ida_kernwin.refresh_idaview_anyway()
+            return
         ni = ida_graph.node_info_t()
         ni.bg_color = value
         ida_graph.set_node_info(self.func.ea, self._id, ni, ida_graph.NIF_BG_COLOR)
