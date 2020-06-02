@@ -43,18 +43,14 @@
 from ida_typeinf import tinfo_t, array_type_data_t, func_type_data_t, udt_type_data_t, enum_type_data_t, apply_tinfo, guess_tinfo, GUESS_FUNC_OK, parse_decl
 import ida_nalt
 import ida_kernwin
+import idc
 
 class BipType(object):
     """
         Abstract class for representing a ``tinfo_t`` object from ida in bip.
         All basic types are subclasses of this one, the class name start with
-        the prefix ``BType``:
-
-        * :class:`BTypeInt` : an integer (signed or unsigned with different size)
-        * TODO
-
-        .. todo:: precise "basic types" and more complex, also doc. which one
-            have childs and which do not.
+        the prefix ``BType``, see :ref:`doc-bip-base-type` for more
+        information.
 
         The objects which inherit from :class:`BipType` can contain other
         *child* :class:`BipType` objects. For example a pointer (TODO class
@@ -68,10 +64,6 @@ class BipType(object):
             A ``type_t`` is only a bit field of one byte which indicate the
             basic type of the IDA object with some flags. This is directly
             mask by bip.
-
-        .. todo:: allow test
-        
-        .. todo:: test this
 
         .. todo:: allow creation of types
 
@@ -104,8 +96,13 @@ class BipType(object):
     def size(self):
         """
             Property which return the number of bytes in this type.
+
+            In case the number of bytes is unknown None is returned.
         """
-        return self._tinfo.get_size()
+        sz = self._tinfo.get_size()
+        if sz == idc.BADADDR:
+            return None
+        return sz
 
     @property
     def str(self):
@@ -408,17 +405,11 @@ class BipType(object):
         return tinfo_t(self._tinfo)
 
 
-# TODO: unknown type
-
 class BTypeEmpty(BipType):
     """
         Class which represent the :class:`BipType` for a type with no
-        information (empty). This is apparently different from unknown. This
+        information (empty or unknown). This
         is really used by IDA including in structures and so on.
-
-        .. todo:: test everything for this.
-        .. todo:: check for collision with other types!
-
     """
 
     @classmethod
@@ -430,9 +421,6 @@ class BTypePartial(BipType):
     """
         Class which represent the :class:`BipType` for a partial type: when
         only the size is known but no other information is available.
-
-        .. todo:: test everything for this.
-        .. todo:: check for collision with other types!
     """
 
     @classmethod
@@ -442,8 +430,6 @@ class BTypePartial(BipType):
 class BTypeVoid(BipType):
     """
         Class which represent the :class:`BipType` for a void. 
-
-        .. todo:: test this more.
     """
 
     @classmethod
