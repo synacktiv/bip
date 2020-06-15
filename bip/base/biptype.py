@@ -914,7 +914,7 @@ class BTypeUnion(BipType):
                 the :meth:`~BTypeStruct.nb_members` minus one.
             :return: The name of the ``num`` member for this struct type.
         """
-        s = str(self._ida_udt_type_data[num].name)
+        return str(self._ida_udt_type_data[num].name)
 
     def get_member_type(self, num):
         """
