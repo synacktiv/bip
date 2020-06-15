@@ -2,9 +2,7 @@ import bipelt
 
 class XrefTypes(object):
     """
-        Static class allowing to get the type of the xref as defined in the
-        documentation:
-        https://www.hex-rays.com/products/ida/support/sdkdoc/group__xref__type.html
+        Static class allowing to get the type of the xref. Internall class.
     """
     # data xref types
     dr_O  = 0x01 #: Offset
@@ -12,7 +10,7 @@ class XrefTypes(object):
     dr_R  = 0x03 #: Read access
     dr_T  = 0x04 #: Text, forced operands only
     dr_I  = 0x05 #: Informational
-    
+
     # code xref types
     fl_CF = 0x10 #: Call Far, function at the reference location
     fl_CN = 0x11 #: Call Near, function at the reference location
@@ -20,35 +18,28 @@ class XrefTypes(object):
     fl_JN = 0x13 #: Jump Near
     fl_USobsolete = 0x14 #: obsolete ??
     fl_F  = 0x15 #: Ordinary flow
-    
+
     # other flags in the type field
     XREF_USER = 0x20 # User specified xref
-    XREF_TAIL = 0x40 # Reference to tail byte in extrn symbols. 
-    XREF_BASE = 0x80 # Reference to the base part of an offset. 
-    XREF_MASK = 0x1F # Mask to get xref type. 
+    XREF_TAIL = 0x40 # Reference to tail byte in extrn symbols.
+    XREF_BASE = 0x80 # Reference to the base part of an offset.
+    XREF_MASK = 0x1F # Mask to get xref type.
     XREF_PASTEND = 0x100
 
 class BipXref(object):
     """
         Base class for representing an xref between two elements.
 
-        .. todo::
+        .. todo:: classmethod allowing to create xref
 
-            * property on data xref
-            * property on struct xref
-            * property on dst and src
-            * classmethod allowing to create xref
-            * classmethod allowing to destroy xref
-
-
-        .. note:: *Hexray documentation*
-
-            https://www.hex-rays.com/products/ida/support/sdkdoc/xref_8hpp.html
+        .. todo:: classmethod allowing to destroy xref
     """
 
     def __init__(self, xref):
         """
-            Constructor for an xref object.
+            Constructor for an xref object. There is few reason to directly
+            use this constructor, properties of :class:`BipBaseElt` and of
+            :class:`BipFunction` should allow to directly get the xref.
 
             :param xref: The xref object used in IDA.
             :type xref: ``idautils._xref`` .
@@ -65,7 +56,7 @@ class BipXref(object):
     @property
     def is_userdef(self):
         """
-            Return True if the xref was added by a user,
+            Return True if the xref was added by a user.
         """
         return self._xref.type & XrefTypes.XREF_USER != 0
 
@@ -85,7 +76,7 @@ class BipXref(object):
             the source address.
 
             :return: An object representing the element at the source address.
-            :rtypes: An :class:`BipBaseElt` or one of its subclasses. See 
+            :rtypes: An :class:`BipBaseElt` or one of its subclasses. See
                 :func:`GetElt`.
         """
         return bipelt.GetElt(self.src_ea)
@@ -106,7 +97,7 @@ class BipXref(object):
 
             :return: An object representing the element at the destination
                 address.
-            :rtypes: An :class:`BipBaseElt` or one of its subclasses. See 
+            :rtypes: An :class:`BipBaseElt` or one of its subclasses. See
                 :func:`GetElt`.
         """
         return bipelt.GetElt(self.dst_ea)
@@ -171,8 +162,6 @@ class BipXref(object):
         """
         return self._type == XrefTypes.dr_R
 
-    # TODO: Text & Information
-
     ########## PROPERTY OF DST & SRC ################
 
     @property
@@ -192,8 +181,4 @@ class BipXref(object):
             :return: True or False.
         """
         return self.src.is_code
-
-
-    # TODO: struct
-
 
