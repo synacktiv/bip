@@ -7,32 +7,22 @@ from bipelt import BipElt
 from biptype import BipType
 from biperror import BipError
 
-# TODO:
-#   * is_offset and setter, is_value_mapped
-#   * operator (equality, cmp...)
-#   * next and prev element
-#   * iter_all: make a 2nd versions: which included undefined element
-#   * link to struct
-#   * strings
-#   * array
-#   * owords
-#   * link to enum
-#   * allow to transform to code ??
-
 class BipData(BipElt):
     """
-        Class for representing and manipulating data in IDA.
+        Class for representing and manipulating data in IDA. The object of
+        this class represent defined and unknown data, those objects can
+        have values or not, those objects inherit from :class:`BipElt`.
 
-
-        .. todo:: make test.
-        .. todo:: precise this doc
+        This class contains also static method for directly accessing and
+        modifying the data from their address without passing by an object.
+        This include the recuperation of string.
     """
 
     def __init__(self, ea=None):
         """
             Constructor for :class:`BipData`, take the address of the
-            data in IDA in parameter.
-
+            data in IDA in parameter. In general it is expected to get one
+            of those object through the :func:`GetElt` function.
 
             :param int ea: The address of the element in IDA. If ``None`` the
                 screen address is taken.
