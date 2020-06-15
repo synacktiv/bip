@@ -135,17 +135,111 @@ def test_biptype08():
     assert BipType.FromC("double").childs == []
     assert BipType.FromC("float").childs == []
 
-# TODO: From BTypePtr and after
+def test_biptype09():
+    # ptr
+    ty = BipType.FromC("void *")
+    assert isinstance(ty, BTypePtr) == True
+    assert ty.str == "void *"
+    assert ty.size == 8
+    assert isinstance(ty.pointed, BTypeVoid)
+    assert ty.is_pvoid == True
+    assert ty.is_pfunc == False
+    assert len(ty.childs) == 1
+    ty = BipType.FromC("int *")
+    assert ty.size == 8
+    assert isinstance(ty.pointed, BTypeInt)
+    assert ty.is_pvoid == False
+    assert ty.is_pfunc == False
+    assert len(ty.childs) == 1
+    ty = BipType.FromC("void (*f)(int a);")
+    assert ty.size == 8
+    assert isinstance(ty.pointed, BTypeFunc)
+    assert ty.is_pvoid == False
+    assert ty.is_pfunc == True
+    assert len(ty.childs) == 1
 
+def test_biptype0A():
+    # array
+    ty = BipType.FromC("int[8]")
+    assert isinstance(ty, BTypeArray) == True
+    assert ty.str == "int[8]"
+    assert ty.size == 0x20
+    assert isinstance(ty.elt_type, BTypeInt)
+    assert ty.nb_elts == 8
+    assert len(ty.childs) == 1
+    assert isinstance(ty.childs[0], BTypeInt)
 
+def test_biptype0B():
+    # func
+    ty = BipType.FromC("int f(int a, void *b)")
+    assert isinstance(ty, BTypeFunc) == True
+    assert ty.str == "int __stdcall(int a, void *b)"
+    assert ty.size is None
+    assert ty.nb_args == 2
+    assert ty.get_arg_name(0) == 'a'
+    assert ty.get_arg_name(1) == 'b'
+    with pytest.raises(IndexError): ty.get_arg_name(2)
+    assert isinstance(ty.get_arg_type(0), BTypeInt)
+    assert isinstance(ty.get_arg_type(1), BTypePtr)
+    assert isinstance(ty.args_type, list)
+    assert len(ty.args_type) == 2
+    assert isinstance(ty.args_type[0], BTypeInt)
+    assert isinstance(ty.args_type[1], BTypePtr)
+    assert isinstance(ty.return_type, BTypeInt)
+    assert len(ty.childs) == 3
+    ty = BipType.FromC("int f(int)")
+    assert ty.get_arg_name(0) == ''
+    assert len(ty.args_type) == 1
+    assert len(ty.childs) == 2
 
+def test_biptype0C():
+    # struct
+    ty = BipType.FromC("_UNWIND_HISTORY_TABLE")
+    assert isinstance(ty, BTypeStruct) == True
+    assert ty.str == '_UNWIND_HISTORY_TABLE'
+    assert ty.size == 0xd8
+    assert ty.nb_members == 0x8
+    assert ty.get_member_name(0) == 'Count'
+    assert ty.get_member_name(1) == 'LocalHint'
+    assert isinstance(ty.get_member_type(0), BTypeInt) == True
+    assert isinstance(ty.get_member_type(1), BTypeInt) == True
+    assert isinstance(ty.members_type, list) == True
+    assert len(ty.members_type) == 8
+    assert isinstance(ty.members_info, dict) == True
+    assert len(ty.members_info) == 8
+    assert isinstance(ty.members_info["Count"], BTypeInt) == True
+    assert isinstance(ty.members_info["Entry"], BTypeArray) == True
+    assert len(ty.childs) == 8
 
+def test_biptype0D():
+    # union
+    ty = BipType.FromC("_SLIST_HEADER")
+    assert isinstance(ty, BTypeUnion) == True
+    assert ty.size == 0x10
+    assert ty.str == '_SLIST_HEADER'
+    assert ty.nb_members == 0x4
+    assert isinstance(ty.get_member_type(1), BTypeStruct) == True
+    assert ty.get_member_type(1).str == '_SLIST_HEADER::$3F637E9514009DECFE5B852E9243EE23'
+    assert ty.get_member_type(0).str == '_SLIST_HEADER::$2AAD3A9E0F86A5BF9BE50654CA710F62'
+    assert ty.get_member_name(0) == ''
+    assert ty.get_member_name(3) == 'HeaderX64'
+    assert ty.get_member_name(1) == 'Header8'
+    assert isinstance(ty.members_type, list) == True
+    assert len(ty.members_type) == 4
+    assert isinstance(ty.members_info, dict) == True
+    assert len(ty.members_info) == 4
+    assert isinstance(ty.members_info["Header8"], BTypeStruct)
+    assert len(ty.childs) == 4
 
-
-
-
-
-
+def test_biptype0E():
+    # enum
+    be = BipEnum.create("testenum") # no enum per default, so create one
+    assert be is not None
+    ty = BipType.FromC("testenum")
+    assert isinstance(ty, BTypeEnum) == True
+    assert ty.size == 0x4
+    assert ty.str == 'testenum'
+    BipEnum.delete("testenum")
 
 
 
