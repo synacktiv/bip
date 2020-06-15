@@ -97,7 +97,7 @@ class Operand(object):
             Constructor for an operand object. Should not directly use this
             constructor but should be access by using the :meth:`~Instr.op`
             method from :class:`Instr` .
-            
+
             :param ins: The instruction in which this operand ins present
             :type ins: :class:`Instr`
             :param int num: The position of the operand in the instruction.
@@ -116,7 +116,7 @@ class Operand(object):
             :rtype: int or long
         """
         return self.instr.ea
-    
+
     @property
     def str(self):
         """
@@ -158,8 +158,6 @@ class Operand(object):
             can be access through the :class:`DestOpType` enum.
             This is is equivalent to accessing the ``op_t.dtype`` from IDA.
 
-            .. todo: Test
-
             :return int: The type of the destination of the operand as defined
                 in :class:`DestOpType`.
         """
@@ -189,7 +187,7 @@ class Operand(object):
             of the operand. This is equivalent to using the
             ``Edit>Operand>Set Operand Type`` menu in IDA with an
             :class:`BipType` instead of a string.
-            
+
             This will create a copy of the type provided in argument
             for avoiding problem with the IDA type system. For more
             informaiton see :class:`BipType` .
@@ -252,12 +250,10 @@ class Operand(object):
 
                 Support the dtype for other things than immediate (such as
                 float).
-                
-            .. todo::
-                
-                Support all of the dtype for immediate
 
-            .. todo: Test
+            .. todo::
+
+                Support all of the dtype for immediate
 
             :return: The value of the operand.
             :rtype: int
@@ -282,7 +278,6 @@ class Operand(object):
 
 
     ######################## TEST TYPE ##########################
-    # TODO: test those
 
     @property
     def is_void(self):
@@ -305,7 +300,7 @@ class Operand(object):
             Test if the operand is a memory reference (one of MEM, PHRASE or
             DISPL in OpType)
         """
-        t = self.type 
+        t = self.type
         return t == OpType.MEM or t == OpType.PHRASE or t == OpType.DISPL
 
     @property
@@ -322,7 +317,7 @@ class Operand(object):
             Test if the operand represent an address, far or near.
             (one of FAR or NEAR in OpType).
         """
-        t = self.type 
+        t = self.type
         return t == OpType.FAR or t == OpType.NEAR
 
     @property
@@ -343,5 +338,6 @@ class Operand(object):
             .. todo:: doc base arg
         """
         idc.op_plain_offset(self.instr.ea, self.opnum, base)
+        # TODO:the opposite is: ida_bytes.clr_op_type(self.instr.ea, self.opnum)
 
 
