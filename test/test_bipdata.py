@@ -6,10 +6,6 @@ import pytest
     Test for class :class:`BipData` in ``bip/base/bipdata.py``.
 """
 
-
-# TODO: remove this
-#   need test for byte, word, dword, qword, unknown, nodata
-
 def test_bipdata00():
     # base
     assert BipData(0x0180110000).ea == 0x0180110000
