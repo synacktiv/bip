@@ -360,6 +360,44 @@ class BipData(BipElt):
             raise RuntimeError("Unable to set value {} at {}".format(ea, value))
 
     @staticmethod
+    def get_bytes(ea, size, original=False):
+        """
+            Static method allowing to get the value of several bytes at an
+            address.
+
+            :param ea: The address where to get the buffer. If
+                ``None`` the screen address is used.
+            :param size: The number of bytes to get.
+            :param original: If True the value recuperated will be the
+                original one (before a patch). Default: False.
+            :return: A string corresponding to the bytes at the address.
+        """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
+        res = b""
+        if original:
+            for i in range(size):
+                res += chr(ida_bytes.get_original_byte(ea + i))
+        else:
+            for i in range(size):
+                res += chr(ida_bytes.get_wide_byte(ea + i))
+        return res
+
+    @staticmethod
+    def set_bytes(ea, byt):
+        """
+            Static method allowing to set the value of one byte at an address.
+
+            :param ea: The address at which changing the value.
+            :param str byt: The buffer of bytes to set at the address.
+            :raise RuntimeError: If it was not possible to change one of the value.
+        """
+        for i in range(len(byt)):
+            value = ord(byt[i])
+            if not ida_bytes.patch_byte(ea + i, value):
+                raise RuntimeError("Unable to set value {} at {}".format(ea, value))
+
+    @staticmethod
     def get_word(ea=None, original=False):
         """
             Static method allowing to get the value of one word at an address.
