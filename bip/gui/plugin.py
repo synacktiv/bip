@@ -63,6 +63,8 @@ class BipPlugin(object):
 
         .. todo:: singleton ?
 
+        .. todo:: make a way to dynamically add and get activities
+
         .. todo:: should support to not automatically load plugin (doable with
             to_load but a more "standard way could be done")
 
