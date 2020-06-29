@@ -11,7 +11,7 @@ def add_top_menu(name, uid=None, before=None):
         top). This should be used only for top level menu and will not work
         for subdirectory which can br created directly when register a
         :class:`BipAction` (or using the :func:`menu` decorator).
-        
+
         This is different from the :func:`menu` decorator. This is a
         wrapper on the ``create_menu`` from IDAPython. Those top level menu
         are in practice different of the submenu, those submenu can
@@ -43,6 +43,6 @@ def del_top_menu(uid):
         :param str uid: The unique ID of the menu. For more information see
             :func:`add_top_menu` .
     """
-    ida_kerwin.delete_menu(uid)
+    ida_kernwin.delete_menu(uid)
 
 
