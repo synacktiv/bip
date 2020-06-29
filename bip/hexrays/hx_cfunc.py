@@ -24,30 +24,11 @@ class HxCFunc(object):
             view at the same time. Basically you will want to regenerate this
             object for the function each time you make F5 again in the GUI,
             this can be done using the :meth:`HxCFunc.from_addr` class method.
-
-        .. todo:: support everything
-
-            * Comments (cfuncp.user_cmts)
-
-        .. todo:: type
-
-        .. todo:: everything in ``cfunc_t`` .
-
-        .. todo:: make smart? error for when ida_hexrays api does not exist
-
-        .. todo:: pretty printer
-
-        .. todo:: make a function for recuperating a lvar from a register or a stack
-            location
-
-        .. todo:: test
     """
 
     def __init__(self, cfunc):
         """
             Constructor for a :class:`HxCFunc` object.
-
-            .. todo:: test
 
             :param cfunc: A ``cfunc_t`` pointer from IDA object such as return
                 by ``ida_hexrays.decompile`` .
@@ -58,8 +39,6 @@ class HxCFunc(object):
     def ea(self):
         """
             Property which return the start address of this function.
-
-            .. todo:: test
 
             :return int: The start address of this function
         """
@@ -176,20 +155,15 @@ class HxCFunc(object):
             variables of this function. This function will return the argument
             as well as the local variable of the function.
 
-            .. todo:: test
-
             :return: A list of :class:`HxLvar`.
         """
         return [HxLvar(l, self) for l in self._cfunc.get_lvars()]
 
-    @property
     def lvars_iter(self):
         """
             Return an iterator of :class:`HxLvar` object representing the
             local variables of this function. This is similar to
             :meth:`~HxCFunc.lvars` but with an iterator instead of a list.
-
-            .. todo:: test
 
             :return: An interator of :class:`HxLvar`.
         """
@@ -204,7 +178,7 @@ class HxCFunc(object):
             :return: A :class:`HxLvar` object or None if the lvar was
                 not found.
         """
-        for l in self.lvars_iter:
+        for l in self.lvars_iter():
             if l.name == name:
                 return l
         return None
@@ -345,10 +319,6 @@ class HxCFunc(object):
         return self.get_cnode_filter(lambda cn: cn.has_label)
 
     ############################ HX VISITOR METHODS ##########################
-
-# todo: 
-# * indicated as deprecated or that it should use bip visitors
-# * make examples ?
 
     def hx_visit_generic(self, visitor_class, *args):
         """
@@ -514,11 +484,6 @@ class HxCFunc(object):
             Class method which return a :class:`HxFunc` object corresponding
             to the function at a particular address.
 
-            .. todo:: error handling
-
-            .. todo:: test
-
-
             This may raise a :class:`~bip.base.BipDecompileError` if the
             decompilation failed or if the address provided is not in a
             function.
@@ -549,9 +514,8 @@ class HxCFunc(object):
             .. warning::
 
                 This function may generate the same problem as decompiling
-                again a function, this has not been tested. See
-                :class:`HxCFunc` warning for more information about this
-                potential problem.
+                again a function. See :class:`HxCFunc` warning for more
+                information about this potential problem.
         """
         ida_hexrays.clear_cached_cfuncs()
 
