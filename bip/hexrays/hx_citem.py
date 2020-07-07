@@ -34,7 +34,7 @@ class HxCItem(AbstractCItem):
             the :class:`CNode` class.
 
             Internally this function is only a wrapper on :meth:`GetHxCItem`.
-    
+
             :param citem: A ``citem_t`` from ida.
             :return: The equivalent object to the ``citem_t`` for bip. This
                 will be an object which inherit from :class:`HxCItem` .
@@ -49,7 +49,7 @@ class HxCItem(AbstractCItem):
             used for converting ``cexpr_t`` and ``cinsn_t`` in their correct
             object for bip. This function is used as interface with the IDA
             object.
-    
+
             If no :class:`HxCItem` child object exist a ``ValueError`` exception
             will be raised.
 
@@ -57,7 +57,7 @@ class HxCItem(AbstractCItem):
                 this function for creating child item but
                 :meth:`HxCItem._createChild` for compatibility with the
                 :class:`CNode` class.
-    
+
             :param citem: A ``citem_t`` from ida.
             :return: The equivalent object to the ``citem_t`` for bip. This
                 will be an object which inherit from :class:`HxCItem` .
@@ -80,6 +80,9 @@ class HxCExpr(HxCItem):
         Abstract class for representing a C Expression as returned by
         HexRays. This is an abstract class which is used as a wrapper on top
         of the ``cexpr_t`` object.
+
+        The equivalent class which inherit from :class:`CNode` is
+        :class:`CNodeExpr`, the :class:`CNode` implementation is advised.
 
         No object of this class should be instanstiated, for getting an
         expression the function :func:`~hx_citem.HxCItem.GetHxCItem` should be
@@ -130,6 +133,9 @@ class HxCStmt(HxCItem):
         Abstract class for representing a C Statement as returned by hexrays.
         This is an abstract class which is a wrapper on top of the
         ``cinsn_t`` ida object.
+
+        The equivalent class which inherit from :class:`CNode` is
+        :class:`CNodeStmt`, the :class:`CNode` implementation is advised.
 
         No object of this class should be instanstiated, for getting an
         expression the function :func:`~hx_citem.HxCItem.GetHxCItem` should be
