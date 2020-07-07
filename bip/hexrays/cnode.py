@@ -25,17 +25,15 @@ class CNode(AbstractCItem):
         * access to the parent node,
         * access to the parent :class:`HxCFunc`,
         * visitor for nodes bellow the current one,
-        * direct access to :class:`HxLvar` for :class:`~bip.hexrays.CNodeExprVar`.
+        * several node specific methods, listed in :ref:`doc-hexrays-cnode-specific-methods`.
 
         The parrent class :class:`AbstractCItem` also provides common
         functionnality with the :class:`HxCItem` objects. All subclasses of
         this class have the same behavior as the one from :class:`HxCItem`
         with just some aditional feature.
 
-        .. todo:: implement low and high address ? (map ea from cfunc could may be help ?)
-
         This is an abstract class and no object of this class should ever be
-        created. The static method :meth:`GetCNode` allow to create object 
+        created. The static method :meth:`GetCNode` allow to create object
         of the correct subclass which inherit from :class:`CNode`.
     """
 
@@ -43,10 +41,8 @@ class CNode(AbstractCItem):
 
     def __init__(self, citem, hxcfunc, parent):
         """
-            Constructor for the abstract class :class:`HxCItem` . This should
+            Constructor for the abstract class :class:`CNode` . This should
             never be used directly.
-
-            .. todo:: add check for correct types ?
 
             :param citem: a ``citem_t`` object, in practice this should always
                 be a ``cexpr_t`` or a ``cinsn_t`` object.
@@ -72,16 +68,16 @@ class CNode(AbstractCItem):
         self._parent = parent
 
     ################################## BASE #################################
-    
+
     @property
     def closest_ea(self):
         """
             Property which return the closest address for this :class:`CNode`.
-            
+
             By default this should be equivalent to the :meth:`~CNode.ea`
             property except if it return ``idc.BADADDR``, in this case it will
             try and get the address of the parent. If the most parrent node
-            of this node (which should be the root node of the function) still 
+            of this node (which should be the root node of the function) still
             has no address, ``None`` is return.
 
             :return: An integer corresponding to the closest address for this
@@ -120,7 +116,7 @@ class CNode(AbstractCItem):
             CNode which are root of a function should not have a parent.
         """
         return self._parent is not None
-    
+
     @property
     def parent(self):
         """
@@ -133,7 +129,7 @@ class CNode(AbstractCItem):
         if self._parent is None:
             raise RuntimeError("CNode {} as not parent".format(self))
         return self._parent
-    
+
     @property
     def cfunc(self):
         """
@@ -304,7 +300,7 @@ class CNode(AbstractCItem):
             Internally this function is a wrapper on :meth:`GetCNode` which
             is call with the same function than this object and with this
             object as parent.
-    
+
             :param citem: A ``citem_t`` from ida.
             :return: The equivalent node object to the ``citem_t`` for bip.
                 This will be an object which inherit from :class:`CNode` .
@@ -320,16 +316,14 @@ class CNode(AbstractCItem):
             ``cinsn_t`` from ida to :class:`CNodeExpr` and :class:`CNodeStmt`
             in bip.  If no :class:`CNode` child object exist corresponding to
             the ``citem`` provided a ``ValueError`` exception will be raised.
-            
+
             This is the equivalent of :meth:`HxCItem.GetHxCItem` but for the
-            :class:`CNode` . 
+            :class:`CNode` .
 
             .. note:: :class:`CNodeExpr` and :class:`CNodeStmt` should not used
                 this function for creating child item but
                 :meth:`CNode._createChild`.
-    
-            .. todo:: maybe return None instead of raising an exception ?
-    
+
             :param citem: A ``citem_t`` from ida.
             :param hxcfunc: A :class:`HxCFunc` object corresponding to the
                 function which contains this node/item.
@@ -409,8 +403,6 @@ class CNodeExpr(CNode):
             Property which return the type (:class:`BipType`) of this
             expression.
 
-            .. todo:: implement setter
-
             :return: An object which inherit from :class:`BipType` which
                 correspond to the type of this object. Change to this type
                 object will not change the type of this expression.
@@ -448,7 +440,7 @@ class CNodeExpr(CNode):
 
             For example for ignoring cast and ref use:
             ``cn.find_left_node_notmatching([CNodeExprCast, CNodeExprRef])`` .
-            
+
             :param li: A ``list`` or ``tuple`` of classes which inherit from
                 :class:`CNodeExpr` to ignore.
             :return: A CNode object which is not of one of the class in
@@ -540,7 +532,7 @@ _citem2cnode = {
 #:  in a CNode class which does not exist (is not possible to implement) in
 #:  the HxCItem class equivalent. When the object is created by
 #:  ``buildCNode`` the method will be added.
-#:  
+#:
 #:  This dictionnary as the name of the class for key, and a parameter a list
 #:  of tuples. Each tuple consist of the name of the method as first element
 #:  follow by the function object.
@@ -557,12 +549,12 @@ def addCNodeMethod(cnode_name, func_name=None):
         exist it will be overwrite by this implementation, this allow to
         redefine base methods from the HxCExpr.
         Internally this use the ``_cnodeMethods`` global dictionnary.
-        
+
         It is possible to add properties using this method, if no
         ``func_name`` parameter is provided the name of the getter will be
         taken (and so the property must have a getter name). It is possible
         to use ``property`` as a decorator but this will work only for getter:
-        
+
         .. code-block:: py
 
             @addCNodeMethod(myclassname)
@@ -577,7 +569,7 @@ def addCNodeMethod(cnode_name, func_name=None):
         .. todo:: correctly handle all property decorators
 
         .. warning::
-        
+
             All methods/properties decorated by this functions should be
             defined before the creation of the corresponding CNode! Currently
             the simplest way to do this is by adding it at the end of the
