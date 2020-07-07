@@ -70,4 +70,12 @@ def test_biphxcfunc03():
     assert len(hxf.args) == 1
     assert isinstance(hxf.args[0], HxLvar)
 
+def test_biphxcfunc04():
+    # root_node
+    hxf = HxCFunc.from_addr(0x01800D2FF0)
+    assert hxf.root_node is not None
+    assert isinstance(hxf.root_node, CNodeStmtBlock)
+    assert hxf.root_node.cfunc == hxf
+
+
 
