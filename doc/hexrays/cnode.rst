@@ -690,6 +690,8 @@ Other leaf Statement API
     :special-members:
     :private-members:
 
+.. _doc-hexrays-cnode-specific-methods:
+
 Methods specific to CNode implementation
 ========================================
 
@@ -708,6 +710,9 @@ Classes                    Methods
 :class:`CNodeExprCast`     :meth:`~bip.hexrays.CNodeExprCast.ignore_cast`
 :class:`CNodeExprCast`     :meth:`~bip.hexrays.CNodeExprCast.ignore_cast_parent`
 :class:`CNodeStmtGoto`     :meth:`~bip.hexrays.CNodeStmtGoto.cnode_dst`
+:class:`CNodeExprCall`     :meth:`~bip.hexrays.CNodeExprCall.caller_addr`
+:class:`CNodeExprCall`     :meth:`~bip.hexrays.CNodeExprCall.caller_func`
+:class:`CNodeExprCall`     :meth:`~bip.hexrays.CNodeExprCall.get_arg_intval`
 ========================   ==========================================================
 
 
