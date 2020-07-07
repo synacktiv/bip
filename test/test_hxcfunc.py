@@ -71,11 +71,12 @@ def test_biphxcfunc03():
     assert isinstance(hxf.args[0], HxLvar)
 
 def test_biphxcfunc04():
-    # root_node
+    # root_node and hx_root_stmt
     hxf = HxCFunc.from_addr(0x01800D2FF0)
     assert hxf.root_node is not None
     assert isinstance(hxf.root_node, CNodeStmtBlock)
     assert hxf.root_node.cfunc == hxf
-
+    assert hxf.hx_root_stmt is not None
+    assert isinstance(hxf.hx_root_stmt, HxCStmtBlock)
 
 

@@ -4,6 +4,7 @@ import ida_kernwin
 from hx_lvar import HxLvar
 from hx_visitor import _hx_visitor_expr, _hx_visitor_list_expr, _hx_visitor_stmt, _hx_visitor_list_stmt, _hx_visitor_all, _hx_visitor_list_all
 from cnode import CNode
+from hx_citem import HxCItem
 #from cnode_visitor import visit_dfs_cnode, visit_dfs_cnode_filterlist
 import bip.base as bbase
 
@@ -319,6 +320,20 @@ class HxCFunc(object):
         return self.get_cnode_filter(lambda cn: cn.has_label)
 
     ############################ HX VISITOR METHODS ##########################
+
+    @property
+    def hx_root_stmt(self):
+        """
+            Property which return the :class:`HxCItem` object for the root
+            element of this function. In practice this should always be a 
+            :class:`HxCStmtBlock`.
+
+            For the :class:`CNode` equivalent, see :meth:`~HxCFunc.root_node`.
+
+            :return: The root object for this function which inherit from
+                :class:`HxCItem`.
+        """
+        return HxCItem.GetHxCItem(self._cfunc.body)
 
     def hx_visit_generic(self, visitor_class, *args):
         """
