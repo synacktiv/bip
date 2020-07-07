@@ -104,10 +104,16 @@ class AbstractCItem(object):
         Abstract class for common element between :class:`HxCItem` and
         :class:`CNode`.
 
+        This class provide access to common implementation: address of the
+        element, equality operator, testing for the label and testing for
+        expression or statement.
 
-        .. todo:: precise what this class provides
-
-        .. todo:: add cmp operators
+        This class also define the
+        :meth:`~AbstractCItem.is_handling_type` method used for determining
+        the correct object to create using the
+        :attr:`~AbstractCItem.TYPE_HANDLE` attribute. Finally, it also define
+        the :meth:`~AbstractCItem._createChild` abstract method used for being
+        able to create child nodes.
     """
     #: Class attribute indicating which type of item this class handles,
     #:  this is used for determining if this is the good object to
