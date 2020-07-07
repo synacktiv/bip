@@ -107,8 +107,6 @@ class HxLvar(object):
         """
             Property which return the size of the current local variable.
 
-            .. todo:: setter ?
-
             :return: The number of bytes (``int``) corresponding to the size
                 of this lvar.
         """
@@ -131,7 +129,7 @@ class HxLvar(object):
 
             .. todo:: test
 
-            :return: The value of the comment or ``None`` if there is no
+            :return: The value of the comment or an empty string if there is no
                 comment.
             :rtype: :class:`str`
         """
@@ -274,31 +272,29 @@ class HxLvar(object):
             Property which return true if this local variable is an argument
             of this function, false otherwise.
 
-            .. todo:: test
-
             :return: bool
         """
         return self._lvar.is_arg_var
 
-    @is_arg.setter
-    def is_arg(self, value):
-        """
-            Setter which allow to change if this local variable should be
-            considered as an argument of this function.
+    #@is_arg.setter
+    #def is_arg(self, value):
+    #    """
+    #        Setter which allow to change if this local variable should be
+    #        considered as an argument of this function.
 
-            .. todo:: test
+    #        .. todo:: This does not work correctly
 
-            :param bool value: If ``True`` this local variable will now be
-                considered as an argument, if ``False`` this local variable
-                will not be considered as an argument anymore. If this is not
-                a boolean a ``TypeError`` will be raised.
-        """
-        if not isinstance(value, bool):
-            raise TypeError("HxLvar.is_arg setter expect a boolean value")
-        if value:
-            self._lvar.set_arg_var()
-        else:
-            self._lvar.clr_arg_var()
+    #        :param bool value: If ``True`` this local variable will now be
+    #            considered as an argument, if ``False`` this local variable
+    #            will not be considered as an argument anymore. If this is not
+    #            a boolean a ``TypeError`` will be raised.
+    #    """
+    #    if not isinstance(value, bool):
+    #        raise TypeError("HxLvar.is_arg setter expect a boolean value")
+    #    if value:
+    #        self._lvar.set_arg_var()
+    #    else:
+    #        self._lvar.clr_arg_var()
 
     @property
     def is_reg(self):
