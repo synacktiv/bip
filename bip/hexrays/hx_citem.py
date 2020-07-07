@@ -4,21 +4,17 @@ from astnode import AbstractCItem, HxCType
 class HxCItem(AbstractCItem):
     """
         Abstract class representing both C expression and C statement as
-        defined by HexRays.
+        defined by HexRays. This is the most direct API on top of Hexrays.
+        However, in most cases, the :class:`CNode` equivalent classes can be
+        used: those provide more functionnality and are the recommanded ones.
 
-        An object of this class should never be created. The
+        An object of this class should never be created directly. The
         :func:`HxCItem.GetHxCItem` static method should be used for creating
         an item of the correct type.
 
         Most of the functionnality provided by this class are inherited from
         its parent class :class:`AbstractCItem` and are common with the
         :class:`CNode` class.
-
-        .. todo:: link with cfunc ? Not sure if there is case where we would
-            have a citem without a cfunc.
-
-        .. todo:: make a commentary for comparing to the :class:`CNode` in
-            this doc.
     """
     #: Class attribute indicating which type of item this class handles, this is used
     #:  by :func:`GetHxCItem` for determining if this is the good object to
@@ -62,8 +58,6 @@ class HxCItem(AbstractCItem):
                 :meth:`HxCItem._createChild` for compatibility with the
                 :class:`CNode` class.
     
-            .. todo:: maybe return None instead of raising an exception ?
-    
             :param citem: A ``citem_t`` from ida.
             :return: The equivalent object to the ``citem_t`` for bip. This
                 will be an object which inherit from :class:`HxCItem` .
@@ -90,14 +84,6 @@ class HxCExpr(HxCItem):
         No object of this class should be instanstiated, for getting an
         expression the function :func:`~hx_citem.HxCItem.GetHxCItem` should be
         used.
-
-        .. todo:: implem exflags
-
-        .. todo:: implem everything in ``cexpr_t``
-
-        .. todo:: implem things for modifying HxCExpr
-
-        .. todo:: implem types
     """
 
     def __init__(self, cexpr):
@@ -133,8 +119,6 @@ class HxCExpr(HxCItem):
             Property which return the type (:class:`BipType`) of this
             expression.
 
-            .. todo:: implement setter
-
             :return: An object which inherit from :class:`BipType` which
                 correspond to the type of this object. Change to this type
                 object will not change the type of this expression.
@@ -155,12 +139,6 @@ class HxCStmt(HxCItem):
         child expression (:class:`HxCExpr`) object.
         By convention properties which will return child statement of an
         object will start with the prefix ``st_`` .
-
-        .. todo:: implem types
-
-        .. todo:: implem things for modifying HxCStmt
-
-        .. todo:: test
     """
 
     def __init__(self, cinsn):
