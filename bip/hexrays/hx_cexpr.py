@@ -75,14 +75,16 @@ class HxCExprNum(HxCExprFinal):
         #return self._cexpr.n._value
         return self._cexpr.n.value(self._cexpr.type)
 
-    @value.setter
-    def value(self, val):
-        """
-            Setter for the value of the expression.
-
-            :param int val: the integer representing this number.
-        """
-        self._cexpr.n.assign(val, self.size, 0)
+    #@value.setter
+    #def value(self, val):
+    #    """
+    #        Setter for the value of the expression.
+    #
+    #        .. todo:: Do not work
+    #
+    #        :param int val: the integer representing this number.
+    #    """
+    #    self._cexpr.n.assign(val, self.size, 0)
         
 
     @property
@@ -92,7 +94,7 @@ class HxCExprNum(HxCExprFinal):
 
             :return int: the size in bytes.
         """
-        return self._cexpr.n.nf.org_nbyes
+        return ord(self._cexpr.n.nf.org_nbytes[0])
 
 @cnode.buildCNode
 class HxCExprFNum(HxCExprFinal):
