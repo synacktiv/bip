@@ -23,5 +23,4 @@ pytest.main([r"test_bipplugin.py",  "--capture=sys"])
 ## Hexrays
 pytest.main([r"test_hxcfunc.py",  "--capture=sys"])
 pytest.main([r"test_hxlvar.py",  "--capture=sys"])
-
-#pytest.main([r"test_hx_base.py",  "--capture=sys"])
+pytest.main([r"test_astnode.py",  "--capture=sys"])
