@@ -335,7 +335,7 @@ class HxCFunc(object):
         """
         return HxCItem.GetHxCItem(self._cfunc.body)
 
-    def hx_visit_generic(self, visitor_class, *args):
+    def _hx_visit_generic(self, visitor_class, *args):
         """
             Generic method for creating and calling the hexrays visitors on
             this function. This function is used by the other ``hx_visit_*``
@@ -362,7 +362,7 @@ class HxCFunc(object):
                 :class:`HxCExpr` object. This function will be called on all
                 :class:`HxCExpr` element which are part of this function.
         """
-        self.hx_visit_generic(_hx_visitor_expr, func_visit)
+        self._hx_visit_generic(_hx_visitor_expr, func_visit)
 
     def hx_visit_list_expr(self, expr_list, func_visit):
         """
@@ -387,7 +387,7 @@ class HxCFunc(object):
                 :class:`HxCExpr` object. This function will be called on all
                 element which are in the ``expr_list`` .
         """
-        self.hx_visit_generic(_hx_visitor_list_expr, expr_list, func_visit)
+        self._hx_visit_generic(_hx_visitor_list_expr, expr_list, func_visit)
 
     def hx_visit_stmt(self, func_visit):
         """
@@ -401,7 +401,7 @@ class HxCFunc(object):
                 :class:`HxCStmt` object. This function will be called on all
                 :class:`HxCStmt` element which are part of this function.
         """
-        self.hx_visit_generic(_hx_visitor_stmt, func_visit)
+        self._hx_visit_generic(_hx_visitor_stmt, func_visit)
 
     def hx_visit_list_stmt(self, stmt_list, func_visit):
         """
@@ -417,7 +417,7 @@ class HxCFunc(object):
                 :class:`HxCStmt` object. This function will be called on all
                 element which are in the ``stmt_list`` .
         """
-        self.hx_visit_generic(_hx_visitor_list_stmt, stmt_list, func_visit)
+        self._hx_visit_generic(_hx_visitor_list_stmt, stmt_list, func_visit)
 
     def hx_visit_all(self, func_visit):
         """
@@ -432,7 +432,7 @@ class HxCFunc(object):
                 which inherit from :class:`HxCItem`. This function will be
                 called on all those elements which are part of this function.
         """
-        self.hx_visit_generic(_hx_visitor_all, func_visit)
+        self._hx_visit_generic(_hx_visitor_all, func_visit)
 
     def hx_visit_list_all(self, item_list, func_visit):
         """
@@ -451,7 +451,7 @@ class HxCFunc(object):
                 :class:`HxCItem` object. This function will be called on all
                 element which are in the ``item_list`` .
         """
-        self.hx_visit_generic(_hx_visitor_list_all, item_list, func_visit)
+        self._hx_visit_generic(_hx_visitor_list_all, item_list, func_visit)
 
     def hx_get_label(self, label_num):
         """
@@ -462,7 +462,7 @@ class HxCFunc(object):
             :return: A :class:`HxCItem` object or None if the label was not
                 found.
         """
-        citem = self._cfunc.find_label(labelnum)
+        citem = self._cfunc.find_label(label_num)
         if citem is None:
             return citem
         return HxCItem.GetHxCItem(citem)
