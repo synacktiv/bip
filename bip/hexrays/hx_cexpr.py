@@ -72,7 +72,7 @@ class HxCExprNum(HxCExprFinal):
             :return int: the value of this number.
         """
         #return self._cexpr.n._value
-        return self._cexpr.n.value(self._cexpr.type)
+        return self._cexpr.n.value(self._cexpr.type) & ((1 << (self.size * 8)) - 1)
 
     #@value.setter
     #def value(self, val):
