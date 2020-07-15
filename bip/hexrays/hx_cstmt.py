@@ -6,7 +6,7 @@ import bip.base as bbase
 class HxCStmtFinal(HxCStmt):
     """
         Abstract class for representing a :class:`HxCStmt` which does not
-        posess child statements. All the child must have a
+        posess child statements but as a value. All the child must have a
         :meth:`~HxCStmtFinal.value` property which return the value of the
         statement.
 
@@ -16,6 +16,9 @@ class HxCStmtFinal(HxCStmt):
         * :class:`HxCStmtGoto`
         * :class:`HxCStmtFinal`
         * :class:`HxCStmtReturn`
+
+        The :class:`HxCStmtContinue` and :class:`HxCStmtBreak` do not inherit
+        from this class as they do not have a value.
     """
 
     def __str__(self):
@@ -86,9 +89,6 @@ class HxCStmtGoto(HxCStmtFinal):
         """
             Property which return the label number of the goto statement.
 
-            .. todo:: make something better ? Should be raccord to the label
-                object ?
-
             :return: An integer representing the label number.
         """
         return self._cinsn.cgoto.label_num
@@ -104,10 +104,6 @@ class HxCStmtGoto(HxCStmtFinal):
 class HxCStmtAsm(HxCStmtFinal):
     """
         Class for representing a inline C ASM statement (``HxCType.CIT_ASM``).
-
-        .. todo:: test this
-
-        .. todo:: this should be probably accessible as a list?
     """
     TYPE_HANDLE = HxCType.CIT_ASM
 
@@ -211,8 +207,6 @@ class HxCStmtIf(HxCStmt):
     def has_else(self):
         """
             Property which indicate if this if statement as an else condtion.
-
-            .. todo:: test this
 
             :return: True if this statement has an else condition, False
                 otherwise.
@@ -443,8 +437,6 @@ class HxCStmtSwitch(HxCStmt):
 
         .. todo:: this should be accessible as a dict (correspond well to a
             switch statement).
-
-        .. todo:: test this
     """
     TYPE_HANDLE = HxCType.CIT_SWITCH
 
@@ -462,8 +454,6 @@ class HxCStmtSwitch(HxCStmt):
     def max_val(self):
         """
             Property which return the case maximum value for the switch.
-
-            .. todo:: test this
 
             :return: An integer which is the maximum case value for the
                 switch.
@@ -547,16 +537,6 @@ class HxCStmtBlock(HxCStmt):
     @property
     def st_childs(self):
         return self.elts
-
-
-
-
-
-
-
-
-
-
 
 
 
