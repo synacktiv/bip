@@ -2,7 +2,7 @@ import idaapi
 import ida_kernwin
 
 from bip.base import *
-from activity import BipActivity
+from .activity import BipActivity
 
 class BipAction(BipActivity):
     """

@@ -5,9 +5,9 @@ import ida_bytes
 import ida_name
 import ida_search
 
-import xref
-from biperror import BipError
-from utils import min_ea, max_ea
+import bip.base.xref
+from .biperror import BipError
+from .utils import min_ea, max_ea
 
 class BipBaseElt(object):
     """
@@ -131,7 +131,7 @@ class BipRefElt(BipBaseElt):
             :return: A list of :class:`BipXref` with the ``src`` being this
                 element.
         """
-        return [xref.BipXref(x) for x in idautils.XrefsFrom(self._idelt)]
+        return [bip.base.xref.BipXref(x) for x in idautils.XrefsFrom(self._idelt)]
 
     @property
     def xTo(self):
@@ -142,7 +142,7 @@ class BipRefElt(BipBaseElt):
             :return: A list of :class:`BipXref` with the ``dst`` being this
                 element.
         """
-        return [xref.BipXref(x) for x in idautils.XrefsTo(self._idelt)]
+        return [bip.base.xref.BipXref(x) for x in idautils.XrefsTo(self._idelt)]
 
     @property
     def xEaFrom(self):

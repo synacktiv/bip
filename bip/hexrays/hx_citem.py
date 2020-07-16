@@ -1,5 +1,5 @@
 from bip.base.biptype import BipType
-from astnode import AbstractCItem, HxCType
+from .astnode import AbstractCItem, HxCType
 
 class HxCItem(AbstractCItem):
     """

@@ -1,7 +1,7 @@
 import idc
 import ida_enum
 
-from bipelt import BipRefElt
+from .bipelt import BipRefElt
 
 
 class BipEnum(object):

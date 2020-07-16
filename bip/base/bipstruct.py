@@ -3,10 +3,10 @@ import idautils
 import ida_struct
 import ida_typeinf
 
-from biptype import BipType
-from bip.base import get_ptr_size
-from bipelt import BipRefElt
-from biperror import BipError
+from .biptype import BipType
+from .utils import get_ptr_size
+from .bipelt import BipRefElt
+from .biperror import BipError
 
 class BipStruct(BipRefElt):
     """

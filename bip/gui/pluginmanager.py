@@ -1,5 +1,5 @@
 import idaapi
-from menutb import add_top_menu
+from .menutb import add_top_menu
 
 #: Global object :class:`BipPluginManager` which should be use by everybody
 #:  access is made through :func:`get_plugin_manager`.

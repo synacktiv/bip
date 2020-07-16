@@ -133,7 +133,7 @@ def get_name_by_addr(offset):
             return name, offset
         return '', 0
 
-    print s
+    print(s)
     name, _, offset = s.partition('+')
     if offset:
         offset = int(offset, 16)
@@ -143,9 +143,9 @@ def get_name_by_addr(offset):
     # FFS IDA
     name = name.replace('__', '::')
     if not get_addr_by_name(name):
-        print "[!] WUT WUT WUT '%s' returned by get_func_off_str doesnt exist" % name
+        print("[!] WUT WUT WUT '{}' returned by get_func_off_str doesnt exist".format(name))
 
-    print name, offset
+    print("{}, {}".format(name, offset))
     return name, offset
 
 

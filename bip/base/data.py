@@ -3,9 +3,9 @@ import ida_bytes
 import ida_kernwin
 import idautils
 
-from bipelt import BipElt
-from biptype import BipType
-from biperror import BipError
+from .bipelt import BipElt
+from .biptype import BipType
+from .biperror import BipError
 
 class BipData(BipElt):
     """

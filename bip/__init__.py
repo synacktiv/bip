@@ -1,3 +1,3 @@
-from base import *
-from gui import *
-from hexrays import *
+from .base import *
+from .gui import *
+from .hexrays import *

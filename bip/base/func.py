@@ -10,11 +10,11 @@ import ida_kernwin
 
 import re
 
-from bipelt import BipElt, GetElt
-import instr
-import block
-import xref
-from biperror import BipError
+from .bipelt import BipElt, GetElt
+import bip.base.instr
+import bip.base.block
+import bip.base.xref
+from .biperror import BipError
 
 hexrays = None
 
@@ -297,7 +297,7 @@ class BipFunction(object):
             In all those case the address of the element is used for testing
             if it is present in the function.
         """
-        if isinstance(value, (BipElt, block.BipBlock)):
+        if isinstance(value, (BipElt, bip.base.block.BipBlock)):
             ea = value.ea
         elif isinstance(value, (int, long)):
             ea = value
@@ -673,7 +673,7 @@ class BipFunction(object):
             :return: A list of object :class:`BipBlock`
         """
         fc = self._flowchart
-        return [block.BipBlock(b) for b in fc]
+        return [bip.base.block.BipBlock(b) for b in fc]
 
 
     @property
@@ -687,7 +687,7 @@ class BipFunction(object):
         """
         fc = self._flowchart
         for b in fc:
-            yield block.BipBlock(b)
+            yield bip.base.block.BipBlock(b)
 
     ############################# INSTR & ITEMS ############################
 
@@ -714,7 +714,7 @@ class BipFunction(object):
 
             :return: A list of object :class:`Instr`
         """
-        return [instr.Instr(h) for h in idautils.Heads(self.ea, self.end) if idc.is_code(ida_bytes.get_full_flags(h))]
+        return [bip.base.instr.Instr(h) for h in idautils.Heads(self.ea, self.end) if idc.is_code(ida_bytes.get_full_flags(h))]
 
     @property
     def instr_iter(self):
@@ -727,7 +727,7 @@ class BipFunction(object):
         """
         for h in idautils.Heads(self.ea, self.end):
             if idc.is_code(ida_bytes.get_full_flags(h)):
-                yield instr.Instr(h)
+                yield bip.base.instr.Instr(h)
 
     @property
     def bytes(self):
@@ -809,7 +809,7 @@ class BipFunction(object):
             :return: A list of :class:`BipXref` with the ``dst`` being this
                 element.
         """
-        return [xref.BipXref(x) for x in idautils.XrefsTo(self.ea)]
+        return [bip.base.xref.BipXref(x) for x in idautils.XrefsTo(self.ea)]
 
     @property
     def xEaTo(self):

@@ -1,8 +1,8 @@
-import pluginmanager
-from actions import BipAction
-from activity import BipActivity, BipActivityContainer
-
 import sys
+
+from . import pluginmanager
+from .actions import BipAction
+from .activity import BipActivity, BipActivityContainer
 
 class MetaBipPlugin(type):
     """

@@ -5,9 +5,9 @@ import ida_bytes
 import ida_kernwin
 import ida_graph
 
-import bipelt
-import func
-import instr
+import bip.base.bipelt
+import bip.base.func
+import bip.base.instr
 
 class BipBlockType(object):
     """
@@ -65,7 +65,7 @@ class BipBlock(object):
             # for getting the basic block we need to get the flowchart for the
             # function
             # this may raise a ValueError if val is not a function
-            fc = func.BipFunction(val)._flowchart
+            fc = bip.base.func.BipFunction(val)._flowchart
             for i in range(fc.size):
                 if val >= fc[i].start_ea and val < fc[i].end_ea: # we found it
                     self._bb = fc[i]
@@ -236,7 +236,7 @@ class BipBlock(object):
 
             :return: The :class:`BipFunction` in which this block is included.
         """
-        return func.BipFunction(self.ea)
+        return bip.base.func.BipFunction(self.ea)
 
 
     ############################# INSTR & ITEMS ############################
@@ -249,7 +249,7 @@ class BipBlock(object):
 
             :return: A list of object :class:`BipElt`.
         """
-        return [bipelt.GetElt(h) for h in idautils.Heads(self.ea, self.end)]
+        return [bip.base.bipelt.GetElt(h) for h in idautils.Heads(self.ea, self.end)]
 
     @property
     def instr(self):
@@ -259,7 +259,7 @@ class BipBlock(object):
 
             :return: A list of object :class:`Instr` .
         """
-        return [instr.Instr(h) for h in idautils.Heads(self.ea, self.end) if idc.is_code(ida_bytes.get_full_flags(h))]
+        return [bip.base.instr.Instr(h) for h in idautils.Heads(self.ea, self.end) if idc.is_code(ida_bytes.get_full_flags(h))]
 
     @property
     def instr_iter(self):
@@ -272,7 +272,7 @@ class BipBlock(object):
         """
         for h in idautils.Heads(self.ea, self.end):
             if idc.is_code(ida_bytes.get_full_flags(h)):
-                yield instr.Instr(h)
+                yield bip.base.instr.Instr(h)
 
     @property
     def bytes(self):

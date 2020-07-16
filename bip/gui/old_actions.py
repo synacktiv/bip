@@ -47,7 +47,7 @@ class BaseGuiAction(idaapi.action_handler_t, object):
         * AST_ENABLE_FOR_FORM
         * AST_ENABLE_FOR_IDB
         """
-        print "[!] update method was not overriden, hardcoded AST_ENABLE_FOR_FORM"
+        print("[!] update method was not overriden, hardcoded AST_ENABLE_FOR_FORM")
         return idaapi.AST_ENABLE_FOR_FORM
 
 class ContextMenuHooks(idaapi.UI_Hooks):

@@ -4,11 +4,11 @@
     :class:`HxCItem` equivalent.
 """
 import idc
-from astnode import AbstractCItem, HxCType
-from hx_citem import HxCItem, HxCExpr, HxCStmt
+from .astnode import AbstractCItem, HxCType
+from .hx_citem import HxCItem, HxCExpr, HxCStmt
 from bip.base.biptype import BipType
-import bip.base as bipbase
-import cnode_visitor
+from bip.base import BipFunction
+from . import cnode_visitor
 
 import ida_pro
 import ida_lines
@@ -762,7 +762,7 @@ def caller_func(self):
     if ea is None:
         return None
     try:
-        return bipbase.BipFunction(ea)
+        return BipFunction(ea)
     except Exception:
         return None
 

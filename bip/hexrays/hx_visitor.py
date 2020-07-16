@@ -10,7 +10,7 @@
     information.
 """
 from idaapi import ctree_visitor_t, CV_FAST
-from hx_citem import HxCItem
+from .hx_citem import HxCItem
 
 class _hx_visitor_expr(ctree_visitor_t):
     """

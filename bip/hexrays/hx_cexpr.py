@@ -1,9 +1,9 @@
 import ida_hexrays
 
-from hx_citem import HxCType, HxCItem, HxCExpr
+from .hx_citem import HxCType, HxCItem, HxCExpr
 from bip.base import biptype
 
-import cnode
+from . import cnode
 
 @cnode.buildCNode
 class HxCExprFinal(HxCExpr):

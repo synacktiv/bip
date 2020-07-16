@@ -1,5 +1,5 @@
 #from cnode import CNodeExpr, CNodeStmt
-import cnode as modcnode
+import bip.hexrays.cnode # as modcnode # problem compat py2/py3, py2 do not like the ``as``
 
 def visit_dfs_cnode(cnode, callback):
     """
@@ -42,13 +42,13 @@ def visit_dfs_cnode(cnode, callback):
         elt = stack.pop() # get the next element
         if callback(elt) == False: # call the callback before visiting the next
             return # if ret False: stop
-        if isinstance(elt, modcnode.CNodeExpr):
+        if isinstance(elt, bip.hexrays.cnode.CNodeExpr):
             # if we have an expr just append all the child, we append them
             #   in reverse order.
             ch = list(elt.ops)
             ch.reverse()
             stack += ch
-        elif isinstance(elt, modcnode.CNodeStmt):
+        elif isinstance(elt, bip.hexrays.cnode.CNodeStmt):
             ch = list(elt.expr_childs)
             ch += list(elt.st_childs)
             ch.reverse()
@@ -88,10 +88,10 @@ def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
     vist_expr = False
     if isinstance(filter_list, (list, tuple)):
         for i in filter_list:
-            if issubclass(i, modcnode.CNodeExpr):
+            if issubclass(i, bip.hexrays.cnode.CNodeExpr):
                 vist_expr = True
                 break
-    elif issubclass(filter_list, modcnode.CNodeExpr):
+    elif issubclass(filter_list, bip.hexrays.cnode.CNodeExpr):
         vist_expr = True
     stack = [cnode]
     while len(stack) != 0:
@@ -103,12 +103,12 @@ def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
             # check if we want the call
             if callback(elt) == False: # call the callback before visiting the next
                 return
-        if isinstance(elt, modcnode.CNodeExpr):
+        if isinstance(elt, bip.hexrays.cnode.CNodeExpr):
             if vist_expr:
                 ch = list(elt.ops)
                 ch.reverse()
                 stack += ch
-        elif isinstance(elt, modcnode.CNodeStmt):
+        elif isinstance(elt, bip.hexrays.cnode.CNodeStmt):
             if vist_expr:
                 ch = list(elt.expr_childs)
             else:

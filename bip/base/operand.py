@@ -1,8 +1,9 @@
 import idaapi
 import idc
-import biptype
 from ida_typeinf import tinfo_t
 from ida_nalt import get_op_tinfo, set_op_tinfo, del_op_tinfo
+
+import bip.base.biptype
 
 class OpType(object):
     """
@@ -178,7 +179,7 @@ class Operand(object):
         ti = tinfo_t()
         if not get_op_tinfo(ti, self.ea, self.opnum): # recuperation of the type failed
             return None
-        return biptype.BipType.GetBipType(ti)
+        return bip.base.biptype.BipType.GetBipType(ti)
 
     @type_info.setter
     def type_info(self, value):
@@ -201,8 +202,8 @@ class Operand(object):
                 or if it was not able to create the BipType from the string.
         """
         if isinstance(value, (str, unicode)):
-            value = biptype.BipType.FromC(value)
-        if not isinstance(value, biptype.BipType):
+            value = bip.base.biptype.BipType.FromC(value)
+        if not isinstance(value, bip.base.biptype.BipType):
             raise TypeError("Operand.type_info expect a BipType object or a string representing the C type.")
         if not set_op_tinfo(self.ea, self.opnum, value._get_tinfo_copy()):
             raise RuntimeError("Fail to set the type ({}) of the operand {}".format(value, self))

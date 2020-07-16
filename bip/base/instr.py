@@ -4,11 +4,11 @@ import ida_ua
 import idautils
 import idaapi
 
-from bipelt import BipElt
-from operand import Operand, OpType
-from biperror import BipError
-import block
-import func
+from .bipelt import BipElt
+from .operand import Operand, OpType
+from .biperror import BipError
+import bip.base.block
+import bip.base.func
 
 class Instr(BipElt):
     """
@@ -240,7 +240,7 @@ class Instr(BipElt):
 
             :return: An :class:`BipBlock` object containing this instruction.
         """
-        return block.BipBlock(self.ea)
+        return bip.base.block.BipBlock(self.ea)
 
     @property
     def func(self):
@@ -254,7 +254,7 @@ class Instr(BipElt):
             :return: An :class:`BipFunction` object containing this
                 instruction.
         """
-        return func.BipFunction(self.ea)
+        return bip.base.func.BipFunction(self.ea)
 
     ########################## XREFS ##############################
 

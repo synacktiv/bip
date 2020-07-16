@@ -1,10 +1,10 @@
 import ida_hexrays
 import ida_kernwin
 
-from hx_lvar import HxLvar
-from hx_visitor import _hx_visitor_expr, _hx_visitor_list_expr, _hx_visitor_stmt, _hx_visitor_list_stmt, _hx_visitor_all, _hx_visitor_list_all
-from cnode import CNode
-from hx_citem import HxCItem
+from .hx_lvar import HxLvar
+from .hx_visitor import _hx_visitor_expr, _hx_visitor_list_expr, _hx_visitor_stmt, _hx_visitor_list_stmt, _hx_visitor_all, _hx_visitor_list_all
+from .cnode import CNode
+from .hx_citem import HxCItem
 #from cnode_visitor import visit_dfs_cnode, visit_dfs_cnode_filterlist
 import bip.base as bbase
 

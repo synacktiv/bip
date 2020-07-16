@@ -1,5 +1,5 @@
-from hx_citem import HxCType, HxCItem, HxCStmt
-import cnode
+from .hx_citem import HxCType, HxCItem, HxCStmt
+from . import cnode
 import bip.base as bbase
 
 @cnode.buildCNode
