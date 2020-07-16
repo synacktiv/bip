@@ -342,7 +342,7 @@ class BipStruct(BipRefElt):
                 Default is ``field_`` .
         """
         offset = self.size
-        ptr_sz = get_ptr_size()/8
+        ptr_sz = get_ptr_size()//8
 
         # start ptr by ptr
         while offset < size - ptr_sz + 1:
