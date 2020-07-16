@@ -177,7 +177,7 @@ def test_bipfunc06():
     assert len(BipFunction(0x01800D324E).bytes) == 0x294
     assert isinstance(BipFunction(0x01800D324E).items[0], Instr) == True
     assert isinstance(BipFunction(0x01800D324E).instr[0], Instr) == True
-    assert isinstance(BipFunction(0x01800D324E).instr_iter.next(), Instr) == True
+    assert isinstance(next(BipFunction(0x01800D324E).instr_iter), Instr) == True
     assert isinstance(BipFunction(0x01800D324E).bytes, list) == True
     assert isinstance(BipFunction(0x01800D324E).bytes[0], int) == True
 
@@ -213,14 +213,14 @@ def test_bipfunc09():
     # class methods
     assert isinstance(BipFunction.ByOrdinal(0), BipFunction)
     assert (BipFunction.ByOrdinal(0) ==  BipFunction(0x180001010))
-    assert (BipFunction.iter_all().next() ==  BipFunction(0x180001010))
+    assert (next(BipFunction.iter_all()) ==  BipFunction(0x180001010))
     assert len([f for f in BipFunction.iter_all()]) == 0xecd
     assert len(BipFunction.Entries()) == 0x926
     assert isinstance(BipFunction.Entries()[0], BipFunction)
     assert BipFunction.Entries()[1] == BipFunction(0x18003D190)
     assert len([e for e in BipFunction.Entries_iter()]) == 0x926
-    assert isinstance(BipFunction.Entries_iter().next(), BipFunction)
-    assert BipFunction.Entries_iter().next() == BipFunction(0x018007D0C0)
+    assert isinstance(next(BipFunction.Entries_iter()), BipFunction)
+    assert next(BipFunction.Entries_iter()) == BipFunction(0x018007D0C0)
     assert (BipFunction.get_by_name("RtlFindClearBits") ==  BipFunction(0x180001010))
     assert (BipFunction.get_by_name("DonotExist") is None)
     assert (BipFunction.get_by_name("") is None)

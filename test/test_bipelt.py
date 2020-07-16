@@ -205,43 +205,43 @@ def test_bipelt07():
 def test_bipelt08():
     # test BipElt.iter_heads
     gen = BipElt.iter_heads()
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x180001000
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == Instr
     assert elt.ea == 0x180001010
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == Instr
     assert elt.ea == 0x180001012
     # with start
     gen = BipElt.iter_heads(start=0x18012F16C)
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x18012F16C
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x18012F172
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x18012F180
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x18012F190
     # BipData.iter_heads
     gen = BipData.iter_heads()
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x180001000
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x180001307
     # Instr.iter_heads
     gen = Instr.iter_heads()
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == Instr
     assert elt.ea == 0x180001010
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == Instr
     assert elt.ea == 0x180001012
 
@@ -249,43 +249,43 @@ def test_bipelt08():
 def test_bipelt09():
     # test BipElt.iter_all
     gen = BipElt.iter_all()
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x180001000
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == Instr
     assert elt.ea == 0x180001010
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == Instr
     assert elt.ea == 0x180001012
     # with start
     gen = BipElt.iter_all(start=0x18012F16C)
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x18012F16C
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x18012F172
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x18012F180
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x18012F184
     # BipData.iter_all
     gen = BipData.iter_all()
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x180001000
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x180001307
     # Instr.iter_all
     gen = Instr.iter_all()
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == Instr
     assert elt.ea == 0x180001010
-    elt = gen.next()
+    elt = next(gen)
     assert elt.__class__ == Instr
     assert elt.ea == 0x180001012
 

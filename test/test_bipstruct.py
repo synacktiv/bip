@@ -74,8 +74,8 @@ def test_bipstruct03():
     assert isinstance(st.members[0], BStructMember) == True
     assert st.members[0].name == 'Count'
     assert len([m for m in st.members_iter]) == 0x8
-    assert isinstance(st.members_iter.next(), BStructMember) == True
-    assert st.members_iter.next().name == 'Count'
+    assert isinstance(next(st.members_iter), BStructMember) == True
+    assert next(st.members_iter).name == 'Count'
     assert isinstance(st.member_at(0), BStructMember) == True
     assert st.member_at(0).name == 'Count'
     assert st.member_at(7).name == 'Once'
