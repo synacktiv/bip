@@ -1,5 +1,7 @@
 import sys
 
+from bip.py3compat.py3compat import *
+
 from bip.base import *
 from bip.hexrays import HxCFunc
 

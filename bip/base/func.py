@@ -10,6 +10,8 @@ import ida_kernwin
 
 import re
 
+from bip.py3compat.py3compat import *
+
 from .bipelt import BipElt, GetElt
 import bip.base.instr
 import bip.base.block

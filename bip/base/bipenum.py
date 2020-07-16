@@ -1,6 +1,8 @@
 import idc
 import ida_enum
 
+from bip.py3compat.py3compat import *
+
 from .bipelt import BipRefElt
 
 

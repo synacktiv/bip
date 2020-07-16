@@ -3,6 +3,8 @@ import idautils
 import ida_struct
 import ida_typeinf
 
+from bip.py3compat.py3compat import *
+
 from .biptype import BipType
 from .utils import get_ptr_size
 from .bipelt import BipRefElt

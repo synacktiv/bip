@@ -5,6 +5,8 @@ import ida_bytes
 import ida_kernwin
 import ida_graph
 
+from bip.py3compat.py3compat import *
+
 import bip.base.bipelt
 import bip.base.func
 import bip.base.instr

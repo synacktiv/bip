@@ -1,5 +1,7 @@
 from bip import *
 
+from bip.py3compat.py3compat import *
+
 import pytest
 
 

@@ -5,6 +5,8 @@ import ida_bytes
 import ida_name
 import ida_search
 
+from bip.py3compat.py3compat import *
+
 import bip.base.xref
 from .biperror import BipError
 from .utils import min_ea, max_ea

@@ -3,6 +3,8 @@ import idc
 from ida_typeinf import tinfo_t
 from ida_nalt import get_op_tinfo, set_op_tinfo, del_op_tinfo
 
+from bip.py3compat.py3compat import *
+
 import bip.base.biptype
 
 class OpType(object):
