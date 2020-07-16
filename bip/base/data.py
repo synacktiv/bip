@@ -138,7 +138,7 @@ class BipData(BipElt):
             if self.is_numerable:
                 return "{} at 0x{:X} = 0x{:X} (size={})".format(self.__class__.__name__, self.ea, self.value, self.size)
             else:
-                return "{} at 0x{:X} = {} (size={})".format(self.__class__.__name__, self.ea, repr("".join([chr(i) for i in self.bytes])), self.size)
+                return "{} at 0x{:X} = {} (size={})".format(self.__class__.__name__, self.ea, repr(b"".join([int2byte(i) for i in self.bytes])), self.size)
         else:
             return "{} at 0x{:X} without value (size={})".format(self.__class__.__name__, self.ea, self.size)
 
@@ -372,17 +372,17 @@ class BipData(BipElt):
             :param size: The number of bytes to get.
             :param original: If True the value recuperated will be the
                 original one (before a patch). Default: False.
-            :return: A string corresponding to the bytes at the address.
+            :return: A byte string corresponding to the bytes at the address.
         """
         if ea is None:
             ea = ida_kernwin.get_screen_ea()
         res = b""
         if original:
             for i in range(size):
-                res += chr(ida_bytes.get_original_byte(ea + i))
+                res += int2byte(ida_bytes.get_original_byte(ea + i))
         else:
             for i in range(size):
-                res += chr(ida_bytes.get_wide_byte(ea + i))
+                res += int2byte(ida_bytes.get_wide_byte(ea + i))
         return res
 
     @staticmethod
@@ -390,12 +390,17 @@ class BipData(BipElt):
         """
             Static method allowing to set the value of one byte at an address.
 
-            :param ea: The address at which changing the value.
-            :param str byt: The buffer of bytes to set at the address.
+            :param int ea: The address at which changing the value.
+            :param bytes byt: The buffer of bytes to set at the address. If a
+                string is provided in python3 it will be decoded as ``latin-1``.
             :raise RuntimeError: If it was not possible to change one of the value.
         """
+        if is_py3() and isinstance(byt, str):
+            byt = bytearray(byt, 'latin-1')
+        else:
+            byt = bytearray(byt)
         for i in range(len(byt)):
-            value = ord(byt[i])
+            value = byt[i]
             if not ida_bytes.patch_byte(ea + i, value):
                 raise RuntimeError("Unable to set value {} at {}".format(ea, value))
 
@@ -498,6 +503,7 @@ class BipData(BipElt):
                 ``None`` the screen address is used.
             :param size: The size of the string. If ``-1`` (default), until a
                 ``\0`` is found.
+            :return: Bytes representing the string
         """
         if ea is None:
             ea = ida_kernwin.get_screen_ea()

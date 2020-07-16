@@ -152,14 +152,14 @@ def test_bipdata02():
     BipData.set_dword(0x018013202E, 0xCCDD1122)
     assert BipData.get_word(0x018013202E) == 0x1122
     assert BipData.get_word(0x0180132030) == 0xCCDD
-    assert BipData.get_cstring(0x0180129090) == 'LdrpLoadResourceFromAlternativeModule'
-    assert BipData.get_cstring(0x0180129090, size=4) == 'Ldrp'
+    assert BipData.get_cstring(0x0180129090) == b'LdrpLoadResourceFromAlternativeModule'
+    assert BipData.get_cstring(0x0180129090, size=4) == b'Ldrp'
     assert BipData.get_cstring(0x01801568C5) is None
-    assert BipData.get_bytes(0x01800D3242, 6) == 'A\xb8\x08\x00\x00\x00'
+    assert BipData.get_bytes(0x01800D3242, 6) == b'A\xb8\x08\x00\x00\x00'
     BipData.set_bytes(0x01800D3242, "123")
-    assert BipData.get_bytes(0x01800D3242, 6) == '123\x00\x00\x00'
-    assert BipData.get_bytes(0x01800D3242, 6, original=True) == 'A\xb8\x08\x00\x00\x00'
-    BipData.set_bytes(0x01800D3242, "A\xb8\x08")
-    assert BipData.get_bytes(0x01800D3242, 6) == 'A\xb8\x08\x00\x00\x00'
+    assert BipData.get_bytes(0x01800D3242, 6) == b'123\x00\x00\x00'
+    assert BipData.get_bytes(0x01800D3242, 6, original=True) == b'A\xb8\x08\x00\x00\x00'
+    BipData.set_bytes(0x01800D3242, b"A\xb8\x08")
+    assert BipData.get_bytes(0x01800D3242, 6) == b'A\xb8\x08\x00\x00\x00'
 
 
