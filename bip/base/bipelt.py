@@ -322,7 +322,7 @@ class BipElt(BipRefElt):
 
             :param value: A list of int corresponding to the bytes to change.
         """
-        if isinstance(value, str):
+        if isinstance(value, bytes):
             ida_bytes.patch_bytes(self.ea, value)
         elif isinstance(value, list):
             i = 0
