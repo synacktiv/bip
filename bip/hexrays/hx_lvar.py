@@ -40,9 +40,10 @@
 #    CVAR_THISARG 0x00008000 #: 'this' argument of c++ member functions   
 #    CVAR_FORCED  0x00010000 #: variable was created by an explicit request otherwise we could reuse an existing var  
 
+from bip.py3compat.py3compat import *
 from bip.base import biptype
-from ida_hexrays import lvar_saved_info_t, lvar_uservec_t, save_user_lvar_settings, restore_user_lvar_settings
 
+from ida_hexrays import lvar_saved_info_t, lvar_uservec_t, save_user_lvar_settings, restore_user_lvar_settings
 
 class HxLvar(object):
     """

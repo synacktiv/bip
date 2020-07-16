@@ -3,6 +3,8 @@ import ida_bytes
 import ida_kernwin
 import idautils
 
+from bip.py3compat.py3compat import *
+
 from .bipelt import BipElt
 from .biptype import BipType
 from .biperror import BipError
