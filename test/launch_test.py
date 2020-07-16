@@ -1,4 +1,12 @@
 import pytest
+import sys
+
+## Setup Python3/IDA for pytest
+
+if sys.version_info[0] == 3:
+    import io, tempfile
+    # IDA replace sys.__stderr__ by None when in python 3
+    sys.__stderr__ = io.TextIOWrapper(tempfile.TemporaryFile())
 
 
 ## Base
@@ -24,3 +32,10 @@ pytest.main([r"test_bipplugin.py",  "--capture=sys"])
 pytest.main([r"test_hxcfunc.py",  "--capture=sys"])
 pytest.main([r"test_hxlvar.py",  "--capture=sys"])
 pytest.main([r"test_astnode.py",  "--capture=sys"])
+
+## Clean Python3/IDA for pytest
+
+if sys.version_info[0] == 3:
+    sys.__stderr__ = None
+
+
