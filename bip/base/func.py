@@ -254,22 +254,59 @@ class BipFunction(object):
 
     ############################ CMP FUNCTIONS #############################
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
-            Compare with another BipFunction. Will return 0 if the functions
-            have the same address, and -1 or 1 depending on the other function
-            position.
-
-            Return ``NotImplemented`` if the argument is not a :class:`BipFunction` .
+            Equality comparator with another :class:`BipFunction`. Return
+            ``NotImplemented`` if the argument is not a :class:`BipFunction`.
         """
         if not isinstance(other, BipFunction):
             return NotImplemented
-        if self.ea < other.ea:
-            return -1
-        elif self.ea > other.ea:
-            return 1
-        else:
-            return 0
+        return self.ea == other.ea
+
+    def __ne__(self, other):
+        """
+            Inequality comparator with another :class:`BipFunction`. Return
+            ``NotImplemented`` if the argument is not a :class:`BipFunction`.
+        """
+        if not isinstance(other, BipFunction):
+            return NotImplemented
+        return self.ea != other.ea
+
+    def __lt__(self, other):
+        """
+            Lesser than comparator with another :class:`BipFunction`. Return
+            ``NotImplemented`` if the argument is not a :class:`BipFunction`.
+        """
+        if not isinstance(other, BipFunction):
+            return NotImplemented
+        return self.ea < other.ea
+
+    def __le__(self, other):
+        """
+            Lesser or equal comparator with another :class:`BipFunction`. Return
+            ``NotImplemented`` if the argument is not a :class:`BipFunction`.
+        """
+        if not isinstance(other, BipFunction):
+            return NotImplemented
+        return self.ea <= other.ea
+
+    def __gt__(self, other):
+        """
+            Greater than comparator with another :class:`BipFunction`. Return
+            ``NotImplemented`` if the argument is not a :class:`BipFunction`.
+        """
+        if not isinstance(other, BipFunction):
+            return NotImplemented
+        return self.ea > other.ea
+
+    def __ge__(self, other):
+        """
+            Gretter or equal comparator with another :class:`BipFunction`. Return
+            ``NotImplemented`` if the argument is not a :class:`BipFunction`.
+        """
+        if not isinstance(other, BipFunction):
+            return NotImplemented
+        return self.ea >= other.ea
 
     def __hash__(self):
         """
