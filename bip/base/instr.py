@@ -299,4 +299,29 @@ class Instr(BipElt):
         """
         return [x.src for x in self.xTo if x.is_codepath] 
 
+    ######################### STATIC/CLASS METHODS ###########################
+
+    @classmethod
+    def Make(cls, ea=None):
+        """
+            Class method for defining an instruction. If auto-analysis is
+            enable in IDA this may define also the following instructions.
+            If the instruction is already define, this instruction just
+            returns it.
+
+            :param ea: The address at which to define the instruction, if None
+                the current screen address is used.
+            :return: The :class:`Instr` for this address.
+            :raise RuntimeError: If it was not possible to define the address
+                as code.
+        """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
+        if idc.is_code(ida_bytes.get_full_flags(ea)): # if we already have code
+            return cls(ea)
+        if ida_ua.create_insn(ea) == 0:
+            raise RuntimeError("Unable to create instruction at 0x{:X}".format(ea))
+        return cls(ea)
+
+
 

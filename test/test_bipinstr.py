@@ -25,6 +25,14 @@ def test_bipinstr00():
     assert str(Instr(0x01800D325A)) == 'Instr: 0x1800D325A (add     rsp, 60h)'
 
 def test_bipinstr01():
+    # class method
+    i = Instr.Make(0x0180117004)
+    assert isinstance(i, Instr)
+    assert i.ea == 0x0180117004
+    assert isinstance(Instr.Make(0x01800D325A), Instr)
+    with pytest.raises(RuntimeError): Instr.Make(0x018011700A)
+
+def test_bipinstr02():
     # operands
     assert Instr(0x01800D325A).countOperand == 2
     assert len(Instr(0x01800D325A).ops) == 2
@@ -38,7 +46,7 @@ def test_bipinstr01():
     assert Instr(0x01800D3268).ops[0].str == 'rbx'
 
 
-def test_bipinstr02():
+def test_bipinstr03():
     # flags
     assert Instr(0x01800D325A).has_prev_instr == True
     assert Instr(0x01800D2FF0).has_prev_instr == False
@@ -72,24 +80,25 @@ def test_bipinstr02():
     assert Instr(0x01800D322E).is_end_block_call == True
 
     assert Instr(0x01800D327F).is_in_func == True
-    # TODO: add test for Instruction not in func (other binary)
+    assert Instr(0x0180117004).is_in_func == False
 
-def test_bipinstr03():
+def test_bipinstr04():
     # utils
     assert Instr(0x01800D325A).prev.ea == 0x01800D3253
     assert Instr(0x01800D325A).next.ea == 0x01800D325E
     assert Instr(0x01800D3269).next.ea == 0X01800D326A
     assert Instr(0x01800D327F).next is None
 
-def test_bipinstr04():
+def test_bipinstr05():
     # func and block
     assert Instr(0x01800D6B33).func.ea == 0x01800D6B30
     assert Instr(0x01800D6B33).func.__class__ == BipFunction
     assert Instr(0x01800D323A).block.ea == 0x01800D3227
     assert Instr(0x01800D323A).block.__class__ == BipBlock
-    # TODO: add test for instr not in func or block
+    with pytest.raises(ValueError): Instr(0x0180117004).func
+    with pytest.raises(ValueError): Instr(0x0180117004).block
 
-def test_bipinstr05():
+def test_bipinstr06():
     # control flow
     assert Instr(0x01800D325A).xOrdinaryCfNext.ea == 0x01800D325E
     assert [x.ea for x in Instr(0x01800D325A).xCfNext] == [0x01800D325E]
@@ -100,7 +109,7 @@ def test_bipinstr05():
     assert [x.ea for x in Instr(0x01800D324E).xCfNext] == [0x01800D3253, 0x01800D35E8]
     assert [x.ea for x in Instr(0x01800D323A).xCfNext] == [0x01800D323C, 0x01800D3242]
 
-def test_bipinstr06():
+def test_bipinstr07():
     # cmp and hash
     assert BipElt(0x01800D325A) == Instr(0x01800D325A)
     assert Instr(0x01800D325A) == Instr(0x01800D325A)
