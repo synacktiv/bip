@@ -3,6 +3,7 @@ import ida_bytes
 import ida_ua
 import idautils
 import idaapi
+import ida_kernwin
 
 from .bipelt import BipElt
 from .operand import Operand, OpType
