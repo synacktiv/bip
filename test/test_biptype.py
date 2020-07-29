@@ -1,6 +1,8 @@
 from bip.base import *
 
 import pytest
+import tempfile
+import os
 
 from ida_typeinf import tinfo_t
 
@@ -240,6 +242,46 @@ def test_biptype0E():
     assert ty.size == 0x4
     assert ty.str == 'testenum'
     BipEnum.delete("testenum")
+
+def test_biptype0F():
+    # ImportCHeader
+    fold = tempfile.mkdtemp()
+    ptst0 = os.path.join(fold, "test0.h")
+    f = open(ptst0, "w")
+    f.write("struct testa { char a; int b;};\n")
+    f.write("struct testb { int c; char d; char *e;};\n")
+    f.write("enum testc { CA, CB};\n")
+    f.close()
+    BipType.ImportCHeader(ptst0)
+    assert BipStruct.get("testa").size == 8
+    BipType.ImportCHeader(ptst0, pack=1)
+    assert BipStruct.get("testa").size == 5
+    assert isinstance(BipStruct.get("testa"), BipStruct)
+    assert isinstance(BipStruct.get("testb"), BipStruct)
+    assert isinstance(BipEnum.get("testc"), BipEnum)
+    BipType.ImportCHeader(ptst0, pack=2)
+    assert BipStruct.get("testa").size == 6
+    BipType.ImportCHeader(ptst0, pack=4)
+    assert BipStruct.get("testa").size == 8
+    BipType.ImportCHeader(ptst0, pack=8)
+    assert BipStruct.get("testa").size == 0x8
+    BipType.ImportCHeader(ptst0, pack=1)
+    assert BipStruct.get("testa").size == 5
+    BipType.ImportCHeader(ptst0, pack=0)
+    assert BipStruct.get("testa").size == 0x8
+    f = open(ptst0, "w")
+    f.write("struct testd { char a; int b;};\n")
+    f.close()
+    BipType.ImportCHeader(ptst0, autoimport=False)
+    with pytest.raises(ValueError): BipStruct.get("testd") # not automatically import, so this should fail
+    f = open(ptst0, "w")
+    f.write("struct teste { char a; int b;};\n")
+    f.close()
+    BipType.ImportCHeader(ptst0)
+    with pytest.raises(ValueError): BipStruct.get("testd") # not automatically import, so this should fail
+    assert isinstance(BipStruct.get("teste"), BipStruct)
+
+
 
 
 

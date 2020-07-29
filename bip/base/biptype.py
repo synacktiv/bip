@@ -16,6 +16,7 @@
 """
 
 from ida_typeinf import tinfo_t, array_type_data_t, func_type_data_t, udt_type_data_t, enum_type_data_t, apply_tinfo, guess_tinfo, GUESS_FUNC_OK, parse_decl
+import ida_typeinf
 import ida_nalt
 import ida_kernwin
 import idc
@@ -329,6 +330,62 @@ class BipType(object):
             raise RuntimeError("Unable to create a BipType from declaration {}".format(repr(cstr)))
         return BipType.GetBipTypeNoCopy(tif)
 
+    @staticmethod
+    def ImportCHeader(path, pack=0, raw_args=True, silent=False, autoimport=True):
+        """
+            Import a C header file.
+
+            :param str path: The path to the C header file to import.
+            :param int pack: The packing for the structure in the header. 0
+                means default (from compiler/configuration), other values are
+                power of 2 up to 16. No verification is made on that value.
+            :param bool raw_args: Should leave the name of the argument
+                unchanged: do not remove the _ in the name. True by default.
+            :param bool silent: Should silently fails on error and mask
+                warnings.
+            :param bool autoimport: If True (the default), this function will
+                import all new types in the IDB ("Structures", "Enums", ...
+                Views), instead of only keeping them in the type
+                library (til, the "Local Types" view).
+            :return: The number of error which occur during parsing.
+        """
+        # This use the idc.parse_decls function, which is different of the
+        #   ida_typeinf.parse_decls function, this one should be implemented
+        #   using the type library
+        flags = ida_typeinf.PT_FILE | ida_typeinf.PT_REPLACE
+        if raw_args:
+            flags |= ida_typeinf.PT_RAWARGS
+        if silent:
+            flags |= ida_typeinf.PT_SIL
+
+        # handle pack conversion, hugly but should be ok
+        if pack <= 2:
+            flags |= (pack << 4) & ida_typeinf.PT_PACKMASK
+        else:
+            if pack == 4:
+                flags |= (3 << 4) & ida_typeinf.PT_PACKMASK
+            elif pack == 8:
+                flags |= (4 << 4) & ida_typeinf.PT_PACKMASK
+            elif pack == 16:
+                flags |= (5 << 4) & ida_typeinf.PT_PACKMASK
+
+        if autoimport:
+            tidft = ida_typeinf.get_idati() # default type lib of the idb
+            # we get the nb of ordinal type, before parsing
+            nb_typ = ida_typeinf.get_ordinal_qty(tidft)
+            # now we make the parsing
+            nb_error = idc.parse_decls(path, flags)
+            # get the new number of types after it has been parsed
+            nb_typ_after = ida_typeinf.get_ordinal_qty(tidft)
+            # now we can import all of them
+            for i in range(nb_typ, nb_typ_after):
+                # get the name of the type
+                na = ida_typeinf.get_numbered_type_name(tidft, i)
+                # import the type, put it at the end
+                ida_typeinf.import_type(tidft, -1, na)
+            return nb_error
+        else:
+            return idc.parse_decls(path, flags)
 
     @staticmethod
     def _GetClassBipType(tinfo):
