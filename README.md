@@ -15,15 +15,27 @@ documentation).
 The documentation is available in the RST format (and can be compile using
 sphinx) in the `doc/` directory.
 
-Current IDA version: IDA 7.5 and Python 2.7
+Current IDA version: IDA 7.5SP1 and Python 2.7 or 3.8
 
 ## Installation
 
-TODO: setup.py
+This installation has been tested only on Windows and Linux: `python install.py`.
 
-1. Take the `bip` folder and put it in the `python` directory in your IDA installation path.
-2. Take the content of the `install` folder and put it in the `plugins` directory  in your IDA installation path (necessary for using `BipPlugin`).
-3. Put every plugin you want to use in the `plugins` directory  in your IDA installation path.
+It is possible to use an optional `--dest` argument for installing in a
+particular folder:
+
+```
+usage: install.py [-h] [--dest DEST]
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --dest DEST  Destination folder where to install Bip
+```
+
+This installer do not insall any plugins by default, but simply the core of
+Bip. By default the destination folder is the one use by IDA locally
+(``%APPDATA%\Hex-Rays\IDA Pro\`` for Windows and ``$HOME/.idapro`` for Linux
+and MacOSX).
 
 ## Overview
 
@@ -571,6 +583,10 @@ class ExPlugin(BipPlugin):
     def action_with_shortcut(self):
         print(self) # this is the ExPlugin object
         print("In ExPlugin action !")# code here
+
+bpm = get_plugin_manager() # get the BipPluginManager object
+bpm.addld_plugin("ExPlugin", ExPlugin) # ask the BipPluginManager to load the plugin
+# plugin in bipplugin folder will be loaded automatically and do not need those lines
 ```
 
 A real plugin for adding comment to printk function exist in
@@ -600,6 +616,7 @@ hello
 ## Similar projects
 
 * [sark](https://sark.readthedocs.io/en/latest/): "an object-oriented scripting layer written on top of IDAPython".
+* [FIDL](https://github.com/fireeye/FIDL): "FLARE IDA Decompiler Library"
 
 ## Thanks
 
