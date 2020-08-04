@@ -16,9 +16,10 @@ class BipAction(BipActivity):
 
         .. todo:: handle ctx and access to it
 
-        .. todo:: Make properties for every attribute...
+        .. todo:: Make properties for every attribute
 
         .. todo:: handle activate **and** update
+
         .. todo:: Handle tooltip & icon
     """
 
@@ -81,8 +82,7 @@ class BipAction(BipActivity):
 
             This only call the :meth:`handler` method.
 
-            .. todo:: doc
-            .. todo:: be smart here.
+            .. todo:: This should be rewritten for allowing more advance control
         """
         self.handler()
 
@@ -93,8 +93,7 @@ class BipAction(BipActivity):
             
             This is always ``AST_ENABLE_ALWAYS``.
 
-            .. todo:: doc
-            .. todo:: be smart here.
+            .. todo:: This should be rewritten for allowing more advance control
         """
         return idaapi.AST_ENABLE_ALWAYS
 
@@ -109,11 +108,10 @@ class BipAction(BipActivity):
             
             .. todo:: Should check if already created ?
         """
-        # TODO: Should check if already created ?
         # create object with needed method
         aht = idaapi.action_handler_t()
-        aht.activate = lambda *args: self._activate(self, *args) # TODO: fix this
-        aht.update =  lambda *args: self._update(self, *args) # TODO: fix this
+        aht.activate = lambda *args: self._activate(self, *args)
+        aht.update =  lambda *args: self._update(self, *args)
 
         self._ida_action_handler = aht
         return aht

@@ -1,76 +1,47 @@
 import sys
 
-from . import pluginmanager
+#from . import pluginmanager
 from .actions import BipAction
 from .activity import BipActivity, BipActivityContainer
-
-class MetaBipPlugin(type):
-    """
-        Metaclass for :class:`BipPlugin`.
-
-        This metaclass has two main usage. The first is for interfacing
-        with the plugin manager: it is used for checking no colision are made
-        between the plugins and to allow the :class:`BipPluginManager` to
-        register all  the plugins.
-
-        The second usage is to create a dict of :class:`BipActivity`
-        associated with a plugin. Those are stored in a dict with the name
-        of the attribute as key and the :class:`BipActivity` object as value.
-    """
-
-    def __init__(cls, name, bases, dct):
-        # Add activity in the class list
-        cls._activities = {}
-        for na, value in dct.items():
-            if isinstance(value, BipActivity):
-                cls._activities[na] = value
-        super(MetaBipPlugin, cls).__init__(name, bases, dct) 
-        # Add plugin to the plugin list
-        # getting the plugin manager
-        bpm = pluginmanager.get_plugin_manager()
-        # black magic for the method of the plugin to be able to call super
-        # we add the class to the module for it to be accessible
-        # this is a hack but this should work in most case, it will be
-        #   rewritten by python just after. There may be a problem in case the
-        #   class is register inside a function or something
-        mod_name = dct["__module__"]
-        mod = sys.modules[mod_name]
-        mod.__dict__[name] = cls
-        # adding the plugin to the plugin manager
-        bpm.addld_plugin(name, cls, ifneeded=True) # do not reload if already done
 
 class BipPlugin(object):
     """
         Class for representing a plugin in IDA.
 
-        All plugin should be instantiated only once.
+        All plugin should be instantiated only once. For adding a plugin the
+        :class:`BipPluginManager` should be used (it can be recuperated using
+        the :func:`get_plugin_manager` function).
+        The following code can be used for loading a new plugin:
 
-        .. todo:: Put link to the PluginManager class for getting, loading,
-            and Unloading driver
-        
-        .. todo:: provide a way to pass "arguments" to a plugin
+        .. code-block:: python
+            
+            class MyPlugin(BipPlugin): # define a new class for the plugin
+                pass # implementation
 
-        .. note:: **BipPlugin, metaclass and BipActivity**
-        
-            If you use a metaclass when defining a plugin, make sure
-            it inherit from :class:`MetaBipPlugin` which is necessary for
-            working with the plugin manager and the :class:`BipActivity`
+            bpm = get_plugin_manager() # get the BipPluginManager
+            bpm.addld_plugin("MyPlugin", MyPlugin, ifneeded=True) # add the plugin
+
+        Once finish developping a :class:`BipPlugin` it can be directly
+        set in the ``bipplugin`` folder for being loaded at start by the
+        :class:`BipPluginManager`, in that case there is no need to call the
+        :meth:`~BipPluginManager.addld_plugin`. The :meth:`BipPlugin.to_load`
+        method can be rewritten for deciding when to load or not the plugin
+        and the :meth:`BipPlugin.load` method allow to make actions directly
+        when the plugin is loaded. :class:`BipActivity` and the associated
+        decorators (:func:`menu`, :func:`shortcut`, ...) can be used for
+        registering actions in IDA.
+
+        .. note:: **BipPlugin and BipActivity**
 
             All :class:`BipPlugin` have an attribute ``_activities``
             corresponding to a dict of ``name`` (corresponding to the orginal
             name of the method) as key and with objects which inherit from
-            :class:`BipActivity`
-
-        .. todo:: singleton ?
+            :class:`BipActivity`. This dictionnary is created by the
+            constructor of this object and the activities are launch when
+            the plugin is loaded.
 
         .. todo:: make a way to dynamically add and get activities
-
-        .. todo:: should support to not automatically load plugin (doable with
-            to_load but a more "standard way could be done")
-
-        .. todo:: doc
     """
-    __metaclass__ = MetaBipPlugin
 
     def __init__(self):
         """
@@ -78,19 +49,35 @@ class BipPlugin(object):
             should not be called directly but should be use by the
             :class:`BipPluginManager` . In particular this should avoid to
             have several time the same plugin register.
-            
-            .. todo:: link to method for registering, and activating a plugin
-                in the pluginmanager.
 
             .. warning:: Instentiating several time the same plugin class can
                 create problems in particular link to its :class:`BipActivity`
-            
+
             In particular this constructor is in charge to provide itself
             for its :class:`BipActivity` objects. Subclasses should call this
-            constructor (using ``super``) or the internal method
-            :meth:`~BipPlugin._provide_plg_activities` .
+            constructor (using ``super``).
         """
+        self._activities = {}
+        self._init_activities()
         self._provide_plg_activities()
+
+    ############################## ACTIVITIES ################################
+
+    def _init_activities(self):
+        """
+            Internal methods which look for the object which inherit from
+            :class:`BipActivity` and add them to the ``_activities``
+            dictionnary.
+            
+            This functions iter on all items in the object ``__dict__`` and
+            the associated class for finding the :class:`BipActivity`.
+        """
+        for na, value in self.__dict__.items():
+            if isinstance(value, BipActivity):
+                self._activities[na] = value
+        for na, value in self.__class__.__dict__.items():
+            if isinstance(value, BipActivity):
+                self._activities[na] = value
 
     def _provide_plg_activities(self):
         """
@@ -105,6 +92,20 @@ class BipPlugin(object):
         """
         for name, act in self._activities.items():
             act.plugin = self
+
+    def _register_activities(self):
+        """
+            Internal method which will parcour all the :class:`BipActivity`
+            object which are associated with this plugin and register all of
+            them.
+
+            This method is not made for being called directly and should be
+            call by the :meth:`BipPlugin.load` function.
+        """
+        for name, action in self._activities.items():
+            action.register()
+
+    ############################## LOADING  ################################
 
     @classmethod
     def to_load(cls):
@@ -122,18 +123,6 @@ class BipPlugin(object):
                 (``True``) or not (``False``).
         """
         return True
-
-    def _register_activities(self):
-        """
-            Internal method which will parcour all the :class:`BipActivity`
-            object which are associated with this plugin and register all of
-            them.
-
-            This method is not made for being called directly and should be
-            call by the :meth:`BipPlugin.load` function.
-        """
-        for name, action in self._activities.items():
-            action.register()
 
     def load(self):
         """

@@ -8,8 +8,6 @@ class BipActivity(object):
         :class:`BipAction` (including :func:`shortcut` and :func:`menu` entry)
         or callbacks.
 
-        .. todo:: put link to callbacks when realized
-
         All :class:`BipActivity` object link to a :class:`BipPlugin` have a
         property ``plugin`` which give them access to the plugin object.
 
