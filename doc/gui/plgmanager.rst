@@ -11,25 +11,32 @@ The :class:`~bip.gui.pluginmanager.BipPluginManager` is a singleton and
 should only be accessed using the :func:`get_plugin_manager` functions.
 It is also the only class in Bip which is a *real* IDA plugin.
 
-There is few reason to directly use the
-:class:`~bip.gui.pluginmanager.BipPluginManager` because
-plugin are loaded automatically. The main reason for accessing it will be
-to recuperate a :class:`BipPlugin` instance:
+The main reason to use the :class:`~bip.gui.pluginmanager.BipPluginManager`
+is to recuperate a :class:`BipPlugin` instance:
 
 .. code-block:: python
 
     bpm = get_plugin_manager() # get the BipPluginManager
     plg = bpm["PLUGINNAME"] # get the plugin PLUGINNAME, PLUGINNAME should be the class of the plugin
 
+or for loading a new plugin:
 
-.. note:: **Internals**
+.. code-block:: python
 
-    The :class:`~bip.gui.pluginmanager.BipPluginManager` is not exposed at the
-    level of the module for avoiding instantiating a second object which will
-    trigger bugs.
-    
-    The loading and creation of a :class:`BipPlugin` is link to their metaclass
-    and internal, see :ref:`gui-plugin-internals` for more information.
+    class MyPlugin(BipPlugin): # define a new class for the plugin
+        pass # implementation
+
+    bpm = get_plugin_manager() # get the BipPluginManager
+    bpm.addld_plugin("MyPlugin", MyPlugin, ifneeded=True) # add the plugin
+    # plugin in bipplugin folder will be loaded automatically and do not need those lines
+
+The :class:`~bip.gui.pluginmanager.BipPluginManager` is not exposed at the
+level of the module for avoiding instantiating a second object which will
+trigger bugs, use :func:`get_plugin_manager` for getting the singleton object.
+
+The :class:`~bip.gui.pluginmanager.BipPluginManager` is also in charge of
+loading automatically 
+
 
 BipPluginManager API
 ====================
@@ -43,4 +50,11 @@ BipPluginManager API
     :member-order: bysource
     :special-members:
     :private-members:
+
+.. autoclass:: BipPluginLoader
+    :members:
+    :member-order: bysource
+    :special-members:
+    :private-members:
+
 

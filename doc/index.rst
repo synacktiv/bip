@@ -92,6 +92,8 @@ GUI & Plugins interface (``bip.gui``)
 This part regroup all the functions and classes made for interfacing with the
 UI and events of IDA. The most important part of this module is probably the
 :class:`BipPlugin` which allow to create plugins and to define actions in IDA.
+While bip can be used in normal IDA plugin and scripts, the :class:`BipPlugin`
+is the central element for interfacing with the GUI using bip.
 
 .. toctree::
     :maxdepth: 2

@@ -60,8 +60,7 @@ Some decorators are define for being use inside a
 :class:`BipPlugin` class for defining interactions with IDA. Those
 decorators will dynamically create :class:`BipActivity` objects.
 
-When a :class:`BipPlugin` class is create the metaclass
-:class:`MetaBipPlugin` of the :class:`BipPlugin` will create a
+When a :class:`BipPlugin` class is created, its constructor will create a
 list of the :class:`BipActivity` associtated with the plugin
 (stored in ``_activities``) and when the plugin object is created
 it will set itself in the :attr:`BipActivity.plugin` of each

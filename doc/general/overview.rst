@@ -422,7 +422,6 @@ variable by the :class:`HxLvar` objects:
     lv.is_arg # is this variable an argument ?
     # True
     lv.name = "thisisthefirstarg" # changing name of the lvar
-    lv
     lv.type = BipType.FromC("void *") # changing the type
     lv.comment = "new comment" # adding a comment
     lv.size # getting the size
@@ -559,8 +558,9 @@ Plugins
 Plugins using Bip should all inherit from the class :class:`BipPlugin`. Those plugin
 are different from the IDA plugin and are loaded and called by the
 :class:`BipPluginManager`. Each plugin is identified by its class name and those
-should be unique. For more information about plugins and internals see
-:ref:`gui-plugins`.
+should be unique. Bip can be used with standard plugin but most of the
+``bip.gui`` implementations is linked to the use of :class:`BipPlugin`. For
+more information about plugins and internals see :ref:`gui-plugins`.
 
 Here is a simple plugin example:
 
@@ -583,14 +583,18 @@ Here is a simple plugin example:
             print(self) # this is the ExPlugin object
             print("In ExPlugin action !")# code here
 
+    bpm = get_plugin_manager() # get the BipPluginManager object
+    bpm.addld_plugin("ExPlugin", ExPlugin) # ask the BipPluginManager to load the plugin
+    # plugin in bipplugin folder will be loaded automatically and do not need those lines
+
+
 A real plugin for adding comment to printk function exist in
-``scripts/printk_com.py`` and can be used as example. The :func:`menu`
+``script/printk_com.py`` and can be used as example. The :func:`menu`
 decorator will automatically create the ``MyPluginExemple`` menu entry in the
 ``Bip`` top level menu entry (which is created by the
 :class:`BipPluginManager`), creating an entry in the ``Edit/Plugins/``
 directory may not work because of how the entry of this submenu are created
 by IDA.
-
 
 A plugin can expose methods which another plugin wants to call or directly
 from the console. A plugin should not be directly instantiated, it is the
