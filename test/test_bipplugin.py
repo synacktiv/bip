@@ -2,6 +2,10 @@ from bip.gui import *
 from bip.gui.pluginmanager import BipPluginManager
 
 import pytest
+import importlib
+import inspect
+import tempfile
+import os, sys
 
 """
     Test for class :class:`BipPlugin` in ``bip/gui/plugin.py``, include
@@ -40,21 +44,57 @@ class Plugin4Test2(BipPlugin):
     def mytest_both(self):
         self.bothcounter += 1
 
+### BipPluginLoader ###
+
+def test_bippluginloader00():
+    # get_plugins_from_module
+    mod = importlib.import_module(Plugin4Test2.__module__)
+    assert inspect.ismodule(mod)
+    d = BipPluginLoader.get_plugins_from_module(mod)
+    assert isinstance(d, dict)
+    assert d["Plugin4Test"] == Plugin4Test
+    assert d["Plugin4Test2"] == Plugin4Test2
+    assert "BipPlugin" not in d
+    assert len(d) == 2
+
+def test_bippluginloader01():
+    # get_plg_from_files_in_module
+    fo = tempfile.mkdtemp()
+    modname = "plgtest"
+    fold = os.path.join(fo, modname)
+    os.mkdir(fold)
+    f = open(os.path.join(fold, "__init__.py"), "w")
+    f.close()
+    f = open(os.path.join(fold, "test.py"), "w")
+    f.write("from bip import *\nclass PlgTestLoader(BipPlugin):\n    pass\n")
+    f.close()
+    f = open(os.path.join(fold, "test2.py"), "w")
+    f.write("from bip import *\nclass PlgTestLoader2(BipPlugin):\n    pass\n")
+    f.close()
+    sys.path.append(fo)
+    d = BipPluginLoader.get_plg_from_files_in_module(modname)
+    assert isinstance(d, dict)
+    assert issubclass(d["PlgTestLoader"], BipPlugin)
+    assert issubclass(d["PlgTestLoader2"], BipPlugin)
+    assert "BipPlugin" not in d
+    assert len(d) == 2
+    sys.path.pop()
+
 ### Bip Plugin Manager ###
 
-class test_bippluginmanag00():
+def test_bippluginmanag00():
     # Getting the bip plugin manager.
     bpm = get_plugin_manager()
     assert isinstance(bpm, BipPluginManager) == True
     assert bpm._is_loaded == True
+    assert bpm.is_ready == True
     bpm2 = get_plugin_manager()
     assert bpm == bpm2
-
-# test for load have already been made in the BipPlugin test
 
 def test_bippluginmanag01():
     # plugin access
     bpm = get_plugin_manager()
+    bpm.addld_plugin("Plugin4Test", Plugin4Test)
     tp = bpm.get_plugin(Plugin4Test)
     assert isinstance(tp, Plugin4Test)
     assert tp == bpm.get_plugin(Plugin4Test)
@@ -66,6 +106,8 @@ def test_bippluginmanag01():
     assert ("DoNotExist" in bpm) == False
     assert bpm.get_plugin("DoNotExist") is None
     with pytest.raises(KeyError): bpm["DoNotExist"]
+    with pytest.raises(RuntimeError): bpm.addld_plugin("Plugin4Test", Plugin4Test)
+    bpm.addld_plugin("Plugin4Test", Plugin4Test, ifneeded=True)
 
 ### Bip Plugin ###
 
@@ -102,6 +144,7 @@ def test_bipplugin01():
 def test_bipplugin02():
     # Activities link
     bpm = get_plugin_manager()
+    bpm.addld_plugin("Plugin4Test2", Plugin4Test2)
     tp = bpm.get_plugin(Plugin4Test2)
     assert isinstance(tp.mytest_shortcut, BipActivityContainer) == True
     assert isinstance(tp.mytest_menu, BipActivityContainer) == True
@@ -132,4 +175,5 @@ def test_bipplugin02():
     assert tp.mytest_menu._activities[0].is_register == False
     assert tp.mytest_both._activities[0].is_register == False
     assert tp.mytest_both._activities[1].is_register == False
+
 
