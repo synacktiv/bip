@@ -175,9 +175,9 @@ def test_bipfunc06():
     assert len(BipFunction(0x01800D324E).instr) == 0xa5
     assert len([i for i in BipFunction(0x01800D324E).instr_iter]) == 0xa5
     assert len(BipFunction(0x01800D324E).bytes) == 0x294
-    assert isinstance(BipFunction(0x01800D324E).items[0], Instr) == True
-    assert isinstance(BipFunction(0x01800D324E).instr[0], Instr) == True
-    assert isinstance(next(BipFunction(0x01800D324E).instr_iter), Instr) == True
+    assert isinstance(BipFunction(0x01800D324E).items[0], BipInstr) == True
+    assert isinstance(BipFunction(0x01800D324E).instr[0], BipInstr) == True
+    assert isinstance(next(BipFunction(0x01800D324E).instr_iter), BipInstr) == True
     assert isinstance(BipFunction(0x01800D324E).bytes, list) == True
     assert isinstance(BipFunction(0x01800D324E).bytes[0], int) == True
 
@@ -199,7 +199,7 @@ def test_bipfunc08():
     assert isinstance(BipFunction(0x1800D2FF0).xEaTo[0], (int, long)) == True
     assert isinstance(BipFunction(0x1800D2FF0).xEltTo[0], BipElt) == True
     assert len(BipFunction(0x1800D2FF0).xEltTo) == 0x4
-    assert isinstance(BipFunction(0x1800D2FF0).xCodeTo[0], Instr) == True
+    assert isinstance(BipFunction(0x1800D2FF0).xCodeTo[0], BipInstr) == True
     assert len(BipFunction(0x1800D2FF0).xCodeTo) == 0x1
     assert len(BipFunction(0x1800D2FF0).callers) == 0x1
     assert isinstance(BipFunction(0x1800D2FF0).callers[0], BipFunction) == True

@@ -40,7 +40,7 @@ manipulated using Bip. Several *building blocks* exist inside this module:
   just an address or an ID, this is in particular used for xref. For more
   information see :ref:`ref-base-elt`.
 * The **xrefs** allow to make link with all childs objects of :class:`BipRefElt`
-  (:class:`Instr`, :class:`BipData`, :class:`BipStruct`,
+  (:class:`BipInstr`, :class:`BipData`, :class:`BipStruct`,
   :class:`BStructMember`) and with :class:`BipFunction`. Xref are represented
   by the :class:`BipXref` classes but in most case methods are provided
   for recuperating directly the correct object or address without using
@@ -59,12 +59,12 @@ manipulated using Bip. Several *building blocks* exist inside this module:
   possess access to xref api provided by :class:`BipRefElt` but also numerous
   API link to the fact of having an address and potentially data ("bytes").
   :class:`BipData` are also linked to the :class:`BipType` which directly
-  impact the behavior of some methods. :class:`Instr` possess references to
+  impact the behavior of some methods. :class:`BipInstr` possess references to
   the :class:`BipFunction` and :class:`BipBlock` when they exist and can also
   allow to manipulate :class:`BipOperand`.
 * The **functions** (:class:`BipFunction`) are a critical link to the API: they possess
   :class:`BipXref`, allow link to their basic block (:class:`BipBlock`) and
-  the :class:`Instr`. They provide also methods for accessing their callers
+  the :class:`BipInstr`. They provide also methods for accessing their callers
   and callees. Finally they make the link between the ``bip.base`` module and
   the ``bip.hexrays`` module.
 
@@ -280,9 +280,9 @@ to use the ``isinstance`` function with the object type being tested.
 Here are a few examples of how it was intended to be used. In this first
 example the first instruction of a function is recuperated using
 :func:`~bip.base.GetEltByName`, in this case we know it is an instruction
-(:class:`~bip.base.Instr`) but the function can return other subclasses
+(:class:`~bip.base.BipInstr`) but the function can return other subclasses
 of :class:`~bip.base.BipElt`. We then look at the :class:`~bip.base.BipElt`
-which reference this address, some are :class:`~bip.base.Instr` and some
+which reference this address, some are :class:`~bip.base.BipInstr` and some
 are :class:`~bip.base.BipData`, for knowing which is which we
 use ``isinstance``.
 
@@ -291,13 +291,13 @@ use ``isinstance``.
     >>> from bip import *
     >>> elt = GetEltByName("RtlQueryProcessLockInformation")
     >>> elt # first instruction of RtlQueryProcessLockInformation
-    Instr: 0x1800D2FF0 (mov     rax, rsp)
+    BipInstr: 0x1800D2FF0 (mov     rax, rsp)
     >>> elt.is_code # this are common property to BipElt which are used to get the correct object
     True
     >>> elt.is_data
     False
-    >>> for e in elt.xEltTo: # here we get the Elt xref, elements can be Instr or BipData
-    ...   if isinstance(e, Instr): # in case of instr we want to print the mnemonic
+    >>> for e in elt.xEltTo: # here we get the Elt xref, elements can be BipInstr or BipData
+    ...   if isinstance(e, BipInstr): # in case of instr we want to print the mnemonic
     ...     print("Found instr at 0x{:X} which ref function, with mnemonic: {}".format(e.ea, e.mnem))
     ...   elif isinstance(e, BipData): # for BipData there is no mnemonic available and so we just want the address
     ...     print("Found data ref at 0x{:x}".format(e.ea))
@@ -379,13 +379,13 @@ there is not always a choice. Because of this several problems exist.
 The first is a really simple problem but hard to solve: when keeping an object
 of a type in Bip the underlying IDB can be changed (using the API or the GUI).
 This can make the current object of Bip invalid. A simple example of this
-will be to recuperate an :class:`~bip.base.Instr` object
+will be to recuperate an :class:`~bip.base.BipInstr` object
 using :func:`~bip.base.GetElt` and then to undefine this element using the GUI.
 If :func:`~bip.base.GetElt` is called again a  :class:`~bip.base.BipData`
 object will be returned, which is the object expected. However, if the previous
 object is used, it can lead to unexpected behavior because this address is
 not an instruction anymore, for example the
-property :class:`~bip.base.Instr.mnem` will return an empty string. 
+property :class:`~bip.base.BipInstr.mnem` will return an empty string. 
 
 For avoiding this problem as much as possible, Bip tries to avoid keeping
 references to the IDA objects or to memoize information, but often this is not

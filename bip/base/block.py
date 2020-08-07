@@ -256,25 +256,25 @@ class BipBlock(object):
     @property
     def instr(self):
         """
-            Return a list of :class:`Instr` corresponding to the instructions
+            Return a list of :class:`BipInstr` corresponding to the instructions
             of the basicblock.
 
-            :return: A list of object :class:`Instr` .
+            :return: A list of object :class:`BipInstr` .
         """
-        return [bip.base.instr.Instr(h) for h in idautils.Heads(self.ea, self.end) if idc.is_code(ida_bytes.get_full_flags(h))]
+        return [bip.base.instr.BipInstr(h) for h in idautils.Heads(self.ea, self.end) if idc.is_code(ida_bytes.get_full_flags(h))]
 
     @property
     def instr_iter(self):
         """
-            Return a generator of :class:`Instr` corresponding to the
+            Return a generator of :class:`BipInstr` corresponding to the
             instructions of the basicblock. This implementation will be just
             a little more performant than the :meth:`instr` property.
 
-            :return: A generator of object :class:`Instr` .
+            :return: A generator of object :class:`BipInstr` .
         """
         for h in idautils.Heads(self.ea, self.end):
             if idc.is_code(ida_bytes.get_full_flags(h)):
-                yield bip.base.instr.Instr(h)
+                yield bip.base.instr.BipInstr(h)
 
     @property
     def bytes(self):

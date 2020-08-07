@@ -136,12 +136,12 @@ class HxCStmtAsm(HxCStmtFinal):
     @property
     def value(self):
         """
-            Return a list of :class:`~bip.base.Instr` corresponding to the ASM
+            Return a list of :class:`~bip.base.BipInstr` corresponding to the ASM
             instructions in this ASM statement.
 
-            :return: A list of :class:`~bip.base.Instr`.
+            :return: A list of :class:`~bip.base.BipInstr`.
         """
-        return [bbase.Instr(ea) for ea in self._cinsn.casm]
+        return [bbase.BipInstr(ea) for ea in self._cinsn.casm]
 
 @cnode.buildCNode
 class HxCStmtReturn(HxCStmtFinal):

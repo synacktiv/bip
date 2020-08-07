@@ -10,7 +10,7 @@ def test_bipxref00():
     # base
     ins = GetElt(0x01800D3138) # recuperate from an instruction
     assert len(ins.xFrom) == 1
-    assert isinstance(ins, Instr) == True
+    assert isinstance(ins, BipInstr) == True
     xf = ins.xFrom[0]
     assert isinstance(xf, BipXref) == True
     assert xf.is_userdef == False
@@ -18,8 +18,8 @@ def test_bipxref00():
     assert xf.src.ea == 0x1800d3138
     assert xf.dst_ea == 0x1800d31e9
     assert xf.dst.ea == 0x1800d31e9
-    assert isinstance(xf.src, Instr) == True
-    assert isinstance(xf.dst, Instr) == True
+    assert isinstance(xf.src, BipInstr) == True
+    assert isinstance(xf.dst, BipInstr) == True
 
 def test_bipxref01():
     # code flow

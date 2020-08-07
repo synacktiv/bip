@@ -1,11 +1,11 @@
 from .utils import get_highlighted_identifier_as_int, Ptr, get_ptr_size, relea, absea, get_addr_by_name, get_name_by_addr, get_struct_from_lvar, bip_exec_sync, min_ea, max_ea
 from .bipelt import BipBaseElt, BipRefElt, BipElt, GetElt, GetEltByName, Here
-from .instr import Instr
+from .instr import BipInstr
 from .data import BipData
-from .operand import OpType, Operand
+from .operand import BipOpType, BipDestOpType, BipOperand
 from .bipstruct import BipStruct, BStructMember
 from .bipenum import BipEnum, BEnumMember
-from .xref import XrefTypes, BipXref
+from .xref import _XrefTypes, BipXref
 from .biperror import BipError, BipDecompileError
 from .func import BipFuncFlags, BipFunction
 from .block import BipBlockType, BipBlock

@@ -7,7 +7,7 @@ from bip.py3compat.py3compat import *
 
 import bip.base.biptype
 
-class OpType(object):
+class BipOpType(object):
     """
         Static class allowing to get the type of the operands as define in the
         ``ua.hpp`` file from hexrays. This is equivalent to the ``idc.o_*``
@@ -52,7 +52,7 @@ class OpType(object):
 #o_crb  =         ida_ua.o_idpspec4      # crbit        x.reg
 #o_dcr  =         ida_ua.o_idpspec5      # Device control register
 
-class DestOpType(object):
+class BipDestOpType(object):
     """
         Static class representing an enum of the ``dt_*`` macro from IDA
         indicating the type of the operand value.
@@ -79,10 +79,10 @@ class DestOpType(object):
     DT_BYTE64       = 17    #: 512 bit
 
 
-class Operand(object):
+class BipOperand(object):
     """
         Class representing an operand of an instruction. This class
-        should be used through :class:`Instr` .
+        should be used through :class:`BipInstr` .
 
         .. todo:: make test property depending of type
 
@@ -98,11 +98,11 @@ class Operand(object):
     def __init__(self, ins, num):
         """
             Constructor for an operand object. Should not directly use this
-            constructor but should be access by using the :meth:`~Instr.op`
-            method from :class:`Instr` .
+            constructor but should be access by using the :meth:`~BipInstr.op`
+            method from :class:`BipInstr` .
 
             :param ins: The instruction in which this operand ins present
-            :type ins: :class:`Instr`
+            :type ins: :class:`BipInstr`
             :param int num: The position of the operand in the instruction.
         """
         self.instr = ins #: Instruction containing the operand
@@ -145,11 +145,11 @@ class Operand(object):
     def type(self):
         """
             Property allowing to get the type of the operand. This type
-            correspond to the :class:`OpType` value .
+            correspond to the :class:`BipOpType` value .
             Wrapper on ``idc.GetOpType`` (old) or ``idc.get_operand_type``
             (new).
 
-            :return: The type of the operand as defined in :class:`OpType` .
+            :return: The type of the operand as defined in :class:`BipOpType` .
             :rtype: int
         """
         return idc.get_operand_type(self.ea, self.opnum)
@@ -158,11 +158,11 @@ class Operand(object):
     def dtype(self):
         """
             Property which allow to get the type of the operand value. Those
-            can be access through the :class:`DestOpType` enum.
+            can be access through the :class:`BipDestOpType` enum.
             This is is equivalent to accessing the ``op_t.dtype`` from IDA.
 
             :return int: The type of the destination of the operand as defined
-                in :class:`DestOpType`.
+                in :class:`BipDestOpType`.
         """
         return self._op_t.dtype
 
@@ -263,17 +263,17 @@ class Operand(object):
         """
         if self.is_imm:
             dt = self.dtype
-            if dt == DestOpType.DT_BYTE:
+            if dt == BipDestOpType.DT_BYTE:
                 return self._value & 0xFF
-            elif dt == DestOpType.DT_WORD:
+            elif dt == BipDestOpType.DT_WORD:
                 return self._value & 0xFFFF
-            elif dt == DestOpType.DT_DWORD:
+            elif dt == BipDestOpType.DT_DWORD:
                 return self._value & 0xFFFFFFFF
-            elif dt == DestOpType.DT_FLOAT: # TODO
+            elif dt == BipDestOpType.DT_FLOAT: # TODO
                 return self._value & 0xFFFFFFFF
-            elif dt == DestOpType.DT_DOUBLE: # TODO
+            elif dt == BipDestOpType.DT_DOUBLE: # TODO
                 return self._value & 0xFFFFFFFFFFFFFFFF
-            elif dt == DestOpType.DT_QWORD:
+            elif dt == BipDestOpType.DT_QWORD:
                 return self._value & 0xFFFFFFFFFFFFFFFF
             else: # TODO
                 return self._value
@@ -286,49 +286,49 @@ class Operand(object):
     def is_void(self):
         """
             Test if this object represent the fact that there is no operand.
-            (OpType.VOID)
+            (``BipOpType.VOID``)
         """
-        return self.type == OpType.VOID
+        return self.type == BipOpType.VOID
 
     @property
     def is_reg(self):
         """
-            Test if the operand represent a register. (OpType.REG)
+            Test if the operand represent a register. (``BipOpType.REG``)
         """
-        return self.type == OpType.REG
+        return self.type == BipOpType.REG
 
     @property
     def is_memref(self):
         """
             Test if the operand is a memory reference (one of MEM, PHRASE or
-            DISPL in OpType)
+            DISPL in BipOpType)
         """
         t = self.type
-        return t == OpType.MEM or t == OpType.PHRASE or t == OpType.DISPL
+        return t == BipOpType.MEM or t == BipOpType.PHRASE or t == BipOpType.DISPL
 
     @property
     def is_imm(self):
         """
             Test if the operand is an immediate value which is **not** an
-            address (OpType.IMM).
+            address (BipOpType.IMM).
         """
-        return self.type == OpType.IMM
+        return self.type == BipOpType.IMM
 
     @property
     def is_addr(self):
         """
             Test if the operand represent an address, far or near.
-            (one of FAR or NEAR in OpType).
+            (one of FAR or NEAR in BipOpType).
         """
         t = self.type
-        return t == OpType.FAR or t == OpType.NEAR
+        return t == BipOpType.FAR or t == BipOpType.NEAR
 
     @property
     def is_proc_specific(self):
         """
             Test if this operand is processor specific.
         """
-        return self.type >= OpType.IDPSPEC0
+        return self.type >= BipOpType.IDPSPEC0
 
     ############################# OFFSET & CHANGE TYPE ######################
 

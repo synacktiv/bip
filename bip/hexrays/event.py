@@ -1,14 +1,12 @@
 
 import ida_hexrays
 
-class HexRaysEvent(object):
+class HxEvent(object):
     """
         Enum object for the hexrays event. This is documented in
         https://www.hex-rays.com/products/decompiler/manual/sdk/hexrays_8hpp.shtml 
         https://www.hex-rays.com/products/decompiler/manual/sdk/hexrays_8hpp_source.shtml
         and defined in ``ida_hexrays`` python file.
-
-        .. todo:: doc this enum
 
         .. todo:: make wrapper on functions and stuff
 

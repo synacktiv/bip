@@ -24,7 +24,7 @@ provided by :class:`BipRefElt` :
 
 * :class:`BipRefElt`
 * :class:`BipElt`
-* :class:`Instr`
+* :class:`BipInstr`
 * :class:`BipData`
 * :class:`BipStruct`
 * :class:`BStructMember`

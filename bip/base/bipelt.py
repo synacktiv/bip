@@ -195,7 +195,7 @@ class BipRefElt(BipBaseElt):
             element. This will take into account jmp, call, ordinary flow and
             "data" references.
 
-            :return: A list of :class:`Instr` referenced by this element.
+            :return: A list of :class:`BipInstr` referenced by this element.
         """
         return [x.dst for x in self.xFrom if ('is_code' in dir(x.dst) and x.dst.is_code)]
 
@@ -206,7 +206,7 @@ class BipRefElt(BipBaseElt):
             element. This will take into account jmp, call, ordinary flow and
             "data" references.
 
-            :return: A list of :class:`Instr` referenced by this element.
+            :return: A list of :class:`BipInstr` referenced by this element.
         """
         return [x.src for x in self.xTo if ('is_code' in dir(x.src) and x.src.is_code)]
 

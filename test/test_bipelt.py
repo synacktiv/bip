@@ -115,7 +115,7 @@ def test_bipelt03():
 def test_bipelt04():
     # GetElt class creation
     assert GetElt(0x018015D228).__class__ == BipData
-    assert GetElt(0x01800D325A).__class__ == Instr
+    assert GetElt(0x01800D325A).__class__ == BipInstr
     assert GetElt(0).__class__ == BipElt
     assert GetElt(0xAAAAA).__class__ == BipElt
     with pytest.raises(RuntimeError):
@@ -142,8 +142,8 @@ def test_bipelt05():
     assert BipElt.next_code_addr(ea=0x1800d324b, down=False) == 0x1800d3248
     assert BipElt.next_code(ea=0x1800d324b, down=True).ea == 0x1800d324e
     assert BipElt.next_code(ea=0x1800d324b, down=False).ea == 0x1800d3248
-    assert isinstance(BipElt.next_code(ea=0x1800d324b, down=True), Instr)
-    assert isinstance(BipElt.next_code(ea=0x1800d324b, down=False), Instr)
+    assert isinstance(BipElt.next_code(ea=0x1800d324b, down=True), BipInstr)
+    assert isinstance(BipElt.next_code(ea=0x1800d324b, down=False), BipInstr)
     # next unknown
     assert BipElt.next_unknown_addr(ea=0x1800d324b, down=True) == 0x180110000
     assert BipElt.next_unknown_addr(ea=0x1800d324b, down=False) is None
@@ -194,13 +194,13 @@ def test_bipelt07():
     assert BipElt(0x01800D3242).xFrom[0].dst == BipElt(0x01800D3248)
     assert BipElt(0x01800D3242).xEaFrom == [0x1800d3248]
     assert BipElt(0x01800D3242).xEltFrom == [BipElt(0x01800D3248)]
-    assert BipElt(0x01800D3242).xCodeFrom == [Instr(0x1800D3248)]
+    assert BipElt(0x01800D3242).xCodeFrom == [BipInstr(0x1800D3248)]
     assert len(BipElt(0x01800D3242).xTo) == 1
     assert BipElt(0x01800D3242).xTo[0].src == BipElt(0x01800D323A)
     assert BipElt(0x01800D3242).xTo[0].dst == BipElt(0x01800D3242)
     assert BipElt(0x01800D3242).xEaTo == [0x1800d323A]
     assert BipElt(0x01800D3242).xEltTo == [BipElt(0x01800D323A)]
-    assert BipElt(0x01800D3242).xCodeTo == [Instr(0x1800D323A)]
+    assert BipElt(0x01800D3242).xCodeTo == [BipInstr(0x1800D323A)]
 
 def test_bipelt08():
     # test BipElt.iter_heads
@@ -209,10 +209,10 @@ def test_bipelt08():
     assert elt.__class__ == BipData
     assert elt.ea == 0x180001000
     elt = next(gen)
-    assert elt.__class__ == Instr
+    assert elt.__class__ == BipInstr
     assert elt.ea == 0x180001010
     elt = next(gen)
-    assert elt.__class__ == Instr
+    assert elt.__class__ == BipInstr
     assert elt.ea == 0x180001012
     # with start
     gen = BipElt.iter_heads(start=0x18012F16C)
@@ -236,13 +236,13 @@ def test_bipelt08():
     elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x180001307
-    # Instr.iter_heads
-    gen = Instr.iter_heads()
+    # BipInstr.iter_heads
+    gen = BipInstr.iter_heads()
     elt = next(gen)
-    assert elt.__class__ == Instr
+    assert elt.__class__ == BipInstr
     assert elt.ea == 0x180001010
     elt = next(gen)
-    assert elt.__class__ == Instr
+    assert elt.__class__ == BipInstr
     assert elt.ea == 0x180001012
 
 
@@ -253,10 +253,10 @@ def test_bipelt09():
     assert elt.__class__ == BipData
     assert elt.ea == 0x180001000
     elt = next(gen)
-    assert elt.__class__ == Instr
+    assert elt.__class__ == BipInstr
     assert elt.ea == 0x180001010
     elt = next(gen)
-    assert elt.__class__ == Instr
+    assert elt.__class__ == BipInstr
     assert elt.ea == 0x180001012
     # with start
     gen = BipElt.iter_all(start=0x18012F16C)
@@ -280,13 +280,13 @@ def test_bipelt09():
     elt = next(gen)
     assert elt.__class__ == BipData
     assert elt.ea == 0x180001307
-    # Instr.iter_all
-    gen = Instr.iter_all()
+    # BipInstr.iter_all
+    gen = BipInstr.iter_all()
     elt = next(gen)
-    assert elt.__class__ == Instr
+    assert elt.__class__ == BipInstr
     assert elt.ea == 0x180001010
     elt = next(gen)
-    assert elt.__class__ == Instr
+    assert elt.__class__ == BipInstr
     assert elt.ea == 0x180001012
 
 

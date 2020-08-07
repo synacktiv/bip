@@ -339,7 +339,7 @@ def genst_stmtasm(cn):
     li = cn.value
     assert isinstance(li, list)
     assert len(li) == cn.length
-    assert isinstance(li[0], Instr)
+    assert isinstance(li[0], BipInstr)
 
 def genst_stmtreturn(cn):
     # StmtReturn

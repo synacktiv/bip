@@ -5,7 +5,7 @@ Functions & Basic blocks
 
 :class:`BipFunction` are created by passing them an address. They are
 container for basic block (:class:`BipBlock` accessible using
-the :meth:`~BipFunction.blocks` property) and instruction (:class:`Instr`
+the :meth:`~BipFunction.blocks` property) and instruction (:class:`BipInstr`
 accessible using the :meth:`~BipFunction.instr` property). :class:`BipBlock`
 them self contain instructions, a link back to the function
 (property :meth:`~BipBlock.func`) and a way to navigate them using the

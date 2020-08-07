@@ -3,18 +3,18 @@ from bip.base import *
 import pytest
 
 """
-    Test for class :class:`BipOperand` in ``bip/base/bipoperand.py``.
+    Test for class :class:`BipBipOperand` in ``bip/base/bipoperand.py``.
 """
 
 def test_bipoperand00():
     # base
     elt = GetElt(0x01800D324B)
-    assert isinstance(elt.op(0), Operand) == True
+    assert isinstance(elt.op(0), BipOperand) == True
     assert elt.op(0).ea == 0x1800d324b
     assert elt.op(0).instr == elt
     assert elt.op(0).opnum == 0
     assert elt.op(0).str == 'rcx'
-    assert elt.op(0).type == OpType.REG
+    assert elt.op(0).type == BipOpType.REG
     assert elt.op(0).dtype == 7
     assert elt.op(0).type_info is None
     elt.op(0).type_info = "void *"
@@ -26,7 +26,7 @@ def test_bipoperand00():
     assert elt.op(1).opnum == 1
     assert elt.op(1).value == 0x8
     assert elt.op(1).dtype == 0x2
-    assert elt.op(1).type == OpType.IMM
+    assert elt.op(1).type == BipOpType.IMM
     assert GetElt(0x01800D3094).op(1).value == 0xc0000017
 
 def test_bipoperand01():

@@ -6,12 +6,12 @@ import idaapi
 import ida_kernwin
 
 from .bipelt import BipElt
-from .operand import Operand, OpType
+from .operand import BipOperand, BipOpType
 from .biperror import BipError
 import bip.base.block
 import bip.base.func
 
-class Instr(BipElt):
+class BipInstr(BipElt):
     """
         Class for representing and manipulating a assembleur instruction in
         IDA.
@@ -26,7 +26,7 @@ class Instr(BipElt):
             :param int ea: The address of the instruction in IDA. If
                 ``None`` the screen address is taken.
         """
-        super(Instr, self).__init__(ea)
+        super(BipInstr, self).__init__(ea)
         if not self.is_code:
             raise BipError("No an instr at 0x{:X}".format(ea))
 
@@ -71,7 +71,7 @@ class Instr(BipElt):
         return i
 
     def __str__(self):
-        return "Instr: 0x{:X} ({})".format(self.ea, self.str)
+        return "BipInstr: 0x{:X} ({})".format(self.ea, self.str)
 
     #################### OPERANDS ####################
 
@@ -82,19 +82,19 @@ class Instr(BipElt):
         """
         i = 0
         ins = self._insn
-        while i < self.UA_MAXOP and ins.ops[i].type != OpType.VOID:
+        while i < self.UA_MAXOP and ins.ops[i].type != BipOpType.VOID:
             i += 1
         return i
 
     def op(self, num):
         """
-            Method for recuperating an :class:`Operand` object.
+            Method for recuperating an :class:`BipOperand` object.
 
             :param int num: The position of the operand.
             :raise ValueError: If the position is not valid.
         """
-        o = Operand(self, num)
-        if o.type == OpType.VOID:
+        o = BipOperand(self, num)
+        if o.type == BipOpType.VOID:
             raise ValueError("Instruction does not have {} operand".format(num))
         else:
             return o
@@ -104,7 +104,7 @@ class Instr(BipElt):
         """
             Property returning a list of the operands of the instruction.
 
-            :return: A list of :class:`Operand` .
+            :return: A list of :class:`BipOperand` .
         """
         return [self.op(i) for i in range(self.countOperand)]
 
@@ -196,13 +196,13 @@ class Instr(BipElt):
             call, ...). It is possible for an instruction to not have a
             previous instruction typically at the start of a function but in
             other cases too. This can be tested with
-            :meth:`~Instr.has_prev_instr` .
+            :meth:`~BipInstr.has_prev_instr` .
 
             :return: The previous instruction if any.
-            :rtype: :class:`Instr` or None
+            :rtype: :class:`BipInstr` or None
         """
         if self.has_prev_instr:
-            return Instr(idc.prev_head(self.ea))
+            return BipInstr(idc.prev_head(self.ea))
         return None
 
     @property
@@ -215,10 +215,10 @@ class Instr(BipElt):
             If the next element is not an instruction (for exemple at the end
             of a function followed by data) ``None`` will be returned.
 
-            :return: The next :class:`Instr` or None in case of error.
+            :return: The next :class:`BipInstr` or None in case of error.
         """
         try:
-            return Instr(idc.next_head(self.ea))
+            return BipInstr(idc.next_head(self.ea))
         except BipError:
             return None
 
@@ -269,7 +269,7 @@ class Instr(BipElt):
             .. note:: This can be simply handle because of things like a
                 switch/jmp table.
 
-            :return: :class:`Instr` for the next instruction in the control
+            :return: :class:`BipInstr` for the next instruction in the control
                 flow or ``None`` .
         """
         xs = [x.dst for x in self.xFrom if x.is_ordinaryflow] 
@@ -286,7 +286,7 @@ class Instr(BipElt):
             control flow. This will take call, jmp and ordinary flow into
             account.
 
-            :return: A list of :class:`Instr` for the next possible
+            :return: A list of :class:`BipInstr` for the next possible
                 intructions.
         """
         return [x.dst for x in self.xFrom if x.is_codepath] 
@@ -312,7 +312,7 @@ class Instr(BipElt):
 
             :param ea: The address at which to define the instruction, if None
                 the current screen address is used.
-            :return: The :class:`Instr` for this address.
+            :return: The :class:`BipInstr` for this address.
             :raise RuntimeError: If it was not possible to define the address
                 as code.
         """

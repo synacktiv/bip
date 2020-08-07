@@ -60,10 +60,10 @@ def test_bipblock03():
     assert BipBlock(0x01800999F0).func.ea == 0x0180099990
     assert len(BipBlock(0x01800999DC).items) == 4
     for i in BipBlock(0x01800999DC).items:
-        assert i.__class__ == Instr
+        assert i.__class__ == BipInstr
     assert len(BipBlock(0x01800999DC).instr) == 4
     for i in BipBlock(0x01800999DC).instr:
-        assert i.__class__ == Instr
+        assert i.__class__ == BipInstr
     assert BipBlock(0x01800999DC).instr[-1].ea == 0x01800999EE
     assert BipBlock(0x01800999DC).bytes == [0x48, 0x8D, 0x94, 0x24, 0xC0, 0x00, 0x00, 0x00, 0x48, 0x8D, 0x4C, 0x24, 0x20, 0xE8, 0xD2, 0xCE, 0xF6, 0xFF, 0x84, 0xDB]
 

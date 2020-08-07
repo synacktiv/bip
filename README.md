@@ -55,21 +55,21 @@ data, xrefs, structures, types, ...
 
 ``` python
 >>> from bip.base import *
->>> i = Instr() # Instr is the base class for representing an instruction
+>>> i = BipInstr() # BipInstr is the base class for representing an instruction
 >>> i # by default the address on the screen is taken
-Instr: 0x1800D324B (mov     rcx, r13)
->>> i2 = Instr(0x01800D3242) # pass the address in argument
+BipInstr: 0x1800D324B (mov     rcx, r13)
+>>> i2 = BipInstr(0x01800D3242) # pass the address in argument
 >>> i2
-Instr: 0x1800D3242 (mov     r8d, 8)
+BipInstr: 0x1800D3242 (mov     r8d, 8)
 >>> i2.next # access next instruction, preivous with i2.prev
-Instr: 0x1800D3248 (mov     rdx, r14)
->>> l = [i3 for i3 in Instr.iter_all()] # l contain the list of all Instruction of the database, iter_all produce a generator object
+BipInstr: 0x1800D3248 (mov     rdx, r14)
+>>> l = [i3 for i3 in BipInstr.iter_all()] # l contain the list of all BipInstruction of the database, iter_all produce a generator object
 >>> i.ea # access the address
 6443315787
 >>> i.mnem # mnemonic representation
 mov
 >>> i.ops # access to the operands
-[<bip.base.operand.Operand object at 0x0000022B0291DA90>, <bip.base.operand.Operand object at 0x0000022B0291DA58>]
+[<bip.base.operand.BipOperand object at 0x0000022B0291DA90>, <bip.base.operand.BipOperand object at 0x0000022B0291DA58>]
 >>> i.ops[0].str # string representation of an operand
 rcx
 >>> i.bytes # bytes in the instruction
@@ -78,7 +78,7 @@ rcx
 3
 >>> i.comment = "hello" # set a comment, rcomment for the repeatable comments
 >>> i
-Instr: 0x1800D324B (mov     rcx, r13; hello)
+BipInstr: 0x1800D324B (mov     rcx, r13; hello)
 >>> i.comment # get a comment
 hello
 >>> i.func # access to the function
@@ -119,7 +119,7 @@ test
 >>> f.callers # list of function which call this function
 [<bip.base.func.BipFunction object at 0x0000022B04544048>]
 >>> f.instr # list of instructions in the function
-[<bip.base.instr.Instr object at 0x0000022B0291DB00>, ..., <bip.base.instr.Instr object at 0x0000022B0454D080>]
+[<bip.base.instr.BipInstr object at 0x0000022B0291DB00>, ..., <bip.base.instr.BipInstr object at 0x0000022B0454D080>]
 >>> f.comment = "welcome to bip" # comment of the function, rcomment for repeatables one 
 >>> f.comment
 welcome to bip
@@ -136,7 +136,7 @@ BipBlock: 0x1800D306E (from Func: test (0x1800D2FF0))
 >>> f.blocks[5].func # link back to the function
 Func: test (0x1800D2FF0)
 >>> f.blocks[5].instr # list of instruction in the block
-[<bip.base.instr.Instr object at 0x0000022B04544710>, ..., <bip.base.instr.Instr object at 0x0000022B0291DB00>]
+[<bip.base.instr.BipInstr object at 0x0000022B04544710>, ..., <bip.base.instr.BipInstr object at 0x0000022B0291DB00>]
 >>> f.blocks[5].pred # predecessor blocks, blocks where control flow lead to this one
 [<bip.base.block.BipBlock object at 0x0000022B04544D68>]
 >>> f.blocks[5].succ # successor blocks
@@ -190,7 +190,7 @@ In Bip most basic object inherit from the same classes: `BipBaseElt` which is
 the most basic one, `BipRefElt` which include all the objects which can have
 xrefs (including structures and structure members, see bellow), `BipElt`
 which represent all elements which have an address in the IDA DataBase (idb),
-including `BipData` and `Instr` (it is this class which implement the
+including `BipData` and `BipInstr` (it is this class which implement the
 properties `comment`,  `name`, `bytes`, ...).
 
 It is possible to use the functions `GetElt` and `GetEltByName` for directly
@@ -203,11 +203,11 @@ a location in the binary.
 BipData at 0x180110068 = 0xAABBCCDD (size=8)
 >>> GetElt(0x00180110078) # get the element at the address 0x00180110078
 BipData at 0x180110078 = 0xAA (size=1)
->>> GetElt(0x1800D2FF0) # in that case it return an Instr object because this is code
-Instr: 0x1800D2FF0 (mov     rax, rsp)
+>>> GetElt(0x1800D2FF0) # in that case it return an BipInstr object because this is code
+BipInstr: 0x1800D2FF0 (mov     rax, rsp)
 >>> GetEltByName("bip_ex") # Get using a name and not an address
 BipData at 0x180110068 = 0xAABBCCDD (size=8)
->>> isinstance(GetElt(0x1800D2FF0), Instr) # test if that element is an instruction ?
+>>> isinstance(GetElt(0x1800D2FF0), BipInstr) # test if that element is an instruction ?
 True
 >>> GetElt(0x1800D2FF0).is_code # are we on code ? same for is_data; do not work for struct
 True
@@ -220,11 +220,11 @@ Some static function are provided for searching element in the database:
 ``` python
 >>> from bip.base import *
 >>> GetElt()
-Instr: 0x1800D3248 (mov     rdx, r14)
+BipInstr: 0x1800D3248 (mov     rdx, r14)
 >>> BipElt.next_code() # find next code elt from current addres or addr passed as arg
-Instr: 0x1800D324B (mov     rcx, r13)
+BipInstr: 0x1800D324B (mov     rcx, r13)
 >>> BipElt.next_code(down=False) # find prev code element
-Instr: 0x1800D3242 (mov     r8d, 8)
+BipInstr: 0x1800D3242 (mov     r8d, 8)
 >>> BipElt.next_data() # find next data elt from current address or addr passed as arg
 BipData at 0x1800D3284 = 0xCC (size=1)
 >>> BipElt.next_data(down=False) # find previous data element
@@ -234,47 +234,47 @@ BipData at 0x1800D2FE1 = 0xCC (size=1)
 >>> BipElt.next_unknown() # same for unknown, which are not typed element of IDA and are considered data by Bip
 BipData at 0x180110000 = 0xE (size=1)
 >>> BipElt.next_defined() # opposite of unknown: data or code
-Instr: 0x1800D324B (mov     rcx, r13)
+BipInstr: 0x1800D324B (mov     rcx, r13)
 >>> BipElt.search_bytes("49 ? CD", 0x1800D3248) # search for byte sequence (ignore the current position by default)
-Instr: 0x1800D324B (mov     rcx, r13)
+BipInstr: 0x1800D324B (mov     rcx, r13)
 ```
 
 #### Xref
 
-All elements which inherit from `BipRefElt` (`Instr`, `BipData`, `BipStruct`,
+All elements which inherit from `BipRefElt` (`BipInstr`, `BipData`, `BipStruct`,
 ...) and some other (in particular `BipFunction`) possess methods which allow
 to access xrefs. They are represented by the `BipXref` object which have a
 `src` (origin of the xref) and a `dst` (destination of the xref).
 
 ``` python
 >>> from bip.base import *
->>> i = Instr(0x01800D3063)
+>>> i = BipInstr(0x01800D3063)
 >>> i # example with instruction but works the same with BipData
-Instr: 0x1800D3063 (cmp     r15, [rsp+98h+var_58])
+BipInstr: 0x1800D3063 (cmp     r15, [rsp+98h+var_58])
 >>> i.xTo # List of xref which point on this instruction
 [<bip.base.xref.BipXref object at 0x0000022B04544438>, <bip.base.xref.BipXref object at 0x0000022B045447F0>]
 >>> i.xTo[0].src # previous instruction
-Instr: 0x1800D305E (mov     [rsp+98h+var_78], rsi)
+BipInstr: 0x1800D305E (mov     [rsp+98h+var_78], rsi)
 >>> i.xTo[0].is_ordinaryflow # is this an ordinary flow between to instruction (not jmp or call)
 True
 >>> i.xTo[1].src # jmp to instruction i at 0x1800D3063
-Instr: 0x1800D3222 (jmp     loc_1800D3063)
+BipInstr: 0x1800D3222 (jmp     loc_1800D3063)
 >>> i.xTo[1].is_jmp # is this xref because of a jmp ?
 True
 >>> i.xEaTo # bypass the xref objects and get the address directly
 [6443315294L, 6443315746L]
 >>> i.xEltTo # bypass the xref objects and get the elements directly, will list BipData if any
-[<bip.base.instr.Instr object at 0x0000022B045447F0>, <bip.base.instr.Instr object at 0x0000022B04544978>]
+[<bip.base.instr.BipInstr object at 0x0000022B045447F0>, <bip.base.instr.BipInstr object at 0x0000022B04544978>]
 >>> i.xCodeTo # bypass the xref objects and get the instr directly, if a BipData was pointed at this address it will not be listed
-[<bip.base.instr.Instr object at 0x0000022B04544438>, <bip.base.instr.Instr object at 0x0000022B0291DD30>]
+[<bip.base.instr.BipInstr object at 0x0000022B04544438>, <bip.base.instr.BipInstr object at 0x0000022B0291DD30>]
 >>> i.xFrom # same but for comming from this instruction
 [<bip.base.xref.BipXref object at 0x0000022B04544D68>]
 >>> i.xFrom[0]
 <bip.base.xref.BipXref object at 0x0000022B04544438>
 >>> i.xFrom[0].dst # next instruction
-Instr: 0x1800D3068 (jz      loc_1800D3227)
+BipInstr: 0x1800D3068 (jz      loc_1800D3227)
 >>> i.xFrom[0].src # current instruction
-Instr: 0x1800D3063 (cmp     r15, [rsp+98h+var_58])
+BipInstr: 0x1800D3063 (cmp     r15, [rsp+98h+var_58])
 >>> hex(i.xFrom[0].dst_ea) # address of the next instruction
 0x1800D3068L
 >>> i.xFrom[0].is_codepath # this is a normal code path (include jmp and call)
@@ -287,9 +287,9 @@ Func: RtlQueryProcessLockInformation (0x1800D2FF0)
 >>> f.xTo # works also for function, but only with To, not with the From
 [<bip.base.xref.BipXref object at 0x000001D95529EB00>, <bip.base.xref.BipXref object at 0x000001D95529EB70>, <bip.base.xref.BipXref object at 0x000001D95529EBE0>, <bip.base.xref.BipXref object at 0x000001D95529EC88>]
 >>> f.xEltTo # here we have 3 data reference to this function
-[<bip.base.instr.Instr object at 0x000001D95529EE48>, <bip.base.data.BipData object at 0x000001D95529EEF0>, <bip.base.data.BipData object at 0x000001D95529EF28>, <bip.base.data.BipData object at 0x000001D95529EF60>]
+[<bip.base.instr.BipInstr object at 0x000001D95529EE48>, <bip.base.data.BipData object at 0x000001D95529EEF0>, <bip.base.data.BipData object at 0x000001D95529EF28>, <bip.base.data.BipData object at 0x000001D95529EF60>]
 >>> f.xCodeTo # but only one instruction
-[<bip.base.instr.Instr object at 0x000001D95529EC88>]
+[<bip.base.instr.BipInstr object at 0x000001D95529EC88>]
 ```
 
 #### Struct
@@ -328,9 +328,9 @@ Struct: EXCEPTION_RECORD (size=0x98)
 >>> st[0].comment
 member comment
 >>> st[8].xEltTo # BStructMember et BipStruct have xrefs
-[<bip.base.instr.Instr object at 0x000001D95536DD30>, <bip.base.instr.Instr object at 0x000001D95536D9E8>]
+[<bip.base.instr.BipInstr object at 0x000001D95536DD30>, <bip.base.instr.BipInstr object at 0x000001D95536D9E8>]
 >>> st[8].xEltTo[0]
-Instr: 0x1800A0720 (mov     [rsp+538h+ExceptionRecord.ExceptionRecord], r10)
+BipInstr: 0x1800A0720 (mov     [rsp+538h+ExceptionRecord.ExceptionRecord], r10)
 ```
 
 Creating struct, adding member and nested structure:

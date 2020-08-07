@@ -44,6 +44,7 @@ General
     general/install
     general/overview
     general/archi
+    general/changelog
 
 .. _index-base:
 

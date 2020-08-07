@@ -8,7 +8,7 @@ try:
 except Exception:
     pass
 
-from .event import HexRaysEvent
+from .event import HxEvent
 from .hx_lvar import HxLvar
 from .hx_cfunc import HxCFunc
 from .astnode import HxCType

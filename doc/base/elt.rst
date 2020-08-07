@@ -16,11 +16,11 @@ Three abstract classes are defined in Bip:
   particular it is in charge of making the interface with :func:`GetElt` and
   :func:`GetEltByName`.
 * :class:`BipRefElt` : is the parent class of all elements which can be
-  referenced by xref in IDA. This include :class:`Instr`, :class:`BipData`,
+  referenced by xref in IDA. This include :class:`BipInstr`, :class:`BipData`,
   :class:`BipStruct` and :class:`BStructMember`.
 * :class:`BipElt` : is the parent class of all elements with an actual address
   as ID and provide a lot of common API for thoses elements, this is the
-  parent class of :class:`Instr` and :class:`BipData`.
+  parent class of :class:`BipInstr` and :class:`BipData`.
 
 For getting a correct element from an ID it is enough to call the
 :func:`GetElt` and :func:`GetEltByName` function. As those functions can

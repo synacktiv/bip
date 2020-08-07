@@ -329,7 +329,7 @@ class BipFunction(object):
             Allow to check if an element is included inside this function. It
             accepts the following in arguments:
 
-            * :class:`BipElt` (including :class:`Instr`)
+            * :class:`BipElt` (including :class:`BipInstr`)
             * :class:`BipBlock`
             * An integer corresponding to an address.
 
@@ -413,7 +413,7 @@ class BipFunction(object):
         """
             Allow to check if an address or an :class:`BipElt` object (or
             inherited) is included in this function. In particular it
-            allow to check if an :class:`Instr` is included in a function.
+            allow to check if an :class:`BipInstr` is included in a function.
 
             This function is based on the ``func_t.contains`` function of
             IDA, this function seems to check only the address compare to the
@@ -738,7 +738,7 @@ class BipFunction(object):
 
             .. note::
 
-                This should mainly be :class:`Instr` but possible in theory
+                This should mainly be :class:`BipInstr` but possible in theory
                 to be other kind of data.
 
             :return: A list of object :class:`BipElt`.
@@ -748,25 +748,25 @@ class BipFunction(object):
     @property
     def instr(self):
         """
-            Return a list of :class:`Instr` corresponding to the instructions
+            Return a list of :class:`BipInstr` corresponding to the instructions
             of the functions.
 
-            :return: A list of object :class:`Instr`
+            :return: A list of object :class:`BipInstr`
         """
-        return [bip.base.instr.Instr(h) for h in idautils.Heads(self.ea, self.end) if idc.is_code(ida_bytes.get_full_flags(h))]
+        return [bip.base.instr.BipInstr(h) for h in idautils.Heads(self.ea, self.end) if idc.is_code(ida_bytes.get_full_flags(h))]
 
     @property
     def instr_iter(self):
         """
-            Return a generator of :class:`Instr` corresponding to the
+            Return a generator of :class:`BipInstr` corresponding to the
             instructions of the functions. This implementation will be just
             a little more performant than the :meth:`instr` property.
 
-            :return: A generator of object :class:`Instr`
+            :return: A generator of object :class:`BipInstr`
         """
         for h in idautils.Heads(self.ea, self.end):
             if idc.is_code(ida_bytes.get_full_flags(h)):
-                yield bip.base.instr.Instr(h)
+                yield bip.base.instr.BipInstr(h)
 
     @property
     def bytes(self):
@@ -878,7 +878,7 @@ class BipFunction(object):
             element. This will take into account jmp, call, ordinary flow and
             "data" references.
 
-            :return: A list of :class:`Instr` referenced by this element.
+            :return: A list of :class:`BipInstr` referenced by this element.
         """
         return [x.src for x in self.xTo if x.src.is_code]
 
