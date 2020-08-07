@@ -20,12 +20,10 @@ from .biperror import BipError
 
 hexrays = None
 
-class BipFuncFlags(object):
+class _BipFuncFlags(object):
     """
         Enum for the function flags from IDA. ``FUNC_*`` flags. Documentation
         of the flags is from the IDA documentation
-
-        .. todo:: doc sphinx complient
     """
     FUNC_NORET          = idaapi.FUNC_NORET         # function doesn't return
     FUNC_FAR            = idaapi.FUNC_FAR           # far function
@@ -57,7 +55,7 @@ class BipFuncFlags(object):
 
     FUNCATTR_FLAGS      = idc.FUNCATTR_FLAGS
 
-class BipFlowChartFlag(object):
+class _BipFlowChartFlag(object):
     """
         Enum for the flag of the flow chart. ``FC_*`` constant. Documentation
         of the flags is from the IDA documentation.
@@ -400,14 +398,14 @@ class BipFunction(object):
 
             :return int: The flags for this function.
         """
-        return idc.get_func_attr(self.ea, BipFuncFlags.FUNCATTR_FLAGS)
+        return idc.get_func_attr(self.ea, _BipFuncFlags.FUNCATTR_FLAGS)
 
     @flags.setter
     def flags(self, value):
         """
             Setter which allow to modify the functions flags.
         """
-        idc.set_func_attr(self.ea, BipFuncFlags.FUNCATTR_FLAGS, value)
+        idc.set_func_attr(self.ea, _BipFuncFlags.FUNCATTR_FLAGS, value)
 
     def is_inside(self, o):
         """
@@ -440,7 +438,7 @@ class BipFunction(object):
             :return boolean: True if the function is expected to return.
         """
         #return self._funct.does_return()
-        return self.flags & BipFuncFlags.FUNC_NORET == 0
+        return self.flags & _BipFuncFlags.FUNC_NORET == 0
 
     @does_return.setter
     def does_return(self, value):
@@ -454,9 +452,9 @@ class BipFunction(object):
         # do not use bitfield op. for setting flags because we don't actually
         #   now its size (and it seems to change if 32 or 64bits)
         if value:
-            self.flags = self.flags - BipFuncFlags.FUNC_NORET
+            self.flags = self.flags - _BipFuncFlags.FUNC_NORET
         else:
-            self.flags = self.flags + BipFuncFlags.FUNC_NORET
+            self.flags = self.flags + _BipFuncFlags.FUNC_NORET
 
     @property
     def is_far(self):
@@ -464,7 +462,7 @@ class BipFunction(object):
             Check flags of this function for knowing if this is a far
             function.
         """
-        return self.flags & BipFuncFlags.FUNC_FAR != 0
+        return self.flags & _BipFuncFlags.FUNC_FAR != 0
 
     @is_far.setter
     def is_far(self, value):
@@ -480,9 +478,9 @@ class BipFunction(object):
         # do not use bitfield op. for setting flags because we don't actually
         #   now its size (and it seems to change if 32 or 64bits)
         if value:
-            self.flags = self.flags + BipFuncFlags.FUNC_FAR
+            self.flags = self.flags + _BipFuncFlags.FUNC_FAR
         else:
-            self.flags = self.flags - BipFuncFlags.FUNC_FAR
+            self.flags = self.flags - _BipFuncFlags.FUNC_FAR
 
     @property
     def is_lib(self):
@@ -490,7 +488,7 @@ class BipFunction(object):
             Check flags of this function for knowing if this is a library
             function.
         """
-        return self.flags & BipFuncFlags.FUNC_LIB != 0
+        return self.flags & _BipFuncFlags.FUNC_LIB != 0
 
     @is_lib.setter
     def is_lib(self, value):
@@ -506,9 +504,9 @@ class BipFunction(object):
         # do not use bitfield op. for setting flags because we don't actually
         #   now its size (and it seems to change if 32 or 64bits)
         if value:
-            self.flags = self.flags + BipFuncFlags.FUNC_LIB
+            self.flags = self.flags + _BipFuncFlags.FUNC_LIB
         else:
-            self.flags = self.flags - BipFuncFlags.FUNC_LIB
+            self.flags = self.flags - _BipFuncFlags.FUNC_LIB
 
     @property
     def is_static(self):
@@ -516,7 +514,7 @@ class BipFunction(object):
             Check flags of this function for knowing if this is a static
             function.
         """
-        return self.flags & BipFuncFlags.FUNC_STATICDEF != 0
+        return self.flags & _BipFuncFlags.FUNC_STATICDEF != 0
 
     @is_static.setter
     def is_static(self, value):
@@ -532,9 +530,9 @@ class BipFunction(object):
         # do not use bitfield op. for setting flags because we don't actually
         #   now its size (and it seems to change if 32 or 64bits)
         if value:
-            self.flags = self.flags + BipFuncFlags.FUNC_STATICDEF
+            self.flags = self.flags + _BipFuncFlags.FUNC_STATICDEF
         else:
-            self.flags = self.flags - BipFuncFlags.FUNC_STATICDEF
+            self.flags = self.flags - _BipFuncFlags.FUNC_STATICDEF
 
     @property
     def use_frame(self):
@@ -542,7 +540,7 @@ class BipFunction(object):
             Check flags of this function for knowing if it is using the frame
             pointer.
         """
-        return self.flags & BipFuncFlags.FUNC_FRAME != 0
+        return self.flags & _BipFuncFlags.FUNC_FRAME != 0
 
     @use_frame.setter
     def use_frame(self, value):
@@ -558,9 +556,9 @@ class BipFunction(object):
         # do not use bitfield op. for setting flags because we don't actually
         #   now its size (and it seems to change if 32 or 64bits)
         if value:
-            self.flags = self.flags + BipFuncFlags.FUNC_FRAME
+            self.flags = self.flags + _BipFuncFlags.FUNC_FRAME
         else:
-            self.flags = self.flags - BipFuncFlags.FUNC_FRAME
+            self.flags = self.flags - _BipFuncFlags.FUNC_FRAME
 
     @property
     def is_userfar(self):
@@ -569,7 +567,7 @@ class BipFunction(object):
             the function as change the marking of the function being far or
             not.
         """
-        return self.flags & BipFuncFlags.FUNC_USERFAR != 0
+        return self.flags & _BipFuncFlags.FUNC_USERFAR != 0
 
     @is_userfar.setter
     def is_userfar(self, value):
@@ -586,16 +584,16 @@ class BipFunction(object):
         # do not use bitfield op. for setting flags because we don't actually
         #   now its size (and it seems to change if 32 or 64bits)
         if value:
-            self.flags = self.flags + BipFuncFlags.FUNC_USERFAR
+            self.flags = self.flags + _BipFuncFlags.FUNC_USERFAR
         else:
-            self.flags = self.flags - BipFuncFlags.FUNC_USERFAR
+            self.flags = self.flags - _BipFuncFlags.FUNC_USERFAR
 
     @property
     def is_hidden(self):
         """
             Check flags of this function for knowing if its a hidden function.
         """
-        return self.flags & BipFuncFlags.FUNC_HIDDEN != 0
+        return self.flags & _BipFuncFlags.FUNC_HIDDEN != 0
 
     @is_hidden.setter
     def is_hidden(self, value):
@@ -612,16 +610,16 @@ class BipFunction(object):
         # do not use bitfield op. for setting flags because we don't actually
         #   now its size (and it seems to change if 32 or 64bits)
         if value:
-            self.flags = self.flags + BipFuncFlags.FUNC_HIDDEN
+            self.flags = self.flags + _BipFuncFlags.FUNC_HIDDEN
         else:
-            self.flags = self.flags - BipFuncFlags.FUNC_HIDDEN
+            self.flags = self.flags - _BipFuncFlags.FUNC_HIDDEN
 
     @property
     def is_thunk(self):
         """
             Check flags of this function for knowing if its a thunk function.
         """
-        return self.flags & BipFuncFlags.FUNC_THUNK != 0
+        return self.flags & _BipFuncFlags.FUNC_THUNK != 0
 
     @is_thunk.setter
     def is_thunk(self, value):
@@ -638,9 +636,9 @@ class BipFunction(object):
         # do not use bitfield op. for setting flags because we don't actually
         #   now its size (and it seems to change if 32 or 64bits)
         if value:
-            self.flags = self.flags + BipFuncFlags.FUNC_THUNK
+            self.flags = self.flags + _BipFuncFlags.FUNC_THUNK
         else:
-            self.flags = self.flags - BipFuncFlags.FUNC_THUNK
+            self.flags = self.flags - _BipFuncFlags.FUNC_THUNK
 
     ############################ COMMENT ##############################
 
@@ -688,13 +686,13 @@ class BipFunction(object):
             .. note::
 
                 Internally this is compute with the flags
-                ``BipFlowChartFlag.FC_PREDS`` and
-                ``BipFlowChartFlag.FC_NOEXT`` .
+                ``_BipFlowChartFlag.FC_PREDS`` and
+                ``_BipFlowChartFlag.FC_NOEXT`` .
 
             :return: An ``idaapi.FlowChart`` object.
         """
         return idaapi.FlowChart(self._funct,
-                flags=(BipFlowChartFlag.FC_PREDS|BipFlowChartFlag.FC_NOEXT))
+                flags=(_BipFlowChartFlag.FC_PREDS|_BipFlowChartFlag.FC_NOEXT))
 
     @property
     def nb_blocks(self):

@@ -7,6 +7,6 @@ from .bipstruct import BipStruct, BStructMember
 from .bipenum import BipEnum, BEnumMember
 from .xref import _XrefTypes, BipXref
 from .biperror import BipError, BipDecompileError
-from .func import BipFuncFlags, BipFunction
+from .func import _BipFuncFlags, BipFunction
 from .block import BipBlockType, BipBlock
 from .biptype import BipType, BTypeEmpty, BTypePartial, BTypeVoid, BTypeInt, BTypeBool, BTypeFloat, BTypePtr, BTypeArray, BTypeFunc, BTypeStruct, BTypeUnion, BTypeEnum
