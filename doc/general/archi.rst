@@ -272,7 +272,7 @@ objects.
 
 In most cases Bip will provide one static function or one static method which
 allows to get the object of the correct class (ex: :func:`~bip.base.GetElt`,
-:func:`~bip.base.GetEltByName`, :meth:`~bip.hexrays.CNode.GetCNode`, ...).
+:func:`~bip.base.GetEltByName`, :meth:`~bip.hexrays.CNode.from_citem`, ...).
 Most parent classes of the objects provide ways to test which kind of object
 will be produced. However, the intended way to check for the object type is
 to use the ``isinstance`` function with the object type being tested.
@@ -309,12 +309,12 @@ use ``isinstance``.
     Found data ref at 0x18016c7fc
 
 This next example show how to check for types. All types in Bip inherit from 
-:class:`~bip.base.BipType`, the :meth:`~bip.base.BipType.GetBipType` method
+:class:`~bip.base.BipType`, the :meth:`~bip.base.BipType.from_tinfo` method
 allow to get the correct Bip object from the ``tinfo_t`` object used by
 IDA (which is used for all different types). In most cases there is no need
 to go through this method, Bip objects which are typed should have a ``type``
 property which should allow to get their type and
-the methods :meth:`~bip.base.BipType.FromC` and
+the methods :meth:`~bip.base.BipType.from_c` and
 :meth:`~bip.base.BipType.get_at` should allow to get the correct value easily.
 However when scripting it is often interesting to look at the type of an
 object, more information about types and the different classes which represent
@@ -326,7 +326,7 @@ pointer (:class:`~bip.base.BTypePtr`) we look at the subtype pointed.
 .. code-block:: pycon
 
     >>> from bip import *
-    >>> tst = BipType.FromC("struct {char a; int b; void *c; __int64 d; char *e; void *(*f)(int i);}")
+    >>> tst = BipType.from_c("struct {char a; int b; void *c; __int64 d; char *e; void *(*f)(int i);}")
     >>> tst.members_info
     {'a': <bip.base.biptype.BTypeInt object at 0x0000029B22C24160>, 'c': <bip.base.biptype.BTypePtr object at 0x0000029B22C24128>, 'b': <bip.base.biptype.BTypeInt object at 0x0000029B22C24390>, 'e': <bip.base.biptype.BTypePtr object at 0x0000029B22C244A8>, 'd': <bip.base.biptype.BTypeInt object at 0x0000029B22C24438>, 'f': <bip.base.biptype.BTypePtr object at 0x0000029B22C24048>}
     >>> for i in range(tst.nb_members):

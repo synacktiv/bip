@@ -50,17 +50,12 @@ class HxLvar(object):
         Python object for representing a local variable of hexrays.
 
         .. todo:: flags (not accessible publicly)
-        .. todo:: raccord with cfunc_t (HxFunc)
-
-        .. todo:: test
     """
 
     def __init__(self, lvar, hxcfunc, persistent=True):
         """
             Constructor for the :class:`HxLvar` representing a local variable
             from hexrays.
-
-            .. todo:: test
 
             :param lvar: A ``lvar_t`` object from hexrays (those are swig
                 proxy) which is the ida variable corresponding to this object.
@@ -114,7 +109,7 @@ class HxLvar(object):
         return self._lvar.width
 
     @property
-    def hxfunc(self):
+    def hxcfunc(self):
         """
             Property which return the hexrays C function (:class:`HxCFunc`)
             object to which this local variable is attached.
@@ -127,8 +122,6 @@ class HxLvar(object):
     def comment(self):
         """
             Property which return the comment of the lvar.
-
-            .. todo:: test
 
             :return: The value of the comment or an empty string if there is no
                 comment.
@@ -178,7 +171,7 @@ class HxLvar(object):
             :return: An object which inherit from :class:`BipType` and
                 represent the type of this local variable.
         """
-        return biptype.BipType.GetBipType(self._ida_tinfo)
+        return biptype.BipType.from_tinfo(self._ida_tinfo)
 
     @type.setter
     def type(self, value):
@@ -203,7 +196,7 @@ class HxLvar(object):
                 type.
         """
         if isinstance(value, (str, unicode)):
-            value = biptype.BipType.FromC(value)
+            value = biptype.BipType.from_c(value)
         if not isinstance(value, biptype.BipType):
             raise TypeError("HxLvar type setter expect an object which inherit from BipType or a string representing the C type")
         if not self._lvar.set_lvar_type(value._get_tinfo_copy(), True):

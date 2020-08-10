@@ -112,7 +112,7 @@ class AbstractCItem(object):
         :meth:`~AbstractCItem.is_handling_type` method used for determining
         the correct object to create using the
         :attr:`~AbstractCItem.TYPE_HANDLE` attribute. Finally, it also define
-        the :meth:`~AbstractCItem._createChild` abstract method used for being
+        the :meth:`~AbstractCItem._create_child` abstract method used for being
         able to create child nodes.
     """
     #: Class attribute indicating which type of item this class handles,
@@ -226,14 +226,14 @@ class AbstractCItem(object):
 
     ############################ INHERITANCE METHODS #########################
 
-    def _createChild(self, obj):
+    def _create_child(self, obj):
         """
             Abstract method which allow to create child element for this
             object with the correct class. This should be implemented by child
             classes and will raise a :class:`NotImplementedError` exception
             if not surcharge.
         """
-        raise NotImplementedError("_createChild is an abstract method and should be surcharge by child class")
+        raise NotImplementedError("_create_child is an abstract method and should be surcharge by child class")
 
     ############################ CLASS METHODS ##########################
 

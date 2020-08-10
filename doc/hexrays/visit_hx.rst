@@ -17,7 +17,7 @@ This API is based on the :class:`~bip.hexrays.HxCItem` abstract class, each
 AST nodes are represented by a subclass of this object which are determine
 by its type. For more information of the different type of nodes see 
 :ref:`doc-hexrays-astnodes-nodetype`. The method
-:meth:`~bip.hexrays.HxCItem.GetHxCItem` allow to recuperate an object of the
+:meth:`~bip.hexrays.HxCItem.from_citem` allow to recuperate an object of the
 correct class (which inherit from :class:`~bip.hexrays.HxCItem`) for a
 particular ``citem_t`` object from IDA.
 

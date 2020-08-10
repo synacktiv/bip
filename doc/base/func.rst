@@ -13,7 +13,7 @@ property :meth:`~BipBlock.succ` and :meth:`BipBlock.pred` .
 
 :class:`BipFunction` can also allow to recuperate the hexrays decompile
 version of their code when available, this is done using the
-:meth:`~BipFunction.hxfunc` property which return a
+:meth:`~BipFunction.hxcfunc` property which return a
 :class:`~bip.hexrays.HxCFunc` object when available.
 
 For example of how to use functions and blocks see the

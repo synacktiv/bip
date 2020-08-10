@@ -345,7 +345,7 @@ class BipFunction(object):
     ######################## Hexrays ###############################
 
     @property
-    def hxfunc(self):
+    def hxcfunc(self):
         """
             Property which return the hexrays C function (:class:`HxCFunc`)
             for this function.
@@ -374,7 +374,7 @@ class BipFunction(object):
             Property which test if it is possible to get the hexrays
             C function (:class:`HxCFunc`) for this function.
 
-            Internally this will just try to call :meth:`BipFunction.hxfunc`
+            Internally this will just try to call :meth:`BipFunction.hxcfunc`
             and catch the error, this means calling this function will
             actually perform the decompilation.
 
@@ -382,7 +382,7 @@ class BipFunction(object):
                 for this :class:`BipFunction`, False otherwise.
         """
         try:
-            self.hxfunc
+            self.hxcfunc
         except Exception:
             return False
         return True
@@ -953,10 +953,10 @@ class BipFunction(object):
 
 
     @classmethod
-    def ByOrdinal(cls, ordinal):
+    def by_ordinal(cls, ordinal):
         """
             Get an :class:`BipFunction` from its ordinal, there is between
-            ``0`` and ``BipFunction.Count()`` function in an IDB.
+            ``0`` and ``BipFunction.count()`` function in an IDB.
         """
         return cls(ida_funcs.getn_func(ordinal).start_ea)
 
@@ -973,20 +973,20 @@ class BipFunction(object):
             yield cls(ea)
 
     @classmethod
-    def Entries(cls):
+    def entries(cls):
         """
             Get the functions which are entry points of the binary.
 
             :return: A list of :class:`BipFunction` which are entry points
                 of the binary currently analyzed.
         """
-        return [elt for elt in cls.Entries_iter()]
+        return [elt for elt in cls.entries_iter()]
 
     @classmethod
-    def Entries_iter(cls):
+    def entries_iter(cls):
         """
             Get an generator on the functions which are entry points of the
-            binary. This should be faster than :meth:`~BipFunction.Entries` .
+            binary. This should be faster than :meth:`~BipFunction.entries` .
 
             :return: A generator on :class:`BipFunction` which are entry
                 points of the binary currently analyzed.
@@ -1068,7 +1068,7 @@ class BipFunction(object):
     ########################## STATIC METHOD ############################
 
     @staticmethod
-    def Count():
+    def count():
         """
             Return the number of functions which are present in the idb.
         """

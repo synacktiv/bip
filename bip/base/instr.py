@@ -303,7 +303,7 @@ class BipInstr(BipElt):
     ######################### STATIC/CLASS METHODS ###########################
 
     @classmethod
-    def Make(cls, ea=None):
+    def make(cls, ea=None):
         """
             Class method for defining an instruction. If auto-analysis is
             enable in IDA this may define also the following instructions.

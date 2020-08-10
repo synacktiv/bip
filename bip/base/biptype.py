@@ -29,8 +29,8 @@ class BipType(object):
         information.
 
         The objects which inherit from :class:`BipType` can contain other
-        *child* :class:`BipType` objects. For example a pointer (TODO class
-        name in bip) will contain one child object corresponding to the
+        *child* :class:`BipType` objects. For example a pointer
+        (:class:`BTypePtr`) will contain one child object corresponding to the
         pointed type. The :meth:`childs` property allow to get a list of the
         child object.
 
@@ -51,7 +51,7 @@ class BipType(object):
         """
             Base constructor for the child classes of :class:`BipType`. This
             constructor is used for interfacing with IDA and initializing. A
-            bip user should probably used the :func:`BipType.GetBipType`
+            bip user should probably used the :func:`BipType.from_tinfo`
             function which will directly create the object of the correct
             class.
 
@@ -202,12 +202,12 @@ class BipType(object):
         # this seems to be define in ida_nalt...
         if ida_nalt.get_tinfo(tif, ea):
             # no need to make a copy in this case
-            return BipType.GetBipTypeNoCopy(tif)
+            return BipType.from_tinfo_no_copy(tif)
 
         # no type define, try to guess it
         # don't know when GUESS_FUNC_TRIVIAL is return so consider failure
         if guess_tinfo(tif, ea) == GUESS_FUNC_OK:
-            return BipType.GetBipTypeNoCopy(tif)
+            return BipType.from_tinfo_no_copy(tif)
 
         # not able to guess, this should be a tinfo_t empty ? (tif.empty() ?)
         return None
@@ -253,7 +253,7 @@ class BipType(object):
         return False
 
     @staticmethod
-    def GetBipType(tinfo):
+    def from_tinfo(tinfo):
         """
             Function which convert a ``tinfo_t`` object from ida to one of the
             child object of :class:`BipType` . This should be used for
@@ -262,7 +262,7 @@ class BipType(object):
 
             If no :class:`BipType` child object supports the ``tinfo_t`` a
             ``ValueError`` exception will be raised. Internally this use
-            the :func:`~BipType._GetClassBipType` function.
+            the :func:`~BipType._get_class_bip_type` function.
 
             This create a **copy** of the underlying ``tinfo_t`` object, this
             allow to avoid problems if when using the IdaPython API or the GUI
@@ -271,41 +271,41 @@ class BipType(object):
             possible this will create an error prone API. Instead types are
             handle by copy instead of by reference, and interface with other
             bip object take this into account. For creating an object of the
-            correct class without a copy the :func:`~BipType.GetBipTypeNoCopy`
+            correct class without a copy the :func:`~BipType.from_tinfo_no_copy`
             can be used by is subject to the above problems.
 
             :param tinfo: A ``tinfo_t`` from ida.
             :return: The equivalent object to the ``tinfo_t`` for bip. This
                 will be an object which inherit from :class:`BipType` .
         """
-        return BipType._GetClassBipType(tinfo)(tinfo_t(tinfo))
+        return BipType._get_class_bip_type(tinfo)(tinfo_t(tinfo))
 
 
     @staticmethod
-    def GetBipTypeNoCopy(tinfo):
+    def from_tinfo_no_copy(tinfo):
         """
             Function which convert a ``tinfo_t`` object from ida to one of the
             child object of :class:`BipType` .
 
             If no :class:`BipType` child object supports the ``tinfo_t`` a
             ``ValueError`` exception will be raised. Internally this use
-            the :func:`~BipType._GetClassBipType` function.
+            the :func:`~BipType._get_class_bip_type` function.
 
             .. warning::
 
                 This function does **not** create a copy of the underlying
                 ``tinfo_t`` object which can create several problems when
                 using the GUI or the IdaPython/IDC API. For creating a copy
-                of the object use the :func:`~BipType.GetBipType` instead.
+                of the object use the :func:`~BipType.from_tinfo` instead.
 
             :param tinfo: A ``tinfo_t`` from ida.
             :return: The equivalent object to the ``tinfo_t`` for bip. This
                 will be an object which inherit from :class:`BipType` .
         """
-        return BipType._GetClassBipType(tinfo)(tinfo)
+        return BipType._get_class_bip_type(tinfo)(tinfo)
 
     @staticmethod
-    def FromC(cstr, flags=0x401):
+    def from_c(cstr, flags=0x401):
         """
             Function which convert a C string declaration into a object which
             inherit from a :class:`BipType` . If there is no ``;`` at the end
@@ -328,10 +328,10 @@ class BipType(object):
             cstr += ';'
         if parse_decl(tif, None, cstr, flags) is None:
             raise RuntimeError("Unable to create a BipType from declaration {}".format(repr(cstr)))
-        return BipType.GetBipTypeNoCopy(tif)
+        return BipType.from_tinfo_no_copy(tif)
 
     @staticmethod
-    def ImportCHeader(path, pack=0, raw_args=True, silent=False, autoimport=True):
+    def import_c_header(path, pack=0, raw_args=True, silent=False, autoimport=True):
         """
             Import a C header file.
 
@@ -388,7 +388,7 @@ class BipType(object):
             return idc.parse_decls(path, flags)
 
     @staticmethod
-    def _GetClassBipType(tinfo):
+    def _get_class_bip_type(tinfo):
         """
             Internal function which allow to recuperate the correct child
             class of :class:`BipType` corresponding to  ``tinfo_t`` object
@@ -415,7 +415,7 @@ class BipType(object):
             else:
                 done.add(cl)
                 todo |= set(cl.__subclasses__())
-        raise ValueError("GetHxCItem could not find an object matching the tinfo_t type provided ({}: {})".format(tinfo, tinfo.dstr()))
+        raise ValueError("_get_class_bip_type could not find an object matching the tinfo_t type provided ({}: {})".format(tinfo, tinfo.dstr()))
 
     def _get_tinfo_copy(self):
         """
@@ -537,7 +537,7 @@ class BTypePtr(BipType):
             :return: An object which inherit from
                 :class:`BipType` class.
         """
-        return BipType.GetBipType(self._tinfo.get_pointed_object())
+        return BipType.from_tinfo(self._tinfo.get_pointed_object())
 
     @property
     def is_pvoid(self):
@@ -601,7 +601,7 @@ class BTypeArray(BipType):
             :return: An object which inherit from
                 :class:`BipType` class.
         """
-        return BipType.GetBipType(self._array_info.elem_type)
+        return BipType.from_tinfo(self._array_info.elem_type)
 
     @property
     def nb_elts(self):
@@ -682,8 +682,8 @@ class BTypeFunc(BipType):
             :return: An object which inherit from :class:`BipType` class.
         """
         # This does not work, don't know why
-        #return BipType.GetBipType(self._ida_func_type_data[pos].type)
-        return BipType.GetBipType(self._tinfo.get_nth_arg(pos))
+        #return BipType.from_tinfo(self._ida_func_type_data[pos].type)
+        return BipType.from_tinfo(self._tinfo.get_nth_arg(pos))
 
     @property
     def nb_args(self):
@@ -717,7 +717,7 @@ class BTypeFunc(BipType):
 
             :return: An object which inherit from :class:`BipType` class.
         """
-        return BipType.GetBipType(self._ida_func_type_data.rettype)
+        return BipType.from_tinfo(self._ida_func_type_data.rettype)
 
     @property
     def childs(self):
@@ -812,7 +812,7 @@ class BTypeStruct(BipType):
             :return: An object which inherit from :class:`BipType` class.
         """
         iutd = self._ida_udt_type_data
-        t = BipType.GetBipType(iutd[num].type)
+        t = BipType.from_tinfo(iutd[num].type)
         return t
 
     @property
@@ -847,7 +847,7 @@ class BTypeStruct(BipType):
         iutd = self._ida_udt_type_data
         for i in range(self.nb_members):
             utd = iutd[i]
-            d[str(utd.name)] = BipType.GetBipType(utd.type)
+            d[str(utd.name)] = BipType.from_tinfo(utd.type)
         return d
 
     @property
@@ -926,7 +926,7 @@ class BTypeUnion(BipType):
             :return: An object which inherit from :class:`BipType` class.
         """
         iutd = self._ida_udt_type_data
-        t = BipType.GetBipType(iutd[num].type)
+        t = BipType.from_tinfo(iutd[num].type)
         return t
 
     @property
@@ -960,7 +960,7 @@ class BTypeUnion(BipType):
         iutd = self._ida_udt_type_data
         for i in range(self.nb_members):
             utd = iutd[i]
-            d[str(utd.name)] = BipType.GetBipType(utd.type)
+            d[str(utd.name)] = BipType.from_tinfo(utd.type)
         return d
 
     @property

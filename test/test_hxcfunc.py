@@ -15,8 +15,8 @@ def test_biphxcfunc00():
     hxf = HxCFunc.from_addr(0x01800D2FF0)
     assert isinstance(hxf, HxCFunc)
     assert hxf.ea == 0x01800D2FF0
-    assert isinstance(BipFunction(0x01800D2FF0).hxfunc, HxCFunc)
-    assert hxf.ea == BipFunction(0x01800D2FF0).hxfunc.ea
+    assert isinstance(BipFunction(0x01800D2FF0).hxcfunc, HxCFunc)
+    assert hxf.ea == BipFunction(0x01800D2FF0).hxcfunc.ea
     hxf = HxCFunc.from_addr(0x01800D2FF7)
     assert isinstance(hxf, HxCFunc)
     assert hxf.ea == 0x01800D2FF0
@@ -75,7 +75,7 @@ def test_biphxcfunc04():
     hxf = HxCFunc.from_addr(0x01800D2FF0)
     assert hxf.root_node is not None
     assert isinstance(hxf.root_node, CNodeStmtBlock)
-    assert hxf.root_node.cfunc == hxf
+    assert hxf.root_node.hxcfunc == hxf
     assert hxf.hx_root_stmt is not None
     assert isinstance(hxf.hx_root_stmt, HxCStmtBlock)
 

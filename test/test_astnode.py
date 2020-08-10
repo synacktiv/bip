@@ -45,7 +45,7 @@ def test_bipabstractcitem00():
     # equality
     assert id(aci) != id(hxf.root_node)
     assert aci == hxf.root_node
-    assert aci != hxf.root_node.st_childs[0]
+    assert aci != hxf.root_node.stmt_childs[0]
     assert aci.__eq__(0x10) == NotImplemented
     assert aci.__ne__(0x10) == NotImplemented
     assert aci != 0x10
@@ -59,7 +59,7 @@ def test_bipcnode00():
     assert not cn.is_expr
     gentst_cnode(cn)
     gentst_cnodestmt(cn)
-    cnc = cn.st_childs[0] # first child, this should be a CNodeStmtExpr
+    cnc = cn.stmt_childs[0] # first child, this should be a CNodeStmtExpr
     assert isinstance(cnc, CNodeStmtExpr)
     assert cnc.is_statement
     assert not cnc.is_expr
@@ -77,7 +77,7 @@ def test_bipcnode00():
     assert cnc.has_parent == True
     with pytest.raises(RuntimeError): cn.parent
     assert cnc.parent == cn
-    assert cn.cfunc == hxf
+    assert cn.hxcfunc == hxf
     # comment
     assert cna.comment is None
     cna.comment = "cmt4test"
@@ -86,8 +86,8 @@ def test_bipcnode00():
     assert len(cna.ops) == 2
     assert isinstance(cna.find_final_left_node(), CNodeExprVar)
     # cnodeStmt
-    assert len(cn.st_childs) != 0
-    assert len(cnc.st_childs) == 0
+    assert len(cn.stmt_childs) != 0
+    assert len(cnc.stmt_childs) == 0
     assert len(cn.expr_childs) == 0
     assert len(cnc.expr_childs) == 1
     hxf2 = HxCFunc.from_addr(0x0180002524)
@@ -105,7 +105,7 @@ def test_biphxcitem00():
     hxf = HxCFunc.from_addr(0x01800D2FF0)
     hi = hxf.hx_root_stmt
     gentst_hxcstmt(hi)
-    hic = hi.st_childs[0] # first child, this should be a CNodeStmtExpr
+    hic = hi.stmt_childs[0] # first child, this should be a CNodeStmtExpr
     assert isinstance(hic, HxCStmtExpr)
     gentst_hxcstmt(hic)
     hia = hic.value # first asg

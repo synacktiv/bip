@@ -83,7 +83,7 @@ def visit_call_printk(cn):
             #print("Invalid string at 0x{:X}".format(cn.ea))
             return
         s = s.strip() # remove \n
-        cn.cfunc.add_cmt(cn.ea, s)
+        cn.hxcfunc.add_cmt(cn.ea, s)
         GetElt(cn.ea).comment = s
     except Exception: 
         #print("Exception at 0x{:X}".format(cn.ea))

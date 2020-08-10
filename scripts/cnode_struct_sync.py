@@ -100,13 +100,13 @@ def visit_propag(cn, num_ops=2, set_all_operand=False):
 
 def propagate_for_func(ea):
     f = BipFunction(ea)
-    f.hxfunc.visit_cnode_filterlist(visit_propag, [CNodeExprMemref, CNodeExprMemptr])
+    f.hxcfunc.visit_cnode_filterlist(visit_propag, [CNodeExprMemref, CNodeExprMemptr])
 
 
 def propagate_all_func():
     for f in BipFunction.iter_all():
         try:
-            f.hxfunc.visit_cnode_filterlist(visit_propag, [CNodeExprMemref, CNodeExprMemptr])
+            f.hxcfunc.visit_cnode_filterlist(visit_propag, [CNodeExprMemref, CNodeExprMemptr])
         except BipDecompileError:
             print("Decompile failure at 0x{:X}".format(f.ea))
             continue

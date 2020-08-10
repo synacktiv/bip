@@ -22,12 +22,12 @@ autodoc_mock_imports = ["idaapi", "idc", "idautils", "ida_hexrays", "ida_bytes",
 
 project = u'Bip'
 copyright = u'2019'
-author = u''
+author = u'BrunoPujos'
 
 # The short X.Y version
-version = u'0.1'
+version = u'0.3'
 # The full version, including alpha/beta/rc tags
-release = u'0.1beta'
+release = u'0.3beta'
 
 
 # -- General configuration ---------------------------------------------------

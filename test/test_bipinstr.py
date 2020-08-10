@@ -26,11 +26,11 @@ def test_bipinstr00():
 
 def test_bipinstr01():
     # class method
-    i = BipInstr.Make(0x0180117004)
+    i = BipInstr.make(0x0180117004)
     assert isinstance(i, BipInstr)
     assert i.ea == 0x0180117004
-    assert isinstance(BipInstr.Make(0x01800D325A), BipInstr)
-    with pytest.raises(RuntimeError): BipInstr.Make(0x018011700A)
+    assert isinstance(BipInstr.make(0x01800D325A), BipInstr)
+    with pytest.raises(RuntimeError): BipInstr.make(0x018011700A)
 
 def test_bipinstr02():
     # operands

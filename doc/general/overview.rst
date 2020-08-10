@@ -331,7 +331,7 @@ Creating struct, adding member and nested structure:
     # Struct: NewStruct (size=0xC)
     st.add("struct_nested", 1)
     # Member: NewStruct.struct_nested (offset=0xC, size=0x1)
-    st["struct_nested"].type = BipType.FromC("EXCEPTION_RECORD") # changing the type of member struct_nested as struct EXCEPTION_RECORD
+    st["struct_nested"].type = BipType.from_c("EXCEPTION_RECORD") # changing the type of member struct_nested as struct EXCEPTION_RECORD
     st["struct_nested"]
     # Member: NewStruct.struct_nested (offset=0xC, size=0x98)
     st["struct_nested"].is_nested # is this a nested structure ?
@@ -355,7 +355,7 @@ different types implemented in Bip see :ref:`doc-bip-base-type`.
 .. code-block:: python
 
     from bip.base import *
-    pv = BipType.FromC("void *") # FromC is the easiest way to create a type
+    pv = BipType.from_c("void *") # from_c is the easiest way to create a type
     pv
     # <bip.base.biptype.BTypePtr object at 0x000001D95536DDD8>
     pv.size # ptr on x64 is 8 bytes
@@ -373,7 +373,7 @@ different types implemented in Bip see :ref:`doc-bip-base-type`.
     # <bip.base.biptype.BTypePtr object at 0x000001D95536D9E8>
     d.type.str
     # void *
-    ps = BipType.FromC("EXCEPTION_RECORD *")
+    ps = BipType.from_c("EXCEPTION_RECORD *")
     ps.pointed # type for struct EXCEPTION_RECORD
     # <bip.base.biptype.BTypeStruct object at 0x000001D95536DD30>
     ps.pointed.is_named # this one is named
@@ -407,7 +407,7 @@ variable by the :class:`HxLvar` objects:
 
     HxCFunc.from_addr() # HxCFunc represent a decompiled function
     # <bip.hexrays.hx_cfunc.HxCFunc object at 0x00000278AE80C860>
-    hf = BipFunction().hxfunc # accessible from a "normal function"
+    hf = BipFunction().hxcfunc # accessible from a "normal function"
     hex(hf.ea) # address of the functions
     # 0x1800d2ff0L
     hf.args # list of the arguments as HxLvar objects
@@ -422,7 +422,7 @@ variable by the :class:`HxLvar` objects:
     lv.is_arg # is this variable an argument ?
     # True
     lv.name = "thisisthefirstarg" # changing name of the lvar
-    lv.type = BipType.FromC("void *") # changing the type
+    lv.type = BipType.from_c("void *") # changing the type
     lv.comment = "new comment" # adding a comment
     lv.size # getting the size
     # 8
@@ -452,18 +452,18 @@ Directly accessing the nodes:
     hf = HxCFunc.from_addr() # get the HxCFunc
     rn = hf.root_node # accessing the root node of the function
     rn # root node is always a CNodeStmtBlock
-    # CNodeStmtBlock(ea=0x1800D3006, st_childs=[<bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278AFDAADD8>, ..., <bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16355F8>])
+    # CNodeStmtBlock(ea=0x1800D3006, stmt_childs=[<bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278AFDAADD8>, ..., <bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16355F8>])
     hex(rn.ea) # address of the root node, after the function prolog
     # 0x1800d3006L
     rn.has_parent # root node does not have parent
     # False
     rn.expr_childs # this node does not have expression statements
     # []
-    ste = rn.st_childs[0] # getting the first statement childs
+    ste = rn.stmt_childs[0] # getting the first statement childs
     ste # CNodeStmtExpr contain one child expression
     # CNodeStmtExpr(ea=0x1800D3006, value=CNodeExprAsg(ea=0x1800D3006, ops=[<bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8>, <bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1637080>]))
     ste.parent # the parent is the root node
-    # CNodeStmtBlock(ea=0x1800D3006, st_childs=[<bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278B1637048>, ..., <bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16376D8>])
+    # CNodeStmtBlock(ea=0x1800D3006, stmt_childs=[<bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278B1637048>, ..., <bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16376D8>])
     a = ste.value # getting the expression of the node
     a # Asg is an assignement
     # CNodeExprAsg(ea=0x1800D3006, ops=[<bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8>, <bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1637080>])
@@ -537,8 +537,8 @@ in the hexrays (a real plugin documented exist in `scripts/printk_com.py`):
                 print("Invalid string at 0x{:X}".format(cn.ea))
                 return
             s = s.strip() # remove space and \n
-            # CNode.cfunc is the HxCFunc object
-            cn.cfunc.add_cmt(cn.ea, s) # add a comment on the hexrays function
+            # CNode.hxcfunc is the HxCFunc object
+            cn.hxcfunc.add_cmt(cn.ea, s) # add a comment on the hexrays function
         except Exception: 
             print("Exception at 0x{:X}".format(cn.ea))
             return

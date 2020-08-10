@@ -33,7 +33,7 @@ the :class:`~bip.hexrays.CNode` implementation:
 * all :class:`~bip.hexrays.CNode` are generated from a ``citem_t`` object in
   IDA, the correct classes is determine depending of the type of
   the ``citem_t`` (:class:`~bip.hexrays.HxCType`). The
-  :meth:`~bip.hexrays.CNode.GetCNode` static method exist for finding the
+  :meth:`~bip.hexrays.CNode.from_citem` static method exist for finding the
   correct child class of :class:`~bip.hexrays.CNode` corresponding to the
   ``citem_t`` and creating it, as a general rule the constructors should not
   be called directly.

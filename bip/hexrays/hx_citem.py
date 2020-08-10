@@ -9,7 +9,7 @@ class HxCItem(AbstractCItem):
         used: those provide more functionnality and are the recommanded ones.
 
         An object of this class should never be created directly. The
-        :func:`HxCItem.GetHxCItem` static method should be used for creating
+        :func:`HxCItem.from_citem` static method should be used for creating
         an item of the correct type.
 
         Most of the functionnality provided by this class are inherited from
@@ -17,7 +17,7 @@ class HxCItem(AbstractCItem):
         :class:`CNode` class.
     """
     #: Class attribute indicating which type of item this class handles, this is used
-    #:  by :func:`GetHxCItem` for determining if this is the good object to
+    #:  by :func:`from_citem` for determining if this is the good object to
     #:  instantiate. All abstract class should have a value of -1 for this
     #:  object, non-abstract class should have a value corresponding to the
     #:  :class:`HxCType` they handle.
@@ -25,7 +25,7 @@ class HxCItem(AbstractCItem):
 
     ############################ ITEM CREATION ##############################
 
-    def _createChild(self, citem):
+    def _create_child(self, citem):
         """
             Internal method which allow to create a :class:`HxCItem` object
             from a ``citem_t``. This must be used by :class:`HxCStmt` and
@@ -33,16 +33,16 @@ class HxCItem(AbstractCItem):
             statement. This method is used for having compatibility with
             the :class:`CNode` class.
 
-            Internally this function is only a wrapper on :meth:`GetHxCItem`.
+            Internally this function is only a wrapper on :meth:`from_citem`.
 
             :param citem: A ``citem_t`` from ida.
             :return: The equivalent object to the ``citem_t`` for bip. This
                 will be an object which inherit from :class:`HxCItem` .
         """
-        return HxCItem.GetHxCItem(citem)
+        return HxCItem.from_citem(citem)
 
     @staticmethod
-    def GetHxCItem(citem):
+    def from_citem(citem):
         """
             Function which convert a ``citem_t`` object from ida to one of the
             child object of :class:`HxCItem` . This should in particular be
@@ -55,7 +55,7 @@ class HxCItem(AbstractCItem):
 
             .. note:: :class:`HxCExpr` and :class:`HxCStmt` should not used
                 this function for creating child item but
-                :meth:`HxCItem._createChild` for compatibility with the
+                :meth:`HxCItem._create_child` for compatibility with the
                 :class:`CNode` class.
 
             :param citem: A ``citem_t`` from ida.
@@ -73,7 +73,7 @@ class HxCItem(AbstractCItem):
             else:
                 done.add(cl)
                 todo |= set(cl.__subclasses__())
-        raise ValueError("GetHxCItem could not find an object matching the citem_t type provided ({})".format(citem.op))
+        raise ValueError("from_citem could not find an object matching the citem_t type provided ({})".format(citem.op))
 
 class HxCExpr(HxCItem):
     """
@@ -85,7 +85,7 @@ class HxCExpr(HxCItem):
         :class:`CNodeExpr`, the :class:`CNode` implementation is advised.
 
         No object of this class should be instanstiated, for getting an
-        expression the function :func:`~hx_citem.HxCItem.GetHxCItem` should be
+        expression the function :func:`~hx_citem.HxCItem.from_citem` should be
         used.
     """
 
@@ -126,7 +126,7 @@ class HxCExpr(HxCItem):
                 correspond to the type of this object. Change to this type
                 object will not change the type of this expression.
         """
-        return BipType.GetBipType(self._cexpr.type)
+        return BipType.from_tinfo(self._cexpr.type)
 
 class HxCStmt(HxCItem):
     """
@@ -138,13 +138,13 @@ class HxCStmt(HxCItem):
         :class:`CNodeStmt`, the :class:`CNode` implementation is advised.
 
         No object of this class should be instanstiated, for getting an
-        expression the function :func:`~hx_citem.HxCItem.GetHxCItem` should be
+        expression the function :func:`~hx_citem.HxCItem.from_citem` should be
         used.
 
         A statement can contain one or more child statement and one or more
         child expression (:class:`HxCExpr`) object.
         By convention properties which will return child statement of an
-        object will start with the prefix ``st_`` .
+        object will start with the prefix ``stmt_`` or ``st_``.
     """
 
     def __init__(self, cinsn):
@@ -161,10 +161,10 @@ class HxCStmt(HxCItem):
         """
             Surcharge for printing a CStmt.
         """
-        return "{}(ea=0x{:X}, st_childs={})".format(self.__class__.__name__, self.ea, self.st_childs)
+        return "{}(ea=0x{:X}, stmt_childs={})".format(self.__class__.__name__, self.ea, self.stmt_childs)
 
     @property
-    def st_childs(self):
+    def stmt_childs(self):
         """
             Property which return a list of the statements which are childs of
             this statement. This is used only when the statement is recursive,

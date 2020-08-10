@@ -45,7 +45,7 @@ def test_bipfunc00():
     assert BipFunction(0x01800D6B30).truename == 'RtlWow64SetThreadContext'
     # TODO need test where truename is different of name
     assert BipFunction(0x01800D6B30).ordinal == 0xb8b
-    assert BipFunction.ByOrdinal(BipFunction(0x01800D6B30).ordinal).ea == 0x01800D6B30
+    assert BipFunction.by_ordinal(BipFunction(0x01800D6B30).ordinal).ea == 0x01800D6B30
     assert str(BipFunction(0x01800D6B30)) ==  'Func: RtlWow64SetThreadContext (0x1800D6B30)'
 
 def test_bipfunc01():
@@ -70,8 +70,8 @@ def test_bipfunc01():
 def test_bipfunc02():
     # hexray interface
     assert BipFunction(0x01800D2FF0).can_decompile == True
-    assert isinstance(BipFunction(0x01800D2FF0).hxfunc, HxCFunc)
-    assert BipFunction(0x01800D2FF0).hxfunc.bfunc == BipFunction(0x01800D2FF0)
+    assert isinstance(BipFunction(0x01800D2FF0).hxcfunc, HxCFunc)
+    assert BipFunction(0x01800D2FF0).hxcfunc.bfunc == BipFunction(0x01800D2FF0)
     # TODO: test for decompilation failure
 
 def test_bipfunc03():
@@ -211,16 +211,16 @@ def test_bipfunc08():
 
 def test_bipfunc09():
     # class methods
-    assert isinstance(BipFunction.ByOrdinal(0), BipFunction)
-    assert (BipFunction.ByOrdinal(0) ==  BipFunction(0x180001010))
+    assert isinstance(BipFunction.by_ordinal(0), BipFunction)
+    assert (BipFunction.by_ordinal(0) ==  BipFunction(0x180001010))
     assert (next(BipFunction.iter_all()) ==  BipFunction(0x180001010))
     assert len([f for f in BipFunction.iter_all()]) == 0xecd
-    assert len(BipFunction.Entries()) == 0x926
-    assert isinstance(BipFunction.Entries()[0], BipFunction)
-    assert BipFunction.Entries()[1] == BipFunction(0x18003D190)
-    assert len([e for e in BipFunction.Entries_iter()]) == 0x926
-    assert isinstance(next(BipFunction.Entries_iter()), BipFunction)
-    assert next(BipFunction.Entries_iter()) == BipFunction(0x018007D0C0)
+    assert len(BipFunction.entries()) == 0x926
+    assert isinstance(BipFunction.entries()[0], BipFunction)
+    assert BipFunction.entries()[1] == BipFunction(0x18003D190)
+    assert len([e for e in BipFunction.entries_iter()]) == 0x926
+    assert isinstance(next(BipFunction.entries_iter()), BipFunction)
+    assert next(BipFunction.entries_iter()) == BipFunction(0x018007D0C0)
     assert (BipFunction.get_by_name("RtlFindClearBits") ==  BipFunction(0x180001010))
     assert (BipFunction.get_by_name("DonotExist") is None)
     assert (BipFunction.get_by_name("") is None)
@@ -233,7 +233,7 @@ def test_bipfunc09():
 
 def test_bibfunc0A():
     # static method
-    assert BipFunction.Count() == 0xecd
+    assert BipFunction.count() == 0xecd
 
 
 

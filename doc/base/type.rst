@@ -15,14 +15,14 @@ case of a function pointer for example. All subclasses of :class:`BipType`
 start with the prefix ``BType*``.
 
 For creating a new :class:`BipType` the easiest way is to use the
-:meth:`BipType.FromC` static method: it will create an object which inherit
+:meth:`BipType.from_c` static method: it will create an object which inherit
 from :class:`BipType` of the correct class from a string representing the C
 declaration of the type.
 
 When recuperating a type from IDA (``tinfo_t``) Bip will try to determine the
 correct object much the same way it is done for the :class:`BipBaseElt` when
 using :func:`GetElt`. This is made using the static method
-:func:`BipType.GetBipType` and the class method for determining the correct
+:func:`BipType.from_tinfo` and the class method for determining the correct
 class is :meth:`BipType.is_handling_type`.
 
 .. warning:: **Modifying types**

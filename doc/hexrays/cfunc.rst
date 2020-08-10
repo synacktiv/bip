@@ -8,7 +8,7 @@ They represent a C function as decompiled by hexrays and are the main
 interface for using the features from hexrays in C.
 
 There are two ways to get a :class:`~bip.hexrays.HxCFunc` object using the Bip
-API, the first one is by using the :meth:`~bip.base.BipFunction.hxfunc`
+API, the first one is by using the :meth:`~bip.base.BipFunction.hxcfunc`
 property method from a :class:`~bip.base.BipFunction`, this property returns
 the equivalent :class:`~bip.hexrays.HxCFunc` for
 the :class:`~bip.base.BipFunction`. The second way is to use the class method

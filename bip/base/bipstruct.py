@@ -596,7 +596,7 @@ class BStructMember(BipRefElt):
         ti = ida_typeinf.tinfo_t()
         if not ida_struct.get_member_tinfo(ti, self._member):
             raise RuntimeError("Could not get the type for {}".format(self))
-        return BipType.GetBipType(ti)
+        return BipType.from_tinfo(ti)
 
     def del_type(self):
         """
@@ -670,7 +670,7 @@ class BStructMember(BipRefElt):
             self.del_type()
             return
         if isinstance(value, (str, unicode)):
-            value = BipType.FromC(value)
+            value = BipType.from_c(value)
         self.set_type(value)
 
     @property

@@ -33,7 +33,7 @@ class CNode(AbstractCItem):
         with just some aditional feature.
 
         This is an abstract class and no object of this class should ever be
-        created. The static method :meth:`GetCNode` allow to create object
+        created. The static method :meth:`from_citem` allow to create object
         of the correct subclass which inherit from :class:`CNode`.
     """
 
@@ -131,7 +131,7 @@ class CNode(AbstractCItem):
         return self._parent
 
     @property
-    def cfunc(self):
+    def hxcfunc(self):
         """
             Property returning the :class:`HxCFunc` to which this node is
             associated.
@@ -157,7 +157,7 @@ class CNode(AbstractCItem):
             .. note:: This use the default itp (at the semi-colon level),
                 see :meth:`HxCFunc.get_cmt`.
         """
-        return self.cfunc.get_cmt(self.closest_ea)
+        return self.hxcfunc.get_cmt(self.closest_ea)
 
     @comment.setter
     def comment(self, value):
@@ -175,7 +175,7 @@ class CNode(AbstractCItem):
 
             :param str value: The comment to add.
         """
-        self.cfunc.add_cmt(self.closest_ea, value)
+        self.hxcfunc.add_cmt(self.closest_ea, value)
 
     ########################### VISITOR METHODS ##############################
 
@@ -288,7 +288,7 @@ class CNode(AbstractCItem):
 
     ########################### CNODE CREATION #############################
 
-    def _createChild(self, citem):
+    def _create_child(self, citem):
         """
             Internal method which allow to create a :class:`CNode` object
             from a ``citem_t`` child of the current node. This must be used
@@ -297,7 +297,7 @@ class CNode(AbstractCItem):
             statement. This method is used for having compatibility with
             the :class:`HxCItem` class.
 
-            Internally this function is a wrapper on :meth:`GetCNode` which
+            Internally this function is a wrapper on :meth:`from_citem` which
             is call with the same function than this object and with this
             object as parent.
 
@@ -305,10 +305,10 @@ class CNode(AbstractCItem):
             :return: The equivalent node object to the ``citem_t`` for bip.
                 This will be an object which inherit from :class:`CNode` .
         """
-        return CNode.GetCNode(citem, self._hxcfunc, self)
+        return CNode.from_citem(citem, self._hxcfunc, self)
 
     @staticmethod
-    def GetCNode(citem, hxcfunc, parent):
+    def from_citem(citem, hxcfunc, parent):
         """
             Static method which allow to create an object of the correct child
             class of :class:`CNode` which is equivalent to a ``citem_t`` from
@@ -317,12 +317,12 @@ class CNode(AbstractCItem):
             in bip.  If no :class:`CNode` child object exist corresponding to
             the ``citem`` provided a ``ValueError`` exception will be raised.
 
-            This is the equivalent of :meth:`HxCItem.GetHxCItem` but for the
+            This is the equivalent of :meth:`HxCItem.from_citem` but for the
             :class:`CNode` .
 
             .. note:: :class:`CNodeExpr` and :class:`CNodeStmt` should not used
                 this function for creating child item but
-                :meth:`CNode._createChild`.
+                :meth:`CNode._create_child`.
 
             :param citem: A ``citem_t`` from ida.
             :param hxcfunc: A :class:`HxCFunc` object corresponding to the
@@ -345,7 +345,7 @@ class CNode(AbstractCItem):
             else:
                 done.add(cl)
                 todo |= set(cl.__subclasses__())
-        raise ValueError("GetCNode could not find an object matching the citem_t type provided ({})".format(citem.op))
+        raise ValueError("from_citem could not find an object matching the citem_t type provided ({})".format(citem.op))
 
 class CNodeExpr(CNode):
     """
@@ -356,7 +356,7 @@ class CNodeExpr(CNode):
         is made for visiting an AST.
 
         No object of this class should be instanstiated, for getting an
-        expression the function :func:`~CNode.GetCNode` should be
+        expression the function :func:`~CNode.from_citem` should be
         used.
 
         .. todo:: something better could be done here for avoiding code
@@ -407,7 +407,7 @@ class CNodeExpr(CNode):
                 correspond to the type of this object. Change to this type
                 object will not change the type of this expression.
         """
-        return BipType.GetBipType(self._cexpr.type)
+        return BipType.from_tinfo(self._cexpr.type)
 
     ################################### HELPERS ##############################
 
@@ -460,13 +460,13 @@ class CNodeStmt(CNode):
         is made for visiting an AST.
 
         No object of this class should be instanstiated, for getting an
-        expression the function :func:`~CNode.GetCNode` should be
+        expression the function :func:`~CNode.from_citem` should be
         used.
 
         A statement can contain one or more child statement and one or more
         child expression (:class:`HxCExpr`) object.
         By convention properties which will return child statement of an
-        object will start with the prefix ``st_`` .
+        object will start with the prefix ``stmt_`` or ``st_``.
     """
 
     def __init__(self, cinsn, hxcfunc, parent):
@@ -490,10 +490,10 @@ class CNodeStmt(CNode):
         """
             Surcharge for printing a CStmt.
         """
-        return "{}(ea=0x{:X}, st_childs={})".format(self.__class__.__name__, self.ea, self.st_childs)
+        return "{}(ea=0x{:X}, stmt_childs={})".format(self.__class__.__name__, self.ea, self.stmt_childs)
 
     @property
-    def st_childs(self):
+    def stmt_childs(self):
         """
             Property which return a list of the statements which are childs of
             this statement. This is used only when the statement is recursive,

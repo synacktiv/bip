@@ -32,8 +32,8 @@ def test_biphxlvar00():
     assert lv2.name == 'newname2'
     assert lv1.size == 8
     assert lv2.size == 8 
-    assert lv1.hxfunc == hxf
-    assert lv2.hxfunc == hxf
+    assert lv1.hxcfunc == hxf
+    assert lv2.hxcfunc == hxf
     assert lv1.comment == ""
     assert lv2.comment == ""
     lv1.comment = "new comment"
@@ -52,7 +52,7 @@ def test_biphxlvar00():
     assert isinstance(lv2.type, BTypePtr)
     assert lv1.has_user_type == False
     assert lv2.has_user_type == False
-    lv1.type = BipType.FromC("__int16 *")
+    lv1.type = BipType.from_c("__int16 *")
     assert isinstance(lv1.type, BTypePtr)
     assert lv1.size == 8
     lv1.type = "__int64"

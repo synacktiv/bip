@@ -181,7 +181,7 @@ class BipOperand(object):
         ti = tinfo_t()
         if not get_op_tinfo(ti, self.ea, self.opnum): # recuperation of the type failed
             return None
-        return bip.base.biptype.BipType.GetBipType(ti)
+        return bip.base.biptype.BipType.from_tinfo(ti)
 
     @type_info.setter
     def type_info(self, value):
@@ -204,7 +204,7 @@ class BipOperand(object):
                 or if it was not able to create the BipType from the string.
         """
         if isinstance(value, (str, unicode)):
-            value = bip.base.biptype.BipType.FromC(value)
+            value = bip.base.biptype.BipType.from_c(value)
         if not isinstance(value, bip.base.biptype.BipType):
             raise TypeError("Operand.type_info expect a BipType object or a string representing the C type.")
         if not set_op_tinfo(self.ea, self.opnum, value._get_tinfo_copy()):

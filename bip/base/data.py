@@ -306,7 +306,7 @@ class BipData(BipElt):
         if isinstance(value, BipType):
             value.set_at(self.ea)
         elif isinstance(value, (str, unicode)):
-            value = BipType.FromC(value)
+            value = BipType.from_c(value)
             value.set_at(self.ea)
         else:
             raise TypeError("Unhandle type for BipData.type setter")

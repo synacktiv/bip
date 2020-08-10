@@ -34,7 +34,7 @@ class _hx_visitor_expr(ctree_visitor_t):
             Handler of the visitor expression. Create the object
             :class:`HxCExpr` call the handler.
         """
-        self.expr_handler(HxCItem.GetHxCItem(i))
+        self.expr_handler(HxCItem.from_citem(i))
         return 0
 
 class _hx_visitor_list_expr(ctree_visitor_t):
@@ -63,7 +63,7 @@ class _hx_visitor_list_expr(ctree_visitor_t):
             :class:`HxCExpr` and if it match the expression in the
             ``expr_list`` call the handler.
         """
-        e = HxCItem.GetHxCItem(i)
+        e = HxCItem.from_citem(i)
         if isinstance(e, tuple(self.expr_list)):
             self.expr_handler(e)
         return 0
@@ -90,7 +90,7 @@ class _hx_visitor_stmt(ctree_visitor_t):
             Handler of the visitor statement. Create the object
             :class:`HxCStmt` call the handler.
         """
-        self.stmt_handler(HxCItem.GetHxCItem(i))
+        self.stmt_handler(HxCItem.from_citem(i))
         return 0
 
 class _hx_visitor_list_stmt(ctree_visitor_t):
@@ -118,7 +118,7 @@ class _hx_visitor_list_stmt(ctree_visitor_t):
             Handler of the visitor statement. Create the object
             :class:`HxCStmt` and if in the list call the handler.
         """
-        e = HxCItem.GetHxCItem(i)
+        e = HxCItem.from_citem(i)
         if isinstance(e, tuple(self.stmt_list)):
             self.stmt_handler(e)
         return 0
@@ -145,7 +145,7 @@ class _hx_visitor_all(ctree_visitor_t):
             Handler of the visitor statement. Create the 
             :class:`HxCItem` object and call the handler with it in arguments.
         """
-        self.handler(HxCItem.GetHxCItem(i))
+        self.handler(HxCItem.from_citem(i))
         return 0
 
     def visit_expr(self, i):
@@ -153,7 +153,7 @@ class _hx_visitor_all(ctree_visitor_t):
             Handler of the visitor expression. Create the 
             :class:`HxCItem` object and call the handler with it in arguments.
         """
-        self.handler(HxCItem.GetHxCItem(i))
+        self.handler(HxCItem.from_citem(i))
         return 0
 
 
@@ -182,7 +182,7 @@ class _hx_visitor_list_all(ctree_visitor_t):
             Handler of the visitor statement. Create the 
             :class:`HxCItem` object and call the handler with it in arguments.
         """
-        e = HxCItem.GetHxCItem(i)
+        e = HxCItem.from_citem(i)
         if isinstance(e, tuple(self.item_list)):
             self.handler(e)
         return 0
@@ -192,7 +192,7 @@ class _hx_visitor_list_all(ctree_visitor_t):
             Handler of the visitor expression. Create the 
             :class:`HxCItem` object and call the handler with it in arguments.
         """
-        e = HxCItem.GetHxCItem(i)
+        e = HxCItem.from_citem(i)
         if isinstance(e, tuple(self.item_list)):
             self.handler(e)
         return 0

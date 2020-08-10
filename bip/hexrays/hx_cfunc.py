@@ -210,7 +210,7 @@ class HxCFunc(object):
             :return: The root object for this function which inherit from
                 :class:`CNode` .
         """
-        return CNode.GetCNode(self._cfunc.body, self, None)
+        return CNode.from_citem(self._cfunc.body, self, None)
 
     def visit_cnode(self, callback):
         """
@@ -333,7 +333,7 @@ class HxCFunc(object):
             :return: The root object for this function which inherit from
                 :class:`HxCItem`.
         """
-        return HxCItem.GetHxCItem(self._cfunc.body)
+        return HxCItem.from_citem(self._cfunc.body)
 
     def _hx_visit_generic(self, visitor_class, *args):
         """
@@ -465,7 +465,7 @@ class HxCFunc(object):
         citem = self._cfunc.find_label(label_num)
         if citem is None:
             return citem
-        return HxCItem.GetHxCItem(citem)
+        return HxCItem.from_citem(citem)
 
     ############################## CMP METHODS ###########################
 
@@ -496,7 +496,7 @@ class HxCFunc(object):
     @classmethod
     def from_addr(cls, ea=None):
         """
-            Class method which return a :class:`HxFunc` object corresponding
+            Class method which return a :class:`HxCFunc` object corresponding
             to the function at a particular address.
 
             This may raise a :class:`~bip.base.BipDecompileError` if the
@@ -504,9 +504,9 @@ class HxCFunc(object):
             function.
             
             :param int ea: An address inside the function for which we want
-                an :class:`HxFunc`. If ``None`` the screen address will be
+                an :class:`HxCFunc`. If ``None`` the screen address will be
                 used.
-            :return: A :class:`HxFunc` object.
+            :return: A :class:`HxCFunc` object.
         """
         if ea is None:
             ea = ida_kernwin.get_screen_ea()
