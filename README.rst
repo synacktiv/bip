@@ -1,7 +1,47 @@
-.. _general-overview:
+Bip
+###
+
+Bip is a project which aimed to simplify the usage of python for interacting
+with IDA. Its main goals are to facilitate the usage of python in the
+interactive console of IDA and for writting plugins. In a more general way
+the goal is to automate the recurent task done through the python API.
+Bip is also developped for providing a more oriented object, a "python-like"
+API and a *real* documentation.
+
+This code is not complete and a lot of features are still missing. Development
+is prioritize on what people ask for and what the developers use, so do not
+hesitate to make PR, Feature Request and Issues (including for the
+documentation).
+
+The documentation is available in the RST format (and can be compile using
+sphinx) in the ``doc/`` directory.
+
+* Current IDA version: IDA 7.5SP1 and Python 2.7 or 3.8
+* Last Bip Version: 0.3
+
+Installation
+============
+
+This installation has been tested only on Windows and Linux: ``python install.py``.
+
+It is possible to use an optional ``--dest`` argument for installing in a
+particular folder:
+
+.. code-block:: none
+
+    usage: install.py [-h] [--dest DEST]
+
+    optional arguments:
+      -h, --help   show this help message and exit
+      --dest DEST  Destination folder where to install Bip
+
+This installer do not insall any plugins by default, but simply the core of
+Bip. By default the destination folder is the one use by IDA locally
+(``%APPDATA%\Hex-Rays\IDA Pro\`` for Windows and ``$HOME/.idapro`` for Linux
+and MacOSX).
 
 Overview
-########
+========
 
 This overview has for goal to show how the most usual operations can be done,
 it is far from being complete. All functions and objects in Bip are documented
@@ -9,9 +49,7 @@ using doc string so just use ``help(BipClass)`` and ``help(obj.bipmethod)`` for
 getting the doc in your shell.
 
 Base
-====
-
-.. module:: bip.base
+----
 
 The module ``bip.base`` contains most of the *basic* features for interfacing
 with IDA. In practice this is mainly the disasmbleur part of IDA, this
@@ -19,7 +57,7 @@ includes: manipulation of instruction, functions, basic blocks, operands,
 data, xrefs, structures, types, ...
 
 Instructions / Operands
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The classes :class:`~bip.base.BipInstr` and :class:`~bip.base.BipOperand`:
 
@@ -58,7 +96,7 @@ The classes :class:`~bip.base.BipInstr` and :class:`~bip.base.BipOperand`:
     BipBlock: 0x1800D3242 (from Func: RtlQueryProcessLockInformation (0x1800D2FF0))
 
 Function / Basic block
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 The classes :class:`~bip.base.BipFunction` and :class:`~bip.base.BipBlock`:
 
@@ -118,9 +156,8 @@ The classes :class:`~bip.base.BipFunction` and :class:`~bip.base.BipBlock`:
     >>> f.blocks[5].is_ret # is this block containing a return
     False
 
-
 Data
-----
+~~~~
 
 The class :class:`~bip.base.BipData`:
 
@@ -162,7 +199,7 @@ The class :class:`~bip.base.BipData`:
     0x600aaL
 
 Element
--------
+~~~~~~~
 
 In Bip most basic object inherit from the same classes: :class:`BipBaseElt` which is
 the most basic one, :class:`BipRefElt` which include all the objects which can have
@@ -219,7 +256,7 @@ Some static function are provided for searching element in the database:
     BipInstr: 0x1800D324B (mov     rcx, r13)
 
 Xref
-----
+~~~~
 
 All elements which inherit from :class:`BipRefElt` (:class:`BipInstr`,
 :class:`BipData`, :class:`BipStruct`, ...) and some other (in
@@ -274,7 +311,7 @@ have a ``src`` (origin of the xref) and a ``dst`` (destination of the xref).
     [<bip.base.instr.BipInstr object at 0x000001D95529EC88>]
 
 Struct
-------
+~~~~~~
 
 Manipulating struct (:class:`BipStruct`) and members (:class:`BStructMember`):
 
@@ -340,7 +377,7 @@ Creating struct, adding member and nested structure:
     Struct: EXCEPTION_RECORD (size=0x98)
 
 Types
------
+~~~~~
 
 IDA use extensively types in hexrays but also in the base API for defining
 types of data, variables and so on. In Bip the different types inherit from
@@ -350,7 +387,7 @@ ones.
 
 The types should be seen as a recursive structure: a ``void *`` is a
 :class:`BTypePtr` containing a :class:`BTypeVoid` structure. For a list of the
-different types implemented in Bip see :ref:`doc-bip-base-type`.
+different types implemented in Bip see TODO.
 
 .. code-block:: pycon
 
@@ -390,15 +427,13 @@ different types implemented in Bip see :ref:`doc-bip-base-type`.
     <bip.base.biptype.BTypePtr object at 0x000001D95536DEB8>
 
 Hexrays
-=======
-
-.. module:: bip.hexrays
+-------
 
 The module ``bip.hexrays`` contains the features link to the decompiler
 provided by IDA.
 
 Functions / local variables
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Hexrays functions are represented by the :class:`HxCFunc` objects and local
 variable by the :class:`HxLvar` objects:
@@ -428,10 +463,8 @@ variable by the :class:`HxLvar` objects:
     >>> lv.size # getting the size
     8
 
-.. _general-overview-cnode-visit:
-
 CNode / Visitors
-----------------
+~~~~~~~~~~~~~~~~
 
 Hexrays allow to manipulate the AST it produces, this is a particularly
 usefull feature as it allow to make static analysis at a way higher level.
@@ -444,7 +477,7 @@ else. Statements can have childs statements or expressions while expressions
 can only have expressions child.
 
 A list of all the different types of node and more details on what they do and
-how to write visitor is present in :ref:`doc-hexrays-cnode`.
+how to write visitor is present in TODO.
 
 Directly accessing the nodes:
 
@@ -550,17 +583,16 @@ in the hexrays:
         hf = HxCFunc.from_addr(eafunc) # get the hexrays function
         hf.visit_cnode_filterlist(visit_call, [CNodeExprCall]) # visit only the call nodes
 
-Plugins
-=======
 
-.. module:: bip.gui
+Plugins
+-------
 
 Plugins using Bip should all inherit from the class :class:`BipPlugin`. Those plugin
 are different from the IDA plugin and are loaded and called by the
 :class:`BipPluginManager`. Each plugin is identified by its class name and those
 should be unique. Bip can be used with standard plugin but most of the
 ``bip.gui`` implementations is linked to the use of :class:`BipPlugin`. For
-more information about plugins and internals see :ref:`gui-plugins`.
+more information about plugins and internals see TODO.
 
 Here is a simple plugin example:
 
@@ -612,4 +644,17 @@ from the console. A plugin should not be directly instantiated, it is the
     # hello
 
 
+Similar projects
+================
+
+* `sark <https://sark.readthedocs.io/en/latest/>`_: "an object-oriented scripting layer written on top of IDAPython".
+* `FIDL <https://github.com/fireeye/FIDL>`_: "FLARE IDA Decompiler Library"
+
+Thanks
+======
+
+Some people to thanks:
+
+* `saph <https://twitter.com/_saph_>`_: for starting this project.
+* `hakril <https://twitter.com/hakril>`_: for the inspiration on the projet and his insights on designing it.
 
