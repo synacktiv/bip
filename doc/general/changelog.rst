@@ -53,6 +53,8 @@ Breaking changes:
 * function ``bip.base.utils.Ptr`` became static method of ``bip.base.BipData.get_ptr``
 * function ``bip.base.utils.bip_exec_sync`` became static method ``bip.base.BipIda.exec_sync``
 * function ``bip.base.utils.get_highlighted_identifier_as_int`` became static method ``BipUserSelect.get_curr_highlighted_int``
+* removed classes ``BaseGuiAction`` and ``ContextMenuHooks``
+
 
 Sed script for automatic update of plugins (no garantee to be perfect or to
 avoid colisions) (use with ``sed -f RULEFILE INPUTFILE``):
