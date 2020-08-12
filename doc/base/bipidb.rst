@@ -27,6 +27,3 @@ Helper functions
 .. autofunction:: max_ea
 
 .. autofunction:: Here
-
-
-

@@ -55,7 +55,6 @@ Element Functions API
 
 .. autofunction:: GetElt
 .. autofunction:: GetEltByName
-.. autofunction:: Here
 
 BipBaseElt API
 ==============
