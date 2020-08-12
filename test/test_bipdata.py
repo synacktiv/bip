@@ -141,6 +141,8 @@ def test_bipdata02():
     assert BipData.get_word(0x018012E801) == 0x1e81
     assert BipData.get_dword(0x018012E804) == 0xf5129aee
     assert BipData.get_qword(0x018012E808) == 0x8a7c6a266c2b0836
+    assert BipData.get_ptr(0x0180110018) == 0x18011ac70
+    assert BipData.get_ptr(0x018012E808) == 0x8a7c6a266c2b0836
     BipData.set_byte(0x018012E800, 0xAA)
     BipData.set_word(0x018012E801, 0xAABB)
     BipData.set_dword(0x018012E804, 0xAABBCCDD)

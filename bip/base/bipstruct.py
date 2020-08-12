@@ -5,8 +5,8 @@ import ida_typeinf
 
 from bip.py3compat.py3compat import *
 
+from .bipidb import BipIdb
 from .biptype import BipType
-from .utils import get_ptr_size
 from .bipelt import BipRefElt
 from .biperror import BipError
 
@@ -342,7 +342,7 @@ class BipStruct(BipRefElt):
                 Default is ``field_`` .
         """
         offset = self.size
-        ptr_sz = get_ptr_size()//8
+        ptr_sz = BipIdb.ptr_size() // 8
 
         # start ptr by ptr
         while offset < size - ptr_sz + 1:

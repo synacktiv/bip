@@ -65,7 +65,8 @@ All classes in this part are regroup in the ``bip.base`` module.
     base/struct
     base/enum
     base/type
-    base/util
+    base/bipidb
+    base/bipida
 
 .. _index-hexrays:
 
@@ -102,6 +103,7 @@ is the central element for interfacing with the GUI using bip.
     gui/plugin
     gui/plgmanager
     gui/activity
+    gui/userselect
 
 .. _index-bipplugins:
 
@@ -122,3 +124,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+

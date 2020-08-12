@@ -21,15 +21,15 @@ def define_vtables_struct(vtables=None):
 		
 		s = BipStruct.create("%sVTable" % classname)
 					
-		while Ptr(ea):
-			# if i in (1,2) and GetFunctionName(Ptr(ea)):
-			# 	MakeName(Ptr(ea), classname+"::Destructor%d" % i)
+		while BipData.get_ptr(ea):
+			# if i in (1,2) and GetFunctionName(BipData.get_ptr(ea)):
+			# 	MakeName(BipData.get_ptr(ea), classname+"::Destructor%d" % i)
 			# 	name = "Destructor%d" % i
 
 			name = "Method_%d" % i
 			
 
-			s.add(name, get_ptr_size()/8, "0x%x" % Ptr(ea))
+			s.add(name, get_ptr_size()/8, "0x%x" % BipData.get_ptr(ea))
 			ea += get_ptr_size()/8
 			i+=1
 
@@ -50,11 +50,11 @@ def parse_vtable_rtti():
 			continue
 		
 		for x in XrefsTo(ea):			
-			if not Ptr(x.frm - get_ptr_size()/8):
+			if not BipData.get_ptr(x.frm - get_ptr_size()/8):
 				continue
 			
 			for x2 in XrefsTo(x.frm - get_ptr_size()/8):
-				if Ptr(x2.frm -get_ptr_size()/8):
+				if BipData.get_ptr(x2.frm -get_ptr_size()/8):
 					continue
 				
 				vtables[demangled] = x2.frm - get_ptr_size()/8

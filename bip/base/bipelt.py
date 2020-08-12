@@ -9,7 +9,7 @@ from bip.py3compat.py3compat import *
 
 import bip.base.xref
 from .biperror import BipError
-from .utils import min_ea, max_ea
+from .bipidb import BipIdb
 
 class BipBaseElt(object):
     """
@@ -90,9 +90,9 @@ class BipBaseElt(object):
                 allowing to iter on all the elt define in the idb.
         """
         if start is None:
-            start = min_ea()
+            start = BipIdb.min_ea()
         if end is None:
-            end = max_ea()
+            end = BipIdb.max_ea()
         for h in idautils.Heads(start, end):
             if cls._is_this_elt(h):
                 yield GetElt(h)
@@ -658,9 +658,9 @@ class BipElt(BipRefElt):
             :return: A generator of object child of :class:`BipBaseElt`
                 allowing to iter on all the elt in the idb.
         """
-        ea = min_ea() if start is None else start
+        ea = BipIdb.min_ea() if start is None else start
         if end is None:
-            end = max_ea()
+            end = BipIdb.max_ea()
         while ea < end:
             elt = GetElt(ea)
             sz = elt.size
@@ -1065,12 +1065,4 @@ def GetEltByName(name):
     if ea is None or ea == idc.BADADDR:
         return None
     return GetElt(ea)
-
-def Here():
-    """
-        Return current screen address.
-
-        :return: The current address.
-    """
-    return ida_kernwin.get_screen_ea()
 

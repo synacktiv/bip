@@ -1,6 +1,7 @@
 import idc
 import ida_bytes
 import ida_kernwin
+import ida_idaapi
 import idautils
 
 from bip.py3compat.py3compat import *
@@ -509,4 +510,24 @@ class BipData(BipElt):
             ea = ida_kernwin.get_screen_ea()
         return idc.get_strlit_contents(ea, length=size)
 
+    @staticmethod
+    def get_ptr(ea=None):
+        """
+            Recuperate the value of a pointer at an address. This will handle
+            automatically the correct size of the pointer.
+    
+            :param int ea: the address at which get the pointer value. If
+                ``None`` the screen address is used.
+            :return: the pointer value
+        """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
+
+        info = ida_idaapi.get_inf_structure()
+        if info.is_64bit():
+            return ida_bytes.get_qword(ea)
+        elif info.is_32bit():
+            return ida_bytes.get_wide_dword(ea)
+        else:
+            return ida_bytes.get_wide_word(ea)
 
