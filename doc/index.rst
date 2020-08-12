@@ -32,9 +32,6 @@ graphics and explaining how to developped plugins. This is mainly
 autodocumentation of bip objects with precisions about usage and potentially
 internals when necessary.
 
-Finally the last part :ref:`index-bipplugins` contains information about the
-plugins included in Bip.
-
 General
 =======
 
@@ -105,21 +102,8 @@ is the central element for interfacing with the GUI using bip.
     gui/activity
     gui/userselect
 
-.. _index-bipplugins:
-
-BipPlugins
-==========
-
-This part regroup a list of different :class:`BipPlugin` integrated in Bip and
-maintain by the developpers.
-
-.. toctree::
-    :maxdepth: 2
-
-    bippluginlist
-
 Indices and tables
-##################
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`

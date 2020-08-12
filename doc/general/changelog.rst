@@ -89,5 +89,8 @@ Are not included in this sed file the change to ``BipInstr.Make``,
 ``BipFunction.Count``, ``Cnode.cfunc``, ``Ptr`` which can easilly create
 problems.
 
+This update removed also the ``example``, ``scripts`` and ``plugins``
+directory which will not be maintain as part of Bip (and where probably
+already not working since some times).
 
 
