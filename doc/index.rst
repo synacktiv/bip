@@ -16,7 +16,7 @@ API and a *real* documentation.
 This code is not complete, and a lot of features are still missing. Development
 is prioritized on what people ask for and what the developers use, so do not
 hesitate to make PR, Feature Request and Issues (including for the
-documentation).
+documentation), see :ref:`general-contrib` for more information.
 
 This documentation is split in several parts. The `General`_ part should allow
 you to start with the project including the install (:ref:`general-install`)
@@ -41,6 +41,7 @@ General
     general/install
     general/overview
     general/archi
+    general/contribution
     general/changelog
 
 .. _index-base:
