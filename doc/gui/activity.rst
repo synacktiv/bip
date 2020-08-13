@@ -28,7 +28,7 @@ actions dynamically and not link to a particular plugin.
 Implementation internals
 ========================
 
-This part as for goal to describe the internal of the :class:`BipActivity`:
+This part as the goal to describe the internal of the :class:`BipActivity`:
 how they interface with :class:`BipPlugin` and how to create a new kind of
 :class:`BipActivity` . It is not necessary to read it for simply using them.
 

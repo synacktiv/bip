@@ -1,7 +1,7 @@
 Changelog
 #########
 
-This page has for goal to record breaking change in the API between versions.
+This page has the goal to record breaking change in the API between versions.
 New features may be listed but probably not always.
 
 

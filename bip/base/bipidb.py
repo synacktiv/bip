@@ -7,7 +7,7 @@ import idc
 
 class BipIdb(object):
     """
-        Class for representing the idb loaded by IDA, this has for goal to
+        Class for representing the idb loaded by IDA, this has the goal to
         provide access to things specific to the IDB.
         
         Currently this contain only static methods.
