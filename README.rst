@@ -14,7 +14,8 @@ hesitate to make PR, Feature Request and Issues (including for the
 documentation).
 
 The documentation is available in the RST format (and can be compiled using
-sphinx) in the ``doc/`` directory. TODO Link
+sphinx) in the ``docs/`` directory, it is also
+available `online <https://synacktiv.github.io/bip/build/html/index.html>`_.
 
 * Current IDA version: IDA 7.5SP1 and Python 2.7 or 3.8
 * Last Bip Version: 0.3
@@ -387,7 +388,7 @@ ones.
 
 The types should be seen as a recursive structure: a ``void *`` is a
 ``BTypePtr`` containing a ``BTypeVoid`` structure. For a list of the
-different types implemented in Bip see TODO.
+different types implemented in Bip see the `documentation <https://synacktiv.github.io/bip/build/html/base/type.html>`_.
 
 .. code-block:: pycon
 
@@ -477,7 +478,7 @@ else. Statements can have children statements or expressions while expressions
 can only have expressions children.
 
 A list of all the different types of node and more details on what they do and
-how to write visitor is present in TODO.
+how to write visitor is present in the `documentation <https://synacktiv.github.io/bip/build/html/hexrays/astnodes.html#ast-node-types>`_.
 
 Directly accessing the nodes:
 
@@ -602,7 +603,7 @@ plugins are different from the IDA plugin and are loaded and called by the
 ``BipPluginManager``. Each plugin is identified by its class name and those
 should be unique. Bip can be used with standard plugin but most of the
 ``bip.gui`` implementation is linked to the use of ``BipPlugin``. For
-more information about plugins and internals see TODO.
+more information about plugins and internals see the `documentation <https://synacktiv.github.io/bip/build/html/gui/plugin.html#gui-plugins>`_.
 
 Here is a simple plugin example:
 
@@ -709,6 +710,6 @@ Thanks
 
 Some people to thanks:
 
-* `saph <https://twitter.com/_saph_>`_: for starting this project.
+* `saph <https://twitter.com/clementberthaux>`_: for starting this project.
 * `hakril <https://twitter.com/hakril>`_: for the inspiration for the project and his insights on designing it.
 

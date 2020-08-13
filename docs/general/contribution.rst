@@ -56,7 +56,7 @@ Change of version
 
 This is a checklist of things to do for a change of version in Bip:
 
-* change version in sphinx doc (``doc/conf.py``),
+* change version in sphinx doc (``docs/conf.py``),
 * change Bip Python version (``bip/__init__.py``),
 * change last stable version in ``README.rst``,
 * check changelog is done and has the right version numbers,
