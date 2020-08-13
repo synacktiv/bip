@@ -59,7 +59,7 @@ data, xrefs, structures, types, ...
 Instructions / Operands
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The classes :class:`~bip.base.BipInstr` and :class:`~bip.base.BipOperand`:
+The classes ``bip.base.BipInstr`` and ``bip.base.BipOperand``:
 
 .. code-block:: pycon
 
@@ -98,7 +98,7 @@ The classes :class:`~bip.base.BipInstr` and :class:`~bip.base.BipOperand`:
 Function / Basic block
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The classes :class:`~bip.base.BipFunction` and :class:`~bip.base.BipBlock`:
+The classes ``bip.base.BipFunction`` and ``bip.base.BipBlock``:
 
 .. code-block:: pycon
 
@@ -159,7 +159,7 @@ The classes :class:`~bip.base.BipFunction` and :class:`~bip.base.BipBlock`:
 Data
 ~~~~
 
-The class :class:`~bip.base.BipData`:
+The class ``bip.base.BipData``:
 
 .. code-block:: pycon
 
@@ -201,15 +201,15 @@ The class :class:`~bip.base.BipData`:
 Element
 ~~~~~~~
 
-In Bip most basic object inherit from the same classes: :class:`BipBaseElt` which is
-the most basic one, :class:`BipRefElt` which include all the objects which can have
-xrefs (including structures (:class:`BipStruct`) and structure members
-(:class:`BStructMember`), see bellow), :class:`BipElt`
+In Bip most basic object inherit from the same classes: ``BipBaseElt`` which is
+the most basic one, ``BipRefElt`` which include all the objects which can have
+xrefs (including structures (``BipStruct``) and structure members
+(``BStructMember``), see bellow), ``BipElt``
 which represent all elements which have an address in the IDA DataBase (idb),
-including :class:`BipData` and :class:`BipInstr` (it is this class which
+including ``BipData`` and ``BipInstr`` (it is this class which
 implement the properties ``comment``,  ``name``, ``bytes``, ...).
 
-It is possible to use the functions :func:`GetElt` and :func:`GetEltByName`
+It is possible to use the functions ``GetElt`` and ``GetEltByName``
 for directly recuperating the good basic element from an address or a name
 representing a location in the binary.
 
@@ -258,10 +258,10 @@ Some static function are provided for searching element in the database:
 Xref
 ~~~~
 
-All elements which inherit from :class:`BipRefElt` (:class:`BipInstr`,
-:class:`BipData`, :class:`BipStruct`, ...) and some other (in
-particular :class:`BipFunction`) possess methods which allow
-to access xrefs. They are represented by the :class:`BipXref` object which
+All elements which inherit from ``BipRefElt`` (``BipInstr``,
+``BipData``, ``BipStruct``, ...) and some other (in
+particular ``BipFunction``) possess methods which allow
+to access xrefs. They are represented by the ``BipXref`` object which
 have a ``src`` (origin of the xref) and a ``dst`` (destination of the xref).
 
 .. code-block:: pycon
@@ -313,7 +313,7 @@ have a ``src`` (origin of the xref) and a ``dst`` (destination of the xref).
 Struct
 ~~~~~~
 
-Manipulating struct (:class:`BipStruct`) and members (:class:`BStructMember`):
+Manipulating struct (``BipStruct``) and members (``BStructMember``):
 
 .. code-block:: pycon
 
@@ -381,12 +381,12 @@ Types
 
 IDA use extensively types in hexrays but also in the base API for defining
 types of data, variables and so on. In Bip the different types inherit from
-the same class :class:`BipType`. This class propose some basic methods common to all
-types and subclasses (class starting by :class:`BType`) can define more specifics
+the same class ``BipType``. This class propose some basic methods common to all
+types and subclasses (class starting by ``BType``) can define more specifics
 ones.
 
 The types should be seen as a recursive structure: a ``void *`` is a
-:class:`BTypePtr` containing a :class:`BTypeVoid` structure. For a list of the
+``BTypePtr`` containing a ``BTypeVoid`` structure. For a list of the
 different types implemented in Bip see TODO.
 
 .. code-block:: pycon
@@ -435,8 +435,8 @@ provided by IDA.
 Functions / local variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Hexrays functions are represented by the :class:`HxCFunc` objects and local
-variable by the :class:`HxLvar` objects:
+Hexrays functions are represented by the ``HxCFunc`` objects and local
+variable by the ``HxLvar`` objects:
 
 .. code-block:: pycon
 
@@ -468,10 +468,10 @@ CNode / Visitors
 
 Hexrays allow to manipulate the AST it produces, this is a particularly
 usefull feature as it allow to make static analysis at a way higher level.
-Bip define :class:`CNode` which represent a node of the AST, each type of node is
-represented by a subclass of :class:`CNode`. All types of node have child nodes except
-:class:`CNodeExprFinal` which are the leaf of the AST. Two *main* types of nodes
-exist :class:`CNodeExpr` (expressions) and :class:`CNodeStmt` (statements).
+Bip define ``CNode`` which represent a node of the AST, each type of node is
+represented by a subclass of ``CNode``. All types of node have child nodes except
+``CNodeExprFinal`` which are the leaf of the AST. Two *main* types of nodes
+exist ``CNodeExpr`` (expressions) and ``CNodeStmt`` (statements).
 Statements correspond to the C Statements: if, while, ... , expressions are everything
 else. Statements can have childs statements or expressions while expressions
 can only have expressions child.
@@ -514,84 +514,94 @@ Directly accessing the nodes:
 
 The previous code show how to get value and manipulate quickly nodes. For
 making analysis it is easier to use visitor on the complete function.
-:meth:`HxCFunc.visit_cnode` allow to visit all the nodes in a function with a callback,
-:meth:`HxCFunc.visit_cnode_filterlist` allow to visit only node of a certain type by
+``HxCFunc.visit_cnode`` allow to visit all the nodes in a function with a callback,
+``HxCFunc.visit_cnode_filterlist`` allow to visit only node of a certain type by
 passing a list of the node.
 
 This script is an example for visiting a function and recuperating the
-format string pass to a `printk` function. It locates the call to `printk`,
+format string pass to a ``printk`` function. It locates the call to ``printk``,
 recuperate the address of the first argument, get the string and add a comment
-in the hexrays:
+in both hexrays and the assembly:
 
 .. code-block:: python
 
-    from bip.base import *
-    from bip.hexrays import *
-    from bip.hexrays.cnode import *
+    from bip import *
 
     """
         Search for all call to printk, if possible recuperate the string and add
-        it in comments in hexrays view at the call level.
+        it in comments at the level of the call.
     """
 
-    def ignore_cast_ref(cn):
-        # ignore cast and ref (``&`` operator in C) node
-        #   ignoring cast is a common problem, ignoring ref can be a really bad
-        #   idea
-        if isinstance(cn, (CNodeExprCast, CNodeExprRef)):
-            return ignore_cast_ref(cn.ops[0])
-        return cn
+    def is_call_to_printk(cn):
+        """
+            Check if the node object represent a call to the function ``printk``.
 
-    def visit_call(cn):
-        c = ignore_cast_ref(cn.caller)
-        if not isinstance(c, CNodeExprObj):
-            # if it is not an object just ignore it, object are for everything
-            # which has an address, including functions
+            :param cn: A :class:`CNodeExprCall` object.
+            :return: True if it is a call to printk, False otherwise
+        """
+        f = cn.caller_func
+        return f is not None and f.name == "printk"
+
+    def visit_call_printk(cn):
+        """
+            Visitor for call node which will check if a node is a call to
+            ``printk`` and add the string in comment if possible.
+
+            :param cn: A :class:`CNodeExprCall` object.
+        """
+        # check if it calls to printk
+        # For more perf. we would want to use xref to printk and checks of
+        #   the address of the node
+        if not is_call_to_printk(cn): # not a call to printk: ignore
             return
+        if cn.number_args < 1: # not enough args
+            print("Not enough args at 0x{:X}".format(cn.closest_ea))
+            return
+        cnr = cn.get_arg(0).ignore_cast # get the arg
+        # if we have a ref (&global) we want the object under
+        if isinstance(cnr, CNodeExprRef):
+            cnr = cnr.ops[0].ignore_cast
+        # if this is not a global object we ignore it
+        if not isinstance(cnr, CNodeExprObj):
+            print("Not an object at 0x{:X}".format(cn.closest_ea))
+            return
+        ea = cnr.value # get the address of the object
+        s = None
         try:
-            # check if it calls to printk
-            # For more perf. we would want to use xref to printk and checks of
-            #   the address of the node
-            if BipFunction(c.value).name != "printk":
-                return
-            if cn.number_args < 1: # if we don't have a first argument ignore
-                print("Call to printk without arg at 0x{:X}".format(cn.ea))
-                return
-
-            # lets get the address of the structure in first arg
-            karg = ignore_cast_ref(cn.args[0])
-            if not isinstance(karg, (CNodeExprNum, CNodeExprObj)):
-                # we check for Num in case hexrays have failed, do not handle
-                #   lvar and so on
-                print("Call to printk with unhandle argument type ({}) at 0x{:X}".format(karg, cn.ea))
-                return
-            ea = karg.value
             s = BipData.get_cstring(ea + 2) # get the string
-            if s is None or s == "": # sanity check
-                print("Invalid string at 0x{:X}".format(cn.ea))
-                return
-            s = s.strip() # remove space and \n
-            # CNode.hxcfunc is the HxCFunc object
-            cn.hxcfunc.add_cmt(cn.ea, s) # add a comment on the hexrays function
         except Exception:
-            print("Exception at 0x{:X}".format(cn.ea))
+            pass
+        if s is None or s == "":
+            print("Invalid string at 0x{:X}".format(cn.closest_ea))
             return
+        s = s.strip() # remove \n
+        # add comment both in hexrays and in asm view
+        cn.hxcfunc.add_cmt(cn.closest_ea, s)
+        GetElt(cn.closest_ea).comment = s
 
     # Final function which take the address of a function and comment the call
     #   to printk
     def printk_handler(eafunc):
         hf = HxCFunc.from_addr(eafunc) # get the hexrays function
-        hf.visit_cnode_filterlist(visit_call, [CNodeExprCall]) # visit only the call nodes
+        hf.visit_cnode_filterlist(visit_call_printk, [CNodeExprCall]) # visit only the call nodes
+
+While visitors are practice (and "fast"), Bip expose also methods for directly
+recuperating the ``CNode`` objects as a list. The methods
+``HxCFunc.get_cnode_filter`` and ``HxCFunc.get_cnode_filter_list``
+allow to avoid to have a visitor function and make it easier to manipulate
+the hexrays API. It is also worth noting that all visitors functions provided
+by ``HxCFunc`` objects are also available directly in ``CNode``
+objects for visiting only a sub-tree of the full AST.
 
 
 Plugins
 -------
 
-Plugins using Bip should all inherit from the class :class:`BipPlugin`. Those plugin
+Plugins using Bip should all inherit from the class ``BipPlugin``. Those plugin
 are different from the IDA plugin and are loaded and called by the
-:class:`BipPluginManager`. Each plugin is identified by its class name and those
+``BipPluginManager``. Each plugin is identified by its class name and those
 should be unique. Bip can be used with standard plugin but most of the
-``bip.gui`` implementations is linked to the use of :class:`BipPlugin`. For
+``bip.gui`` implementations is linked to the use of ``BipPlugin``. For
 more information about plugins and internals see TODO.
 
 Here is a simple plugin example:
@@ -620,16 +630,16 @@ Here is a simple plugin example:
     # plugins in ``bipplugin`` folder will be loaded automatically and do not need those lines
 
 
-The :func:`menu` decorator will automatically create the ``MyPluginExemple``
+The ``menu`` decorator will automatically create the ``MyPluginExemple``
 menu entry in the ``Bip`` top level menu entry (which is created by the
-:class:`BipPluginManager`), creating an entry in the ``Edit/Plugins/``
+``BipPluginManager``), creating an entry in the ``Edit/Plugins/``
 directory may not work because of how the entry of this submenu are created
 by IDA.
 
 A plugin can expose methods which another plugin wants to call or directly
 from the console. A plugin should not be directly instantiated, it is the
-:class:`BipPluginManager` which is in charge of loading it. For recuperating a
-:class:`BipPlugin` object it should be requested to the plugin manager:
+``BipPluginManager`` which is in charge of loading it. For recuperating a
+``BipPlugin`` object it should be requested to the plugin manager:
 
 .. code-block:: python
 
@@ -642,6 +652,50 @@ from the console. A plugin should not be directly instantiated, it is the
     # <__plugins__tst_plg.TstPlugin object at 0x000001EFE42D69B0>
     tp.hello() # calling a method of TstPlugin
     # hello
+
+For the previous exemple with ``printk`` we could write the following plugin:
+
+.. code-block:: python
+
+    class PrintkComs(BipPlugin):
+
+        def printk_handler(self, eafunc):
+            """
+                Comment all call to printk in a function with the format string
+                pass to the printk. Comments are added in both the hexrays and ASM
+                view. Works only if the first argument is a global.
+
+                :param eafunc: The addess of the function in which to add the
+                    comment.
+            """
+            try:
+                hf = HxCFunc.from_addr(eafunc) # get hexray view of the func
+            except Exception:
+                print("Fail getting the decompile view for function at 0x{:X}".format(eafunc))
+                return
+            hf.visit_cnode_filterlist(visit_call_printk, [CNodeExprCall]) # visit only on the call
+
+        @shortcut("Ctrl-H")
+        @menu("Bip/PrintkCom/", "Comment printk in current function")
+        def printk_current(self):
+            """
+                Add comment for the current function.
+            """
+            self.printk_handler(Here())
+
+        @menu("Bip/PrintkCom/", "Comment all printk")
+        def printk_all(self):
+            """
+                Add comment for the all the functions in the IDB.
+            """
+            # get the function which call printk
+            f = BipFunction.get_by_name("printk")
+            if f is None:
+                print("No function named printk")
+                return
+            for fu in f.callers:
+                print("Renaming for {}".format(fu))
+                self.printk_handler(fu.ea)
 
 
 Similar projects

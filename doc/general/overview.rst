@@ -488,67 +488,77 @@ passing a list of the node.
 This script is an example for visiting a function and recuperating the
 format string pass to a `printk` function. It locates the call to `printk`,
 recuperate the address of the first argument, get the string and add a comment
-in the hexrays:
+in both hexrays and the assembly:
 
 .. code-block:: python
 
-    from bip.base import *
-    from bip.hexrays import *
-    from bip.hexrays.cnode import *
+    from bip import *
 
     """
         Search for all call to printk, if possible recuperate the string and add
-        it in comments in hexrays view at the call level.
+        it in comments at the level of the call.
     """
 
-    def ignore_cast_ref(cn):
-        # ignore cast and ref (``&`` operator in C) node
-        #   ignoring cast is a common problem, ignoring ref can be a really bad
-        #   idea
-        if isinstance(cn, (CNodeExprCast, CNodeExprRef)):
-            return ignore_cast_ref(cn.ops[0])
-        return cn
+    def is_call_to_printk(cn):
+        """
+            Check if the node object represent a call to the function ``printk``.
 
-    def visit_call(cn):
-        c = ignore_cast_ref(cn.caller)
-        if not isinstance(c, CNodeExprObj):
-            # if it is not an object just ignore it, object are for everything
-            # which has an address, including functions
+            :param cn: A :class:`CNodeExprCall` object.
+            :return: True if it is a call to printk, False otherwise
+        """
+        f = cn.caller_func
+        return f is not None and f.name == "printk"
+
+    def visit_call_printk(cn):
+        """
+            Visitor for call node which will check if a node is a call to
+            ``printk`` and add the string in comment if possible.
+
+            :param cn: A :class:`CNodeExprCall` object.
+        """
+        # check if it calls to printk
+        # For more perf. we would want to use xref to printk and checks of
+        #   the address of the node
+        if not is_call_to_printk(cn): # not a call to printk: ignore
             return
+        if cn.number_args < 1: # not enough args
+            print("Not enough args at 0x{:X}".format(cn.closest_ea))
+            return
+        cnr = cn.get_arg(0).ignore_cast # get the arg
+        # if we have a ref (&global) we want the object under
+        if isinstance(cnr, CNodeExprRef):
+            cnr = cnr.ops[0].ignore_cast
+        # if this is not a global object we ignore it
+        if not isinstance(cnr, CNodeExprObj):
+            print("Not an object at 0x{:X}".format(cn.closest_ea))
+            return
+        ea = cnr.value # get the address of the object
+        s = None
         try:
-            # check if it calls to printk
-            # For more perf. we would want to use xref to printk and checks of
-            #   the address of the node
-            if BipFunction(c.value).name != "printk":
-                return
-            if cn.number_args < 1: # if we don't have a first argument ignore
-                print("Call to printk without arg at 0x{:X}".format(cn.ea))
-                return
-
-            # lets get the address of the structure in first arg
-            karg = ignore_cast_ref(cn.args[0])
-            if not isinstance(karg, (CNodeExprNum, CNodeExprObj)):
-                # we check for Num in case hexrays have failed, do not handle
-                #   lvar and so on
-                print("Call to printk with unhandle argument type ({}) at 0x{:X}".format(karg, cn.ea))
-                return
-            ea = karg.value
             s = BipData.get_cstring(ea + 2) # get the string
-            if s is None or s == "": # sanity check
-                print("Invalid string at 0x{:X}".format(cn.ea))
-                return
-            s = s.strip() # remove space and \n
-            # CNode.hxcfunc is the HxCFunc object
-            cn.hxcfunc.add_cmt(cn.ea, s) # add a comment on the hexrays function
         except Exception:
-            print("Exception at 0x{:X}".format(cn.ea))
+            pass
+        if s is None or s == "":
+            print("Invalid string at 0x{:X}".format(cn.closest_ea))
             return
+        s = s.strip() # remove \n
+        # add comment both in hexrays and in asm view
+        cn.hxcfunc.add_cmt(cn.closest_ea, s)
+        GetElt(cn.closest_ea).comment = s
 
     # Final function which take the address of a function and comment the call
     #   to printk
     def printk_handler(eafunc):
         hf = HxCFunc.from_addr(eafunc) # get the hexrays function
-        hf.visit_cnode_filterlist(visit_call, [CNodeExprCall]) # visit only the call nodes
+        hf.visit_cnode_filterlist(visit_call_printk, [CNodeExprCall]) # visit only the call nodes
+
+While visitors are practice (and "fast"), Bip expose also methods for directly
+recuperating the :class:`CNode` objects as a list. The methods
+:meth:`HxCFunc.get_cnode_filter` and :meth:`HxCFunc.get_cnode_filter_list`
+allow to avoid to have a visitor function and make it easier to manipulate
+the hexrays API. It is also worth noting that all visitors functions provided
+by :class:`HxCFunc` objects are also available directly in :class:`CNode`
+objects for visiting only a sub-tree of the full AST.
 
 Plugins
 =======
@@ -610,6 +620,50 @@ from the console. A plugin should not be directly instantiated, it is the
     # <__plugins__tst_plg.TstPlugin object at 0x000001EFE42D69B0>
     tp.hello() # calling a method of TstPlugin
     # hello
+
+For the previous exemple with ``printk`` we could write the following plugin:
+
+.. code-block:: python
+
+    class PrintkComs(BipPlugin):
+
+        def printk_handler(self, eafunc):
+            """
+                Comment all call to printk in a function with the format string
+                pass to the printk. Comments are added in both the hexrays and ASM
+                view. Works only if the first argument is a global.
+
+                :param eafunc: The addess of the function in which to add the
+                    comment.
+            """
+            try:
+                hf = HxCFunc.from_addr(eafunc) # get hexray view of the func
+            except Exception:
+                print("Fail getting the decompile view for function at 0x{:X}".format(eafunc))
+                return
+            hf.visit_cnode_filterlist(visit_call_printk, [CNodeExprCall]) # visit only on the call
+
+        @shortcut("Ctrl-H")
+        @menu("Bip/PrintkCom/", "Comment printk in current function")
+        def printk_current(self):
+            """
+                Add comment for the current function.
+            """
+            self.printk_handler(Here())
+
+        @menu("Bip/PrintkCom/", "Comment all printk")
+        def printk_all(self):
+            """
+                Add comment for the all the functions in the IDB.
+            """
+            # get the function which call printk
+            f = BipFunction.get_by_name("printk")
+            if f is None:
+                print("No function named printk")
+                return
+            for fu in f.callers:
+                print("Renaming for {}".format(fu))
+                self.printk_handler(fu.ea)
 
 
 
