@@ -4,7 +4,7 @@
     the abstraction on top of the ``tinfo_t`` (:class:`BipType`).
 
     Each object representing a type can have "children". Those children
-    represent subtypes of the current type. The most basic exemple of this is
+    represent subtypes of the current type. The most basic example of this is
     the case for a pointer: the pointer point on a particular type, for
     example an integer in the case of ``int *``. The :class:`BTypePtr`
     representing the pointer will have one children :class:`BTypeInt`
@@ -29,9 +29,9 @@ class BipType(object):
         information.
 
         The objects which inherit from :class:`BipType` can contain other
-        *child* :class:`BipType` objects. For example a pointer
+        *children* :class:`BipType` objects. For example a pointer
         (:class:`BTypePtr`) will contain one child object corresponding to the
-        pointed type. The :meth:`childs` property allow to get a list of the
+        pointed type. The :meth:`children` property allow to get a list of the
         child object.
 
         .. todo:: allow creation of types
@@ -224,12 +224,12 @@ class BipType(object):
             ea = ida_kernwin.get_screen_ea()
         ida_nalt.del_tinfo(ea)
 
-    ############################# CHILDS ##############################
+    ############################# CHILDREN ##############################
 
     @property
-    def childs(self):
+    def children(self):
         """
-            Property which return a list of childs types. All elements of this
+            Property which return a list of children types. All elements of this
             list will be object which inherit from :class:`BipType`.
 
             :return: A list of object inheriting from :class:`BipType`
@@ -556,7 +556,7 @@ class BTypePtr(BipType):
         return self._tinfo.is_funcptr()
 
     @property
-    def childs(self):
+    def children(self):
         return [self.pointed]
 
     @classmethod
@@ -613,7 +613,7 @@ class BTypeArray(BipType):
         return self._array_info.nelems
 
     @property
-    def childs(self):
+    def children(self):
         return [self.elt_type]
 
     @classmethod
@@ -720,9 +720,9 @@ class BTypeFunc(BipType):
         return BipType.from_tinfo(self._ida_func_type_data.rettype)
 
     @property
-    def childs(self):
+    def children(self):
         """
-            Property which return a list of childs types. All elements of this
+            Property which return a list of children types. All elements of this
             list will be object which inherit from :class:`BipType`.
 
             First element is the return type followed by the argument types.
@@ -748,7 +748,7 @@ class BTypeStruct(BipType):
         :meth:`get_member_name` method, it is also possible to get the type
         using the :meth:`get_member_type` method or the :meth:`members_type`
         property (which return a list), the :meth:`members_info` return a
-        dictionnary with the name of the members as key and their type as
+        dictionary with the name of the members as key and their type as
         value.
 
         .. todo:: link to struct in bip
@@ -851,9 +851,9 @@ class BTypeStruct(BipType):
         return d
 
     @property
-    def childs(self):
+    def children(self):
         """
-            Property which return a list of childs types. All elements of this
+            Property which return a list of children types. All elements of this
             list will be object which inherit from :class:`BipType`.
 
             This contain the type of the members and is equivalent to
@@ -964,9 +964,9 @@ class BTypeUnion(BipType):
         return d
 
     @property
-    def childs(self):
+    def children(self):
         """
-            Property which return a list of childs types. All elements of this
+            Property which return a list of children types. All elements of this
             list will be object which inherit from :class:`BipType`.
 
             This contain the type of the members and is equivalent to

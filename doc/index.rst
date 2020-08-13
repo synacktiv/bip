@@ -8,13 +8,13 @@ Welcome to Bip's documentation!
 
 Bip is a project which aimed to simplify the usage of python for interacting
 with IDA. Its main goals are to facilitate the usage of python in the
-interactive console of IDA and for writting plugins. In a more general way
-the goal is to automate the recurent task done through the python API. Bip is
-also developped for providing a more oriented object, a "python-like" API and
-a real documentation.
+interactive console of IDA and for writing plugins. In a more general way
+the goal is to automate the recurrent task done through the python API.
+Bip is also developxped for providing a more oriented object, a "python-like"
+API and a *real* documentation.
 
-This code is not complete and a lot of features are still missing. Development
-is prioritize on what people ask for and what the developers use, so do not
+This code is not complete, and a lot of features are still missing. Development
+is prioritized on what people ask for and what the developers use, so do not
 hesitate to make PR, Feature Request and Issues (including for the
 documentation).
 
@@ -28,7 +28,7 @@ The main part of the documentation is split in the three parts of
 bip: :ref:`index-base`
 containing the basic interfaces, the :ref:`index-hexrays` for manipulating
 hexrays functions and the :ref:`index-gui` containing interface with the
-graphics and explaining how to developped plugins. This is mainly
+graphics and explaining how to developed plugins. This is mainly
 autodocumentation of bip objects with precisions about usage and potentially
 internals when necessary.
 
@@ -72,7 +72,7 @@ Hexrays interface (``bip.hexrays``)
 
 This regroup the interface on top of the IDA Hexrays API, in particular it
 allows to visit the AST generated for the functions. This module will be
-usefull only if the decompiler for the binary exist and is installed.
+useful only if the decompiler for the binary exist and is installed.
 
 .. toctree::
     :maxdepth: 2

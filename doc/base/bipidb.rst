@@ -3,7 +3,7 @@ IDB representation
 
 .. module:: bip.base
 
-Some usefull information are link to the IDB loaded by IDA, those information
+Some useful information are link to the IDB loaded by IDA, those information
 are accessible through static methods of the :class:`BipIdb` class. Those
 information include things such as the base address of the image, the minium
 and maximum address mapped in the IDB and so on. A few `helper functions`_ are

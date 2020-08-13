@@ -161,12 +161,12 @@ class HxCStmt(HxCItem):
         """
             Surcharge for printing a CStmt.
         """
-        return "{}(ea=0x{:X}, stmt_childs={})".format(self.__class__.__name__, self.ea, self.stmt_childs)
+        return "{}(ea=0x{:X}, stmt_children={})".format(self.__class__.__name__, self.ea, self.stmt_children)
 
     @property
-    def stmt_childs(self):
+    def stmt_children(self):
         """
-            Property which return a list of the statements which are childs of
+            Property which return a list of the statements which are children of
             this statement. This is used only when the statement is recursive,
             if not this will return an empty list.
 
@@ -176,10 +176,10 @@ class HxCStmt(HxCItem):
         return []
 
     @property
-    def expr_childs(self):
+    def expr_children(self):
         """
             Property which return a list of the expression (:class:`HxCExpr`)
-            which are childs of this statement. This will not return childs
+            which are children of this statement. This will not return children
             expression of the statement child of the current object.
 
             :return: A list of child expression of this object.

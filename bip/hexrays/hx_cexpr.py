@@ -224,7 +224,7 @@ class HxCExprInsn(HxCExprFinal):
 class HxCExprType(HxCExprFinal):
     """
         Class for representing a type (``HxCType.COT_TYPE``). This can be used
-        for exemple as a Sizeof node.
+        for example as a Sizeof node.
     """
     TYPE_HANDLE = HxCType.COT_TYPE
 

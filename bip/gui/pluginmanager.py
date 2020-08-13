@@ -263,7 +263,7 @@ class BipPluginLoader(object):
     def get_plugins_from_module(mod, thismodonly=True):
         """
             Return a dict of the different classes which inherit from
-            :class:`BipPlugin` in a module. Key of the dictionnary are the
+            :class:`BipPlugin` in a module. Key of the dictionary are the
             name in the module and values are the :class:`BipPlugin` classes.
 
             :param mod: The module in which to search for :class:`BipPlugin`.

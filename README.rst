@@ -3,18 +3,18 @@ Bip
 
 Bip is a project which aimed to simplify the usage of python for interacting
 with IDA. Its main goals are to facilitate the usage of python in the
-interactive console of IDA and for writting plugins. In a more general way
-the goal is to automate the recurent task done through the python API.
-Bip is also developped for providing a more oriented object, a "python-like"
+interactive console of IDA and for writing plugins. In a more general way
+the goal is to automate the recurrent task done through the python API.
+Bip is also developxped for providing a more oriented object, a "python-like"
 API and a *real* documentation.
 
-This code is not complete and a lot of features are still missing. Development
-is prioritize on what people ask for and what the developers use, so do not
+This code is not complete, and a lot of features are still missing. Development
+is prioritized on what people ask for and what the developers use, so do not
 hesitate to make PR, Feature Request and Issues (including for the
 documentation).
 
-The documentation is available in the RST format (and can be compile using
-sphinx) in the ``doc/`` directory.
+The documentation is available in the RST format (and can be compiled using
+sphinx) in the ``doc/`` directory. TODO Link
 
 * Current IDA version: IDA 7.5SP1 and Python 2.7 or 3.8
 * Last Bip Version: 0.3
@@ -35,7 +35,7 @@ particular folder:
       -h, --help   show this help message and exit
       --dest DEST  Destination folder where to install Bip
 
-This installer do not insall any plugins by default, but simply the core of
+This installer does not install any plugins by default, but simply the core of
 Bip. By default the destination folder is the one use by IDA locally
 (``%APPDATA%\Hex-Rays\IDA Pro\`` for Windows and ``$HOME/.idapro`` for Linux
 and MacOSX).
@@ -43,7 +43,7 @@ and MacOSX).
 Overview
 ========
 
-This overview has for goal to show how the most usual operations can be done,
+This overview has a goal to show how the most usual operations can be done,
 it is far from being complete. All functions and objects in Bip are documented
 using doc string so just use ``help(BipClass)`` and ``help(obj.bipmethod)`` for
 getting the doc in your shell.
@@ -52,7 +52,7 @@ Base
 ----
 
 The module ``bip.base`` contains most of the *basic* features for interfacing
-with IDA. In practice this is mainly the disasmbleur part of IDA, this
+with IDA. In practice this is mainly the disassembler part of IDA, this
 includes: manipulation of instruction, functions, basic blocks, operands,
 data, xrefs, structures, types, ...
 
@@ -202,12 +202,12 @@ Element
 ~~~~~~~
 
 In Bip most basic object inherit from the same classes: ``BipBaseElt`` which is
-the most basic one, ``BipRefElt`` which include all the objects which can have
+the most basic one, ``BipRefElt`` which includes all the objects which can have
 xrefs (including structures (``BipStruct``) and structure members
-(``BStructMember``), see bellow), ``BipElt``
+(``BStructMember``), see below), ``BipElt``
 which represent all elements which have an address in the IDA DataBase (idb),
 including ``BipData`` and ``BipInstr`` (it is this class which
-implement the properties ``comment``,  ``name``, ``bytes``, ...).
+implement the properties: ``comment``,  ``name``, ``bytes``, ...).
 
 It is possible to use the functions ``GetElt`` and ``GetEltByName``
 for directly recuperating the good basic element from an address or a name
@@ -231,7 +231,7 @@ representing a location in the binary.
     >>> isinstance(GetElt(0x1800D2FF0), BipData) # or data ?
     False
 
-Some static function are provided for searching element in the database:
+Some static functions are provided for searching elements in the database:
 
 .. code-block:: pycon
 
@@ -261,7 +261,7 @@ Xref
 All elements which inherit from ``BipRefElt`` (``BipInstr``,
 ``BipData``, ``BipStruct``, ...) and some other (in
 particular ``BipFunction``) possess methods which allow
-to access xrefs. They are represented by the ``BipXref`` object which
+to access xrefs. They are represented by the ``BipXref`` objects which
 have a ``src`` (origin of the xref) and a ``dst`` (destination of the xref).
 
 .. code-block:: pycon
@@ -352,7 +352,7 @@ Manipulating struct (``BipStruct``) and members (``BStructMember``):
     >>> st[8].xEltTo[0]
     BipInstr: 0x1800A0720 (mov     [rsp+538h+ExceptionRecord.ExceptionRecord], r10)
 
-Creating struct, adding member and nested structure:
+Creating struct, adding members and nested structure:
 
 .. code-block:: pycon
 
@@ -382,7 +382,7 @@ Types
 IDA use extensively types in hexrays but also in the base API for defining
 types of data, variables and so on. In Bip the different types inherit from
 the same class ``BipType``. This class propose some basic methods common to all
-types and subclasses (class starting by ``BType``) can define more specifics
+types and subclasses (class starting by ``BType``) can define more specific
 ones.
 
 The types should be seen as a recursive structure: a ``void *`` is a
@@ -403,7 +403,7 @@ different types implemented in Bip see TODO.
     False
     >>> pv.pointed # type bellow the pointer (recursive)
     <bip.base.biptype.BTypeVoid object at 0x000001D95536DF60>
-    >>> pv.childs # list of type pointed
+    >>> pv.children # list of type pointed
     [<bip.base.biptype.BTypeVoid object at 0x000001D95536DEB8>]
     >>> d = BipData(0x000180110068)
     >>> d.type # access directly to the type at the address
@@ -466,15 +466,15 @@ variable by the ``HxLvar`` objects:
 CNode / Visitors
 ~~~~~~~~~~~~~~~~
 
-Hexrays allow to manipulate the AST it produces, this is a particularly
-usefull feature as it allow to make static analysis at a way higher level.
-Bip define ``CNode`` which represent a node of the AST, each type of node is
+Hexrays allows to manipulate the AST it produces, this is a particularly
+useful feature as it allows to make static analysis at a way higher level.
+Bip defines ``CNode`` which represents a node of the AST, each type of node is
 represented by a subclass of ``CNode``. All types of node have child nodes except
 ``CNodeExprFinal`` which are the leaf of the AST. Two *main* types of nodes
 exist ``CNodeExpr`` (expressions) and ``CNodeStmt`` (statements).
 Statements correspond to the C Statements: if, while, ... , expressions are everything
-else. Statements can have childs statements or expressions while expressions
-can only have expressions child.
+else. Statements can have children statements or expressions while expressions
+can only have expressions children.
 
 A list of all the different types of node and more details on what they do and
 how to write visitor is present in TODO.
@@ -486,18 +486,18 @@ Directly accessing the nodes:
     >>> hf = HxCFunc.from_addr() # get the HxCFunc
     >>> rn = hf.root_node # accessing the root node of the function
     >>> rn # root node is always a CNodeStmtBlock
-    CNodeStmtBlock(ea=0x1800D3006, st_childs=[<bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278AFDAADD8>, ..., <bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16355F8>])
+    CNodeStmtBlock(ea=0x1800D3006, stmt_children=[<bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278AFDAADD8>, ..., <bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16355F8>])
     >>> hex(rn.ea) # address of the root node, after the function prolog
     0x1800d3006L
     >>> rn.has_parent # root node does not have parent
     False
-    >>> rn.expr_childs # this node does not have expression statements
+    >>> rn.expr_children # this node does not have expression statements
     []
-    >>> ste = rn.st_childs[0] # getting the first statement childs
+    >>> ste = rn.stmt_children[0] # getting the first statement children
     >>> ste # CNodeStmtExpr contain one child expression
     CNodeStmtExpr(ea=0x1800D3006, value=CNodeExprAsg(ea=0x1800D3006, ops=[<bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8>, <bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1637080>]))
     >>> ste.parent # the parent is the root node
-    CNodeStmtBlock(ea=0x1800D3006, st_childs=[<bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278B1637048>, ..., <bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16376D8>])
+    CNodeStmtBlock(ea=0x1800D3006, stmt_children=[<bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278B1637048>, ..., <bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16376D8>])
     >>> a = ste.value # getting the expression of the node
     >>> a # Asg is an assignement
     CNodeExprAsg(ea=0x1800D3006, ops=[<bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8>, <bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1637080>])
@@ -513,10 +513,10 @@ Directly accessing the nodes:
     0x1800d3006L
 
 The previous code show how to get value and manipulate quickly nodes. For
-making analysis it is easier to use visitor on the complete function.
-``HxCFunc.visit_cnode`` allow to visit all the nodes in a function with a callback,
-``HxCFunc.visit_cnode_filterlist`` allow to visit only node of a certain type by
-passing a list of the node.
+making analysis it is easier to use visitors on the complete function.
+``HxCFunc.visit_cnode`` allows to visit all the nodes in a function with a
+callback, ``HxCFunc.visit_cnode_filterlist`` allow to visit only nodes of a
+certain type by passing a list of the node classes.
 
 This script is an example for visiting a function and recuperating the
 format string pass to a ``printk`` function. It locates the call to ``printk``,
@@ -585,10 +585,10 @@ in both hexrays and the assembly:
         hf = HxCFunc.from_addr(eafunc) # get the hexrays function
         hf.visit_cnode_filterlist(visit_call_printk, [CNodeExprCall]) # visit only the call nodes
 
-While visitors are practice (and "fast"), Bip expose also methods for directly
+While visitors are practice (and "fast"), Bip also exposes methods for directly
 recuperating the ``CNode`` objects as a list. The methods
 ``HxCFunc.get_cnode_filter`` and ``HxCFunc.get_cnode_filter_list``
-allow to avoid to have a visitor function and make it easier to manipulate
+allow to avoid having a visitor function and make it easier to manipulate
 the hexrays API. It is also worth noting that all visitors functions provided
 by ``HxCFunc`` objects are also available directly in ``CNode``
 objects for visiting only a sub-tree of the full AST.
@@ -597,11 +597,11 @@ objects for visiting only a sub-tree of the full AST.
 Plugins
 -------
 
-Plugins using Bip should all inherit from the class ``BipPlugin``. Those plugin
-are different from the IDA plugin and are loaded and called by the
+Plugins using Bip should all inherit from the class ``BipPlugin``. Those
+plugins are different from the IDA plugin and are loaded and called by the
 ``BipPluginManager``. Each plugin is identified by its class name and those
 should be unique. Bip can be used with standard plugin but most of the
-``bip.gui`` implementations is linked to the use of ``BipPlugin``. For
+``bip.gui`` implementation is linked to the use of ``BipPlugin``. For
 more information about plugins and internals see TODO.
 
 Here is a simple plugin example:
@@ -620,7 +620,7 @@ Here is a simple plugin example:
 
         @shortcut("Ctrl-H") # add a shortcut as a decorator, will call the method bellow
         @shortcut("Ctrl-5") # add an other one
-        @menu("Bip/MyPluginExemple/", "ExPlugin Action!") # add a menu entry named "ExPlugin Action!", default is the method name
+        @menu("Bip/MyPluginExample/", "ExPlugin Action!") # add a menu entry named "ExPlugin Action!", default is the method name
         def action_with_shortcut(self):
             print(self) # this is the ExPlugin object
             print("In ExPlugin action !")# code here
@@ -630,7 +630,7 @@ Here is a simple plugin example:
     # plugins in ``bipplugin`` folder will be loaded automatically and do not need those lines
 
 
-The ``menu`` decorator will automatically create the ``MyPluginExemple``
+The ``menu`` decorator will automatically create the ``MyPluginExample``
 menu entry in the ``Bip`` top level menu entry (which is created by the
 ``BipPluginManager``), creating an entry in the ``Edit/Plugins/``
 directory may not work because of how the entry of this submenu are created
@@ -653,7 +653,7 @@ from the console. A plugin should not be directly instantiated, it is the
     tp.hello() # calling a method of TstPlugin
     # hello
 
-For the previous exemple with ``printk`` we could write the following plugin:
+For the previous example with ``printk`` we could write the following plugin:
 
 .. code-block:: python
 
@@ -710,5 +710,5 @@ Thanks
 Some people to thanks:
 
 * `saph <https://twitter.com/_saph_>`_: for starting this project.
-* `hakril <https://twitter.com/hakril>`_: for the inspiration on the projet and his insights on designing it.
+* `hakril <https://twitter.com/hakril>`_: for the inspiration for the project and his insights on designing it.
 

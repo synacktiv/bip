@@ -35,7 +35,7 @@ Implementation internals
 This part as for goal to describe the internal of the :class:`BipPlugin`:
 how are they loaded by the :class:`~bip.gui.pluginmanager.BipPluginManager` 
 and how the interface with :class:`BipActivity`.
-It is not necessary to read it for using them or writting one.
+It is not necessary to read it for using them or writing one.
 
 Loading of the plugins
 ----------------------

@@ -16,8 +16,8 @@ def visit_dfs_cnode(cnode, callback):
         will be called in the same order than returned by
         :meth:`~CNodeExpr.ops`; for an object which inherit from
         :class:`CNodeStmt` the child nodes will be called in the same order
-        than returned by :meth:`~CNodeStmt.expr_childs` (expression) follow by
-        the nodes in the same order as :meth:`~CNodeStmt.stmt_childs`
+        than returned by :meth:`~CNodeStmt.expr_children` (expression) follow by
+        the nodes in the same order as :meth:`~CNodeStmt.stmt_children`
         (statements).
 
         If the callback return ``False`` the visitor will stop. Every other
@@ -49,8 +49,8 @@ def visit_dfs_cnode(cnode, callback):
             ch.reverse()
             stack += ch
         elif isinstance(elt, bip.hexrays.cnode.CNodeStmt):
-            ch = list(elt.expr_childs)
-            ch += list(elt.stmt_childs)
+            ch = list(elt.expr_children)
+            ch += list(elt.stmt_children)
             ch.reverse()
             stack += ch
         else:
@@ -110,10 +110,10 @@ def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
                 stack += ch
         elif isinstance(elt, bip.hexrays.cnode.CNodeStmt):
             if vist_expr:
-                ch = list(elt.expr_childs)
+                ch = list(elt.expr_children)
             else:
                 ch = []
-            ch += list(elt.stmt_childs)
+            ch += list(elt.stmt_children)
             ch.reverse()
             stack += ch
         else:

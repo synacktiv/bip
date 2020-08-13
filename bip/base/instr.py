@@ -212,7 +212,7 @@ class BipInstr(BipElt):
             notice it will not always be the next instruction in the control
             flow.
             
-            If the next element is not an instruction (for exemple at the end
+            If the next element is not an instruction (for example at the end
             of a function followed by data) ``None`` will be returned.
 
             :return: The next :class:`BipInstr` or None in case of error.

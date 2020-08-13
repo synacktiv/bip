@@ -37,8 +37,9 @@ Breaking changes:
 * renaming of ``bip.hexrays.HxCItem.GetHxCItem`` to ``bip.hexrays.HxCItem.from_citem``
 * renaming of ``bip.hexrays.HxCItem._createChild`` to ``bip.hexrays.HxCItem._create_child``
 * renaming of ``bip.hexrays.CNode._createChild`` to ``bip.hexrays.CNode._create_child``
-* renaming of ``bip.hexrays.HxCStmt.st_childs`` to ``bip.hexrays.HxCStmt.stmt_childs``
-* renaming of ``bip.hexrays.CNodeStmt.st_childs`` to ``bip.hexrays.CNodeStmt.stmt_childs``
+* renaming of ``bip.hexrays.HxCStmt.st_childs`` to ``bip.hexrays.HxCStmt.stmt_children``
+* renaming of ``bip.hexrays.CNodeStmt.st_childs`` to ``bip.hexrays.CNodeStmt.stmt_children``
+* renaming of ``bip.hexrays.CNodeStmt.expr_childs`` to ``bip.hexrays.CNodeStmt.expr_children``
 * renaming of ``bip.hexrays.CNode.GetCNode`` to ``bip.hexrays.CNode.from_citem``
 * renaming of ``bip.hexrays.CNode.cfunc`` to ``bip.hexrays.CNode.hxcfunc``
 * renaming of ``bip.base.BipFunction.hxfunc`` to ``bip.base.BipFunction.hxcfunc``
@@ -54,6 +55,7 @@ Breaking changes:
 * function ``bip.base.utils.bip_exec_sync`` became static method ``bip.base.BipIda.exec_sync``
 * function ``bip.base.utils.get_highlighted_identifier_as_int`` became static method ``BipUserSelect.get_curr_highlighted_int``
 * removed classes ``BaseGuiAction`` and ``ContextMenuHooks``
+* renamed method ``bip.base.BipType.childs`` to ``bip.base.BiType.children``
 
 
 Sed script for automatic update of plugins (no garantee to be perfect or to
@@ -79,11 +81,13 @@ avoid colisions) (use with ``sed -f RULEFILE INPUTFILE``):
     s/Entries/entries/g
     s/GetHxCItem/from_citem/g
     s/_createChild/_create_child/g
-    s/st_childs/stmt_childs/g
+    s/st_childs/stmt_children/g
+    s/expr_childs/expr_children/g
     s/GetCNode/from_citem/g
     s/get_ptr_size/BipIdb.ptr_size/g
     s/bip_exec_sync/BipIda.exec_sync/g
     s/get_highlighted_identifier_as_int/BipUserSelect.get_curr_highlighted_int/g
+    s/childs/children/g
 
 Are not included in this sed file the change to ``BipInstr.Make``,
 ``BipFunction.Count``, ``Cnode.cfunc``, ``Ptr`` which can easilly create

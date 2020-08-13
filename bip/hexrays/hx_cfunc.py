@@ -254,7 +254,7 @@ class HxCFunc(object):
             Method which return a list of :class:`CNode` for which a filter
             return true. Internally this use the :meth:`~HxCFunc.visit_cnode`
             method which visit all nodes of the function, this is just a
-            usefull wrapper.
+            wrapper.
 
             :param cb_filter: A callable which take a :class:`CNode` in
                 parameter and return a boolean. This callback will be called
@@ -272,7 +272,7 @@ class HxCFunc(object):
             Method which return a list of :class:`CNode` of a particular
             type(s). Internally this use the :meth:`~HxCFunc.visit_cnode`
             method which visit all nodes of the function, this is just a
-            usefull wrapper.
+            wrapper.
 
             :param type_filter: The type(s) of :class:`CNode` to get. Only
                 :class:`CNode` matching the isinstance of this type will

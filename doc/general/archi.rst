@@ -9,7 +9,7 @@ understanding the global design of Bip, however for starting reading the
 
 The `Module architecture`_ part describes how the different modules and
 classes are interfaced together, the `common code patterns`_ part explains how
-Bip was developped for being used, finally the `interfacing with IDA & limitations`_ part
+Bip was developed for being used, finally the `interfacing with IDA & limitations`_ part
 explains how the interface with IDA is made and problems link to that design.
 
 Module architecture
@@ -39,7 +39,7 @@ manipulated using Bip. Several *building blocks* exist inside this module:
   This allow to provide an easy to use way to get the correct object from
   just an address or an ID, this is in particular used for xref. For more
   information see :ref:`ref-base-elt`.
-* The **xrefs** allow to make link with all childs objects of :class:`BipRefElt`
+* The **xrefs** allow to make link with all children objects of :class:`BipRefElt`
   (:class:`BipInstr`, :class:`BipData`, :class:`BipStruct`,
   :class:`BStructMember`) and with :class:`BipFunction`. Xref are represented
   by the :class:`BipXref` classes but in most case methods are provided
@@ -191,13 +191,13 @@ correspond to the index in the local variable array and arguments of the
 function counts also (so ``a1`` will be at index ``0``), its possible to
 directly get the :class:`~bip.hexrays.HxLvar` object corresponding using the
 :meth:`~bip.hexrays.CNodeExprVar.lvar` property. The right part of the
-assignment will be a :class:`~bip.hexrays.CNodeExprAdd` node with 2 childs
+assignment will be a :class:`~bip.hexrays.CNodeExprAdd` node with 2 children
 himself: a :class:`~bip.hexrays.CNodeExprVar` again for ``a1`` and a
 :class:`~bip.hexrays.CNodeExprNum` for the number ``2``.
 
 The second statement (2) contained in the
 :meth:`~bip.hexrays.HxCFunc.root_node` will be
-a :class:`~bip.hexrays.CNodeStmtIf` which contains 2 childs: an expression
+a :class:`~bip.hexrays.CNodeStmtIf` which contains 2 children: an expression
 for the condition and a statement for the content of the ``if``, if
 an ``else`` was present a third child will be present (a statement again).
 The expression for the condition will once again be a

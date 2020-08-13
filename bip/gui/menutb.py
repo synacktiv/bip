@@ -23,10 +23,10 @@ def add_top_menu(name, uid=None, before=None):
         :param str uid: Unique id for this menu, this will not be shown
             in the gui but can be used for deleting it
             after (:func:`del_top_menu`) or for the ``before`` argument (see
-            bellow). If it not unique this function will fail. By default
+            below). If it not unique this function will fail. By default
             (``None``) the value of the ``name`` will be used as there is
             few case where having two top level menu of the same name is
-            usefull.
+            useful.
         :param str before: The uid of a menu before which to insert this new
             menu. If the ``uid`` does not exist it this function will still
             succeed but insert the entry at the end.

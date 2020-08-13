@@ -7,7 +7,7 @@ import pytest
 
 """
     This regroup generic function for testing nodes of the Hexrays AST. This
-    include all the childs class :class:`HxCExpr`, :class:`HxCStmt`,
+    include all the children class :class:`HxCExpr`, :class:`HxCStmt`,
     :class:`CNodeExpr` and :class:`CNodeStmt`. As most of those classes have
     the same code (dynamic generation of the :class:`CNode` classes), the test
     function support both node type.
@@ -73,11 +73,11 @@ def gentst_cnodeexpr(cn):
 def gentst_cnodestmt(cn):
     # generic CNodeStmt test
     assert isinstance(cn, CNodeStmt)
-    assert isinstance(cn.stmt_childs, list)
-    assert isinstance(cn.expr_childs, list)
-    for cnc in cn.stmt_childs:
+    assert isinstance(cn.stmt_children, list)
+    assert isinstance(cn.expr_children, list)
+    for cnc in cn.stmt_children:
         assert isinstance(cnc, CNodeStmt)
-    for cnc in cn.expr_childs:
+    for cnc in cn.expr_children:
         assert isinstance(cnc, CNodeExpr)
 
 def gentst_hxcexpr(hi):
@@ -93,11 +93,11 @@ def gentst_hxcstmt(hi):
     # generic HxCStmt test
     assert isinstance(hi, HxCItem)
     assert isinstance(hi, HxCStmt)
-    assert isinstance(hi.stmt_childs, list)
-    assert isinstance(hi.expr_childs, list)
-    for hic in hi.stmt_childs:
+    assert isinstance(hi.stmt_children, list)
+    assert isinstance(hi.expr_children, list)
+    for hic in hi.stmt_children:
         assert isinstance(hic, HxCStmt)
-    for hic in hi.expr_childs:
+    for hic in hi.expr_children:
         assert isinstance(hic, HxCExpr)
 
 
@@ -306,8 +306,8 @@ def genst_stmtexpr(cn):
     assert isinstance(cn, (HxCStmt, CNodeStmt))
     assert isinstance(cn, (HxCStmtFinal, CNodeStmtFinal))
     assert isinstance(cn, (HxCStmtExpr, CNodeStmtExpr))
-    assert len(cn.stmt_childs) == 0
-    assert len(cn.expr_childs) == 1
+    assert len(cn.stmt_children) == 0
+    assert len(cn.expr_children) == 1
     assert isinstance(cn.expr, (HxCExpr, CNodeExpr))
     assert cn.expr == cn.value
 
@@ -316,8 +316,8 @@ def genst_stmtgoto(cn):
     assert isinstance(cn, (HxCStmt, CNodeStmt))
     assert isinstance(cn, (HxCStmtFinal, CNodeStmtFinal))
     assert isinstance(cn, (HxCStmtGoto, CNodeStmtGoto))
-    assert len(cn.stmt_childs) == 0
-    assert len(cn.expr_childs) == 0
+    assert len(cn.stmt_children) == 0
+    assert len(cn.expr_children) == 0
     assert isinstance(cn.label, (int, long))
     assert cn.label == cn.value
     if isinstance(cn, CNodeStmtGoto):
@@ -328,8 +328,8 @@ def genst_stmtasm(cn):
     assert isinstance(cn, (HxCStmt, CNodeStmt))
     assert isinstance(cn, (HxCStmtFinal, CNodeStmtFinal))
     assert isinstance(cn, (HxCStmtAsm, CNodeStmtAsm))
-    assert len(cn.stmt_childs) == 0
-    assert len(cn.expr_childs) == 0
+    assert len(cn.stmt_children) == 0
+    assert len(cn.expr_children) == 0
     assert isinstance(cn.addr_instr, list)
     assert len(cn.addr_instr) > 0
     assert isinstance(cn.addr_instr[0], (int, long))
@@ -346,86 +346,86 @@ def genst_stmtreturn(cn):
     assert isinstance(cn, (HxCStmt, CNodeStmt))
     assert isinstance(cn, (HxCStmtFinal, CNodeStmtFinal))
     assert isinstance(cn, (HxCStmtReturn, CNodeStmtReturn))
-    assert len(cn.stmt_childs) == 0
-    assert len(cn.expr_childs) == 1
+    assert len(cn.stmt_children) == 0
+    assert len(cn.expr_children) == 1
     assert cn.value == cn.ret_val
-    assert cn.value == cn.expr_childs[0]
+    assert cn.value == cn.expr_children[0]
     assert isinstance(cn.ret_val, (HxCExpr, CNodeExpr))
 
 def genst_stmtif(cn):
     # StmtIf
     assert isinstance(cn, (HxCStmt, CNodeStmt))
     assert isinstance(cn, (HxCStmtIf, CNodeStmtIf))
-    assert len(cn.expr_childs) == 1
+    assert len(cn.expr_children) == 1
     assert isinstance(cn.cond, (HxCExpr, CNodeExpr))
-    assert cn.expr_childs[0] == cn.cond
+    assert cn.expr_children[0] == cn.cond
     assert isinstance(cn.st_then, (HxCStmt, CNodeStmt))
-    assert cn.stmt_childs[0] == cn.st_then
+    assert cn.stmt_children[0] == cn.st_then
     assert isinstance(cn.has_else, bool)
     if cn.has_else:
         assert isinstance(cn.st_else, (HxCStmt, CNodeStmt))
-        assert len(cn.stmt_childs) == 2
-        assert cn.stmt_childs[1] == cn.st_else
+        assert len(cn.stmt_children) == 2
+        assert cn.stmt_children[1] == cn.st_else
     else:
         assert cn.st_else is None
-        assert len(cn.stmt_childs) == 1
+        assert len(cn.stmt_children) == 1
 
 def genst_stmtfor(cn):
     # StmtFor
     assert isinstance(cn, (HxCStmt, CNodeStmt))
     assert isinstance(cn, (HxCStmtLoop, CNodeStmtLoop))
     assert isinstance(cn, (HxCStmtFor, CNodeStmtFor))
-    assert len(cn.stmt_childs) == 1
-    assert len(cn.expr_childs) == 3
+    assert len(cn.stmt_children) == 1
+    assert len(cn.expr_children) == 3
     assert isinstance(cn.init, (HxCExpr, CNodeExpr))
     assert isinstance(cn.cond, (HxCExpr, CNodeExpr))
     assert isinstance(cn.step, (HxCExpr, CNodeExpr))
-    assert cn.init == cn.expr_childs[0]
-    assert cn.cond == cn.expr_childs[1]
-    assert cn.step == cn.expr_childs[2]
+    assert cn.init == cn.expr_children[0]
+    assert cn.cond == cn.expr_children[1]
+    assert cn.step == cn.expr_children[2]
     assert isinstance(cn.st_body, (HxCStmt, CNodeStmt))
-    assert cn.st_body == cn.stmt_childs[0]
+    assert cn.st_body == cn.stmt_children[0]
 
 def genst_stmtwhile(cn):
     # StmtWhile
     assert isinstance(cn, (HxCStmt, CNodeStmt))
     assert isinstance(cn, (HxCStmtLoop, CNodeStmtLoop))
     assert isinstance(cn, (HxCStmtWhile, CNodeStmtWhile))
-    assert len(cn.stmt_childs) == 1
-    assert len(cn.expr_childs) == 1
+    assert len(cn.stmt_children) == 1
+    assert len(cn.expr_children) == 1
     assert isinstance(cn.cond, (HxCExpr, CNodeExpr))
-    assert cn.cond == cn.expr_childs[0]
+    assert cn.cond == cn.expr_children[0]
     assert isinstance(cn.st_body, (HxCStmt, CNodeStmt))
-    assert cn.st_body == cn.stmt_childs[0]
+    assert cn.st_body == cn.stmt_children[0]
 
 def genst_stmtdowhile(cn):
     # StmtDoWhile
     assert isinstance(cn, (HxCStmt, CNodeStmt))
     assert isinstance(cn, (HxCStmtLoop, CNodeStmtLoop))
     assert isinstance(cn, (HxCStmtDoWhile, CNodeStmtDoWhile))
-    assert len(cn.stmt_childs) == 1
-    assert len(cn.expr_childs) == 1
+    assert len(cn.stmt_children) == 1
+    assert len(cn.expr_children) == 1
     assert isinstance(cn.cond, (HxCExpr, CNodeExpr))
-    assert cn.cond == cn.expr_childs[0]
+    assert cn.cond == cn.expr_children[0]
     assert isinstance(cn.st_body, (HxCStmt, CNodeStmt))
-    assert cn.st_body == cn.stmt_childs[0]
+    assert cn.st_body == cn.stmt_children[0]
 
 def genst_stmtswitch(cn):
     # StmtSwitch
     assert isinstance(cn, (HxCStmt, CNodeStmt))
     assert isinstance(cn, (HxCStmtLoop, CNodeStmtLoop))
     assert isinstance(cn, (HxCStmtSwitch, CNodeStmtSwitch))
-    assert len(cn.stmt_childs) != 0
-    assert len(cn.expr_childs) == 1
+    assert len(cn.stmt_children) != 0
+    assert len(cn.expr_children) == 1
     assert isinstance(cn.expr, (HxCExpr, CNodeExpr))
-    assert cn.expr == cn.expr_childs[0]
+    assert cn.expr == cn.expr_children[0]
     assert isinstance(cn.max_val, (int, long))
     cas = cn.st_cases
     casv = cn.cases_val
     assert isinstance(cas, list)
     assert isinstance(casv, list)
     assert len(cas) != 0
-    assert len(cas) == len(cn.stmt_childs)
+    assert len(cas) == len(cn.stmt_children)
     assert len(cas) == len(casv)
     for i in range(len(cas)):
         assert isinstance(cas[i], (HxCStmt, CNodeStmt))
@@ -438,9 +438,9 @@ def genst_stmtblock(cn):
     # StmtBlock
     assert isinstance(cn, (HxCStmt, CNodeStmt))
     assert isinstance(cn, (HxCStmtBlock, CNodeStmtBlock))
-    assert len(cn.stmt_childs) != 0
-    assert len(cn.expr_childs) == 0
-    assert len(cn.elts) == len(cn.stmt_childs)
+    assert len(cn.stmt_children) != 0
+    assert len(cn.expr_children) == 0
+    assert len(cn.elts) == len(cn.stmt_children)
 
 def genst_all(cn):
     gentst_abstractcitem(cn) # all note should inherit from AbstractCItem

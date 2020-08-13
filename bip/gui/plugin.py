@@ -36,7 +36,7 @@ class BipPlugin(object):
             All :class:`BipPlugin` have an attribute ``_activities``
             corresponding to a dict of ``name`` (corresponding to the orginal
             name of the method) as key and with objects which inherit from
-            :class:`BipActivity`. This dictionnary is created by the
+            :class:`BipActivity`. This dictionary is created by the
             constructor of this object and the activities are launch when
             the plugin is loaded.
 
@@ -67,7 +67,7 @@ class BipPlugin(object):
         """
             Internal methods which look for the object which inherit from
             :class:`BipActivity` and add them to the ``_activities``
-            dictionnary.
+            dictionary.
             
             This functions iter on all items in the object ``__dict__`` and
             the associated class for finding the :class:`BipActivity`.
@@ -149,7 +149,7 @@ def shortcut(shortcut_str):
         The method which is decorated should only take ``self`` in argument
         which will be the :class:`BipPlugin` object.
 
-        An exemple of usage is the following:
+        An example of usage is the following:
 
         .. code-block:: python
 

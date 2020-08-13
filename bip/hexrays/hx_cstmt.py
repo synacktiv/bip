@@ -74,7 +74,7 @@ class HxCStmtExpr(HxCStmtFinal):
         return self.expr
 
     @property
-    def expr_childs(self):
+    def expr_children(self):
         return [self.expr]
 
 @cnode.buildCNode
@@ -169,7 +169,7 @@ class HxCStmtReturn(HxCStmtFinal):
         return self.ret_val
 
     @property
-    def expr_childs(self):
+    def expr_children(self):
         return [self.ret_val]
 
 
@@ -231,14 +231,14 @@ class HxCStmtIf(HxCStmt):
             return None
 
     @property
-    def stmt_childs(self):
+    def stmt_children(self):
         if self.has_else:
             return [self.st_then, self.st_else]
         else:
             return [self.st_then]
 
     @property
-    def expr_childs(self):
+    def expr_children(self):
         return [self.cond]
 
 @cnode.buildCNode
@@ -273,8 +273,8 @@ class HxCStmtLoop(HxCStmt):
 class HxCStmtFor(HxCStmtLoop):
     """
         Class for representing a C *for* statement (``HxCType.CIT_FOR``).
-        This is a recursive statement which have 2 childs statement and
-        2 childs expression.
+        This is a recursive statement which have 2 children statement and
+        2 children expression.
 
         The for of the for is the following:
 
@@ -325,11 +325,11 @@ class HxCStmtFor(HxCStmtLoop):
         return self._create_child(self._cinsn.cfor.step)
 
     @property
-    def stmt_childs(self):
+    def stmt_children(self):
         return [self.st_body]
 
     @property
-    def expr_childs(self):
+    def expr_children(self):
         return [self.init, self.cond, self.step]
 
 @cnode.buildCNode
@@ -361,11 +361,11 @@ class HxCStmtWhile(HxCStmtLoop):
         return self._create_child(self._cinsn.cwhile.body)
 
     @property
-    def stmt_childs(self):
+    def stmt_children(self):
         return [self.st_body]
 
     @property
-    def expr_childs(self):
+    def expr_children(self):
         return [self.cond]
 
 @cnode.buildCNode
@@ -397,11 +397,11 @@ class HxCStmtDoWhile(HxCStmtLoop):
         return self._create_child(self._cinsn.cdo.body)
 
     @property
-    def stmt_childs(self):
+    def stmt_children(self):
         return [self.st_body]
 
     @property
-    def expr_childs(self):
+    def expr_children(self):
         return [self.cond]
 
 @cnode.buildCNode
@@ -488,11 +488,11 @@ class HxCStmtSwitch(HxCStmt):
         return [list(c.values) for c in self._cinsn.cswitch.cases]
 
     @property
-    def stmt_childs(self):
+    def stmt_children(self):
         return self.st_cases
 
     @property
-    def expr_childs(self):
+    def expr_children(self):
         return [self.expr]
 
 @cnode.buildCNode
@@ -535,7 +535,7 @@ class HxCStmtBlock(HxCStmt):
         return [self._create_child(e) for e in self._cinsn.cblock]
 
     @property
-    def stmt_childs(self):
+    def stmt_children(self):
         return self.elts
 
 

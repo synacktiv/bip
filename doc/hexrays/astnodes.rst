@@ -159,7 +159,7 @@ Class name                    Parent class name                   Description   
 :class:`CNodeExprVar`         :class:`CNodeExprFinal`             An object representing a local variable (:class:`HxLvar`).                                                     None.
 :class:`CNodeExprHelper`      :class:`CNodeExprFinal`             An "helper" function: not real functions but created by hexrays. In particular use for intrinsic.              None.
 :class:`CNodeExprInsn`        :class:`CNodeExprFinal`             An expression which contains a statements. This should never happend and is **not** implemented.               None.
-:class:`CNodeExprType`        :class:`CNodeExprFinal`             An expression which contains a type. This is used for exemple with the :class:`CNodeExprSizeof` node.          None.
+:class:`CNodeExprType`        :class:`CNodeExprFinal`             An expression which contains a type. This is used for example with the :class:`CNodeExprSizeof` node.          None.
 :class:`CNodeExprTernary`     :class:`CNodeExpr`                  A C ternary operation.                                                                                         Three expressions: :meth:`~CNodeExprTernary.cond`, :meth:`~CNodeExprTernary.expr1`, :meth:`~CNodeExprTernary.expr2`. C representation is ``cond ? expr1 : expr2``.
 :class:`CNodeExprCall`        :class:`CNodeExpr`                  A call to a function, this include call to function pointer.                                                   One expression representing the caller (:meth:`~CNodeExprCall.caller`) and several expressions corresponding to the arguments (:meth:`~CNodeExprCall.args` as a list).
 :class:`CNodeExprAsg`         :class:`CNodeExprAssignment`        C assignment operation: ``dst = src``                                                                          Two children expressions: :meth:`~CNodeExprAssignment.dst` and :meth:`~CNodeExprAssignment.src`
@@ -236,9 +236,9 @@ to use) is implemented directly in Bip and iterate on sublcasses of
 improvement only on the Bip implementation of the visitors.
 
 The Bip implementation of the visitor use a Deep-First Search (DFS) algorithm
-with preorder-traversal (the current node is visited before the childs), when
-a statement is visited all the childs expression will be visited before the
-childs statements. The functions actually implementing this visitor are
+with preorder-traversal (the current node is visited before the children), when
+a statement is visited all the children expression will be visited before the
+children statements. The functions actually implementing this visitor are
 documented in :ref:`doc-hexrays-cnode-visitor-api`. The main methods allowing
 to use this visitor are :meth:`~bip.hexrays.HxCFunc.visit_cnode` and
 :meth:`~bip.hexrays.HxCFunc.visit_cnode_filterlist`.

@@ -73,12 +73,12 @@ class BipBaseElt(object):
 
                 Internally this function iterate on all the ``Heads`` and
                 create the object if the class which is used for it match
-                the element. For exemple calling ``BipData.iter_heads()`` will
+                the element. For example calling ``BipData.iter_heads()`` will
                 return only the heads which are :class:`BipData` object or
                 their children.
 
             .. note:: This function will work only on mapped object, it is not
-                possible to use it for getting :class:`BipStruct` for exemple.
+                possible to use it for getting :class:`BipStruct` for example.
 
             :param start: The address at which to start iterating. If this
                 parameter is None (the default) the minimum mapped address
@@ -462,7 +462,7 @@ class BipElt(BipRefElt):
             :meth:`~BipElt.is_auto_name` and :meth:`~BipElt.is_dummy_name`.
 
             This is still not perfect and name put some names put by IDA will
-            not be recognize by this function (for exemple the global for the
+            not be recognize by this function (for example the global for the
             CFG and probably others).
 
             :return: ``True`` if the element has a name provided by IDA,
@@ -644,7 +644,7 @@ class BipElt(BipRefElt):
             Class method allowing to iter on all mapped elements of the IDB.
 
             This will return only the elements which are handle by the class
-            or one of this subclasses. For exemple calling
+            or one of this subclasses. For example calling
             ``BipData.iter_heads()`` will return only the heads which are
             :class:`BipData` object or children of that class. This use
             :func:`GetElt` for determining the correct object to return.
@@ -691,7 +691,7 @@ class BipElt(BipRefElt):
 
             :param ea: The address at which to start the search. If ``None``
                 the screen address will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :return: The address of the next data or None if the search did
                 not find any match.
@@ -714,7 +714,7 @@ class BipElt(BipRefElt):
 
             :param ea: The address at which to start the search. If ``None``
                 the screen address will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :return: An object which ibherit from :class:`BipBaseElt` or
                 ``None`` if the search did not find any match.
@@ -733,7 +733,7 @@ class BipElt(BipRefElt):
 
             :param ea: The address at which to start the search. If ``None``
                 the screen address will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :return: The address of the next code or None if the search did
                 not find any match.
@@ -756,7 +756,7 @@ class BipElt(BipRefElt):
 
             :param ea: The address at which to start the search. If ``None``
                 the screen address will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :return: An object which ibherit from :class:`BipBaseElt` or
                 ``None`` if the search did not find any match.
@@ -776,7 +776,7 @@ class BipElt(BipRefElt):
 
             :param ea: The address at which to start the search. If ``None``
                 the screen address will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :return: The address of the next unknown element or ``None`` if
                 the search did not find any match.
@@ -801,7 +801,7 @@ class BipElt(BipRefElt):
 
             :param ea: The address at which to start the search. If ``None``
                 the screen address will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :return: An object which ibherit from :class:`BipBaseElt` or
                 ``None`` if the search did not find any match.
@@ -821,7 +821,7 @@ class BipElt(BipRefElt):
 
             :param ea: The address at which to start the search. If ``None``
                 the screen address will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :return: The address of the next defined element or None if the
                 search did not find any match.
@@ -846,7 +846,7 @@ class BipElt(BipRefElt):
 
             :param ea: The address at which to start the search. If ``None``
                 the screen address will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :return: An object which ibherit from :class:`BipBaseElt` or
                 ``None`` if the search did not find any match.
@@ -867,7 +867,7 @@ class BipElt(BipRefElt):
             ``FindBinary``) function from IDA with a radix of 16.
 
             The byte should be represented in hexadecimal seperated by space.
-            A ``?`` can be put for replacing a byte, for exemple:
+            A ``?`` can be put for replacing a byte, for example:
             ``41 8B 44 ? 20``.
 
             :param byt: A string representing a sequence of byte.
@@ -876,7 +876,7 @@ class BipElt(BipRefElt):
             :param end_ea: The address at which to stop the search, if
                 ``None`` the maximum or minimum (depending of searching up or
                 down) will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :param nxt: If True (the default) the current element will not
                 be included in the search.
@@ -911,7 +911,7 @@ class BipElt(BipRefElt):
             ``FindBinary``) function from IDA with a radix of 16.
 
             The byte should be represented in hexadecimal seperated by space.
-            A ``?`` can be put for replacing a byte, for exemple:
+            A ``?`` can be put for replacing a byte, for example:
             ``41 8B 44 ? 20``.
 
             :param byt: A string representing a sequence of byte.
@@ -920,7 +920,7 @@ class BipElt(BipRefElt):
             :param end_ea: The address at which to stop the search, if
                 ``None`` the maximum or minimum (depending of searching up or
                 down) will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :param nxt: If True (the default) the current element will not
                 be included in the search.
@@ -957,7 +957,7 @@ class BipElt(BipRefElt):
             :param end_ea: The address at which to stop the search, if
                 ``None`` the maximum or minimum (depending of searching up or
                 down) will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :param nxt: If True (the default) the current element will not
                 be included in the search.
@@ -1004,7 +1004,7 @@ class BipElt(BipRefElt):
             :param end_ea: The address at which to stop the search, if
                 ``None`` the maximum or minimum (depending of searching up or
                 down) will be used.
-            :param down: If True (the default) search bellow the given
+            :param down: If True (the default) search below the given
                 address, if False search above.
             :param nxt: If True (the default) the current element will not
                 be included in the search.

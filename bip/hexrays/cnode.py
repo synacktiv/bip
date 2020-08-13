@@ -24,7 +24,7 @@ class CNode(AbstractCItem):
 
         * access to the parent node,
         * access to the parent :class:`HxCFunc`,
-        * visitor for nodes bellow the current one,
+        * visitor for nodes below the current one,
         * several node specific methods, listed in :ref:`doc-hexrays-cnode-specific-methods`.
 
         The parrent class :class:`AbstractCItem` also provides common
@@ -98,7 +98,7 @@ class CNode(AbstractCItem):
         """
             Property which return the C code corresponding to the
             decompilation of this :class:`CNode` as a onliner. This will
-            include the childs of this object.
+            include the children of this object.
 
             :return str: The human readable C string corresponding to this
                 :class:`CNode` as a onliner.
@@ -182,13 +182,13 @@ class CNode(AbstractCItem):
     def visit_cnode(self, callback):
         """
             Method which allow to visit this :class:`CNode` elements and all
-            those bellow it. This is implemented using a DFS algorithm. This
+            those below it. This is implemented using a DFS algorithm. This
             does not use the hexrays visitor. For more information about the
             implementation see :func:`~cnode_visitor.visit_dfs_cnode` (this
             method is just a wrapper).
 
             :param callback: A callable which will be called on this and all
-                :class:`CNode` bellow it. The call should take only one
+                :class:`CNode` below it. The call should take only one
                 argument which correspond to the :class:`CNode` currently
                 visited. If this callback return False the visit is stoped,
                 all other result is ignored.
@@ -220,8 +220,8 @@ class CNode(AbstractCItem):
         """
             Method which return a list of :class:`CNode` for which a filter
             return true. Internally this use the :meth:`~CNode.visit_cnode`
-            method which visit all nodes bellow (and including) the current
-            one, this is just a usefull wrapper.
+            method which visit all nodes below (and including) the current
+            one, this is just a wrapper.
 
             :param cb_filter: A callable which take a :class:`CNode` in
                 parameter and return a boolean. This callback will be called
@@ -243,8 +243,8 @@ class CNode(AbstractCItem):
         """
             Method which return a list of :class:`CNode` of a particular
             type(s). Internally this use the :meth:`~HxCFunc.visit_cnode_filterlist`
-            method which visit all nodes bellow and including the current one,
-            this is just a usefull wrapper.
+            method which visit all nodes below and including the current one,
+            this is just a wrapper.
 
             :param type_filter: The type(s) of :class:`CNode` to get. Only
                 :class:`CNode` matching the isinstance of this type will
@@ -414,7 +414,7 @@ class CNodeExpr(CNode):
     def find_final_left_node(self):
         """
             Return the node which is the left most "final" expression (inherit
-            from :class:`CNodeExprFinal`) bellow this node. If this
+            from :class:`CNodeExprFinal`) below this node. If this
             node is a final expression it is returned.
         """
         obj = self
@@ -490,12 +490,12 @@ class CNodeStmt(CNode):
         """
             Surcharge for printing a CStmt.
         """
-        return "{}(ea=0x{:X}, stmt_childs={})".format(self.__class__.__name__, self.ea, self.stmt_childs)
+        return "{}(ea=0x{:X}, stmt_children={})".format(self.__class__.__name__, self.ea, self.stmt_children)
 
     @property
-    def stmt_childs(self):
+    def stmt_children(self):
         """
-            Property which return a list of the statements which are childs of
+            Property which return a list of the statements which are children of
             this statement. This is used only when the statement is recursive,
             if not this will return an empty list.
 
@@ -505,10 +505,10 @@ class CNodeStmt(CNode):
         return []
 
     @property
-    def expr_childs(self):
+    def expr_children(self):
         """
             Property which return a list of the expression (:class:`CNodeExpr`)
-            which are childs of this statement. This will not return childs
+            which are children of this statement. This will not return children
             expression of the statement child of the current object.
 
             :return: A list of child expression of this object.
@@ -516,7 +516,7 @@ class CNodeStmt(CNode):
         """
         return []
 
-#: Dictionnary which contain an equivalence between the class which inherit
+#: Dictionary which contain an equivalence between the class which inherit
 #:  from :class:`HxCItem` and the one which inherit from :class:`CNode`. This
 #:  is used for automatically constructing the classes which inherit from
 #:  :class:`CNode` dynamically and should not be modified by hand.
@@ -527,13 +527,13 @@ _citem2cnode = {
         HxCStmt: CNodeStmt,
     }
 
-#: Dictionnary which allows to add method to a particular CNode
+#: Dictionary which allows to add method to a particular CNode
 #:  implementation. This is used by :func:`addCNodeMethod` for adding a method
 #:  in a CNode class which does not exist (is not possible to implement) in
 #:  the HxCItem class equivalent. When the object is created by
 #:  ``buildCNode`` the method will be added.
 #:
-#:  This dictionnary as the name of the class for key, and a parameter a list
+#:  This dictionary as the name of the class for key, and a parameter a list
 #:  of tuples. Each tuple consist of the name of the method as first element
 #:  follow by the function object.
 _cnodeMethods = {}
@@ -548,7 +548,7 @@ def addCNodeMethod(cnode_name, func_name=None):
         added this way should be done before calling it. If the method already
         exist it will be overwrite by this implementation, this allow to
         redefine base methods from the HxCExpr.
-        Internally this use the ``_cnodeMethods`` global dictionnary.
+        Internally this use the ``_cnodeMethods`` global dictionary.
 
         It is possible to add properties using this method, if no
         ``func_name`` parameter is provided the name of the getter will be
@@ -629,7 +629,7 @@ def buildCNode(cls):
             raise AssertionError("Base class for {} does not exist: impossible to generate dynamically".format(cls.__name__))
         lb.append(_citem2cnode[b])
 
-    # creating the dictionnary of attributes
+    # creating the dictionary of attributes
     attr = dict(cls.__dict__) # create a copy of the dict
     attr["__module__"] = __name__ # change module to cnode
     attr["__doc__"] = "Copy of :class:`{}` but which inherit from :class:`CNode`.\nAutomatically created by :func:`~bip.hexrays.cnode.buildCNode`".format(cls.__name__)# change doc

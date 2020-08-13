@@ -53,12 +53,12 @@ def test_biptype02():
     assert BipType.get_at(0x018013F000).str == 'UNWIND_INFO_HDR'
 
 def test_biptype03():
-    # childs (basic)
+    # children (basic)
     tint = BipType.from_c("int")
     tintp = BipType.from_c("int *")
-    assert tint.childs == []
-    assert len(tintp.childs) == 1
-    assert isinstance(tintp.childs[0], BipType)
+    assert tint.children == []
+    assert len(tintp.children) == 1
+    assert isinstance(tintp.children[0], BipType)
 
 def test_biptype04():
     # object creation
@@ -109,7 +109,7 @@ def test_biptype06():
     assert BipType.from_c("__int8").is_signed == True
     assert BipType.from_c("__int8").is_unsigned == False
     assert BipType.from_c("__int8").str == '__int8'
-    assert BipType.from_c("__int8").childs == []
+    assert BipType.from_c("__int8").children == []
     assert BipType.from_c("unsigned __int16").size == 0x2
     assert BipType.from_c("unsigned __int16").is_signed == False
     assert BipType.from_c("unsigned __int16").is_unsigned == True
@@ -124,7 +124,7 @@ def test_biptype07():
     assert isinstance(BipType.from_c("bool"), BTypeBool) == True
     assert BipType.from_c("bool").size == 0x1
     assert BipType.from_c("bool").str == 'bool'
-    assert BipType.from_c("bool").childs == []
+    assert BipType.from_c("bool").children == []
 
 def test_biptype08():
     # float
@@ -134,8 +134,8 @@ def test_biptype08():
     assert isinstance(BipType.from_c("double"), BTypeFloat) == True
     assert BipType.from_c("double").size == 0x8
     assert BipType.from_c("double").str == 'double'
-    assert BipType.from_c("double").childs == []
-    assert BipType.from_c("float").childs == []
+    assert BipType.from_c("double").children == []
+    assert BipType.from_c("float").children == []
 
 def test_biptype09():
     # ptr
@@ -146,19 +146,19 @@ def test_biptype09():
     assert isinstance(ty.pointed, BTypeVoid)
     assert ty.is_pvoid == True
     assert ty.is_pfunc == False
-    assert len(ty.childs) == 1
+    assert len(ty.children) == 1
     ty = BipType.from_c("int *")
     assert ty.size == 8
     assert isinstance(ty.pointed, BTypeInt)
     assert ty.is_pvoid == False
     assert ty.is_pfunc == False
-    assert len(ty.childs) == 1
+    assert len(ty.children) == 1
     ty = BipType.from_c("void (*f)(int a);")
     assert ty.size == 8
     assert isinstance(ty.pointed, BTypeFunc)
     assert ty.is_pvoid == False
     assert ty.is_pfunc == True
-    assert len(ty.childs) == 1
+    assert len(ty.children) == 1
 
 def test_biptype0A():
     # array
@@ -168,8 +168,8 @@ def test_biptype0A():
     assert ty.size == 0x20
     assert isinstance(ty.elt_type, BTypeInt)
     assert ty.nb_elts == 8
-    assert len(ty.childs) == 1
-    assert isinstance(ty.childs[0], BTypeInt)
+    assert len(ty.children) == 1
+    assert isinstance(ty.children[0], BTypeInt)
 
 def test_biptype0B():
     # func
@@ -188,11 +188,11 @@ def test_biptype0B():
     assert isinstance(ty.args_type[0], BTypeInt)
     assert isinstance(ty.args_type[1], BTypePtr)
     assert isinstance(ty.return_type, BTypeInt)
-    assert len(ty.childs) == 3
+    assert len(ty.children) == 3
     ty = BipType.from_c("int f(int)")
     assert ty.get_arg_name(0) == ''
     assert len(ty.args_type) == 1
-    assert len(ty.childs) == 2
+    assert len(ty.children) == 2
 
 def test_biptype0C():
     # struct
@@ -211,7 +211,7 @@ def test_biptype0C():
     assert len(ty.members_info) == 8
     assert isinstance(ty.members_info["Count"], BTypeInt) == True
     assert isinstance(ty.members_info["Entry"], BTypeArray) == True
-    assert len(ty.childs) == 8
+    assert len(ty.children) == 8
 
 def test_biptype0D():
     # union
@@ -231,7 +231,7 @@ def test_biptype0D():
     assert isinstance(ty.members_info, dict) == True
     assert len(ty.members_info) == 4
     assert isinstance(ty.members_info["Header8"], BTypeStruct)
-    assert len(ty.childs) == 4
+    assert len(ty.children) == 4
 
 def test_biptype0E():
     # enum
