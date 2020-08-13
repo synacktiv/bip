@@ -18,7 +18,7 @@ sphinx) in the ``docs/`` directory, it is also
 available `online <https://synacktiv.github.io/bip/build/html/index.html>`_.
 
 * Current IDA version: IDA 7.5SP1 and Python 2.7 or 3.8
-* Last Bip Version: 0.3
+* Last Bip Version: 1.0
 
 Installation
 ============
