@@ -1,0 +1,461 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Plugins &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plugin Manager" href="plgmanager.html" />
+    <link rel="prev" title="HxCItem" href="../hexrays/visit_hx.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plgmanager.html" title="Plugin Manager"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../hexrays/visit_hx.html" title="HxCItem"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.gui">
+<span id="plugins"></span><span id="gui-plugins"></span><h1>Plugins<a class="headerlink" href="#module-bip.gui" title="Permalink to this headline">¶</a></h1>
+<p>Bip has it own systems of plugins refered as <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a>. All plugins
+should inherit of the <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> class. It is still possible to use
+bip in classic IDA plugin, however the gui part of Bip is mostly link to
+<a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a>.</p>
+<p>A plugin is made for being load by the
+<a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a> and will be
+instantiated only once. Once loaded it is possible to get the plugin instance
+through the <a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a> object:
+<code class="docutils literal notranslate"><span class="pre">get_plugin_manager()[&quot;PLUGINNAME&quot;]</span></code> .</p>
+<p>A typicall implementation of a plugin will:</p>
+<ul class="simple">
+<li>surcharge the <a class="reference internal" href="#bip.gui.BipPlugin.to_load" title="bip.gui.BipPlugin.to_load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_load()</span></code></a> classmethod for checking if
+the plugin should be loaded.</li>
+<li>surcharge the <a class="reference internal" href="#bip.gui.BipPlugin.load" title="bip.gui.BipPlugin.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a> method for making actions when it it
+loaded in IDA.</li>
+<li>use some <a class="reference internal" href="#activity-decorators">activity decorators</a> for declaring actions.</li>
+</ul>
+<p>For example of a plugin you can check the <a class="reference internal" href="../general/overview.html#general-overview"><span class="std std-ref">Overview</span></a> or look at
+the printk plugin.</p>
+<div class="section" id="implementation-internals">
+<span id="gui-plugin-internals"></span><h2>Implementation internals<a class="headerlink" href="#implementation-internals" title="Permalink to this headline">¶</a></h2>
+<p>This part as the goal to describe the internal of the <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a>:
+how are they loaded by the <a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a>
+and how the interface with <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a>.
+It is not necessary to read it for using them or writing one.</p>
+<div class="section" id="loading-of-the-plugins">
+<h3>Loading of the plugins<a class="headerlink" href="#loading-of-the-plugins" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> are made for being loaded by the
+<a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a>. <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> present
+in a particular directory (<code class="docutils literal notranslate"><span class="pre">bipplugin</span></code> by default) will be loaded
+automatically by the <a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a>. For
+doing this, the <a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a> will search
+for all <code class="docutils literal notranslate"><span class="pre">.py</span></code> files present in the <code class="docutils literal notranslate"><span class="pre">bipplugin</span></code> directory and will search
+for classes which inherit from the <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> class. When the
+<a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a> is loaded by IDA it will load
+all the plugins which has been found (this is done in the
+<a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager.init" title="bip.gui.pluginmanager.BipPluginManager.init"><code class="xref py py-meth docutils literal notranslate"><span class="pre">init()</span></code></a> method).</p>
+<p>It is also possible to load <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> “by hand” using the
+<a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager.addld_plugin" title="bip.gui.pluginmanager.BipPluginManager.addld_plugin"><code class="xref py py-meth docutils literal notranslate"><span class="pre">addld_plugin()</span></code></a> method. If this
+is done before the <a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a> is loaded
+by IDA, it will load the plugin later: the same way it is done for the
+ones in the <code class="docutils literal notranslate"><span class="pre">bipplugin</span></code> directory. If the
+<a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a> is already loaded, the plugin
+will be loaded immediately.</p>
+<p>When a <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> is loaded the following actions are made:</p>
+<ol class="arabic simple">
+<li>The attributes of the class are check for objects which inherit from the
+<a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> class and are stored in a <code class="docutils literal notranslate"><span class="pre">_attributes</span></code> list of the
+object (done by the <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> constructor, implemented in the
+<a class="reference internal" href="#bip.gui.BipPlugin._init_activities" title="bip.gui.BipPlugin._init_activities"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipPlugin._init_activities()</span></code></a> method).</li>
+<li>The class method <a class="reference internal" href="#bip.gui.BipPlugin.to_load" title="bip.gui.BipPlugin.to_load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipPlugin.to_load()</span></code></a> will be called: if it returns
+<code class="docutils literal notranslate"><span class="pre">False</span></code> the plugin will not be loaded, if it return <code class="docutils literal notranslate"><span class="pre">True</span></code> the
+manager continue its steps (done by <a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a>).</li>
+<li>The <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> object is then created and the constructor will
+try to register its <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> (see <a class="reference internal" href="#registering-activities">Registering activities</a>).</li>
+<li>The plugin is added in the list of instance maintain by the
+<a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a>.</li>
+<li>Finally the <a class="reference internal" href="#bip.gui.BipPlugin.load" title="bip.gui.BipPlugin.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipPlugin.load()</span></code></a> method will be called
+(done by the <a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a>).</li>
+</ol>
+<p>It is important to note that if the
+<a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a> has already been init by IDA
+this will all be made directly through the
+<a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager.addld_plugin" title="bip.gui.pluginmanager.BipPluginManager.addld_plugin"><code class="xref py py-meth docutils literal notranslate"><span class="pre">addld_plugin()</span></code></a> method, but if
+the <a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a> has not yet been loaded
+the plugin will be loaded later. It is possible to use the
+<a class="reference internal" href="plgmanager.html#bip.gui.pluginmanager.BipPluginManager.is_ready" title="bip.gui.pluginmanager.BipPluginManager.is_ready"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_ready()</span></code></a> to check if the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code> has initialized and as loaded its plugins.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>Several loading of python scripts</strong></p>
+<p class="last"><a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> should be loaded only once, it is important for not
+having problems with activities (see <a class="reference internal" href="#registering-activities">Registering activities</a>) and to
+keep a unique reference to the actual object. However python files
+in the <code class="docutils literal notranslate"><span class="pre">plugins</span></code> directory are actually loaded twice by IDA which
+creates problem with the design explain before.</p>
+</div>
+</div>
+<div class="section" id="registering-activities">
+<h3>Registering activities<a class="headerlink" href="#registering-activities" title="Permalink to this headline">¶</a></h3>
+<p>When a <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> is created the <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> which are used
+must be registered. All <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> will be instantiated by the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code> through the method
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">load_all()</span></code> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">load_one()</span></code>.
+Those methods will called the class method <a class="reference internal" href="#bip.gui.BipPlugin.to_load" title="bip.gui.BipPlugin.to_load"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin.to_load</span></code></a> of the
+<a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> and if it returned true the constructor will be called
+follow by the <a class="reference internal" href="#bip.gui.BipPlugin.load" title="bip.gui.BipPlugin.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipPlugin.load()</span></code></a> method.</p>
+<p>When a plugin is instantiated, the <a class="reference internal" href="#bip.gui.BipPlugin.__init__" title="bip.gui.BipPlugin.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a> constructor
+will call the <a class="reference internal" href="#bip.gui.BipPlugin._init_activities" title="bip.gui.BipPlugin._init_activities"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_init_activities()</span></code></a> which will create a dict
+of all the <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> objects define for the object and its class.
+Then the method <a class="reference internal" href="#bip.gui.BipPlugin._provide_plg_activities" title="bip.gui.BipPlugin._provide_plg_activities"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_provide_plg_activities()</span></code></a> will provide to the
+<a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> object the plugin in itself.</p>
+<p>Once the <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> is instantiated, the <a class="reference internal" href="#bip.gui.BipPlugin.load" title="bip.gui.BipPlugin.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipPlugin.load()</span></code></a> method
+will be called. This method will call <a class="reference internal" href="#bip.gui.BipPlugin._register_activities" title="bip.gui.BipPlugin._register_activities"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_register_activities()</span></code></a>
+which will take the dict of <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> and for each one call its
+<a class="reference internal" href="activity.html#bip.gui.BipActivity.register" title="bip.gui.BipActivity.register"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register()</span></code></a> method.</p>
+</div>
+</div>
+<div class="section" id="bipplugin-api">
+<h2>BipPlugin API<a class="headerlink" href="#bipplugin-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.gui.BipPlugin">
+<em class="property">class </em><code class="descclassname">bip.gui.</code><code class="descname">BipPlugin</code><a class="headerlink" href="#bip.gui.BipPlugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a plugin in IDA.</p>
+<p>All plugin should be instantiated only once. For adding a plugin the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code> should be used (it can be recuperated using
+the <a class="reference internal" href="plgmanager.html#bip.gui.get_plugin_manager" title="bip.gui.get_plugin_manager"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_plugin_manager()</span></code></a> function).
+The following code can be used for loading a new plugin:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyPlugin</span><span class="p">(</span><span class="n">BipPlugin</span><span class="p">):</span> <span class="c1"># define a new class for the plugin</span>
+    <span class="k">pass</span> <span class="c1"># implementation</span>
+
+<span class="n">bpm</span> <span class="o">=</span> <span class="n">get_plugin_manager</span><span class="p">()</span> <span class="c1"># get the BipPluginManager</span>
+<span class="n">bpm</span><span class="o">.</span><span class="n">addld_plugin</span><span class="p">(</span><span class="s2">&quot;MyPlugin&quot;</span><span class="p">,</span> <span class="n">MyPlugin</span><span class="p">,</span> <span class="n">ifneeded</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c1"># add the plugin</span>
+</pre></div>
+</div>
+<p>Once finish developping a <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> it can be directly
+set in the <code class="docutils literal notranslate"><span class="pre">bipplugin</span></code> folder for being loaded at start by the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code>, in that case there is no need to call the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">addld_plugin()</span></code>. The <a class="reference internal" href="#bip.gui.BipPlugin.to_load" title="bip.gui.BipPlugin.to_load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipPlugin.to_load()</span></code></a>
+method can be rewritten for deciding when to load or not the plugin
+and the <a class="reference internal" href="#bip.gui.BipPlugin.load" title="bip.gui.BipPlugin.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipPlugin.load()</span></code></a> method allow to make actions directly
+when the plugin is loaded. <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> and the associated
+decorators (<a class="reference internal" href="#bip.gui.menu" title="bip.gui.menu"><code class="xref py py-func docutils literal notranslate"><span class="pre">menu()</span></code></a>, <a class="reference internal" href="#bip.gui.shortcut" title="bip.gui.shortcut"><code class="xref py py-func docutils literal notranslate"><span class="pre">shortcut()</span></code></a>, …) can be used for
+registering actions in IDA.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>BipPlugin and BipActivity</strong></p>
+<p class="last">All <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> have an attribute <code class="docutils literal notranslate"><span class="pre">_activities</span></code>
+corresponding to a dict of <code class="docutils literal notranslate"><span class="pre">name</span></code> (corresponding to the orginal
+name of the method) as key and with objects which inherit from
+<a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a>. This dictionary is created by the
+constructor of this object and the activities are launch when
+the plugin is loaded.</p>
+</div>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">make a way to dynamically add and get activities</p>
+</div>
+<dl class="method">
+<dt id="bip.gui.BipPlugin.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.gui.BipPlugin.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for a <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> object. This constructor
+should not be called directly but should be use by the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code> . In particular this should avoid to
+have several time the same plugin register.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Instentiating several time the same plugin class can
+create problems in particular link to its <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a></p>
+</div>
+<p>In particular this constructor is in charge to provide itself
+for its <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> objects. Subclasses should call this
+constructor (using <code class="docutils literal notranslate"><span class="pre">super</span></code>).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.gui.BipPlugin._init_activities">
+<code class="descname">_init_activities</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.gui.BipPlugin._init_activities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal methods which look for the object which inherit from
+<a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> and add them to the <code class="docutils literal notranslate"><span class="pre">_activities</span></code>
+dictionary.</p>
+<p>This functions iter on all items in the object <code class="docutils literal notranslate"><span class="pre">__dict__</span></code> and
+the associated class for finding the <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.gui.BipPlugin._provide_plg_activities">
+<code class="descname">_provide_plg_activities</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.gui.BipPlugin._provide_plg_activities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate on all <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> of this object and set
+their <code class="docutils literal notranslate"><span class="pre">plugin</span></code> property with this object.</p>
+<p>This is an internal method and should not be called directly. The
+constructor of a <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> call this function.</p>
+<p>Internally this will iterate on the <code class="docutils literal notranslate"><span class="pre">_activities</span></code> property
+(dict) for providing the plugin.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.gui.BipPlugin._register_activities">
+<code class="descname">_register_activities</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.gui.BipPlugin._register_activities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal method which will parcour all the <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a>
+object which are associated with this plugin and register all of
+them.</p>
+<p>This method is not made for being called directly and should be
+call by the <a class="reference internal" href="#bip.gui.BipPlugin.load" title="bip.gui.BipPlugin.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipPlugin.load()</span></code></a> function.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.gui.BipPlugin.to_load">
+<em class="property">classmethod </em><code class="descname">to_load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.gui.BipPlugin.to_load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method allowing to test if this plugin should be loaded.
+At that point the plugin object has not been loaded yet, this
+allow to test if the plugin is made for working in this
+environment (python version, OS, IDA version, …).</p>
+<p>This method can be called several time.</p>
+<p>By default always return <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A boolean value indicating if the plugin should be loaded
+(<code class="docutils literal notranslate"><span class="pre">True</span></code>) or not (<code class="docutils literal notranslate"><span class="pre">False</span></code>).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.gui.BipPlugin.load">
+<code class="descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.gui.BipPlugin.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which will be called by the <code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code> when
+the plugin must be loaded.</p>
+<p>This method can be surcharge by a Plugin for allowing to take
+actions at the moment where it will be loaded.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method is in charge of calling
+<a class="reference internal" href="#bip.gui.BipPlugin._register_activities" title="bip.gui.BipPlugin._register_activities"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_register_activities()</span></code></a> which allow to
+activate the <a class="reference internal" href="activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> link to this plugin.
+A plugin should ensure to call this method using <code class="docutils literal notranslate"><span class="pre">super</span></code>.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.gui.BipPlugin.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#bip.gui.BipPlugin.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="activity-decorators">
+<span id="gui-plugin-activity-decorators"></span><h2>Activity decorators<a class="headerlink" href="#activity-decorators" title="Permalink to this headline">¶</a></h2>
+<p>Here is an overview of the currently available decorators, for more information
+on how they work see <a class="reference internal" href="activity.html#gui-activity-actions"><span class="std std-ref">Activities and Actions</span></a>:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="53%" />
+<col width="32%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Decorator Name</th>
+<th class="head">Description</th>
+<th class="head">Usage example</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="#bip.gui.shortcut" title="bip.gui.shortcut"><code class="xref py py-func docutils literal notranslate"><span class="pre">shortcut()</span></code></a></td>
+<td>Register a “hot-key” which will call the function when triggered.</td>
+<td><code class="docutils literal notranslate"><span class="pre">&#64;shortcut(&quot;Ctrl-H&quot;)</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bip.gui.menu" title="bip.gui.menu"><code class="xref py py-func docutils literal notranslate"><span class="pre">menu()</span></code></a></td>
+<td>Register an entry in a menu in IDA.</td>
+<td><code class="docutils literal notranslate"><span class="pre">&#64;menu(&quot;Edit/Plugins/&quot;,</span> <span class="pre">&quot;PRINTNAME&quot;)</span></code></td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="bip.gui.shortcut">
+<code class="descclassname">bip.gui.</code><code class="descname">shortcut</code><span class="sig-paren">(</span><em>shortcut_str</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.gui.shortcut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for defining a method of a <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> as a shortcut.
+This decorator expect a string in argument representing the shortcut
+it wants to register.</p>
+<p>The method which is decorated should only take <code class="docutils literal notranslate"><span class="pre">self</span></code> in argument
+which will be the <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> object.</p>
+<p>An example of usage is the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyPlugin</span><span class="p">(</span><span class="n">BipPlugin</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">my_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1"># a method inside the plugin</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Hello from MyPlugin.my_method&quot;</span><span class="p">)</span>
+    
+    <span class="nd">@shortcut</span><span class="p">(</span><span class="s2">&quot;Ctrl-H&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">my_shortcut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># self is the MyPlugin object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">my_method</span><span class="p">()</span> <span class="c1"># call the method before</span>
+
+<span class="c1"># Pressing Ctrl-H will trigger a call to my_shortcut which will</span>
+<span class="c1"># call my_method and print &quot;Hello from MyPlugin.my_method&quot;. It</span>
+<span class="c1"># is also possible to use mp.my_shortcut directly as a function.</span>
+</pre></div>
+</div>
+<p>Internally this decorator will define a <a class="reference internal" href="activity.html#bip.gui.BipAction" title="bip.gui.BipAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipAction</span></code></a> object and
+define its handler as a call to the method decorated with the plugin
+as argument. Accessing (without call) to the <code class="docutils literal notranslate"><span class="pre">MyPlugin.my_shortcut</span></code>
+attribute will return a <a class="reference internal" href="activity.html#bip.gui.BipActivityContainer" title="bip.gui.BipActivityContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivityContainer</span></code></a> object which
+will contain a <a class="reference internal" href="activity.html#bip.gui.BipAction" title="bip.gui.BipAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipAction</span></code></a> object corresponding to the shortcut
+define.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shortcut</strong> (<em>str</em>) – The string representation of the shortcut.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="bip.gui.menu">
+<code class="descclassname">bip.gui.</code><code class="descname">menu</code><span class="sig-paren">(</span><em>menu_path</em>, <em>menu_entry=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.gui.menu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for defining a method of a <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> as an entry
+in the menu of IDA. This decorator expect a string in argument
+representing the path in the menu it wants to register
+(ex.: <code class="docutils literal notranslate"><span class="pre">Options/</span></code>).</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Using this decorator for registering an entry in <code class="docutils literal notranslate"><span class="pre">Edit/Plugins/</span></code>
+may create problems if the plugin is loaded during IDA
+initialisation and the entry may not be present in IDA. For more
+information see the documentation of
+<a class="reference internal" href="activity.html#bip.gui.BipAction.attach_to_menu" title="bip.gui.BipAction.attach_to_menu"><code class="xref py py-meth docutils literal notranslate"><span class="pre">attach_to_menu()</span></code></a>.</p>
+</div>
+<p>The method which is decorated should only take <code class="docutils literal notranslate"><span class="pre">self</span></code> in argument
+which will be the <a class="reference internal" href="#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> object. Internally this will
+create and add a <a class="reference internal" href="activity.html#bip.gui.BipAction" title="bip.gui.BipAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipAction</span></code></a> (for more information about the
+internal see <a class="reference internal" href="#bip.gui.shortcut" title="bip.gui.shortcut"><code class="xref py py-func docutils literal notranslate"><span class="pre">shortcut()</span></code></a>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>menu_path</strong> (<em>str</em>) – The path at which the action should be
+registered.</li>
+<li><strong>menu_entry</strong> (<em>str</em>) – The name which will apear in the menu for this
+action. If it is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default) the name of the function will
+be used. Internaly this is the <code class="docutils literal notranslate"><span class="pre">label</span></code> of the
+<a class="reference internal" href="activity.html#bip.gui.BipAction" title="bip.gui.BipAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipAction</span></code></a>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Plugins</a><ul>
+<li><a class="reference internal" href="#implementation-internals">Implementation internals</a><ul>
+<li><a class="reference internal" href="#loading-of-the-plugins">Loading of the plugins</a></li>
+<li><a class="reference internal" href="#registering-activities">Registering activities</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bipplugin-api">BipPlugin API</a></li>
+<li><a class="reference internal" href="#activity-decorators">Activity decorators</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../hexrays/visit_hx.html"
+                        title="previous chapter">HxCItem</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="plgmanager.html"
+                        title="next chapter">Plugin Manager</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/gui/plugin.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plgmanager.html" title="Plugin Manager"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../hexrays/visit_hx.html" title="HxCItem"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

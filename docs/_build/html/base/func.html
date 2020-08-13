@@ -1,0 +1,1446 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Functions &amp; Basic blocks &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Xref" href="xref.html" />
+    <link rel="prev" title="Data" href="data.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="xref.html" title="Xref"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="data.html" title="Data"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.base">
+<span id="functions-basic-blocks"></span><h1>Functions &amp; Basic blocks<a class="headerlink" href="#module-bip.base" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> are created by passing them an address. They are
+container for basic block (<a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> accessible using
+the <a class="reference internal" href="#bip.base.BipFunction.blocks" title="bip.base.BipFunction.blocks"><code class="xref py py-meth docutils literal notranslate"><span class="pre">blocks()</span></code></a> property) and instruction (<a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a>
+accessible using the <a class="reference internal" href="#bip.base.BipFunction.instr" title="bip.base.BipFunction.instr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">instr()</span></code></a> property). <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a>
+them self contain instructions, a link back to the function
+(property <a class="reference internal" href="#bip.base.BipBlock.func" title="bip.base.BipBlock.func"><code class="xref py py-meth docutils literal notranslate"><span class="pre">func()</span></code></a>) and a way to navigate them using the
+property <a class="reference internal" href="#bip.base.BipBlock.succ" title="bip.base.BipBlock.succ"><code class="xref py py-meth docutils literal notranslate"><span class="pre">succ()</span></code></a> and <a class="reference internal" href="#bip.base.BipBlock.pred" title="bip.base.BipBlock.pred"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipBlock.pred()</span></code></a> .</p>
+<p><a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> can also allow to recuperate the hexrays decompile
+version of their code when available, this is done using the
+<a class="reference internal" href="#bip.base.BipFunction.hxcfunc" title="bip.base.BipFunction.hxcfunc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hxcfunc()</span></code></a> property which return a
+<a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> object when available.</p>
+<p>For example of how to use functions and blocks see the
+<a class="reference internal" href="../general/overview.html#general-overview"><span class="std std-ref">Overview</span></a> .</p>
+<div class="section" id="bipfunction-api">
+<h2>BipFunction API<a class="headerlink" href="#bipfunction-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.base.BipFunction">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipFunction</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing and manipulating function in IDA.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">provide interface for flowgraph and allow to get all basicblocks and not only the one included in the function (external block: without FC_NOEXT flag)</p>
+</div>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">Interface with stack</p>
+</div>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">color</p>
+</div>
+<div class="admonition-todo admonition" id="index-3">
+<p class="first admonition-title">Todo</p>
+<p class="last">frame ?</p>
+</div>
+<div class="admonition-todo admonition" id="index-4">
+<p class="first admonition-title">Todo</p>
+<p class="last">setter for start ea (<a class="reference internal" href="#bip.base.BipFunction.ea" title="bip.base.BipFunction.ea"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipFunction.ea()</span></code></a>) and end ea
+(<a class="reference internal" href="#bip.base.BipFunction.end" title="bip.base.BipFunction.end"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipFunction.end()</span></code></a>)</p>
+</div>
+<dl class="method">
+<dt id="bip.base.BipFunction.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for a <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> object.</p>
+<p>This function will raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if the address <code class="docutils literal notranslate"><span class="pre">ea</span></code>
+is not in the function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> – An address included in the function, it does not need
+to be the first one. If <code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address is used.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction._funct">
+<code class="descname">_funct</code><em class="property"> = None</em><a class="headerlink" href="#bip.base.BipFunction._funct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal func_t object from IDA</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.ea">
+<code class="descname">ea</code><a class="headerlink" href="#bip.base.BipFunction.ea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the start address of the function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The address of the function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.end">
+<code class="descname">end</code><a class="headerlink" href="#bip.base.BipFunction.end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the address at the end of the function.
+This address is not included in the function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The stop address of the function. This address is
+not included in the function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.size">
+<code class="descname">size</code><a class="headerlink" href="#bip.base.BipFunction.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get the size of the function in bytes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The number of bytes in the function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.name">
+<code class="descname">name</code><a class="headerlink" href="#bip.base.BipFunction.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the name of the function as display in the
+IDA window.</p>
+<p>This function does not handle mangling,
+see <a class="reference internal" href="#bip.base.BipFunction.demangle_name" title="bip.base.BipFunction.demangle_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">demangle_name()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return str:</th><td class="field-body">The name of the function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.demangle_name">
+<code class="descname">demangle_name</code><a class="headerlink" href="#bip.base.BipFunction.demangle_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the demangle name of the function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return str:</th><td class="field-body">The demangle name of the function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.is_dummy_name">
+<code class="descname">is_dummy_name</code><a class="headerlink" href="#bip.base.BipFunction.is_dummy_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for checking if the current name of this function is a
+“dummy” name (a name set by default by IDA when it does not know
+how to call an element) with a special prefix. This function will
+not recognize the <code class="docutils literal notranslate"><span class="pre">aSTRING</span></code> naming,
+see <a class="reference internal" href="#bip.base.BipFunction.is_auto_name" title="bip.base.BipFunction.is_auto_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_auto_name()</span></code></a>, and <a class="reference internal" href="#bip.base.BipFunction.is_ida_name" title="bip.base.BipFunction.is_ida_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_ida_name()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the function has a dummy name, <code class="docutils literal notranslate"><span class="pre">False</span></code>
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.is_auto_name">
+<code class="descname">is_auto_name</code><a class="headerlink" href="#bip.base.BipFunction.is_auto_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for checking if the current name of this function is an
+“auto-generated” name, those are the default name generated by
+IDA but without a special prefix
+(see <a class="reference internal" href="#bip.base.BipFunction.is_dummy_name" title="bip.base.BipFunction.is_dummy_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_dummy_name()</span></code></a>) such as the one for the
+string. See also <a class="reference internal" href="#bip.base.BipFunction.is_ida_name" title="bip.base.BipFunction.is_ida_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_ida_name()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the function has an auto-generated name,
+<code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.is_ida_name">
+<code class="descname">is_ida_name</code><a class="headerlink" href="#bip.base.BipFunction.is_ida_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for checking if the current name is a default name as
+generated by IDA. This is an OR condition of
+<a class="reference internal" href="#bip.base.BipFunction.is_auto_name" title="bip.base.BipFunction.is_auto_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_auto_name()</span></code></a> and <a class="reference internal" href="#bip.base.BipFunction.is_dummy_name" title="bip.base.BipFunction.is_dummy_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_dummy_name()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the function has a name provided by IDA,
+<code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.is_user_name">
+<code class="descname">is_user_name</code><a class="headerlink" href="#bip.base.BipFunction.is_user_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for checking if the current name is a “user name”. In
+practice this check a flag that the API can avoid setting, so
+there is no garantee it is an actual user name.
+See <a class="reference internal" href="#bip.base.BipFunction.is_ida_name" title="bip.base.BipFunction.is_ida_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_ida_name()</span></code></a> for checking if a name was
+generated by IDA.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the name is marked as set by a user,
+<code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.truename">
+<code class="descname">truename</code><a class="headerlink" href="#bip.base.BipFunction.truename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the true name of the function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return str:</th><td class="field-body">The true name of the function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.ordinal">
+<code class="descname">ordinal</code><a class="headerlink" href="#bip.base.BipFunction.ordinal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the ordinal of this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The number corresponding to the ordinal of this
+function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipFunction.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><em>) &lt;==&gt; str(x</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.__str__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipFunction.__eq__">
+<code class="descname">__eq__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equality comparator with another <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipFunction.__ne__">
+<code class="descname">__ne__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.__ne__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inequality comparator with another <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipFunction.__lt__">
+<code class="descname">__lt__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.__lt__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lesser than comparator with another <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipFunction.__le__">
+<code class="descname">__le__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.__le__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lesser or equal comparator with another <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipFunction.__gt__">
+<code class="descname">__gt__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.__gt__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Greater than comparator with another <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipFunction.__ge__">
+<code class="descname">__ge__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.__ge__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gretter or equal comparator with another <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipFunction.__hash__">
+<code class="descname">__hash__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.__hash__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a unique hash for this ida function. The produce hash is
+dependant of the type of the object (<a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>) and
+of its address. This allow to create container using the hash
+of the object for matching an object of a defined type and with
+a particular address.</p>
+<p>Calculation made is: <code class="docutils literal notranslate"><span class="pre">hash(type(self))</span> <span class="pre">^</span> <span class="pre">self.ea</span></code>, in particular
+it means than child classes will not have the same hash as a
+parrent classes even if the compare works.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An integer corresponding to the hash for this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipFunction.__contains__">
+<code class="descname">__contains__</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.__contains__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to check if an element is included inside this function. It
+accepts the following in arguments:</p>
+<ul class="simple">
+<li><a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a> (including <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a>)</li>
+<li><a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a></li>
+<li>An integer corresponding to an address.</li>
+</ul>
+<p>In all those case the address of the element is used for testing
+if it is present in the function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.hxcfunc">
+<code class="descname">hxcfunc</code><a class="headerlink" href="#bip.base.BipFunction.hxcfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the hexrays C function (<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code>)
+for this function.</p>
+<p>If if it not possible to import the hexrays API an NotImplementedError
+error will be raised.</p>
+<p>This may raise a <code class="xref py py-class docutils literal notranslate"><span class="pre">BipDecompileError</span></code> if the
+decompilation failed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code> object equivalent to this function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.can_decompile">
+<code class="descname">can_decompile</code><a class="headerlink" href="#bip.base.BipFunction.can_decompile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which test if it is possible to get the hexrays
+C function (<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code>) for this function.</p>
+<p>Internally this will just try to call <a class="reference internal" href="#bip.base.BipFunction.hxcfunc" title="bip.base.BipFunction.hxcfunc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipFunction.hxcfunc()</span></code></a>
+and catch the error, this means calling this function will
+actually perform the decompilation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if its possible to get the <code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code> object
+for this <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.flags">
+<code class="descname">flags</code><a class="headerlink" href="#bip.base.BipFunction.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the function flags as returned by
+<code class="docutils literal notranslate"><span class="pre">idc.GetFunctionFlags</span></code> (old) or
+<code class="docutils literal notranslate"><span class="pre">idc.get_func_attr(ea,</span> <span class="pre">FUNCATTR_FLAGS)</span></code> (new).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The flags for this function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipFunction.is_inside">
+<code class="descname">is_inside</code><span class="sig-paren">(</span><em>o</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.is_inside" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to check if an address or an <a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a> object (or
+inherited) is included in this function. In particular it
+allow to check if an <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> is included in a function.</p>
+<p>This function is based on the <code class="docutils literal notranslate"><span class="pre">func_t.contains</span></code> function of
+IDA, this function seems to check only the address compare to the
+start and end address of a function and will return False for
+function chunk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>o</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code> coresponding to an address or an object inherited
+from <a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a> .) – The address or object to test for inclusion.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>TypeError</strong> – if the parameter <code class="docutils literal notranslate"><span class="pre">o</span></code> is not from a valid type.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.does_return">
+<code class="descname">does_return</code><a class="headerlink" href="#bip.base.BipFunction.does_return" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which indicate if the function is expected to return.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return boolean:</th><td class="field-body">True if the function is expected to return.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.is_far">
+<code class="descname">is_far</code><a class="headerlink" href="#bip.base.BipFunction.is_far" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check flags of this function for knowing if this is a far
+function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.is_lib">
+<code class="descname">is_lib</code><a class="headerlink" href="#bip.base.BipFunction.is_lib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check flags of this function for knowing if this is a library
+function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.is_static">
+<code class="descname">is_static</code><a class="headerlink" href="#bip.base.BipFunction.is_static" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check flags of this function for knowing if this is a static
+function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.use_frame">
+<code class="descname">use_frame</code><a class="headerlink" href="#bip.base.BipFunction.use_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check flags of this function for knowing if it is using the frame
+pointer.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.is_userfar">
+<code class="descname">is_userfar</code><a class="headerlink" href="#bip.base.BipFunction.is_userfar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check flags of this function for knowing if the user as define
+the function as change the marking of the function being far or
+not.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.is_hidden">
+<code class="descname">is_hidden</code><a class="headerlink" href="#bip.base.BipFunction.is_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check flags of this function for knowing if its a hidden function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.is_thunk">
+<code class="descname">is_thunk</code><a class="headerlink" href="#bip.base.BipFunction.is_thunk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check flags of this function for knowing if its a thunk function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.comment">
+<code class="descname">comment</code><a class="headerlink" href="#bip.base.BipFunction.comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow access to the comment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.rcomment">
+<code class="descname">rcomment</code><a class="headerlink" href="#bip.base.BipFunction.rcomment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow access to the repeatable comment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction._flowchart">
+<code class="descname">_flowchart</code><a class="headerlink" href="#bip.base.BipFunction._flowchart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <code class="docutils literal notranslate"><span class="pre">FlowChart</span></code> object as defined by IDA in <code class="docutils literal notranslate"><span class="pre">ida_gdl.py</span></code>.
+This is used for getting the basic block and should not be used
+directly.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Internally this is compute with the flags
+<code class="docutils literal notranslate"><span class="pre">_BipFlowChartFlag.FC_PREDS</span></code> and
+<code class="docutils literal notranslate"><span class="pre">_BipFlowChartFlag.FC_NOEXT</span></code> .</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <code class="docutils literal notranslate"><span class="pre">idaapi.FlowChart</span></code> object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.nb_blocks">
+<code class="descname">nb_blocks</code><a class="headerlink" href="#bip.base.BipFunction.nb_blocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of blocks present in this function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.blocks">
+<code class="descname">blocks</code><a class="headerlink" href="#bip.base.BipFunction.blocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> corresponding to the
+BasicBlocks in this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of object <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.blocks_iter">
+<code class="descname">blocks_iter</code><a class="headerlink" href="#bip.base.BipFunction.blocks_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a generator of <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> corresponding to the
+BasicBlocks in this function. This implementation will be just
+a little more performant than the <a class="reference internal" href="#bip.base.BipFunction.blocks" title="bip.base.BipFunction.blocks"><code class="xref py py-meth docutils literal notranslate"><span class="pre">blocks()</span></code></a> property.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A generator of object <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.items">
+<code class="descname">items</code><a class="headerlink" href="#bip.base.BipFunction.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a> corresponding to the items of
+the functions.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This should mainly be <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> but possible in theory
+to be other kind of data.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of object <a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.instr">
+<code class="descname">instr</code><a class="headerlink" href="#bip.base.BipFunction.instr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> corresponding to the instructions
+of the functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of object <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.instr_iter">
+<code class="descname">instr_iter</code><a class="headerlink" href="#bip.base.BipFunction.instr_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a generator of <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> corresponding to the
+instructions of the functions. This implementation will be just
+a little more performant than the <a class="reference internal" href="#bip.base.BipFunction.instr" title="bip.base.BipFunction.instr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">instr()</span></code></a> property.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A generator of object <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.bytes">
+<code class="descname">bytes</code><a class="headerlink" href="#bip.base.BipFunction.bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property returning the value of the bytes contain in the function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of the bytes forming the element.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(int)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction._ida_tinfo">
+<code class="descname">_ida_tinfo</code><a class="headerlink" href="#bip.base.BipFunction._ida_tinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal property which allow to get the <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig proxy
+from IDA associated with this function. Internally this use the
+<code class="docutils literal notranslate"><span class="pre">idaapi.get_type</span></code> method with the third argument
+(<code class="docutils literal notranslate"><span class="pre">type_source_t</span></code>) as <code class="docutils literal notranslate"><span class="pre">idaapi.GUESSED_FUNC</span></code> .</p>
+<p>This property can raise a <code class="xref py py-class docutils literal notranslate"><span class="pre">BipError</span></code> in case it was not
+possible to determine (guess ?) the type, meaning the
+<code class="docutils literal notranslate"><span class="pre">idaapi.get_type</span></code> returned false. It should be possible to try
+with a less agressive type source, but except problem with this
+way it is probably better to be more restrective than less.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When a function is decompiled using hexrays IDA will
+have a usually way better guess on the type of the function so
+it may be a good idea to decompile the function before getting
+the type.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The <code class="docutils literal notranslate"><span class="pre">ida_typeinf.tinfo_t</span></code> object (swig proxy) provided
+by IDA for this function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.str_type">
+<code class="descname">str_type</code><a class="headerlink" href="#bip.base.BipFunction.str_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the type (prototype) of the function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return str:</th><td class="field-body">String representing the type of the function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.guess_strtype">
+<code class="descname">guess_strtype</code><a class="headerlink" href="#bip.base.BipFunction.guess_strtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to return the prototype of the function
+guessed by IDA.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return str:</th><td class="field-body">The guess prototype of the function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.xTo">
+<code class="descname">xTo</code><a class="headerlink" href="#bip.base.BipFunction.xTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get all xrefs pointing to (to) this
+function. This is the equivalent to <code class="docutils literal notranslate"><span class="pre">XrefsTo</span></code> from idapython on
+the first instruction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="xref.html#bip.base.BipXref" title="bip.base.BipXref"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipXref</span></code></a> with the <code class="docutils literal notranslate"><span class="pre">dst</span></code> being this
+element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.xEaTo">
+<code class="descname">xEaTo</code><a class="headerlink" href="#bip.base.BipFunction.xEaTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get all addresses which referenced this
+function (xref to).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of address.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.xEltTo">
+<code class="descname">xEltTo</code><a class="headerlink" href="#bip.base.BipFunction.xEltTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get all elements which referenced this
+element (xref to).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="elt.html#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> (or subclasses
+of <a class="reference internal" href="elt.html#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#bip.base.BipFunction.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.xCodeTo">
+<code class="descname">xCodeTo</code><a class="headerlink" href="#bip.base.BipFunction.xCodeTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return all instructions which referenced this
+element. This will take into account jmp, call, ordinary flow and
+“data” references.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> referenced by this element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.callers">
+<code class="descname">callers</code><a class="headerlink" href="#bip.base.BipFunction.callers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of all the functions which call this
+function.</p>
+<p>This function will not take into account jmp or ordinary flow to
+this function, see <a class="reference internal" href="#bip.base.BipFunction.jcallers" title="bip.base.BipFunction.jcallers"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jcallers()</span></code></a> property for
+also getting the jmp and ordinary flow.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> which call this function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.jcallers">
+<code class="descname">jcallers</code><a class="headerlink" href="#bip.base.BipFunction.jcallers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of all the functions which call,
+jump or have an ordinary flow to this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> which call this function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipFunction.callees">
+<code class="descname">callees</code><a class="headerlink" href="#bip.base.BipFunction.callees" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of the functions which are called by
+this one.</p>
+<p>Internally this function will iterate on all instruction for
+getting the call xref. This can be quite time consuming.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> which are called by this
+function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipFunction.by_ordinal">
+<em class="property">classmethod </em><code class="descname">by_ordinal</code><span class="sig-paren">(</span><em>ordinal</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.by_ordinal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> from its ordinal, there is between
+<code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">BipFunction.count()</span></code> function in an IDB.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipFunction.iter_all">
+<em class="property">classmethod </em><code class="descname">iter_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.iter_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method allowing to iter on all the functions define in
+the IDB.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A generator of <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> allowing to iter on
+all the functions define in the idb.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipFunction.entries">
+<em class="property">classmethod </em><code class="descname">entries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.entries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the functions which are entry points of the binary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> which are entry points
+of the binary currently analyzed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipFunction.entries_iter">
+<em class="property">classmethod </em><code class="descname">entries_iter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.entries_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an generator on the functions which are entry points of the
+binary. This should be faster than <a class="reference internal" href="#bip.base.BipFunction.entries" title="bip.base.BipFunction.entries"><code class="xref py py-meth docutils literal notranslate"><span class="pre">entries()</span></code></a> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A generator on <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> which are entry
+points of the binary currently analyzed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipFunction.get_by_name">
+<em class="property">classmethod </em><code class="descname">get_by_name</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.get_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method allowing to get a function from its name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> with the correct name or None
+if the function was not found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipFunction.get_by_prefix">
+<em class="property">classmethod </em><code class="descname">get_by_prefix</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.get_by_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method allowing to get all the functions which are named
+with a particular prefix.</p>
+<p>Internally this iterate on all functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prefix</strong> (<em>str</em>) – The prefix for which to get the function.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> where their names start
+with the prefix.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipFunction.get_by_regex">
+<em class="property">classmethod </em><code class="descname">get_by_regex</code><span class="sig-paren">(</span><em>regex</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.get_by_regex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method allowing to get all functions matching a regex.</p>
+<p>Internally this iterate on all functions and use the <code class="docutils literal notranslate"><span class="pre">re.match</span></code>
+function (it compiles the regex first) and return the function
+if the match did not return None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>regex</strong> (<em>str</em>) – The regex used for finding the function.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> where their names match
+the regex.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipFunction.create">
+<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>start</em>, <em>end=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method allowing to create a new function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> (<em>int</em>) – Start address for the function to create.</li>
+<li><strong>end</strong> (<em>int</em>) – Facultative argument which indicate the end
+address of the function. If is is not provided (None, default
+value) it will try to create a function using the
+auto-analysis of IDA.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> object corresponding to the
+function create. If this function was not able to create the
+new function a <code class="docutils literal notranslate"><span class="pre">BipError</span></code> will be raised.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipFunction.count">
+<em class="property">static </em><code class="descname">count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipFunction.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of functions which are present in the idb.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="bipblock-api">
+<h2>BipBlock API<a class="headerlink" href="#bipblock-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.base.BipBlock">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipBlock</code><span class="sig-paren">(</span><em>val=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing and manipulating basic blocks in IDA.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This class is an abstraction on top of IDA BadicBlock. In
+particular IDA does <strong>not</strong> create basic block if not in a defined
+function. Change to the flowgraph can be not directly repercuted
+on this object.</p>
+</div>
+<div class="admonition-todo admonition" id="index-5">
+<p class="first admonition-title">Todo</p>
+<p class="last">equality and inclusion operator</p>
+</div>
+<div class="admonition-todo admonition" id="index-6">
+<p class="first admonition-title">Todo</p>
+<p class="last">more functions for testing type (abstraction on .type
+property), property function starting with <code class="docutils literal notranslate"><span class="pre">is_</span></code></p>
+</div>
+<dl class="method">
+<dt id="bip.base.BipBlock.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>val=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipBlock.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for an <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> object.</p>
+<p>This function may raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> if the argument is not
+of a type supported or a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if the address pass in
+parameter is not inside a function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> – A value used for creating a basic block. This can be
+an address (int or long) or a <code class="docutils literal notranslate"><span class="pre">ida_gdl.BasicBlock</span></code> object.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address is used.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock._bb">
+<code class="descname">_bb</code><em class="property"> = None</em><a class="headerlink" href="#bip.base.BipBlock._bb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal ida_gdl.BasicBlock object representing this block in IDA</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.ea">
+<code class="descname">ea</code><a class="headerlink" href="#bip.base.BipBlock.ea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the start address of the function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The address of the basicblock.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.end">
+<code class="descname">end</code><a class="headerlink" href="#bip.base.BipBlock.end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the end address of the function. This
+address is not included in the basicblock.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The first address at the end of the basicblock.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipBlock.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><em>) &lt;==&gt; str(x</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipBlock.__str__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock._id">
+<code class="descname">_id</code><a class="headerlink" href="#bip.base.BipBlock._id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property returning the ID of the basic block. This is use in
+particular for manipulating the block using the graph functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The ID of this basic block.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.type">
+<code class="descname">type</code><a class="headerlink" href="#bip.base.BipBlock.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow access to the type of basic block.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">One of the <a class="reference internal" href="#bip.base.BipBlockType" title="bip.base.BipBlockType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlockType</span></code></a> enum.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.is_ret">
+<code class="descname">is_ret</code><a class="headerlink" href="#bip.base.BipBlock.is_ret" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return True if the block can return.</p>
+<p>Internally this test the type for <code class="docutils literal notranslate"><span class="pre">BipBlockType.FCB_RET</span></code> and
+<code class="docutils literal notranslate"><span class="pre">BipBlockType.FCB_CNDRET</span></code>. It is the equivalent of
+<code class="docutils literal notranslate"><span class="pre">ida_gdl.is_ret_block</span></code> in the standard idapython.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if the block return, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.is_noret">
+<code class="descname">is_noret</code><a class="headerlink" href="#bip.base.BipBlock.is_noret" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for testing if the block never return. For example this
+will be True if the block terminate by a call to a function which
+will never return (<code class="docutils literal notranslate"><span class="pre">abort</span></code>, …)</p>
+<p>Internally this test the type for <code class="docutils literal notranslate"><span class="pre">BipBlockType.FCB_NORET</span></code>
+and <code class="docutils literal notranslate"><span class="pre">BipBlockType.FCB_ENORET</span></code>. It is the equivalent of
+<code class="docutils literal notranslate"><span class="pre">ida_gdl.is_noret_block</span></code> in the standard idapython.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if the block never return, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.is_external">
+<code class="descname">is_external</code><a class="headerlink" href="#bip.base.BipBlock.is_external" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for testing if the block is external to the function from
+which it came.</p>
+<p>Internally this test the type for <code class="docutils literal notranslate"><span class="pre">FCB_ENORET</span></code> and
+<code class="docutils literal notranslate"><span class="pre">FCB_EXTERN</span></code> .</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This should never be True if this <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> was
+provided by a <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>, it can be True if the
+block provided at the initialization was recuperated from an
+other source.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if the block is not included in the function from
+which the flowgraph was created, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.succ">
+<code class="descname">succ</code><a class="headerlink" href="#bip.base.BipBlock.succ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> which are successor of this
+block. This follow the potential execution pass.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> successor of this block.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.succ_iter">
+<code class="descname">succ_iter</code><a class="headerlink" href="#bip.base.BipBlock.succ_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a generator of the <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> following this one.
+This is equivalent to <a class="reference internal" href="#bip.base.BipBlock.succ" title="bip.base.BipBlock.succ"><code class="xref py py-meth docutils literal notranslate"><span class="pre">succ()</span></code></a> and will probably be a little
+faster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A generator of <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> successor of this block.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.pred">
+<code class="descname">pred</code><a class="headerlink" href="#bip.base.BipBlock.pred" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> which are predecessor of this
+block. This provide the basicblock which can lead to this block
+followin the execution pass.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> predecessor of this block.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.pred_iter">
+<code class="descname">pred_iter</code><a class="headerlink" href="#bip.base.BipBlock.pred_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a generator of the <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> predecessor of this
+one. This is equivalent to <a class="reference internal" href="#bip.base.BipBlock.pred" title="bip.base.BipBlock.pred"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pred()</span></code></a> and will probably be a
+little faster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A generator of <a class="reference internal" href="#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> predecessor of this
+block.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.func">
+<code class="descname">func</code><a class="headerlink" href="#bip.base.BipBlock.func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> object corresponding to this
+block.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Internally this will return the <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> which is
+present at the start address of the block. In particular in
+case of external blocks this will return the function in which
+the block are included and not the one from which they came
+from.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The <a class="reference internal" href="#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> in which this block is included.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.items">
+<code class="descname">items</code><a class="headerlink" href="#bip.base.BipBlock.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a> corresponding to the items
+included in the basic block (between <code class="docutils literal notranslate"><span class="pre">ea</span></code> and <code class="docutils literal notranslate"><span class="pre">end</span></code>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of object <a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.instr">
+<code class="descname">instr</code><a class="headerlink" href="#bip.base.BipBlock.instr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> corresponding to the instructions
+of the basicblock.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of object <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.instr_iter">
+<code class="descname">instr_iter</code><a class="headerlink" href="#bip.base.BipBlock.instr_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a generator of <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> corresponding to the
+instructions of the basicblock. This implementation will be just
+a little more performant than the <a class="reference internal" href="#bip.base.BipBlock.instr" title="bip.base.BipBlock.instr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">instr()</span></code></a> property.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A generator of object <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#bip.base.BipBlock.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.bytes">
+<code class="descname">bytes</code><a class="headerlink" href="#bip.base.BipBlock.bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property returning the value of the bytes contain in the
+basicblock.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of the bytes forming the element.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(int)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlock.color">
+<code class="descname">color</code><a class="headerlink" href="#bip.base.BipBlock.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for accessing the color of this basic block.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>RuntimeError</strong> – If this function was not able to get the
+information about the graph node.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return int:</th><td class="field-body">The integer representing the color of this block in
+the BGR format.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BipBlockType">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipBlockType</code><a class="headerlink" href="#bip.base.BipBlockType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum for the type of basic block. This come from the
+<code class="docutils literal notranslate"><span class="pre">fc_block_type_t</span></code> enum (<code class="docutils literal notranslate"><span class="pre">gdl.hpp</span></code>) not exposed to the python API.</p>
+<dl class="attribute">
+<dt id="bip.base.BipBlockType.FCB_NORMAL">
+<code class="descname">FCB_NORMAL</code><em class="property"> = 0</em><a class="headerlink" href="#bip.base.BipBlockType.FCB_NORMAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>normal block</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlockType.FCB_INDJUMP">
+<code class="descname">FCB_INDJUMP</code><em class="property"> = 1</em><a class="headerlink" href="#bip.base.BipBlockType.FCB_INDJUMP" title="Permalink to this definition">¶</a></dt>
+<dd><p>block ends with indirect jump</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlockType.FCB_RET">
+<code class="descname">FCB_RET</code><em class="property"> = 2</em><a class="headerlink" href="#bip.base.BipBlockType.FCB_RET" title="Permalink to this definition">¶</a></dt>
+<dd><p>return block</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlockType.FCB_CNDRET">
+<code class="descname">FCB_CNDRET</code><em class="property"> = 3</em><a class="headerlink" href="#bip.base.BipBlockType.FCB_CNDRET" title="Permalink to this definition">¶</a></dt>
+<dd><p>conditional return block</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlockType.FCB_NORET">
+<code class="descname">FCB_NORET</code><em class="property"> = 4</em><a class="headerlink" href="#bip.base.BipBlockType.FCB_NORET" title="Permalink to this definition">¶</a></dt>
+<dd><p>noreturn block</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlockType.FCB_ENORET">
+<code class="descname">FCB_ENORET</code><em class="property"> = 5</em><a class="headerlink" href="#bip.base.BipBlockType.FCB_ENORET" title="Permalink to this definition">¶</a></dt>
+<dd><p>external noreturn block (does not belong to the function)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlockType.FCB_EXTERN">
+<code class="descname">FCB_EXTERN</code><em class="property"> = 6</em><a class="headerlink" href="#bip.base.BipBlockType.FCB_EXTERN" title="Permalink to this definition">¶</a></dt>
+<dd><p>external normal block</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBlockType.FCB_ERROR">
+<code class="descname">FCB_ERROR</code><em class="property"> = 7</em><a class="headerlink" href="#bip.base.BipBlockType.FCB_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd><p>block passes execution past the function end</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Functions &amp; Basic blocks</a><ul>
+<li><a class="reference internal" href="#bipfunction-api">BipFunction API</a></li>
+<li><a class="reference internal" href="#bipblock-api">BipBlock API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="data.html"
+                        title="previous chapter">Data</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="xref.html"
+                        title="next chapter">Xref</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/base/func.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="xref.html" title="Xref"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="data.html" title="Data"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

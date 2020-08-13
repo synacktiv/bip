@@ -1,0 +1,503 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Bip Project architecture &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributions" href="contribution.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="contribution.html" title="Contributions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="bip-project-architecture">
+<span id="general-archi"></span><h1>Bip Project architecture<a class="headerlink" href="#bip-project-architecture" title="Permalink to this headline">¶</a></h1>
+<p>This part describe the main architecture of Bip. It is a good read for
+understanding the global design of Bip, however for starting reading the
+<a class="reference internal" href="overview.html#general-overview"><span class="std std-ref">Overview</span></a> is probably simpler.</p>
+<p>The <a class="reference internal" href="#module-architecture">Module architecture</a> part describes how the different modules and
+classes are interfaced together, the <a class="reference internal" href="#common-code-patterns">common code patterns</a> part explains how
+Bip was developed for being used, finally the <a class="reference internal" href="#interfacing-with-ida-limitations">interfacing with IDA &amp; limitations</a> part
+explains how the interface with IDA is made and problems link to that design.</p>
+<div class="section" id="module-architecture">
+<h2>Module architecture<a class="headerlink" href="#module-architecture" title="Permalink to this headline">¶</a></h2>
+<p>Bip is decomposed in three main modules: <code class="docutils literal notranslate"><span class="pre">bip.base</span></code>, <code class="docutils literal notranslate"><span class="pre">bip.hexrays</span></code> and
+<code class="docutils literal notranslate"><span class="pre">bip.gui</span></code>.</p>
+<div class="section" id="module-bip.base">
+<span id="base"></span><h3>Base<a class="headerlink" href="#module-bip.base" title="Permalink to this headline">¶</a></h3>
+<p>The module <code class="docutils literal notranslate"><span class="pre">bip.base</span></code> is in charge of all the basic interfaces with IDA for
+manipulating and modifying the IDB. The following schematic represent the
+main classes and their link together:</p>
+<div class="figure">
+<img alt="../_images/bip_base2.png" src="../_images/bip_base2.png" />
+</div>
+<p>Those classes represent the main elements which can be accessed and
+manipulated using Bip. Several <em>building blocks</em> exist inside this module:</p>
+<ul class="simple">
+<li>The <strong>elements</strong> (<a class="reference internal" href="../base/elt.html#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>, <a class="reference internal" href="../base/elt.html#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a> and <a class="reference internal" href="../base/elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>)
+are abstract classes which allow to provide common interfaces for their
+child classes. The <a class="reference internal" href="../base/elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> and <a class="reference internal" href="../base/elt.html#bip.base.GetEltByName" title="bip.base.GetEltByName"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetEltByName()</span></code></a> allow to
+recuperate directly the correct child class from their ID or their name.
+This allow to provide an easy to use way to get the correct object from
+just an address or an ID, this is in particular used for xref. For more
+information see <a class="reference internal" href="../base/elt.html#ref-base-elt"><span class="std std-ref">Elements</span></a>.</li>
+<li>The <strong>xrefs</strong> allow to make link with all children objects of <a class="reference internal" href="../base/elt.html#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a>
+(<a class="reference internal" href="../base/instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a>, <a class="reference internal" href="../base/data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a>, <a class="reference internal" href="../base/struct.html#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a>,
+<a class="reference internal" href="../base/struct.html#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a>) and with <a class="reference internal" href="../base/func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>. Xref are represented
+by the <a class="reference internal" href="../base/xref.html#bip.base.BipXref" title="bip.base.BipXref"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipXref</span></code></a> classes but in most case methods are provided
+for recuperating directly the correct object or address without using
+directly those objects. Xref can be of several types depending if they
+are link because of data or code, they also include the control flow links.</li>
+<li>The <strong>structure</strong> are represented by two different but linked classes:
+<a class="reference internal" href="../base/struct.html#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> and <a class="reference internal" href="../base/struct.html#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a>. A <a class="reference internal" href="../base/struct.html#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> will
+keep references to its members and a member will keep a reference to its
+struct. Both of those class can use xref through the API they inherit
+from <a class="reference internal" href="../base/elt.html#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a>.</li>
+<li>The <strong>type</strong> are represented by the abstract class <a class="reference internal" href="../base/type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> and
+several child classes starting by the prefix <code class="docutils literal notranslate"><span class="pre">BType</span></code>. Types are used in
+numerous occasions and impact both the analysis and the comportement of IDA.
+For more information on how they work in Bip see <a class="reference internal" href="../base/type.html#doc-bip-base-type"><span class="std std-ref">Type</span></a>.</li>
+<li>The <strong>instructions</strong> and <strong>data</strong> inherit from <a class="reference internal" href="../base/elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a> and so
+possess access to xref api provided by <a class="reference internal" href="../base/elt.html#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a> but also numerous
+API link to the fact of having an address and potentially data (“bytes”).
+<a class="reference internal" href="../base/data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a> are also linked to the <a class="reference internal" href="../base/type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> which directly
+impact the behavior of some methods. <a class="reference internal" href="../base/instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> possess references to
+the <a class="reference internal" href="../base/func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> and <a class="reference internal" href="../base/func.html#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> when they exist and can also
+allow to manipulate <a class="reference internal" href="../base/instr.html#bip.base.BipOperand" title="bip.base.BipOperand"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipOperand</span></code></a>.</li>
+<li>The <strong>functions</strong> (<a class="reference internal" href="../base/func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>) are a critical link to the API: they possess
+<a class="reference internal" href="../base/xref.html#bip.base.BipXref" title="bip.base.BipXref"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipXref</span></code></a>, allow link to their basic block (<a class="reference internal" href="../base/func.html#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a>) and
+the <a class="reference internal" href="../base/instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a>. They provide also methods for accessing their callers
+and callees. Finally they make the link between the <code class="docutils literal notranslate"><span class="pre">bip.base</span></code> module and
+the <code class="docutils literal notranslate"><span class="pre">bip.hexrays</span></code> module.</li>
+</ul>
+</div>
+<div class="section" id="module-bip.hexrays">
+<span id="hexrays"></span><span id="general-archi-hexrays"></span><h3>Hexrays<a class="headerlink" href="#module-bip.hexrays" title="Permalink to this headline">¶</a></h3>
+<p>The module <code class="docutils literal notranslate"><span class="pre">bip.hexrays</span></code> contains the interfaces for manipulating the
+hexrays decompiler from IDA. This module will not provide anything if an
+hexrays decompiler for the current architecture is not set. The following
+schematic represent the architecture of this module:</p>
+<div class="figure">
+<img alt="../_images/bip_hexrays_cnode.png" src="../_images/bip_hexrays_cnode.png" />
+</div>
+<p>The central part of the <code class="docutils literal notranslate"><span class="pre">bip.hexrays</span></code> module is the <a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a>
+which is used for representing a C function as decompiled by HexRays.
+A <a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> allows to access local storage of the function <em>lvar</em>
+represented by <a class="reference internal" href="../hexrays/lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> which have a name, a type and may or not be
+arguments of the function. The second interesting part about <a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a>
+is they allow access to the AST created by HexRays, this AST represent a
+subset of C and it is possible to use visitors for inspecting the nodes from
+which it is composed.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">When asking the hexrays decompiler to decompile again a function (<code class="docutils literal notranslate"><span class="pre">F5</span></code>)
+a new object representing the decompiled function will be created, if a
+<a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> was recuperated before that it will not use the
+correct object which can lead to wierd behavior.</p>
+</div>
+<p><a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> is an abstract class (all class are abstract for the CNode
+except the leaf of the inheritance tree) which represent a node of the AST,
+two main types of node exist: <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a> which represent a C
+statement (<em>if</em>, <em>for</em>, <em>while</em>, <em>block</em>, <em>goto</em>, <em>continue</em>, <em>return</em>, …)
+and <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a> which represent C expressions (arithmetic and logic
+operations, function calls, cast, memory access, …). As an AST is a tree
+most nodes will have children: <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a> can have <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a>
+or <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a> as children, while <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a> can only have
+other <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a> as children. For helping to manipulate those objects
+some intermediate abstract class are define such as <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprFinal" title="bip.hexrays.CNodeExprFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFinal</span></code></a>
+which represent all expressions without child.</p>
+<p>For more information about the usage and implementation of hexrays see
+<a class="reference internal" href="../index.html#index-hexrays"><span class="std std-ref">Hexrays interface (bip.hexrays)</span></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>CNode and HxCItem</strong></p>
+<p>It is expected of a Bip user to use <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> for manipulating
+AST nodes but in practice two different implementations of the hexrays AST
+nodes exist in Bip: the <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> and the <a class="reference internal" href="../hexrays/visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a>. Those two
+implementations are in fact exactly the same with the only difference
+that the <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> objects have a link to their <a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a>
+and there parent <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> object in the AST (at the exception of
+the root node which does not have a parent).</p>
+<p>This difference in implementation allow to travel more easilly the AST and
+to make efficient link with other components, the simplest example is the
+possibility to create a link between the <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprVar" title="bip.hexrays.CNodeExprVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprVar</span></code></a> object
+and the corresponding <a class="reference internal" href="../hexrays/lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> object, while it is not possible
+using the <a class="reference internal" href="../hexrays/visit_hx.html#bip.hexrays.HxCExprVar" title="bip.hexrays.HxCExprVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprVar</span></code></a> object (this may have change since IDA 7.3
+with the access to the microcode API in IdaPython).</p>
+<p>For avoiding code duplication all the <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> classes are
+automatically generated from their equivalent <a class="reference internal" href="../hexrays/visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> classes at
+the exception of <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> (equivalent to <a class="reference internal" href="../hexrays/visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a>),
+<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a> (<a class="reference internal" href="../hexrays/visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>) and <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a>
+(<a class="reference internal" href="../hexrays/visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a>). Every change in the <a class="reference internal" href="../hexrays/visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> classes will
+also change the comportement of the equivalent <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> classes. The
+methods unique to the <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> classes are present in the
+<code class="docutils literal notranslate"><span class="pre">cnode.py</span></code> file and use the <code class="docutils literal notranslate"><span class="pre">&#64;addCNodeMethod</span></code> decorator.</p>
+<p class="last">For more information about the internal implementation of <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>
+see <a class="reference internal" href="../hexrays/cnode.html#doc-hexrays-cnode-generation-internal"><span class="std std-ref">CNode generation and internals</span></a>.</p>
+</div>
+<div class="section" id="example-of-ast">
+<span id="general-archi-hexrays-example-ast"></span><h4>Example of AST<a class="headerlink" href="#example-of-ast" title="Permalink to this headline">¶</a></h4>
+<p>As an illustration of the AST view, lets look at a really simple function with
+the following code decompiled:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="c1">// this is a simple example written by hand for explaining how this works,</span>
+<span class="c1">//   hexrays may optimize this equivalent code differently.</span>
+<span class="kt">int</span> <span class="nf">f</span><span class="p">(</span><span class="kt">int</span> <span class="n">a1</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">a2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">v1</span><span class="p">;</span>
+
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span> <span class="c1">// (1)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a2</span><span class="p">)</span> <span class="c1">// (2)</span>
+        <span class="k">return</span> <span class="n">v1</span> <span class="o">+</span> <span class="mi">3</span><span class="p">;</span> <span class="c1">// (3)</span>
+    <span class="k">return</span> <span class="n">v1</span><span class="p">;</span> <span class="c1">// (4)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All the class given there after are the one for the
+<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> implementation but it works exactly the same
+for the <a class="reference internal" href="../hexrays/visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> implementation.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Depending on the IDA version, the tree structure may change however the
+idea how the AST works should stay the same.</p>
+</div>
+<p>A <a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> <a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc.root_node" title="bip.hexrays.HxCFunc.root_node"><code class="xref py py-meth docutils literal notranslate"><span class="pre">root_node()</span></code></a> should
+always be a <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeStmtBlock" title="bip.hexrays.CNodeStmtBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtBlock</span></code></a>. This node will contain a
+list of other statments representing the content of the function.</p>
+<p>The first statement (1) contained in the <a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc.root_node" title="bip.hexrays.HxCFunc.root_node"><code class="xref py py-meth docutils literal notranslate"><span class="pre">root_node()</span></code></a>
+will be a <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeStmtExpr" title="bip.hexrays.CNodeStmtExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtExpr</span></code></a> which is just a statement
+containing an expression. This expression will be
+a <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprAsg" title="bip.hexrays.CNodeExprAsg"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsg</span></code></a> which represent an assignment, this
+expression contains two operands and inherit from the
+<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a> abstract class. The first
+operand (<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a>) will be the
+left part of the assignment: a local variable (<code class="docutils literal notranslate"><span class="pre">v1</span></code>) which is represented by
+the <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprVar" title="bip.hexrays.CNodeExprVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprVar</span></code></a> with a value of <code class="docutils literal notranslate"><span class="pre">2</span></code>, this value
+correspond to the index in the local variable array and arguments of the
+function counts also (so <code class="docutils literal notranslate"><span class="pre">a1</span></code> will be at index <code class="docutils literal notranslate"><span class="pre">0</span></code>), its possible to
+directly get the <a class="reference internal" href="../hexrays/lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> object corresponding using the
+<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprVar.lvar" title="bip.hexrays.CNodeExprVar.lvar"><code class="xref py py-meth docutils literal notranslate"><span class="pre">lvar()</span></code></a> property. The right part of the
+assignment will be a <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprAdd" title="bip.hexrays.CNodeExprAdd"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAdd</span></code></a> node with 2 children
+himself: a <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprVar" title="bip.hexrays.CNodeExprVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprVar</span></code></a> again for <code class="docutils literal notranslate"><span class="pre">a1</span></code> and a
+<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprNum" title="bip.hexrays.CNodeExprNum"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprNum</span></code></a> for the number <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p>
+<p>The second statement (2) contained in the
+<a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc.root_node" title="bip.hexrays.HxCFunc.root_node"><code class="xref py py-meth docutils literal notranslate"><span class="pre">root_node()</span></code></a> will be
+a <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeStmtIf" title="bip.hexrays.CNodeStmtIf"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtIf</span></code></a> which contains 2 children: an expression
+for the condition and a statement for the content of the <code class="docutils literal notranslate"><span class="pre">if</span></code>, if
+an <code class="docutils literal notranslate"><span class="pre">else</span></code> was present a third child will be present (a statement again).
+The expression for the condition will once again be a
+<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprVar" title="bip.hexrays.CNodeExprVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprVar</span></code></a>.</p>
+<p>The content of the <code class="docutils literal notranslate"><span class="pre">if</span></code> (3) will be a
+<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeStmtBlock" title="bip.hexrays.CNodeStmtBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtBlock</span></code></a> with only one statement in it a
+<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeStmtReturn" title="bip.hexrays.CNodeStmtReturn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtReturn</span></code></a> representing the <code class="docutils literal notranslate"><span class="pre">return</span></code>, itself
+containing a <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprAdd" title="bip.hexrays.CNodeExprAdd"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAdd</span></code></a> once again for the <code class="docutils literal notranslate"><span class="pre">v1</span> <span class="pre">+</span> <span class="pre">3</span></code>.</p>
+<p>The last statement will be <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeStmtReturn" title="bip.hexrays.CNodeStmtReturn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtReturn</span></code></a> statement
+containing a <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprVar" title="bip.hexrays.CNodeExprVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprVar</span></code></a>.</p>
+<p>As can be seen in this simple example this is a pretty straight forward AST
+structures, however for being able to use it well a good understanding of
+the node types is better. For a complete list of the different types of
+<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> see <a class="reference internal" href="../hexrays/astnodes.html#doc-hexrays-astnodes-nodetype"><span class="std std-ref">AST Node types</span></a>.</p>
+</div>
+</div>
+<div class="section" id="module-bip.gui">
+<span id="gui"></span><h3>Gui<a class="headerlink" href="#module-bip.gui" title="Permalink to this headline">¶</a></h3>
+<p>Finally the <code class="docutils literal notranslate"><span class="pre">bip.gui</span></code> module is the smallest module, it contains the
+interfaces for the user interfaces and the plugins. Its architecture is
+represented by this schematic:</p>
+<div class="figure">
+<img alt="../_images/bip_gui.png" src="../_images/bip_gui.png" />
+</div>
+<p>The most important part of this module for a user is the
+<a class="reference internal" href="../gui/plugin.html#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> system. Bip defines its own plugin system which is
+separated from the one of IDA, each plugin should inherit from the class
+<a class="reference internal" href="../gui/plugin.html#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> (directly or indirectly) and will be loaded by the
+<a class="reference internal" href="../gui/plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a> . Each Bip plugin should
+be a singleton and can be recuperated using the
+<a class="reference internal" href="../gui/plgmanager.html#bip.gui.pluginmanager.BipPluginManager" title="bip.gui.pluginmanager.BipPluginManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code></a>, which is itself a singleton
+and a <em>real</em> IDA Plugin (recuperated using <a class="reference internal" href="../gui/plgmanager.html#bip.gui.get_plugin_manager" title="bip.gui.get_plugin_manager"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_plugin_manager()</span></code></a>).</p>
+<p>Activities are objects made for interfacing with different parts of
+IDA, and in particular for being able to be used as decorator of methods of a
+<a class="reference internal" href="../gui/plugin.html#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a>. The <a class="reference internal" href="../gui/activity.html#bip.gui.BipActivity" title="bip.gui.BipActivity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivity</span></code></a> is an abstract class which is a
+callable and expect a handler and a way to register with the IDA interface.
+The simplest example of Activity is the <a class="reference internal" href="../gui/activity.html#bip.gui.BipAction" title="bip.gui.BipAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipAction</span></code></a> which allows to
+define menu entry or shortcuts (<em>hot-key</em>) in IDA, as a general rule they
+are made to being used as decorator in a similar way as the <code class="docutils literal notranslate"><span class="pre">property</span></code>
+decorator of Python.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>BipActivityContainer</strong></p>
+<p class="last">The <a class="reference internal" href="../gui/activity.html#bip.gui.BipActivityContainer" title="bip.gui.BipActivityContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipActivityContainer</span></code></a> is a particular activity containing
+several activities and which does not do any action by it-self. It is made
+for allowing to chain decorators on the same method.</p>
+</div>
+<p>For more information about writing plugins and their internal
+see <a class="reference internal" href="../gui/plugin.html#gui-plugins"><span class="std std-ref">Plugins</span></a>.</p>
+</div>
+</div>
+<div class="section" id="common-code-patterns">
+<span id="general-archi-common-patterns"></span><h2>Common code patterns<a class="headerlink" href="#common-code-patterns" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="bip-class-identification">
+<h3>Bip class identification<a class="headerlink" href="#bip-class-identification" title="Permalink to this headline">¶</a></h3>
+<p>Bip provide an abstraction in top of several objects in IDA, several different
+classes in Bip can be used for representing the same IDA objects (ex.:
+<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>, <a class="reference internal" href="../base/type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>, …). Each different
+class will provide different functionalities depending on attribute(s) of the
+underlying IDA object, this allows to avoid trying to use features which are
+not set or invalid in the IDA object and to clarify the usage of those
+objects.</p>
+<p>In most cases Bip will provide one static function or one static method which
+allows to get the object of the correct class (ex: <a class="reference internal" href="../base/elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a>,
+<a class="reference internal" href="../base/elt.html#bip.base.GetEltByName" title="bip.base.GetEltByName"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetEltByName()</span></code></a>, <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode.from_citem" title="bip.hexrays.CNode.from_citem"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_citem()</span></code></a>, …).
+Most parent classes of the objects provide ways to test which kind of object
+will be produced. However, the intended way to check for the object type is
+to use the <code class="docutils literal notranslate"><span class="pre">isinstance</span></code> function with the object type being tested.</p>
+<p>Here are a few examples of how it was intended to be used. In this first
+example the first instruction of a function is recuperated using
+<a class="reference internal" href="../base/elt.html#bip.base.GetEltByName" title="bip.base.GetEltByName"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetEltByName()</span></code></a>, in this case we know it is an instruction
+(<a class="reference internal" href="../base/instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a>) but the function can return other subclasses
+of <a class="reference internal" href="../base/elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>. We then look at the <a class="reference internal" href="../base/elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>
+which reference this address, some are <a class="reference internal" href="../base/instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> and some
+are <a class="reference internal" href="../base/data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a>, for knowing which is which we
+use <code class="docutils literal notranslate"><span class="pre">isinstance</span></code>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bip</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">elt</span> <span class="o">=</span> <span class="n">GetEltByName</span><span class="p">(</span><span class="s2">&quot;RtlQueryProcessLockInformation&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">elt</span> <span class="c1"># first instruction of RtlQueryProcessLockInformation</span>
+<span class="go">BipInstr: 0x1800D2FF0 (mov     rax, rsp)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">elt</span><span class="o">.</span><span class="n">is_code</span> <span class="c1"># this are common property to BipElt which are used to get the correct object</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">elt</span><span class="o">.</span><span class="n">is_data</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elt</span><span class="o">.</span><span class="n">xEltTo</span><span class="p">:</span> <span class="c1"># here we get the Elt xref, elements can be BipInstr or BipData</span>
+<span class="gp">... </span>  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">BipInstr</span><span class="p">):</span> <span class="c1"># in case of instr we want to print the mnemonic</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Found instr at 0x{:X} which ref function, with mnemonic: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">ea</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">mnem</span><span class="p">))</span>
+<span class="gp">... </span>  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">BipData</span><span class="p">):</span> <span class="c1"># for BipData there is no mnemonic available and so we just want the address</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Found data ref at 0x{:x}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">ea</span><span class="p">))</span>
+<span class="gp">... </span>  <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Something else ?? {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+<span class="go">Found instr at 0x1800C12A2 which ref function, with mnemonic: call</span>
+<span class="go">Found data ref at 0x1801136d7</span>
+<span class="go">Found data ref at 0x1801434a8</span>
+<span class="go">Found data ref at 0x18016c7fc</span>
+</pre></div>
+</div>
+<p>This next example show how to check for types. All types in Bip inherit from
+<a class="reference internal" href="../base/type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>, the <a class="reference internal" href="../base/type.html#bip.base.BipType.from_tinfo" title="bip.base.BipType.from_tinfo"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_tinfo()</span></code></a> method
+allow to get the correct Bip object from the <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> object used by
+IDA (which is used for all different types). In most cases there is no need
+to go through this method, Bip objects which are typed should have a <code class="docutils literal notranslate"><span class="pre">type</span></code>
+property which should allow to get their type and
+the methods <a class="reference internal" href="../base/type.html#bip.base.BipType.from_c" title="bip.base.BipType.from_c"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_c()</span></code></a> and
+<a class="reference internal" href="../base/type.html#bip.base.BipType.get_at" title="bip.base.BipType.get_at"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_at()</span></code></a> should allow to get the correct value easily.
+However when scripting it is often interesting to look at the type of an
+object, more information about types and the different classes which represent
+them can be found in the <a class="reference internal" href="../base/type.html#doc-bip-base-type"><span class="std std-ref">Type</span></a> documentation. Here is a
+small example of how to look at the types, we start with a
+<a class="reference internal" href="../base/type.html#bip.base.BTypeStruct" title="bip.base.BTypeStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeStruct</span></code></a> and look at the members, if a member is a
+pointer (<a class="reference internal" href="../base/type.html#bip.base.BTypePtr" title="bip.base.BTypePtr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypePtr</span></code></a>) we look at the subtype pointed.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bip</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tst</span> <span class="o">=</span> <span class="n">BipType</span><span class="o">.</span><span class="n">from_c</span><span class="p">(</span><span class="s2">&quot;struct {char a; int b; void *c; __int64 d; char *e; void *(*f)(int i);}&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tst</span><span class="o">.</span><span class="n">members_info</span>
+<span class="go">{&#39;a&#39;: &lt;bip.base.biptype.BTypeInt object at 0x0000029B22C24160&gt;, &#39;c&#39;: &lt;bip.base.biptype.BTypePtr object at 0x0000029B22C24128&gt;, &#39;b&#39;: &lt;bip.base.biptype.BTypeInt object at 0x0000029B22C24390&gt;, &#39;e&#39;: &lt;bip.base.biptype.BTypePtr object at 0x0000029B22C244A8&gt;, &#39;d&#39;: &lt;bip.base.biptype.BTypeInt object at 0x0000029B22C24438&gt;, &#39;f&#39;: &lt;bip.base.biptype.BTypePtr object at 0x0000029B22C24048&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tst</span><span class="o">.</span><span class="n">nb_members</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tst</span><span class="o">.</span><span class="n">get_member_type</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">BTypePtr</span><span class="p">):</span>
+<span class="gp">... </span>       <span class="k">print</span><span class="p">(</span><span class="s2">&quot;We have a ptr for member {}! Type pointed is: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tst</span><span class="o">.</span><span class="n">get_member_name</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">tst</span><span class="o">.</span><span class="n">get_member_type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">pointed</span><span class="o">.</span><span class="n">str</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>       <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Not a pointer for member {}, type is: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tst</span><span class="o">.</span><span class="n">get_member_name</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">tst</span><span class="o">.</span><span class="n">get_member_type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="p">))</span>
+<span class="go">Not a pointer for member a, type is: char</span>
+<span class="go">Not a pointer for member b, type is: int</span>
+<span class="go">We have a ptr for member c! Type pointed is: void</span>
+<span class="go">Not a pointer for member d, type is: __int64</span>
+<span class="go">We have a ptr for member e! Type pointed is: char</span>
+<span class="go">We have a ptr for member f! Type pointed is: void *__stdcall(int i)</span>
+</pre></div>
+</div>
+<p>This is also the case when using visitors in hexrays. The Bip visitors return
+objects which inherit from the <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> class. As
+in the other example, the easiest way to determine which types of node is to
+use <code class="docutils literal notranslate"><span class="pre">isinstance</span></code>. An example of this can simply be found in the overview in
+the part <a class="reference internal" href="overview.html#general-overview-cnode-visit"><span class="std std-ref">CNode / Visitors</span></a> in the <code class="docutils literal notranslate"><span class="pre">visit_call</span></code> functions,
+it is also shown indirectly through the usage of the method
+<a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc.visit_cnode_filterlist" title="bip.hexrays.HxCFunc.visit_cnode_filterlist"><code class="xref py py-meth docutils literal notranslate"><span class="pre">visit_cnode_filterlist()</span></code></a> which takes a list of
+class in argument, under the hood this function will visit all nodes and call
+the callback only for the one being instance of one of the class passed in the
+second argument.</p>
+<p>It is worth noticing that in most cases the underlying object or identifier
+used by IDA will be kept in reference in one of the private attributes of the
+object.</p>
+</div>
+</div>
+<div class="section" id="interfacing-with-ida-limitations">
+<h2>Interfacing with IDA &amp; limitations<a class="headerlink" href="#interfacing-with-ida-limitations" title="Permalink to this headline">¶</a></h2>
+<p>This part of the documentation describe some limitations of Bip and some
+problems and limitations which can occur because of the interface with IDA.
+Basic usage of the API for recuperating should not create many of those
+problems, one noticeable exception is when modifying the database using the
+GUI and reusing objects which have been kept from before the modification,
+this, of course, include the <em>undo</em> feature of IDA. More “advanced” usage and
+developers should consider being careful about those.</p>
+<p>In a lot of case IDA provides API which allows to recuperate the information
+necessary, however, in some cases the IDAPython API do not offer such
+useful wrappers and for being able to get the full benefits of the available
+API it is necessary to recuperate reference to the underlying objects. Those
+objects are available in Python through the swig interface (part of IDAPython)
+build by IDA on top of their C++ API. As a general rule, people from hexrays
+encourage avoiding keeping references on those objects, but as said earlier
+there is not always a choice. Because of this several problems exist.</p>
+<p>The first is a really simple problem but hard to solve: when keeping an object
+of a type in Bip the underlying IDB can be changed (using the API or the GUI).
+This can make the current object of Bip invalid. A simple example of this
+will be to recuperate an <a class="reference internal" href="../base/instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> object
+using <a class="reference internal" href="../base/elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> and then to undefine this element using the GUI.
+If <a class="reference internal" href="../base/elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> is called again a  <a class="reference internal" href="../base/data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a>
+object will be returned, which is the object expected. However, if the previous
+object is used, it can lead to unexpected behavior because this address is
+not an instruction anymore, for example the
+property <a class="reference internal" href="../base/instr.html#bip.base.BipInstr.mnem" title="bip.base.BipInstr.mnem"><code class="xref py py-class docutils literal notranslate"><span class="pre">mnem</span></code></a> will return an empty string.</p>
+<p>For avoiding this problem as much as possible, Bip tries to avoid keeping
+references to the IDA objects or to memoize information, but often this is not
+possible and it has an overall cost in performance. As a general rule when
+doing modifications to the IDB the user should be careful to fetch again the
+object instead of re-using them. Sadly there is actually no solution
+implemented in Bip for solving this problem. In theory it could be implemented
+using the event API of hexrays but this may create several other complex
+problems if it is even possible.</p>
+<p>Another common problem of using the IDA objects is that
+<a class="reference external" href="https://www.hex-rays.com/blog/idapython-wrappers-are-only-wrappers/">wrappers are only wrappers</a> .
+What this basically said is that we have to handle the management of our
+objects in python as they are in C++, with SWIG in the middle. This include
+the example in the blogpost but also several others, such as for example
+the ones link to the <a class="reference internal" href="../base/type.html#doc-bip-base-type"><span class="std std-ref">Type</span></a> API (look for the warning). As
+a rule, having problem with the memory management when using the Bip
+standard (not private) API is not considered normal and can be
+reported as a bug. However this can force development to make some
+particular choice for enforcing this.</p>
+<p>Finally, the <em>undo</em> feature provided in IDA may invalidate any or all of the
+internal object use by IDA (“The simplest approach is to assume that the
+database has completely changed and to re-read information from the database
+to the memory.” and “Plugins in general should not cache and reuse pointers to
+kernel objects (like func_t, segment_t). These pointers may change between
+plugins invocations.”
+from <a class="reference external" href="https://www.hex-rays.com/products/ida/7_3/undo/">Undo: IDA can do it</a>).
+As there is nothing really possible to do at that point for supporting such
+a thing and trying to actualize all possible objects when an <em>undo</em> or <em>redo</em>
+is simply not acceptable it is advice to simply disable this feature.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Bip Project architecture</a><ul>
+<li><a class="reference internal" href="#module-architecture">Module architecture</a><ul>
+<li><a class="reference internal" href="#module-bip.base">Base</a></li>
+<li><a class="reference internal" href="#module-bip.hexrays">Hexrays</a><ul>
+<li><a class="reference internal" href="#example-of-ast">Example of AST</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bip.gui">Gui</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#common-code-patterns">Common code patterns</a><ul>
+<li><a class="reference internal" href="#bip-class-identification">Bip class identification</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#interfacing-with-ida-limitations">Interfacing with IDA &amp; limitations</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="overview.html"
+                        title="previous chapter">Overview</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="contribution.html"
+                        title="next chapter">Contributions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/general/archi.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="contribution.html" title="Contributions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

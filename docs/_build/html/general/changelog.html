@@ -1,0 +1,208 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Changelog &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Elements" href="../base/elt.html" />
+    <link rel="prev" title="Contributions" href="contribution.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../base/elt.html" title="Elements"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="contribution.html" title="Contributions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<p>This page has the goal to record breaking change in the API between versions.
+New features may be listed but probably not always.</p>
+<div class="section" id="change-from-v0-3-to-v1-0">
+<h2>Change from v0.3 to v1.0<a class="headerlink" href="#change-from-v0-3-to-v1-0" title="Permalink to this headline">¶</a></h2>
+<p>New features:</p>
+<ul class="simple">
+<li>new class <a class="reference internal" href="../base/bipidb.html#bip.base.BipIdb" title="bip.base.BipIdb"><code class="xref py py-class docutils literal notranslate"><span class="pre">bip.base.BipIdb</span></code></a></li>
+<li>new class <a class="reference internal" href="../base/bipida.html#bip.base.BipIda" title="bip.base.BipIda"><code class="xref py py-class docutils literal notranslate"><span class="pre">bip.base.BipIda</span></code></a></li>
+<li>new class <a class="reference internal" href="../gui/userselect.html#bip.gui.BipUserSelect" title="bip.gui.BipUserSelect"><code class="xref py py-class docutils literal notranslate"><span class="pre">bip.gui.BipUserSelect</span></code></a></li>
+</ul>
+<p>Breaking changes:</p>
+<ul class="simple">
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.XrefTypes</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base._XrefTypes</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.DestOpType</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipDestOpType</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.OpType</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipOpType</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.Operand</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipOperand</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.hexrays.HexRaysEvent</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.HxEvent</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.Instr</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipInstr</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipFuncFlags</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base._BipFuncFlags</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipFlowChartFlag</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base._BipFlowChartFlag</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipType._GetClassBipType</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipType._get_class_bip_type</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipType.GetBipTypeNoCopy</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipType.from_tinfo_no_copy</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipType.GetBipType</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipType.from_tinfo</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipType.FromC</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipType.from_c</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipType.ImportCHeader</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipType.import_c_header</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipInstr.Make</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipInstr.make</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipFunction.ByOrdinal</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipFunction.by_ordinal</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipFunction.Entries</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipFunction.entries</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipFunction.Entries_iter</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipFunction.entries_iter</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipFunction.Count</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipFunction.count</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.hexrays.HxCItem.GetHxCItem</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.hexrays.HxCItem.from_citem</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.hexrays.HxCItem._createChild</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.hexrays.HxCItem._create_child</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.hexrays.CNode._createChild</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.hexrays.CNode._create_child</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.hexrays.HxCStmt.st_childs</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.hexrays.HxCStmt.stmt_children</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.hexrays.CNodeStmt.st_childs</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.hexrays.CNodeStmt.stmt_children</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.hexrays.CNodeStmt.expr_childs</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.hexrays.CNodeStmt.expr_children</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.hexrays.CNode.GetCNode</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.hexrays.CNode.from_citem</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.hexrays.CNode.cfunc</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.hexrays.CNode.hxcfunc</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.base.BipFunction.hxfunc</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BipFunction.hxcfunc</span></code></li>
+<li>renaming of <code class="docutils literal notranslate"><span class="pre">bip.hexrays.HxLvar.hxfunc</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.hexrays.HxLvar.hxcfunc</span></code></li>
+<li>function <code class="docutils literal notranslate"><span class="pre">bip.base.utils.get_ptr_size</span></code> became static method <code class="docutils literal notranslate"><span class="pre">bip.base.BipIdb.ptr_size</span></code></li>
+<li>function <code class="docutils literal notranslate"><span class="pre">bip.base.utils.absea</span></code> became a static method of <code class="docutils literal notranslate"><span class="pre">bip.base.BipIdb</span></code></li>
+<li>function <code class="docutils literal notranslate"><span class="pre">bip.base.utils.relea</span></code> became a static method of <code class="docutils literal notranslate"><span class="pre">bip.base.BipIdb</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">min_ea</span></code>, <code class="docutils literal notranslate"><span class="pre">max_ea</span></code> and <code class="docutils literal notranslate"><span class="pre">Here</span></code>, functions are now in <code class="docutils literal notranslate"><span class="pre">bip.base.bipidb</span></code></li>
+<li>function <code class="docutils literal notranslate"><span class="pre">bip.base.utils.get_addr_by_name</span></code> has been removed.</li>
+<li>function <code class="docutils literal notranslate"><span class="pre">bip.base.utils.get_name_by_addr</span></code> has been removed.</li>
+<li>function <code class="docutils literal notranslate"><span class="pre">bip.base.utils.get_struct_from_lvar</span></code> has been removed.</li>
+<li>function <code class="docutils literal notranslate"><span class="pre">bip.base.utils.Ptr</span></code> became static method of <code class="docutils literal notranslate"><span class="pre">bip.base.BipData.get_ptr</span></code></li>
+<li>function <code class="docutils literal notranslate"><span class="pre">bip.base.utils.bip_exec_sync</span></code> became static method <code class="docutils literal notranslate"><span class="pre">bip.base.BipIda.exec_sync</span></code></li>
+<li>function <code class="docutils literal notranslate"><span class="pre">bip.base.utils.get_highlighted_identifier_as_int</span></code> became static method <code class="docutils literal notranslate"><span class="pre">BipUserSelect.get_curr_highlighted_int</span></code></li>
+<li>removed classes <code class="docutils literal notranslate"><span class="pre">BaseGuiAction</span></code> and <code class="docutils literal notranslate"><span class="pre">ContextMenuHooks</span></code></li>
+<li>renamed method <code class="docutils literal notranslate"><span class="pre">bip.base.BipType.childs</span></code> to <code class="docutils literal notranslate"><span class="pre">bip.base.BiType.children</span></code></li>
+</ul>
+<p>Sed script for automatic update of plugins (no garantee to be perfect or to
+avoid colisions) (use with <code class="docutils literal notranslate"><span class="pre">sed</span> <span class="pre">-f</span> <span class="pre">RULEFILE</span> <span class="pre">INPUTFILE</span></code>):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>s/XrefTypes/_XrefTypes/g
+s/DestOpType/BipDestOpType/g
+s/OpType/BipOpType/g
+s/Operand/BipOperand/g
+s/countBipOperand/countOperand/g
+s/HexRaysEvent/HxEvent/g
+s/Instr/BipInstr/g
+s/BipFuncFlags/_BipFuncFlags/g
+s/BipFlowChartFlag/_BipFlowChartFlag/g
+s/_GetClassBipType/_get_class_bip_type/g
+s/GetBipTypeNoCopy/from_tinfo_no_copy/g
+s/GetBipType/from_tinfo/g
+s/FromC/from_c/g
+s/ImportCHeader/import_c_header/g
+s/ByOrdinal/by_ordinal/g
+s/Entries/entries/g
+s/GetHxCItem/from_citem/g
+s/_createChild/_create_child/g
+s/st_childs/stmt_children/g
+s/expr_childs/expr_children/g
+s/GetCNode/from_citem/g
+s/get_ptr_size/BipIdb.ptr_size/g
+s/bip_exec_sync/BipIda.exec_sync/g
+s/get_highlighted_identifier_as_int/BipUserSelect.get_curr_highlighted_int/g
+s/childs/children/g
+</pre></div>
+</div>
+<p>Are not included in this sed file the change to <code class="docutils literal notranslate"><span class="pre">BipInstr.Make</span></code>,
+<code class="docutils literal notranslate"><span class="pre">BipFunction.Count</span></code>, <code class="docutils literal notranslate"><span class="pre">Cnode.cfunc</span></code>, <code class="docutils literal notranslate"><span class="pre">Ptr</span></code> which can easilly create
+problems.</p>
+<p>This update removed also the <code class="docutils literal notranslate"><span class="pre">example</span></code>, <code class="docutils literal notranslate"><span class="pre">scripts</span></code> and <code class="docutils literal notranslate"><span class="pre">plugins</span></code>
+directory which will not be maintain as part of Bip (and where probably
+already not working since some times).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Changelog</a><ul>
+<li><a class="reference internal" href="#change-from-v0-3-to-v1-0">Change from v0.3 to v1.0</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="contribution.html"
+                        title="previous chapter">Contributions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../base/elt.html"
+                        title="next chapter">Elements</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/general/changelog.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../base/elt.html" title="Elements"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="contribution.html" title="Contributions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

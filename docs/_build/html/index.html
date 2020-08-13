@@ -1,0 +1,346 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Welcome to Bip’s documentation! &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation steps" href="general/install.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="general/install.html" title="Installation steps"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-bip-s-documentation">
+<h1>Welcome to Bip’s documentation!<a class="headerlink" href="#welcome-to-bip-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Bip is a project which aimed to simplify the usage of python for interacting
+with IDA. Its main goals are to facilitate the usage of python in the
+interactive console of IDA and for writing plugins. In a more general way
+the goal is to automate the recurrent task done through the python API.
+Bip is also developxped for providing a more oriented object, a “python-like”
+API and a <em>real</em> documentation.</p>
+<p>This code is not complete, and a lot of features are still missing. Development
+is prioritized on what people ask for and what the developers use, so do not
+hesitate to make PR, Feature Request and Issues (including for the
+documentation), see <a class="reference internal" href="general/contribution.html#general-contrib"><span class="std std-ref">Contributions</span></a> for more information.</p>
+<p>This documentation is split in several parts. The <a class="reference internal" href="#general">General</a> part should allow
+you to start with the project including the install (<a class="reference internal" href="general/install.html#general-install"><span class="std std-ref">Installation steps</span></a>)
+and an overview (<a class="reference internal" href="general/overview.html#general-overview"><span class="std std-ref">Overview</span></a>) which explain how to use it.
+The <a class="reference internal" href="general/archi.html#general-archi"><span class="std std-ref">Bip Project architecture</span></a> allows to get a better understanding of how the
+project works and was intended to be used.</p>
+<p>The main part of the documentation is split in the three parts of
+bip: <a class="reference internal" href="#index-base"><span class="std std-ref">Base interface (bip.base)</span></a>
+containing the basic interfaces, the <a class="reference internal" href="#index-hexrays"><span class="std std-ref">Hexrays interface (bip.hexrays)</span></a> for manipulating
+hexrays functions and the <a class="reference internal" href="#index-gui"><span class="std std-ref">GUI &amp; Plugins interface (bip.gui)</span></a> containing interface with the
+graphics and explaining how to developed plugins. This is mainly
+autodocumentation of bip objects with precisions about usage and potentially
+internals when necessary.</p>
+<div class="section" id="general">
+<h2>General<a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="general/install.html">Installation steps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="general/install.html#installing-bip">Installing Bip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="general/install.html#installing-bipplugin">Installing BipPlugin</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="general/overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="general/overview.html#module-bip.base">Base</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="general/overview.html#instructions-operands">Instructions / Operands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="general/overview.html#function-basic-block">Function / Basic block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="general/overview.html#data">Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="general/overview.html#element">Element</a></li>
+<li class="toctree-l3"><a class="reference internal" href="general/overview.html#xref">Xref</a></li>
+<li class="toctree-l3"><a class="reference internal" href="general/overview.html#struct">Struct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="general/overview.html#types">Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="general/overview.html#module-bip.hexrays">Hexrays</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="general/overview.html#functions-local-variables">Functions / local variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="general/overview.html#cnode-visitors">CNode / Visitors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="general/overview.html#module-bip.gui">Plugins</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="general/archi.html">Bip Project architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="general/archi.html#module-architecture">Module architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="general/archi.html#module-bip.base">Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="general/archi.html#module-bip.hexrays">Hexrays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="general/archi.html#module-bip.gui">Gui</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="general/archi.html#common-code-patterns">Common code patterns</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="general/archi.html#bip-class-identification">Bip class identification</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="general/archi.html#interfacing-with-ida-limitations">Interfacing with IDA &amp; limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="general/contribution.html">Contributions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="general/contribution.html#pull-request">Pull Request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="general/contribution.html#change-of-version">Change of version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="general/changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="general/changelog.html#change-from-v0-3-to-v1-0">Change from v0.3 to v1.0</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="base-interface-bip-base">
+<span id="index-base"></span><h2>Base interface (<code class="docutils literal notranslate"><span class="pre">bip.base</span></code>)<a class="headerlink" href="#base-interface-bip-base" title="Permalink to this headline">¶</a></h2>
+<p>This regroup the part about the base interface on top of the IDA basic API.
+All classes in this part are regroup in the <code class="docutils literal notranslate"><span class="pre">bip.base</span></code> module.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="base/elt.html">Elements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base/elt.html#internals">Internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base/elt.html#element-functions-api">Element Functions API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base/elt.html#bipbaseelt-api">BipBaseElt API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base/elt.html#biprefelt-api">BipRefElt API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base/elt.html#bipelt-api">BipElt API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="base/instr.html">Instructions &amp; Operands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base/instr.html#bipinstr-api">BipInstr API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base/instr.html#bipoperand-api">BipOperand API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="base/data.html">Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base/data.html#bipdata-api">BipData API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="base/func.html">Functions &amp; Basic blocks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base/func.html#bipfunction-api">BipFunction API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base/func.html#bipblock-api">BipBlock API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="base/xref.html">Xref</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base/xref.html#bipxref-api">BipXref API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="base/struct.html">Structures</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base/struct.html#bipstruct-api">BipStruct API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base/struct.html#bstructmember-api">BStructMember API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="base/enum.html">Enum</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base/enum.html#bipenum-api">BipEnum API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base/enum.html#benummember-api">BEnumMember API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="base/type.html">Type</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base/type.html#biptype-api">BipType API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="base/bipidb.html">IDB representation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base/bipidb.html#bipidb-api">BipIdb API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base/bipidb.html#helper-functions">Helper functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="base/bipida.html">IDA interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base/bipida.html#bipida-api">BipIda API</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="hexrays-interface-bip-hexrays">
+<span id="index-hexrays"></span><h2>Hexrays interface (<code class="docutils literal notranslate"><span class="pre">bip.hexrays</span></code>)<a class="headerlink" href="#hexrays-interface-bip-hexrays" title="Permalink to this headline">¶</a></h2>
+<p>This regroup the interface on top of the IDA Hexrays API, in particular it
+allows to visit the AST generated for the functions. This module will be
+useful only if the decompiler for the binary exist and is installed.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hexrays/cfunc.html">Hexrays Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cfunc.html#hxcfunc-api">HxCFunc API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hexrays/lvar.html">Local variables</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/lvar.html#hxlvar-api">HxLvar API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hexrays/astnodes.html">Ast Nodes &amp; Visitors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/astnodes.html#node-representation-in-bip">Node representation in Bip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/astnodes.html#ast-node-types">AST Node types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/astnodes.html#visitors-in-bip">Visitors in Bip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/astnodes.html#abstractcitem-api">AbstractCItem API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/astnodes.html#hxctype-enum">HxCtype Enum</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hexrays/cnode.html">CNode</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#cnode-api">CNode API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#cnodeexpr-api">CNodeExpr API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#cnodestmt-api">CNodeStmt API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#final-expression-api">Final Expression API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#memaccess-expression-api">MemAccess Expression API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#unary-operation-expression-api">Unary Operation Expression API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#double-operation-expression-api">Double Operation Expression API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#other-leaf-expressions-api">Other leaf Expressions API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#final-statement-api">Final Statement API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#loop-statement-api">Loop Statement API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#other-leaf-statement-api">Other leaf Statement API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#methods-specific-to-cnode-implementation">Methods specific to CNode implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#module-bip.hexrays.cnode_visitor">Internal Hexrays Visitor API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/cnode.html#cnode-generation-and-internals">CNode generation and internals</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hexrays/visit_hx.html">HxCItem</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#hxcitem-api">HxCItem API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#hxcexpr-api">HxCExpr API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#hxcstmt-api">HxCStmt API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#final-expression-api">Final Expression API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#memaccess-expression-api">MemAccess Expression API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#unary-operation-expression-api">Unary Operation Expression API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#double-operation-expression-api">Double Operation Expression API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#other-leaf-expressions-api">Other leaf Expressions API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#final-statement-api">Final Statement API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#loop-statement-api">Loop Statement API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#other-leaf-statement-api">Other leaf Statement API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hexrays/visit_hx.html#module-bip.hexrays.hx_visitor">Internal Hexrays Visitor API</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="gui-plugins-interface-bip-gui">
+<span id="index-gui"></span><h2>GUI &amp; Plugins interface (<code class="docutils literal notranslate"><span class="pre">bip.gui</span></code>)<a class="headerlink" href="#gui-plugins-interface-bip-gui" title="Permalink to this headline">¶</a></h2>
+<p>This part regroup all the functions and classes made for interfacing with the
+UI and events of IDA. The most important part of this module is probably the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code> which allow to create plugins and to define actions in IDA.
+While bip can be used in normal IDA plugin and scripts, the <code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code>
+is the central element for interfacing with the GUI using bip.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gui/plugin.html">Plugins</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gui/plugin.html#implementation-internals">Implementation internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gui/plugin.html#bipplugin-api">BipPlugin API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gui/plugin.html#activity-decorators">Activity decorators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gui/plgmanager.html">Plugin Manager</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gui/plgmanager.html#bippluginmanager-api">BipPluginManager API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gui/activity.html">Activities and Actions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gui/activity.html#implementation-internals">Implementation internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gui/activity.html#bipaction-api">BipAction API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gui/activity.html#bipactivity-api">BipActivity API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gui/activity.html#bipactivitycontainer-api">BipActivityContainer API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gui/userselect.html">User selections</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gui/userselect.html#bipuserselect-api">BipUserSelect API</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to Bip’s documentation!</a><ul>
+<li><a class="reference internal" href="#general">General</a></li>
+<li><a class="reference internal" href="#base-interface-bip-base">Base interface (<code class="docutils literal notranslate"><span class="pre">bip.base</span></code>)</a></li>
+<li><a class="reference internal" href="#hexrays-interface-bip-hexrays">Hexrays interface (<code class="docutils literal notranslate"><span class="pre">bip.hexrays</span></code>)</a></li>
+<li><a class="reference internal" href="#gui-plugins-interface-bip-gui">GUI &amp; Plugins interface (<code class="docutils literal notranslate"><span class="pre">bip.gui</span></code>)</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="general/install.html"
+                        title="next chapter">Installation steps</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="general/install.html" title="Installation steps"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

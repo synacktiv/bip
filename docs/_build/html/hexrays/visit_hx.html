@@ -1,0 +1,2379 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>HxCItem &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plugins" href="../gui/plugin.html" />
+    <link rel="prev" title="CNode" href="cnode.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../gui/plugin.html" title="Plugins"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cnode.html" title="CNode"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.hexrays">
+<span id="hxcitem"></span><h1>HxCItem<a class="headerlink" href="#module-bip.hexrays" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> API is one of the way to represent AST nodes
+of an Hexrays decompiled function at the level of Bip. This API is the closest
+of the one provided by IDAPython, however this is not the prefered way to view
+AST nodes in Bip, <a class="reference internal" href="cnode.html#doc-hexrays-cnode"><span class="std std-ref">CNode</span></a> for the prefered way and
+<a class="reference internal" href="astnodes.html#doc-hexrays-astnodes"><span class="std std-ref">Ast Nodes &amp; Visitors</span></a> for more general information.</p>
+<p>The simplest way to access <a class="reference internal" href="#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> elements is through
+the usage of the visitorm methods starting with <code class="docutils literal notranslate"><span class="pre">hx_visit_</span></code> in
+<a class="reference internal" href="cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a></p>
+<p>This API is based on the <a class="reference internal" href="#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> abstract class, each
+AST nodes are represented by a subclass of this object which are determine
+by its type. For more information of the different type of nodes see
+<a class="reference internal" href="astnodes.html#doc-hexrays-astnodes-nodetype"><span class="std std-ref">AST Node types</span></a>. The method
+<a class="reference internal" href="#bip.hexrays.HxCItem.from_citem" title="bip.hexrays.HxCItem.from_citem"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_citem()</span></code></a> allow to recuperate an object of the
+correct class (which inherit from <a class="reference internal" href="#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a>) for a
+particular <code class="docutils literal notranslate"><span class="pre">citem_t</span></code> object from IDA.</p>
+<div class="section" id="hxcitem-api">
+<h2>HxCItem API<a class="headerlink" href="#hxcitem-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCItem">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCItem</code><span class="sig-paren">(</span><em>citem</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class representing both C expression and C statement as
+defined by HexRays. This is the most direct API on top of Hexrays.
+However, in most cases, the <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> equivalent classes can be
+used: those provide more functionnality and are the recommanded ones.</p>
+<p>An object of this class should never be created directly. The
+<a class="reference internal" href="#bip.hexrays.HxCItem.from_citem" title="bip.hexrays.HxCItem.from_citem"><code class="xref py py-func docutils literal notranslate"><span class="pre">HxCItem.from_citem()</span></code></a> static method should be used for creating
+an item of the correct type.</p>
+<p>Most of the functionnality provided by this class are inherited from
+its parent class <a class="reference internal" href="astnodes.html#bip.hexrays.AbstractCItem" title="bip.hexrays.AbstractCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractCItem</span></code></a> and are common with the
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> class.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCItem.TYPE_HANDLE">
+<code class="descname">TYPE_HANDLE</code><em class="property"> = -1</em><a class="headerlink" href="#bip.hexrays.HxCItem.TYPE_HANDLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class attribute indicating which type of item this class handles, this is used
+by <a class="reference internal" href="#bip.hexrays.HxCItem.from_citem" title="bip.hexrays.HxCItem.from_citem"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_citem()</span></code></a> for determining if this is the good object to
+instantiate. All abstract class should have a value of -1 for this
+object, non-abstract class should have a value corresponding to the
+<a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> they handle.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCItem._create_child">
+<code class="descname">_create_child</code><span class="sig-paren">(</span><em>citem</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCItem._create_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal method which allow to create a <a class="reference internal" href="#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> object
+from a <code class="docutils literal notranslate"><span class="pre">citem_t</span></code>. This must be used by <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> and
+<a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> for creating their child expression and
+statement. This method is used for having compatibility with
+the <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> class.</p>
+<p>Internally this function is only a wrapper on <a class="reference internal" href="#bip.hexrays.HxCItem.from_citem" title="bip.hexrays.HxCItem.from_citem"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_citem()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>citem</strong> – A <code class="docutils literal notranslate"><span class="pre">citem_t</span></code> from ida.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The equivalent object to the <code class="docutils literal notranslate"><span class="pre">citem_t</span></code> for bip. This
+will be an object which inherit from <a class="reference internal" href="#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.hexrays.HxCItem.from_citem">
+<em class="property">static </em><code class="descname">from_citem</code><span class="sig-paren">(</span><em>citem</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCItem.from_citem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which convert a <code class="docutils literal notranslate"><span class="pre">citem_t</span></code> object from ida to one of the
+child object of <a class="reference internal" href="#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> . This should in particular be
+used for converting <code class="docutils literal notranslate"><span class="pre">cexpr_t</span></code> and <code class="docutils literal notranslate"><span class="pre">cinsn_t</span></code> in their correct
+object for bip. This function is used as interface with the IDA
+object.</p>
+<p>If no <a class="reference internal" href="#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> child object exist a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> exception
+will be raised.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> and <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> should not used
+this function for creating child item but
+<a class="reference internal" href="#bip.hexrays.HxCItem._create_child" title="bip.hexrays.HxCItem._create_child"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HxCItem._create_child()</span></code></a> for compatibility with the
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> class.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>citem</strong> – A <code class="docutils literal notranslate"><span class="pre">citem_t</span></code> from ida.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The equivalent object to the <code class="docutils literal notranslate"><span class="pre">citem_t</span></code> for bip. This
+will be an object which inherit from <a class="reference internal" href="#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="hxcexpr-api">
+<h2>HxCExpr API<a class="headerlink" href="#hxcexpr-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCExpr">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExpr</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class for representing a C Expression as returned by
+HexRays. This is an abstract class which is used as a wrapper on top
+of the <code class="docutils literal notranslate"><span class="pre">cexpr_t</span></code> object.</p>
+<p>The equivalent class which inherit from <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> is
+<a class="reference internal" href="cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a>, the <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> implementation is advised.</p>
+<p>No object of this class should be instanstiated, for getting an
+expression the function <code class="xref py py-func docutils literal notranslate"><span class="pre">from_citem()</span></code> should be
+used.</p>
+<dl class="method">
+<dt id="bip.hexrays.HxCExpr.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExpr.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cexpr</strong> – A <code class="docutils literal notranslate"><span class="pre">cexpr_t</span></code> object from ida.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExpr._cexpr">
+<code class="descname">_cexpr</code><em class="property"> = None</em><a class="headerlink" href="#bip.hexrays.HxCExpr._cexpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">cexpr_t</span></code> object from ida.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCExpr.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExpr.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surcharge for printing a CExpr</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExpr.ops">
+<code class="descname">ops</code><a class="headerlink" href="#bip.hexrays.HxCExpr.ops" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which return the C Expressions child of this expression.
+This is used only when the expression is recursive.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <code class="docutils literal notranslate"><span class="pre">list</span></code> of object inheriting from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> and
+child of the current expression.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExpr.type">
+<code class="descname">type</code><a class="headerlink" href="#bip.hexrays.HxCExpr.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the type (<code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code>) of this
+expression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code> which
+correspond to the type of this object. Change to this type
+object will not change the type of this expression.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="hxcstmt-api">
+<h2>HxCStmt API<a class="headerlink" href="#hxcstmt-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCStmt">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmt</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class for representing a C Statement as returned by hexrays.
+This is an abstract class which is a wrapper on top of the
+<code class="docutils literal notranslate"><span class="pre">cinsn_t</span></code> ida object.</p>
+<p>The equivalent class which inherit from <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> is
+<a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a>, the <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> implementation is advised.</p>
+<p>No object of this class should be instanstiated, for getting an
+expression the function <code class="xref py py-func docutils literal notranslate"><span class="pre">from_citem()</span></code> should be
+used.</p>
+<p>A statement can contain one or more child statement and one or more
+child expression (<a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>) object.
+By convention properties which will return child statement of an
+object will start with the prefix <code class="docutils literal notranslate"><span class="pre">stmt_</span></code> or <code class="docutils literal notranslate"><span class="pre">st_</span></code>.</p>
+<dl class="method">
+<dt id="bip.hexrays.HxCStmt.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmt.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for a <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cinsn</strong> – A <code class="docutils literal notranslate"><span class="pre">cinsn_t</span></code> from ida.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmt._cinsn">
+<code class="descname">_cinsn</code><em class="property"> = None</em><a class="headerlink" href="#bip.hexrays.HxCStmt._cinsn" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">cinsn_t</span></code> object from ida.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCStmt.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmt.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surcharge for printing a CStmt.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmt.stmt_children">
+<code class="descname">stmt_children</code><a class="headerlink" href="#bip.hexrays.HxCStmt.stmt_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of the statements which are children of
+this statement. This is used only when the statement is recursive,
+if not this will return an empty list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of child statement of this object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Objects which inherit from <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmt.expr_children">
+<code class="descname">expr_children</code><a class="headerlink" href="#bip.hexrays.HxCStmt.expr_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of the expression (<a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>)
+which are children of this statement. This will not return children
+expression of the statement child of the current object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of child expression of this object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Objects which inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="final-expression-api">
+<h2>Final Expression API<a class="headerlink" href="#final-expression-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCExprFinal">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprFinal</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprFinal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class for representing a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> which does not
+posess child expression. All the child class must have a
+<a class="reference internal" href="#bip.hexrays.HxCExprFinal.value" title="bip.hexrays.HxCExprFinal.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">value()</span></code></a> property which return the value of the
+expression.</p>
+<p>This is used as a parent for:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#bip.hexrays.HxCExprNum" title="bip.hexrays.HxCExprNum"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprNum</span></code></a></li>
+<li><a class="reference internal" href="#bip.hexrays.HxCExprFNum" title="bip.hexrays.HxCExprFNum"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprFNum</span></code></a></li>
+<li><a class="reference internal" href="#bip.hexrays.HxCExprStr" title="bip.hexrays.HxCExprStr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprStr</span></code></a></li>
+<li><a class="reference internal" href="#bip.hexrays.HxCExprObj" title="bip.hexrays.HxCExprObj"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprObj</span></code></a></li>
+<li><a class="reference internal" href="#bip.hexrays.HxCExprVar" title="bip.hexrays.HxCExprVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprVar</span></code></a></li>
+<li><a class="reference internal" href="#bip.hexrays.HxCExprHelper" title="bip.hexrays.HxCExprHelper"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprHelper</span></code></a></li>
+<li><a class="reference internal" href="#bip.hexrays.HxCExprInsn" title="bip.hexrays.HxCExprInsn"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprInsn</span></code></a></li>
+<li><a class="reference internal" href="#bip.hexrays.HxCExprType" title="bip.hexrays.HxCExprType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprType</span></code></a></li>
+</ul>
+<dl class="method">
+<dt id="bip.hexrays.HxCExprFinal.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprFinal.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surcharge for printing a HxCExprFinal.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprFinal.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCExprFinal.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the value of a final expression. This is
+abstract and if not overwritten it will raise a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code> .</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprEmpty">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprEmpty</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprEmpty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing an empty CExpr (<code class="docutils literal notranslate"><span class="pre">HxCType.COT_EMPTY</span></code>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprNum">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprNum</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprNum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a CExpr containing a Number
+(<code class="docutils literal notranslate"><span class="pre">HxCType.COT_NUM</span></code>).</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">test</p>
+</div>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">make an assign function with full access to all the value.</p>
+</div>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">flags, should make accessible and settable the flags see
+<code class="docutils literal notranslate"><span class="pre">number_format_t</span></code> in <code class="docutils literal notranslate"><span class="pre">hexrays.cpp</span></code></p>
+</div>
+<div class="admonition-todo admonition" id="index-3">
+<p class="first admonition-title">Todo</p>
+<p class="last">make accessible the serial and the type_name from <code class="docutils literal notranslate"><span class="pre">number_format_t</span></code> .</p>
+</div>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprNum.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCExprNum.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Value of the number.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">the value of this number.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprNum.size">
+<code class="descname">size</code><a class="headerlink" href="#bip.hexrays.HxCExprNum.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Original size in bytes of the number.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">the size in bytes.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprFNum">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprFNum</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprFNum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a Floating number (<code class="docutils literal notranslate"><span class="pre">HxCType.COT_FNUM</span></code>).</p>
+<div class="admonition-todo admonition" id="index-4">
+<p class="first admonition-title">Todo</p>
+<p class="last">everything, see <code class="docutils literal notranslate"><span class="pre">fnumber_t</span></code> in <code class="docutils literal notranslate"><span class="pre">hexrays.hpp</span></code> and
+<code class="docutils literal notranslate"><span class="pre">ida_hexrays.py</span></code></p>
+</div>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprFNum.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCExprFNum.value" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition-todo admonition" id="index-5">
+<p class="first admonition-title">Todo</p>
+<p class="last">not sure if this works at all and probably not what we
+want anyway.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprFNum.size">
+<code class="descname">size</code><a class="headerlink" href="#bip.hexrays.HxCExprFNum.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Original size in bytes of the number.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">the size in bytes.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprStr">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprStr</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprStr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a string (<code class="docutils literal notranslate"><span class="pre">HxCType.COT_STR</span></code>).</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprStr.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCExprStr.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>String value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return str:</th><td class="field-body">the value of this string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprObj">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprObj</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprObj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing an “object” (<code class="docutils literal notranslate"><span class="pre">HxCType.COT_OBJ</span></code>). An object
+can be anything with an address including the address of a
+function, a string …</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprObj.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCExprObj.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Address of the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">the address of the object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprVar">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprVar</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprVar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a variable (<code class="docutils literal notranslate"><span class="pre">HxCType.COT_VAR</span></code>).</p>
+<div class="admonition-todo admonition" id="index-6">
+<p class="first admonition-title">Todo</p>
+<p class="last">test</p>
+</div>
+<div class="admonition-todo admonition" id="index-7">
+<p class="first admonition-title">Todo</p>
+<p class="last">link with variables</p>
+</div>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprVar.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCExprVar.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index in the lvar array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">the index in the lvar array.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprVar.index">
+<code class="descname">index</code><a class="headerlink" href="#bip.hexrays.HxCExprVar.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index in the lvar array.</p>
+<div class="admonition-todo admonition" id="index-8">
+<p class="first admonition-title">Todo</p>
+<p class="last">this should probably directly return the lvar ?</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">the index in the lvar array.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprHelper">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprHelper</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprHelper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class  for representing an helper string (<code class="docutils literal notranslate"><span class="pre">HxCType.COT_HELPER</span></code>) .</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprHelper.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCExprHelper.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Value of this helper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return str:</th><td class="field-body">the string containing the value of the helper.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprInsn">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprInsn</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprInsn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a statement in an expression
+(<code class="docutils literal notranslate"><span class="pre">HxCType.COT_INSN</span></code>).</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Do not confound with <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> which is a
+statement. This is an expression which contain a statement.</p>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprType">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprType</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a type (<code class="docutils literal notranslate"><span class="pre">HxCType.COT_TYPE</span></code>). This can be used
+for example as a Sizeof node.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprType.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCExprType.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the <code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code> which is represented by this node.
+This is equivalent to the <a class="reference internal" href="#bip.hexrays.HxCExpr.type" title="bip.hexrays.HxCExpr.type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">type()</span></code></a> property.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="memaccess-expression-api">
+<h2>MemAccess Expression API<a class="headerlink" href="#memaccess-expression-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCExprMemAccess">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprMemAccess</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprMemAccess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class for representing a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> corresponding to
+a memory access. This include access in an array (<code class="docutils literal notranslate"><span class="pre">obj[off]</span></code>,
+a memory reference (<code class="docutils literal notranslate"><span class="pre">obj.off</span></code>) or a memory pointer (<code class="docutils literal notranslate"><span class="pre">obj-&gt;off</span></code>).</p>
+<p>Provide the properties: <a class="reference internal" href="#bip.hexrays.HxCExprMemAccess.obj" title="bip.hexrays.HxCExprMemAccess.obj"><code class="xref py py-meth docutils literal notranslate"><span class="pre">obj()</span></code></a> and
+<a class="reference internal" href="#bip.hexrays.HxCExprMemAccess.off" title="bip.hexrays.HxCExprMemAccess.off"><code class="xref py py-meth docutils literal notranslate"><span class="pre">off()</span></code></a>.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprMemAccess.obj">
+<code class="descname">obj</code><a class="headerlink" href="#bip.hexrays.HxCExprMemAccess.obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> representing the base
+memory location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An operand of the expression, an object which
+inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprMemAccess.off">
+<code class="descname">off</code><a class="headerlink" href="#bip.hexrays.HxCExprMemAccess.off" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the offset of the memory location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> or an
+integer.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprIdx">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprIdx</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprIdx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing access to an index in an array
+(<code class="docutils literal notranslate"><span class="pre">array[index]</span></code>). The <a class="reference internal" href="#bip.hexrays.HxCExprIdx.array" title="bip.hexrays.HxCExprIdx.array"><code class="xref py py-meth docutils literal notranslate"><span class="pre">array()</span></code></a> is a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>
+representing the array and <a class="reference internal" href="#bip.hexrays.HxCExprIdx.index" title="bip.hexrays.HxCExprIdx.index"><code class="xref py py-meth docutils literal notranslate"><span class="pre">index()</span></code></a> is a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>
+representing the index which is access.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprIdx.array">
+<code class="descname">array</code><a class="headerlink" href="#bip.hexrays.HxCExprIdx.array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> representing the array
+element access by this expression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An operand of the expression, an object which
+inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprIdx.index">
+<code class="descname">index</code><a class="headerlink" href="#bip.hexrays.HxCExprIdx.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> representing the index
+of the element access by this expression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An operand of the expression, an object which
+inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprMemref">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprMemref</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprMemref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a memory reference
+(<code class="docutils literal notranslate"><span class="pre">mem.off</span></code>). The <a class="reference internal" href="#bip.hexrays.HxCExprMemref.mem" title="bip.hexrays.HxCExprMemref.mem"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mem()</span></code></a> is a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>
+representing the object which is access and <a class="reference internal" href="#bip.hexrays.HxCExprMemref.off" title="bip.hexrays.HxCExprMemref.off"><code class="xref py py-meth docutils literal notranslate"><span class="pre">off()</span></code></a> is an integer
+representing the memory offset.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprMemref.mem">
+<code class="descname">mem</code><a class="headerlink" href="#bip.hexrays.HxCExprMemref.mem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> representing the object
+which is access by this expression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An operand of the expression, an object which
+inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprMemref.off">
+<code class="descname">off</code><a class="headerlink" href="#bip.hexrays.HxCExprMemref.off" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the memory offset which is access by this
+expression. In practice this should be an offset in a structure or
+an enum.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The memory offset.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprMemptr">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprMemptr</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprMemptr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a memory access using a pointer
+(<code class="docutils literal notranslate"><span class="pre">ptr-&gt;off</span></code>). The <a class="reference internal" href="#bip.hexrays.HxCExprMemptr.ptr" title="bip.hexrays.HxCExprMemptr.ptr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ptr()</span></code></a> is a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>
+representing the object which is access and <a class="reference internal" href="#bip.hexrays.HxCExprMemptr.off" title="bip.hexrays.HxCExprMemptr.off"><code class="xref py py-meth docutils literal notranslate"><span class="pre">off()</span></code></a> is an integer
+representing the memory offset. <a class="reference internal" href="#bip.hexrays.HxCExprMemptr.access_size" title="bip.hexrays.HxCExprMemptr.access_size"><code class="xref py py-meth docutils literal notranslate"><span class="pre">access_size()</span></code></a> provide the size
+access by this expression.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprMemptr.ptr">
+<code class="descname">ptr</code><a class="headerlink" href="#bip.hexrays.HxCExprMemptr.ptr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> representing the object
+which is access by this expression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An operand of the expression, an object which
+inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprMemptr.off">
+<code class="descname">off</code><a class="headerlink" href="#bip.hexrays.HxCExprMemptr.off" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the memory offset which is access by this
+expression. In practice this should be an offset in a structure or
+an enum.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The memory offset.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprMemptr.access_size">
+<code class="descname">access_size</code><a class="headerlink" href="#bip.hexrays.HxCExprMemptr.access_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the size which is access by the
+derefencement of this pointer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An int corresponding to the size acceded.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="unary-operation-expression-api">
+<h2>Unary Operation Expression API<a class="headerlink" href="#unary-operation-expression-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCExprUnaryOperation">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprUnaryOperation</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprUnaryOperation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract for representing a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> with a unary operation.
+This <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation.operand" title="bip.hexrays.HxCExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HxCExprUnaryOperation.operand()</span></code></a> is also a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>
+making it recursive.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprUnaryOperation.operand">
+<code class="descname">operand</code><a class="headerlink" href="#bip.hexrays.HxCExprUnaryOperation.operand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the operand of this expression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The operand of the expression, an object which
+inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprPtr">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprPtr</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprPtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing the deref. of a pointer (<code class="docutils literal notranslate"><span class="pre">*operand</span></code>). This
+inherit from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprPtr.access_size">
+<code class="descname">access_size</code><a class="headerlink" href="#bip.hexrays.HxCExprPtr.access_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the size which is access by the
+derefencement of this pointer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An int corresponding to the size acceded.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprFneg">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprFneg</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprFneg" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprNeg">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprNeg</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprNeg" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprCast">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprCast</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprCast" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprLnot">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprLnot</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprLnot" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprBnot">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprBnot</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprBnot" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprRef">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprRef</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprRef" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprPostinc">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprPostinc</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprPostinc" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprPostdec">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprPostdec</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprPostdec" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprPreinc">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprPreinc</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprPreinc" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprPredec">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprPredec</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprPredec" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprSizeof">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprSizeof</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprSizeof" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprUnaryOperation" title="bip.hexrays.HxCExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprUnaryOperation</span></code></a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="double-operation-expression-api">
+<h2>Double Operation Expression API<a class="headerlink" href="#double-operation-expression-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCExprDoubleOperation">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprDoubleOperation</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprDoubleOperation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class for representing a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> with two operands.
+Those operands are also <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> making them recursive.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprDoubleOperation.first_op">
+<code class="descname">first_op</code><a class="headerlink" href="#bip.hexrays.HxCExprDoubleOperation.first_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the first operand.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The first operand of the expression, an object which
+inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprDoubleOperation.second_op">
+<code class="descname">second_op</code><a class="headerlink" href="#bip.hexrays.HxCExprDoubleOperation.second_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the second operand.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The second operand of the expression, an object which
+inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprComma">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprComma</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprComma" title="Permalink to this definition">¶</a></dt>
+<dd><p>C Expression for a comma expression. Typically used in conditions
+by hexrays.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprLor">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprLor</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprLor" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprLand">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprLand</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprLand" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprBor">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprBor</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprBor" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprXor">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprXor</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprXor" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprBand">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprBand</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprBand" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprEq">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprEq</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprEq" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprNe">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprNe</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprNe" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprSge">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprSge</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprSge" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprUge">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprUge</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprUge" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprSle">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprSle</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprSle" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprUle">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprUle</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprUle" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprSgt">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprSgt</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprSgt" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprUgt">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprUgt</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprUgt" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprSlt">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprSlt</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprSlt" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprUlt">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprUlt</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprUlt" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprSshr">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprSshr</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprSshr" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprUshr">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprUshr</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprUshr" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprShl">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprShl</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprShl" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAdd">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAdd</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAdd" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprSub">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprSub</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprSub" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprMul">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprMul</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprMul" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprSdiv">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprSdiv</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprSdiv" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprUdiv">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprUdiv</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprUdiv" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprSmod">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprSmod</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprSmod" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprUmod">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprUmod</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprUmod" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprFadd">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprFadd</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprFadd" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprFsub">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprFsub</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprFsub" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprFmul">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprFmul</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprFmul" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprFdiv">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprFdiv</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprFdiv" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>.</p>
+</dd></dl>
+
+<div class="section" id="assignment">
+<h3>Assignment<a class="headerlink" href="#assignment" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAssignment">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAssignment</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAssignment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class for representing a <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> where the left
+operand is the destination of an assignment. This inherit from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a> and include not only the simple
+assignment operation but also the one which include another operation
+such as <code class="docutils literal notranslate"><span class="pre">+=</span></code> (<a class="reference internal" href="#bip.hexrays.HxCExprAsgadd" title="bip.hexrays.HxCExprAsgadd"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAsgadd</span></code></a>), <code class="docutils literal notranslate"><span class="pre">^=</span></code>
+(<a class="reference internal" href="#bip.hexrays.HxCExprAsgxor" title="bip.hexrays.HxCExprAsgxor"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAsgxor</span></code></a>), …</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprAssignment.src">
+<code class="descname">src</code><a class="headerlink" href="#bip.hexrays.HxCExprAssignment.src" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper property which return the source of the assignment.</p>
+<p>This is just a wrapper on top of
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation.second_op" title="bip.hexrays.HxCExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The second operand of the expression, an object which
+inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprAssignment.dst">
+<code class="descname">dst</code><a class="headerlink" href="#bip.hexrays.HxCExprAssignment.dst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper property which return the destination of the assignment.</p>
+<p>This is just a wrapper on top of
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation.first_op" title="bip.hexrays.HxCExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The first operand of the expression, an object which
+inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsg">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsg</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsg" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgbor">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgbor</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgbor" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgxor">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgxor</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgxor" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgband">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgband</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgband" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgadd">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgadd</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgadd" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgsub">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgsub</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgsub" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgmul">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgmul</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgmul" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgsshr">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgsshr</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgsshr" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgushr">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgushr</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgushr" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgshl">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgshl</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgshl" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgsdiv">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgsdiv</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgsdiv" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgudiv">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgudiv</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgudiv" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgsmod">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgsmod</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgsmod" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprAsgumod">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprAsgumod</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprAsgumod" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="astnodes.html#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> for description.
+Inherited from <a class="reference internal" href="#bip.hexrays.HxCExprAssignment" title="bip.hexrays.HxCExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprAssignment</span></code></a> (indirectly from
+<a class="reference internal" href="#bip.hexrays.HxCExprDoubleOperation" title="bip.hexrays.HxCExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExprDoubleOperation</span></code></a>).</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="other-leaf-expressions-api">
+<h2>Other leaf Expressions API<a class="headerlink" href="#other-leaf-expressions-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCExprTernary">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprTernary</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprTernary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a ternary operation (<code class="docutils literal notranslate"><span class="pre">cond</span> <span class="pre">?</span> <span class="pre">expr1</span> <span class="pre">:</span> <span class="pre">expr2</span></code>)
+(<code class="docutils literal notranslate"><span class="pre">HxCType.COT_TERN</span></code>).</p>
+<p>This class contain 3 operands which are recursive.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprTernary.cond">
+<code class="descname">cond</code><a class="headerlink" href="#bip.hexrays.HxCExprTernary.cond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the condition of the ternary expression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprTernary.expr1">
+<code class="descname">expr1</code><a class="headerlink" href="#bip.hexrays.HxCExprTernary.expr1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the first expression of the ternary
+expression: the one executed if the condition
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">cond()</span></code> is true.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprTernary.expr2">
+<code class="descname">expr2</code><a class="headerlink" href="#bip.hexrays.HxCExprTernary.expr2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the second expression of the ternary
+expression: the one executed if the condition
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">cond()</span></code> is false.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCExprCall">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCExprCall</code><span class="sig-paren">(</span><em>cexpr</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprCall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a call expression. This class also provide
+function which allow to manipulate the arguments.</p>
+<div class="admonition-todo admonition" id="index-9">
+<p class="first admonition-title">Todo</p>
+<p class="last">function type (carglist_t.functype)</p>
+</div>
+<div class="admonition-todo admonition" id="index-10">
+<p class="first admonition-title">Todo</p>
+<p class="last">args type (carg.formal_type)</p>
+</div>
+<div class="admonition-todo admonition" id="index-11">
+<p class="first admonition-title">Todo</p>
+<p class="last">vararg (carg.is_vararg) (variadic number of arguments, like printf)</p>
+</div>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprCall._carglist">
+<code class="descname">_carglist</code><a class="headerlink" href="#bip.hexrays.HxCExprCall._carglist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the <code class="docutils literal notranslate"><span class="pre">carglist_t</span></code> from IDA.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCExprCall._get_carg">
+<code class="descname">_get_carg</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprCall._get_carg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal function which give access to the argument at position
+number <code class="docutils literal notranslate"><span class="pre">num</span></code>. There is no check on the value of num.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprCall.type_call">
+<code class="descname">type_call</code><a class="headerlink" href="#bip.hexrays.HxCExprCall.type_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the type for the function call. This will be the type
+printed by HexRays for the function. It differs from
+<a class="reference internal" href="#bip.hexrays.HxCExpr.type" title="bip.hexrays.HxCExpr.type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">type()</span></code></a> which is the type of result of the node.</p>
+<div class="admonition-todo admonition" id="index-12">
+<p class="first admonition-title">Todo</p>
+<p class="last">setter</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code> which
+correspond to the call type of this node.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprCall.caller">
+<code class="descname">caller</code><a class="headerlink" href="#bip.hexrays.HxCExprCall.caller" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the caller of this expression. The caller
+is also an expression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprCall.is_helper">
+<code class="descname">is_helper</code><a class="headerlink" href="#bip.hexrays.HxCExprCall.is_helper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return true if this function is a decompiler helper
+function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A bool indicating if this is a helper function (true) or
+a “real” call.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprCall.number_args">
+<code class="descname">number_args</code><a class="headerlink" href="#bip.hexrays.HxCExprCall.number_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the number of arguments pass to the call
+expresion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The number of argument to the call expression.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCExprCall.get_arg">
+<code class="descname">get_arg</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCExprCall.get_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which return one of the argument of the call to a
+function. Each argument is also an expression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) – The argument number.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">num</span></code> is superior to the number of
+arguments in the call expression.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprCall.args">
+<code class="descname">args</code><a class="headerlink" href="#bip.hexrays.HxCExprCall.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the args of the call. Those args are also
+expressions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCExprCall.args_iter">
+<code class="descname">args_iter</code><a class="headerlink" href="#bip.hexrays.HxCExprCall.args_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return an iterator on the args of the call. This
+is similar to <a class="reference internal" href="#bip.hexrays.HxCExprCall.args" title="bip.hexrays.HxCExprCall.args"><code class="xref py py-meth docutils literal notranslate"><span class="pre">args()</span></code></a> but with an iterator, and
+should have more perf.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="final-statement-api">
+<h2>Final Statement API<a class="headerlink" href="#final-statement-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtFinal">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtFinal</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtFinal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class for representing a <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> which does not
+posess child statements but as a value. All the child must have a
+<a class="reference internal" href="#bip.hexrays.HxCStmtFinal.value" title="bip.hexrays.HxCStmtFinal.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">value()</span></code></a> property which return the value of the
+statement.</p>
+<p>This is used as a parent for:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#bip.hexrays.HxCStmtExpr" title="bip.hexrays.HxCStmtExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmtExpr</span></code></a></li>
+<li><a class="reference internal" href="#bip.hexrays.HxCStmtGoto" title="bip.hexrays.HxCStmtGoto"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmtGoto</span></code></a></li>
+<li><a class="reference internal" href="#bip.hexrays.HxCStmtFinal" title="bip.hexrays.HxCStmtFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmtFinal</span></code></a></li>
+<li><a class="reference internal" href="#bip.hexrays.HxCStmtReturn" title="bip.hexrays.HxCStmtReturn"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmtReturn</span></code></a></li>
+</ul>
+<p>The <a class="reference internal" href="#bip.hexrays.HxCStmtContinue" title="bip.hexrays.HxCStmtContinue"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmtContinue</span></code></a> and <a class="reference internal" href="#bip.hexrays.HxCStmtBreak" title="bip.hexrays.HxCStmtBreak"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmtBreak</span></code></a> do not inherit
+from this class as they do not have a value.</p>
+<dl class="method">
+<dt id="bip.hexrays.HxCStmtFinal.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtFinal.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surcharge for printing a HxCExprFinal.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtFinal.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCStmtFinal.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the value of a final expression. This is
+abstract and if not overwritten it will raise a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code> .</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtEmpty">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtEmpty</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtEmpty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a statement which is empty.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtExpr">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtExpr</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtExpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a statement which contain a single expression.
+In practice this class is used for making the transition between
+<a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> and <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtExpr.expr">
+<code class="descname">expr</code><a class="headerlink" href="#bip.hexrays.HxCStmtExpr.expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the expression contain in this statement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A child object of <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> which represent the
+expression contain in this statement.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtExpr.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCStmtExpr.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The expression contain in this statement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A child object of <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> which represent the
+expression contain in this statement.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtGoto">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtGoto</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtGoto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a C <em>goto</em> statement (<code class="docutils literal notranslate"><span class="pre">HxCType.CIT_GOTO</span></code>).</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtGoto.label">
+<code class="descname">label</code><a class="headerlink" href="#bip.hexrays.HxCStmtGoto.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the label number of the goto statement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An integer representing the label number.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtGoto.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCStmtGoto.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the label number see <a class="reference internal" href="#bip.hexrays.HxCStmtGoto.label" title="bip.hexrays.HxCStmtGoto.label"><code class="xref py py-meth docutils literal notranslate"><span class="pre">label()</span></code></a> .</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtAsm">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtAsm</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtAsm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a inline C ASM statement (<code class="docutils literal notranslate"><span class="pre">HxCType.CIT_ASM</span></code>).</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtAsm.addr_instr">
+<code class="descname">addr_instr</code><a class="headerlink" href="#bip.hexrays.HxCStmtAsm.addr_instr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of address corresponding to the ASM
+instruction which are inline.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of address (integer) representing the address of
+the inline assembly instruction in the binary.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtAsm.length">
+<code class="descname">length</code><a class="headerlink" href="#bip.hexrays.HxCStmtAsm.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the number of instruction in this ASM
+statement.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCStmtAsm.__len__">
+<code class="descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtAsm.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of instruction in this ASM statement. Same
+as <a class="reference internal" href="#bip.hexrays.HxCStmtAsm.length" title="bip.hexrays.HxCStmtAsm.length"><code class="xref py py-meth docutils literal notranslate"><span class="pre">length()</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtAsm.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCStmtAsm.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <a class="reference internal" href="../base/instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> corresponding to the ASM
+instructions in this ASM statement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="../base/instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtReturn">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtReturn</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtReturn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a C <em>return</em> statement (<code class="docutils literal notranslate"><span class="pre">HxCType.CIT_RETURN</span></code>).</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtReturn.ret_val">
+<code class="descname">ret_val</code><a class="headerlink" href="#bip.hexrays.HxCStmtReturn.ret_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the expression which is the value return by
+this <em>return</em> statement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtReturn.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.hexrays.HxCStmtReturn.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> which is return by this statement. See
+<a class="reference internal" href="#bip.hexrays.HxCStmtReturn.ret_val" title="bip.hexrays.HxCStmtReturn.ret_val"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ret_val()</span></code></a> .</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="loop-statement-api">
+<h2>Loop Statement API<a class="headerlink" href="#loop-statement-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtLoop">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtLoop</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtLoop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class for representing the different C loop statement
+(for, while, dowhile). All of those have at least an expression as a
+condition (<a class="reference internal" href="#bip.hexrays.HxCStmtLoop.cond" title="bip.hexrays.HxCStmtLoop.cond"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cond()</span></code></a>) and a statement as body
+(<a class="reference internal" href="#bip.hexrays.HxCStmtLoop.st_body" title="bip.hexrays.HxCStmtLoop.st_body"><code class="xref py py-meth docutils literal notranslate"><span class="pre">st_body()</span></code></a>)</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtLoop.cond">
+<code class="descname">cond</code><a class="headerlink" href="#bip.hexrays.HxCStmtLoop.cond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the expression used as a condition for
+the loop.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtLoop.st_body">
+<code class="descname">st_body</code><a class="headerlink" href="#bip.hexrays.HxCStmtLoop.st_body" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the statement used as a body for the loop.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtFor">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtFor</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtFor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a C <em>for</em> statement (<code class="docutils literal notranslate"><span class="pre">HxCType.CIT_FOR</span></code>).
+This is a recursive statement which have 2 children statement and
+2 children expression.</p>
+<p>The for of the for is the following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>for (init; cond; step)
+    st_body
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtFor.cond">
+<code class="descname">cond</code><a class="headerlink" href="#bip.hexrays.HxCStmtFor.cond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the expression used as a condition for
+the <em>for</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtFor.st_body">
+<code class="descname">st_body</code><a class="headerlink" href="#bip.hexrays.HxCStmtFor.st_body" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the statement used as a body for the <em>for</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtFor.init">
+<code class="descname">init</code><a class="headerlink" href="#bip.hexrays.HxCStmtFor.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the expression for the initialization of
+the <em>for</em> loop.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtFor.step">
+<code class="descname">step</code><a class="headerlink" href="#bip.hexrays.HxCStmtFor.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the expression for the step of the <em>for</em>
+loop.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtWhile">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtWhile</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtWhile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a C <em>while</em> statement (<code class="docutils literal notranslate"><span class="pre">HxCType.CIT_WHILE</span></code>).
+This is a recursive statement.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtWhile.cond">
+<code class="descname">cond</code><a class="headerlink" href="#bip.hexrays.HxCStmtWhile.cond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the expression used as a condition for
+the <em>while</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtWhile.st_body">
+<code class="descname">st_body</code><a class="headerlink" href="#bip.hexrays.HxCStmtWhile.st_body" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the statement used as a body for the
+<em>while</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtDoWhile">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtDoWhile</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtDoWhile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a C <em>do-while</em> statement (<code class="docutils literal notranslate"><span class="pre">HxCType.CIT_DO</span></code>).
+This is a recursive statement.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtDoWhile.cond">
+<code class="descname">cond</code><a class="headerlink" href="#bip.hexrays.HxCStmtDoWhile.cond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the expression used as a condition for
+the <em>do-while</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtDoWhile.st_body">
+<code class="descname">st_body</code><a class="headerlink" href="#bip.hexrays.HxCStmtDoWhile.st_body" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the statement used as a body for the
+<em>do-while</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="other-leaf-statement-api">
+<h2>Other leaf Statement API<a class="headerlink" href="#other-leaf-statement-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtIf">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtIf</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtIf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a C <em>if</em> statement (<code class="docutils literal notranslate"><span class="pre">HxCType.CIT_IF</span></code>).
+This is a recursive statement with 2 or 3 child statement depending
+if a else condition is present.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtIf.cond">
+<code class="descname">cond</code><a class="headerlink" href="#bip.hexrays.HxCStmtIf.cond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the expression used as a condition for the
+if.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtIf.st_then">
+<code class="descname">st_then</code><a class="headerlink" href="#bip.hexrays.HxCStmtIf.st_then" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the statement executed if the condition
+(<a class="reference internal" href="#bip.hexrays.HxCStmtIf.cond" title="bip.hexrays.HxCStmtIf.cond"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cond()</span></code></a>) is true.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtIf.has_else">
+<code class="descname">has_else</code><a class="headerlink" href="#bip.hexrays.HxCStmtIf.has_else" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which indicate if this if statement as an else condtion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if this statement has an else condition, False
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtIf.st_else">
+<code class="descname">st_else</code><a class="headerlink" href="#bip.hexrays.HxCStmtIf.st_else" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the executed if the condition
+(<a class="reference internal" href="#bip.hexrays.HxCStmtIf.cond" title="bip.hexrays.HxCStmtIf.cond"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cond()</span></code></a>) is False.</p>
+<p>This property will return <code class="docutils literal notranslate"><span class="pre">None</span></code> if this condition has no else
+statement. This can be tested by checking
+<a class="reference internal" href="#bip.hexrays.HxCStmtIf.has_else" title="bip.hexrays.HxCStmtIf.has_else"><code class="xref py py-meth docutils literal notranslate"><span class="pre">has_else()</span></code></a> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtSwitch">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtSwitch</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtSwitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a C <em>switch</em> statement
+(<code class="docutils literal notranslate"><span class="pre">HxCType.CIT_SWITCH</span></code>). This is a recursive statement. This also
+allow to get the cases value.</p>
+<p>A switch statement as the following form:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="k">switch</span> <span class="p">(</span><span class="n">expr</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// statement expression for the switch</span>
+    
+    <span class="k">case</span> <span class="n">cases_val</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">:</span> <span class="c1">// first value for the first case</span>
+    <span class="k">case</span> <span class="n">cases_val</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="c1">// second value for the first case</span>
+    <span class="c1">// ...</span>
+        <span class="n">st_cases</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="c1">//  statement for the first case</span>
+
+    <span class="k">case</span> <span class="n">cases_val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">:</span> <span class="c1">// first value for the second case</span>
+    <span class="c1">// ...</span>
+        <span class="n">st_cases</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="c1">//  statement for the second case</span>
+
+    <span class="c1">// ...</span>
+
+    <span class="k">default</span><span class="o">:</span> <span class="c1">// when cases_val[x] is empty</span>
+        <span class="n">st_cases</span><span class="p">[</span><span class="n">x</span><span class="p">];</span> <span class="c1">// statement for the default case</span>
+    
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition-todo admonition" id="index-13">
+<p class="first admonition-title">Todo</p>
+<p class="last">make something for accessing the default statement.</p>
+</div>
+<div class="admonition-todo admonition" id="index-14">
+<p class="first admonition-title">Todo</p>
+<p class="last">this should be accessible as a dict (correspond well to a
+switch statement).</p>
+</div>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtSwitch.expr">
+<code class="descname">expr</code><a class="headerlink" href="#bip.hexrays.HxCStmtSwitch.expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the expression used as the <em>switch</em>
+expression.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherits from <a class="reference internal" href="#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtSwitch.max_val">
+<code class="descname">max_val</code><a class="headerlink" href="#bip.hexrays.HxCStmtSwitch.max_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the case maximum value for the switch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An integer which is the maximum case value for the
+switch.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtSwitch.st_cases">
+<code class="descname">st_cases</code><a class="headerlink" href="#bip.hexrays.HxCStmtSwitch.st_cases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the statement used in the different cases.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of statements representing the different possible
+cases of this switch.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Objects which inherit from <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtSwitch.cases_val">
+<code class="descname">cases_val</code><a class="headerlink" href="#bip.hexrays.HxCStmtSwitch.cases_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the list of values for each statement. This
+list is in the same order as the list of statement return by
+<a class="reference internal" href="#bip.hexrays.HxCStmtSwitch.st_cases" title="bip.hexrays.HxCStmtSwitch.st_cases"><code class="xref py py-meth docutils literal notranslate"><span class="pre">st_cases()</span></code></a> .</p>
+<p>As each case can have several values for triggering it, this
+property return a list of list of values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of lists of values (int), each list correspond to
+a different case and contain the values which will make the
+code enter this path. An empty list means it the default case.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtContinue">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtContinue</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtContinue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a C <em>continue</em> statement
+(<code class="docutils literal notranslate"><span class="pre">HxCType.CIT_CONTINUE</span></code>). This is not recursive nor as a value.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtBreak">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtBreak</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtBreak" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a C <em>break</em> statement
+(<code class="docutils literal notranslate"><span class="pre">HxCType.CIT_BREAK</span></code>). This is not recursive nor as a value.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.HxCStmtBlock">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCStmtBlock</code><span class="sig-paren">(</span><em>cinsn</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCStmtBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing a <em>block</em> statement meaning a list of other
+statement (<code class="docutils literal notranslate"><span class="pre">HxCType.CIT_BLOCK</span></code>).</p>
+<div class="admonition-todo admonition" id="index-15">
+<p class="first admonition-title">Todo</p>
+<p class="last">make this directly accessible as an iterator.</p>
+</div>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCStmtBlock.elts">
+<code class="descname">elts</code><a class="headerlink" href="#bip.hexrays.HxCStmtBlock.elts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the list of child statement included in this
+block.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The list of child statement of this block.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Objects which inherit from <a class="reference internal" href="#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-bip.hexrays.hx_visitor">
+<span id="internal-hexrays-visitor-api"></span><span id="doc-hexrays-ida-visitor-internal"></span><h2>Internal Hexrays Visitor API<a class="headerlink" href="#module-bip.hexrays.hx_visitor" title="Permalink to this headline">¶</a></h2>
+<p>Implement visitor in top of the hexrays ctree visitor API. Those classes
+are define only for internal used and should probably be not used
+directly. Those are accessible through the methods
+of <a class="reference internal" href="cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> starting with <code class="docutils literal notranslate"><span class="pre">hx_visit_</span></code>. Another
+implementation of visitors exist in Bip which does not rely on the
+<code class="docutils literal notranslate"><span class="pre">ctree_visitor_t</span></code> from IDA and which allow to visit
+on <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>, this is usually the prefered way to
+visit nodes using Bip. See <a class="reference internal" href="astnodes.html#doc-hexrays-astnodes-visitors"><span class="std std-ref">Visitors in Bip</span></a> for more
+information.</p>
+<dl class="class">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_expr">
+<em class="property">class </em><code class="descclassname">bip.hexrays.hx_visitor.</code><code class="descname">_hx_visitor_expr</code><span class="sig-paren">(</span><em>expr_handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inherit from the <code class="docutils literal notranslate"><span class="pre">ctree_visitor_t</span></code> class and allow to visit all
+expressions (<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code>).</p>
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_expr.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>expr_handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_expr.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creator for the visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>expr_handler</strong> – A function which take as argument an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code> object. This function will be called on all
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code> part of the function on which it is applied.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_expr.visit_expr">
+<code class="descname">visit_expr</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_expr.visit_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler of the visitor expression. Create the object
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code> call the handler.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_list_expr">
+<em class="property">class </em><code class="descclassname">bip.hexrays.hx_visitor.</code><code class="descname">_hx_visitor_list_expr</code><span class="sig-paren">(</span><em>expr_list</em>, <em>expr_handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_list_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inherit from the <code class="docutils literal notranslate"><span class="pre">ctree_visitor_t</span></code> class and allow to visit
+expressions which are in a list.</p>
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_list_expr.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>expr_list</em>, <em>expr_handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_list_expr.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creator for the visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>expr_list</strong> – A list of class which inherit from
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code>, only expression in the list will be visited.</li>
+<li><strong>expr_handler</strong> – A function which take as argument an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code> object. This function will be called on all
+element which are in the <code class="docutils literal notranslate"><span class="pre">expr_list</span></code> .</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_list_expr.visit_expr">
+<code class="descname">visit_expr</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_list_expr.visit_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler of the visitor expression. Create the object
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code> and if it match the expression in the
+<code class="docutils literal notranslate"><span class="pre">expr_list</span></code> call the handler.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_stmt">
+<em class="property">class </em><code class="descclassname">bip.hexrays.hx_visitor.</code><code class="descname">_hx_visitor_stmt</code><span class="sig-paren">(</span><em>stmt_handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_stmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inherit from the <code class="docutils literal notranslate"><span class="pre">ctree_visitor_t</span></code> class and allow to visit all
+statements (<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code>).</p>
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_stmt.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>stmt_handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_stmt.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creator for the visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stmt_handler</strong> – A function which take as argument an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code> object. This function will be called on all
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code> part of the function on which it is applied.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_stmt.visit_insn">
+<code class="descname">visit_insn</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_stmt.visit_insn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler of the visitor statement. Create the object
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code> call the handler.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_list_stmt">
+<em class="property">class </em><code class="descclassname">bip.hexrays.hx_visitor.</code><code class="descname">_hx_visitor_list_stmt</code><span class="sig-paren">(</span><em>stmt_list</em>, <em>stmt_handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_list_stmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inherit from the <code class="docutils literal notranslate"><span class="pre">ctree_visitor_t</span></code> class and allow to visit all
+statements (<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code>).</p>
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_list_stmt.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>stmt_list</em>, <em>stmt_handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_list_stmt.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creator for the visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stmt_list</strong> – A list of class which inherit from
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code>, only statement in the list will be visited.</li>
+<li><strong>stmt_handler</strong> – A function which take as argument an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code> object. This function will be called only on 
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code> which are in the <code class="docutils literal notranslate"><span class="pre">stmt_list</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_list_stmt.visit_insn">
+<code class="descname">visit_insn</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_list_stmt.visit_insn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler of the visitor statement. Create the object
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code> and if in the list call the handler.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_all">
+<em class="property">class </em><code class="descclassname">bip.hexrays.hx_visitor.</code><code class="descname">_hx_visitor_all</code><span class="sig-paren">(</span><em>handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inherit from the <code class="docutils literal notranslate"><span class="pre">ctree_visitor_t</span></code> class and allow to visit all
+statements (<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code>) and expression (<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code>).</p>
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_all.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_all.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creator for the visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handler</strong> – A function which take as argument an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code> object. This function will be called on all
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code> part of the function on which it is applied.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_all.visit_insn">
+<code class="descname">visit_insn</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_all.visit_insn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler of the visitor statement. Create the 
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code> object and call the handler with it in arguments.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_all.visit_expr">
+<code class="descname">visit_expr</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_all.visit_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler of the visitor expression. Create the 
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code> object and call the handler with it in arguments.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_list_all">
+<em class="property">class </em><code class="descclassname">bip.hexrays.hx_visitor.</code><code class="descname">_hx_visitor_list_all</code><span class="sig-paren">(</span><em>item_list</em>, <em>handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_list_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inherit from the <code class="docutils literal notranslate"><span class="pre">ctree_visitor_t</span></code> class and allow to visit all
+statements (<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code>).</p>
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_list_all.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>item_list</em>, <em>handler</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_list_all.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creator for the visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>item_list</strong> – A list of class which inherit from
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code>, only item in the list will be visited.</li>
+<li><strong>handler</strong> – A function which take as argument an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code> object. This function will be called on
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code> which are in the <code class="docutils literal notranslate"><span class="pre">item_list</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_list_all.visit_insn">
+<code class="descname">visit_insn</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_list_all.visit_insn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler of the visitor statement. Create the 
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code> object and call the handler with it in arguments.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.hx_visitor._hx_visitor_list_all.visit_expr">
+<code class="descname">visit_expr</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.hx_visitor._hx_visitor_list_all.visit_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler of the visitor expression. Create the 
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code> object and call the handler with it in arguments.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">HxCItem</a><ul>
+<li><a class="reference internal" href="#hxcitem-api">HxCItem API</a></li>
+<li><a class="reference internal" href="#hxcexpr-api">HxCExpr API</a></li>
+<li><a class="reference internal" href="#hxcstmt-api">HxCStmt API</a></li>
+<li><a class="reference internal" href="#final-expression-api">Final Expression API</a></li>
+<li><a class="reference internal" href="#memaccess-expression-api">MemAccess Expression API</a></li>
+<li><a class="reference internal" href="#unary-operation-expression-api">Unary Operation Expression API</a></li>
+<li><a class="reference internal" href="#double-operation-expression-api">Double Operation Expression API</a><ul>
+<li><a class="reference internal" href="#assignment">Assignment</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-leaf-expressions-api">Other leaf Expressions API</a></li>
+<li><a class="reference internal" href="#final-statement-api">Final Statement API</a></li>
+<li><a class="reference internal" href="#loop-statement-api">Loop Statement API</a></li>
+<li><a class="reference internal" href="#other-leaf-statement-api">Other leaf Statement API</a></li>
+<li><a class="reference internal" href="#module-bip.hexrays.hx_visitor">Internal Hexrays Visitor API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cnode.html"
+                        title="previous chapter">CNode</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../gui/plugin.html"
+                        title="next chapter">Plugins</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/hexrays/visit_hx.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../gui/plugin.html" title="Plugins"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cnode.html" title="CNode"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

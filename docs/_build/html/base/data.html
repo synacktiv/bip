@@ -1,0 +1,587 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Data &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Functions &amp; Basic blocks" href="func.html" />
+    <link rel="prev" title="Instructions &amp; Operands" href="instr.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="func.html" title="Functions &amp; Basic blocks"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="instr.html" title="Instructions &amp; Operands"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.base">
+<span id="data"></span><h1>Data<a class="headerlink" href="#module-bip.base" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a> objects inherit from <a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a> and are used for
+representing data which means everything which is not code.</p>
+<p><a class="reference internal" href="#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a> object can be created by calling the constructor with the
+data address but in a more generic way it is possible to use the
+<a class="reference internal" href="elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> or <a class="reference internal" href="elt.html#bip.base.GetEltByName" title="bip.base.GetEltByName"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetEltByName()</span></code></a> for recuperating them.
+<a class="reference internal" href="#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a> will be create by <a class="reference internal" href="elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> if IDA considered the
+address as data or unknown. As they are inheriting from <a class="reference internal" href="elt.html#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a> it
+is possible to use the xref API through them (for access to and from them).</p>
+<p>The most basic usage will be to recuperate or set a value using the property
+<a class="reference internal" href="#bip.base.BipData.value" title="bip.base.BipData.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">value()</span></code></a>. This property depends of the type
+which can be access and modify through the <a class="reference internal" href="#bip.base.BipData.type" title="bip.base.BipData.type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">type()</span></code></a> property,
+this property return and expect a <a class="reference internal" href="type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> object. It is also possible
+to access directly the <a class="reference internal" href="elt.html#bip.base.BipElt.bytes" title="bip.base.BipElt.bytes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipElt.bytes()</span></code></a> of the object.</p>
+<p><a class="reference internal" href="#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a> provides some static methods for accessing and
+modifying data of the IDB without creating an object, in particular the
+<a class="reference internal" href="#bip.base.BipData.get_cstring" title="bip.base.BipData.get_cstring"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_cstring()</span></code></a> which allow to get a C string from an address.
+Finally it is possible to iterate on all defined <a class="reference internal" href="#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a> using the
+class method <code class="xref py py-class docutils literal notranslate"><span class="pre">BipData.iter_heads</span></code>.</p>
+<div class="section" id="bipdata-api">
+<h2>BipData API<a class="headerlink" href="#bipdata-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.base.BipData">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipData</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing and manipulating data in IDA. The object of
+this class represent defined and unknown data, those objects can
+have values or not, those objects inherit from <a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>.</p>
+<p>This class contains also static method for directly accessing and
+modifying the data from their address without passing by an object.
+This include the recuperation of string.</p>
+<dl class="method">
+<dt id="bip.base.BipData.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for <a class="reference internal" href="#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a>, take the address of the
+data in IDA in parameter. In general it is expected to get one
+of those object through the <a class="reference internal" href="elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> (<em>int</em>) – The address of the element in IDA. If <code class="docutils literal notranslate"><span class="pre">None</span></code> the
+screen address is taken.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>BipError</strong> – If address do not correspond to data</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipData.original_value">
+<code class="descname">original_value</code><a class="headerlink" href="#bip.base.BipData.original_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get the original value of data. This is
+the same as <a class="reference internal" href="#bip.base.BipData.value" title="bip.base.BipData.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">value()</span></code></a> getter property but for the
+original bytes before they were patch.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipData.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.base.BipData.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the value corresponding to the data of a
+numberable elements. This property works only if the
+<a class="reference internal" href="#bip.base.BipData.is_numerable" title="bip.base.BipData.is_numerable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_numerable()</span></code></a> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">has_data()</span></code>
+properties returned True. For getting value of an element which
+is not numerable use the <a class="reference internal" href="elt.html#bip.base.BipElt.bytes" title="bip.base.BipElt.bytes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">bytes()</span></code></a> property.</p>
+<p>This property is link to the type defined or guessed by IDA and
+it is a good idea to assure you have the proper type before using
+it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An integer representing the value of the data or <code class="docutils literal notranslate"><span class="pre">None</span></code>
+if the data element is not numerable or do not have data.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipData.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><em>) &lt;==&gt; str(x</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.__str__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipData.is_byte">
+<code class="descname">is_byte</code><a class="headerlink" href="#bip.base.BipData.is_byte" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to test if this object represent a byte
+(1 byte).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if this data object represent a byte, False
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipData.is_word">
+<code class="descname">is_word</code><a class="headerlink" href="#bip.base.BipData.is_word" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to test if this object represent a word
+(2 bytes).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if this data object represent a word, False
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipData.is_dword">
+<code class="descname">is_dword</code><a class="headerlink" href="#bip.base.BipData.is_dword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to test if this object represent a dword
+(4 bytes).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if this data object represent a dword, False
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipData.is_qword">
+<code class="descname">is_qword</code><a class="headerlink" href="#bip.base.BipData.is_qword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to test if this object represent a qword
+(8 bytes).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if this data object represent a qword, False
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipData.is_numerable">
+<code class="descname">is_numerable</code><a class="headerlink" href="#bip.base.BipData.is_numerable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to test if this data element can be
+considered as a number for the <a class="reference internal" href="#bip.base.BipData.value" title="bip.base.BipData.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">value()</span></code></a> property.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if the data is a byte, word, dword, qword
+or unknwon, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipData.type">
+<code class="descname">type</code><a class="headerlink" href="#bip.base.BipData.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get the type of an element.
+This is a wrapper for <a class="reference internal" href="type.html#bip.base.BipType.get_at" title="bip.base.BipType.get_at"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipType.get_at()</span></code></a> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> or <code class="docutils literal notranslate"><span class="pre">None</span></code>
+if it was not able to guess a type.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipData._is_this_elt">
+<em class="property">classmethod </em><code class="descname">_is_this_elt</code><span class="sig-paren">(</span><em>ea</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData._is_this_elt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow the function <a class="reference internal" href="elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> to know if
+this the correct type for an address. Only subclasses of an
+element which return True will be tested by <a class="reference internal" href="elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a>,
+<a class="reference internal" href="elt.html#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> return always True except if <code class="docutils literal notranslate"><span class="pre">idelt</span></code> is not
+of the correct type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>idelt</strong> (<em>int</em>) – An id representing the element, typically an
+address.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if this is a valid class for constructing this
+element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.get_byte">
+<em class="property">static </em><code class="descname">get_byte</code><span class="sig-paren">(</span><em>ea=None</em>, <em>original=False</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.get_byte" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method allowing to get the value of one byte at an address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which recuperating the value. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address is used.</li>
+<li><strong>original</strong> – If True the value recuperated will be the
+original one (before a patch). Default: False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An integer corresponding to the value at the address.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.set_byte">
+<em class="property">static </em><code class="descname">set_byte</code><span class="sig-paren">(</span><em>ea</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.set_byte" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method allowing to set the value of one byte at an address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which changing the value.</li>
+<li><strong>value</strong> – The value to set at the address.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>RuntimeError</strong> – If it was not possible to change the value.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.get_bytes">
+<em class="property">static </em><code class="descname">get_bytes</code><span class="sig-paren">(</span><em>ea</em>, <em>size</em>, <em>original=False</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.get_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method allowing to get the value of several bytes at an
+address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address where to get the buffer. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address is used.</li>
+<li><strong>size</strong> – The number of bytes to get.</li>
+<li><strong>original</strong> – If True the value recuperated will be the
+original one (before a patch). Default: False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A byte string corresponding to the bytes at the address.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.set_bytes">
+<em class="property">static </em><code class="descname">set_bytes</code><span class="sig-paren">(</span><em>ea</em>, <em>byt</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.set_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method allowing to set the value of one byte at an address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> (<em>int</em>) – The address at which changing the value.</li>
+<li><strong>byt</strong> (<em>bytes</em>) – The buffer of bytes to set at the address. If a
+string is provided in python3 it will be decoded as <code class="docutils literal notranslate"><span class="pre">latin-1</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>RuntimeError</strong> – If it was not possible to change one of the value.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.get_word">
+<em class="property">static </em><code class="descname">get_word</code><span class="sig-paren">(</span><em>ea=None</em>, <em>original=False</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.get_word" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method allowing to get the value of one word at an address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which recuperating the value. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address is used.</li>
+<li><strong>original</strong> – If True the value recuperated will be the
+original one (before a patch). Default: False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An integer corresponding to the value at the address.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.set_word">
+<em class="property">static </em><code class="descname">set_word</code><span class="sig-paren">(</span><em>ea</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.set_word" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method allowing to set the value of one wordat an address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which changing the value.</li>
+<li><strong>value</strong> – The value to set at the address.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>RuntimeError</strong> – If it was not possible to change the value.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.get_dword">
+<em class="property">static </em><code class="descname">get_dword</code><span class="sig-paren">(</span><em>ea=None</em>, <em>original=False</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.get_dword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method allowing to get the value of one dword at an address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which recuperating the value. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address is used.</li>
+<li><strong>original</strong> – If True the value recuperated will be the
+original one (before a patch). Default: False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An integer corresponding to the value at the address.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.set_dword">
+<em class="property">static </em><code class="descname">set_dword</code><span class="sig-paren">(</span><em>ea</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.set_dword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method allowing to set the value of one dwordat an address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which changing the value.</li>
+<li><strong>value</strong> – The value to set at the address.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>RuntimeError</strong> – If it was not possible to change the value.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.get_qword">
+<em class="property">static </em><code class="descname">get_qword</code><span class="sig-paren">(</span><em>ea=None</em>, <em>original=False</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.get_qword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method allowing to get the value of one qword at an address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which recuperating the value. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address is used.</li>
+<li><strong>original</strong> – If True the value recuperated will be the
+original one (before a patch). Default: False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An integer corresponding to the value at the address.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.set_qword">
+<em class="property">static </em><code class="descname">set_qword</code><span class="sig-paren">(</span><em>ea</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.set_qword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method allowing to set the value of one qwordat an address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which changing the value.</li>
+<li><strong>value</strong> – The value to set at the address.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>RuntimeError</strong> – If it was not possible to change the value.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.get_cstring">
+<em class="property">static </em><code class="descname">get_cstring</code><span class="sig-paren">(</span><em>ea=None</em>, <em>size=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.get_cstring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for getting a C string from an address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address of the string. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address is used.</li>
+<li><strong>size</strong> – The size of the string. If <code class="docutils literal notranslate"><span class="pre">-1</span></code> (default), until a
+<code class="docutils literal notranslate"><span class="pre">\</span></code> is found.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Bytes representing the string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipData.get_ptr">
+<em class="property">static </em><code class="descname">get_ptr</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipData.get_ptr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recuperate the value of a pointer at an address. This will handle
+automatically the correct size of the pointer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> (<em>int</em>) – the address at which get the pointer value. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address is used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the pointer value</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Data</a><ul>
+<li><a class="reference internal" href="#bipdata-api">BipData API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="instr.html"
+                        title="previous chapter">Instructions &amp; Operands</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="func.html"
+                        title="next chapter">Functions &amp; Basic blocks</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/base/data.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="func.html" title="Functions &amp; Basic blocks"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="instr.html" title="Instructions &amp; Operands"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

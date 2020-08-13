@@ -1,0 +1,176 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Contributions &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Changelog" href="changelog.html" />
+    <link rel="prev" title="Bip Project architecture" href="archi.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="changelog.html" title="Changelog"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="archi.html" title="Bip Project architecture"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="contributions">
+<span id="general-contrib"></span><h1>Contributions<a class="headerlink" href="#contributions" title="Permalink to this headline">¶</a></h1>
+<p>Contributions to Bip are welcome, it can be Issues, Feature Request or Pull
+Request (PR), all of those can be made on github. Those can concern the code
+but also the documentation, which has the goal to be clear and complete.
+The integrality of Bip is currently maintained by a unique person, so please
+take the time to read those and thank you in advance for your patience.</p>
+<p>As general rules for Issues and Feature Request, provided a clear
+description, an example (with the line of the API and if needed the content
+of IDA) and if possible a way to reproduce or test it. Do not hesitate to
+propose an example of what you would like to have as an API in Bip. If you
+have it, an example of how to do it with the IDAPython API would be amazing.</p>
+<div class="section" id="pull-request">
+<h2>Pull Request<a class="headerlink" href="#pull-request" title="Permalink to this headline">¶</a></h2>
+<p>For Pull Request, please provide a clear description of what your code does
+and, especially if it is a big PR, how you implemented it. The only release of
+IDA for which Bip is maintained is the last one, so be sure it works with it.
+No pull request will be merged in <code class="docutils literal notranslate"><span class="pre">master</span></code> if:</p>
+<ul class="simple">
+<li>the code is not documented,</li>
+<li>the code is not integrated in the documentation,</li>
+<li>the code is not compatible for python2 and python3 (as long as both are
+supported in Bip),</li>
+<li>there are no tests for the new functions/methods/classes/…</li>
+</ul>
+<p>You can make a PR without those, however it will take some time for it to be
+merged because those will have to be written.</p>
+<p>Regarding the code in itself, no hardline coding convention is enforced (for
+now) but please follow as much as possible those rules:</p>
+<ul class="simple">
+<li>use 4 spaces instead of tabulation,</li>
+<li>write python2 and python3 compatible code,</li>
+<li>follow naming convention of Python (<code class="docutils literal notranslate"><span class="pre">UpperCaseCamel</span></code> for classes
+and <code class="docutils literal notranslate"><span class="pre">lower_with_underscore</span></code> for methods),</li>
+<li>start the name of the class with <code class="docutils literal notranslate"><span class="pre">Bip</span></code> or <code class="docutils literal notranslate"><span class="pre">Hx</span></code> (for hexrays) or a clear
+prefix which identifies it (the goal is to avoid collisions with IDAPython
+and other python packages, as well as to make auto-completion easier),</li>
+<li>write <strong>readable</strong> code (avoid nested list comprehension and so on),</li>
+<li>simpler code is often better,</li>
+<li>stay around 80 chars (a little more is fine).</li>
+</ul>
+<p>Finally, if the PR introduces a breaking change (change in names of a
+method or a class, change in arguments, change in behavior, …), it has to
+log in the changelog including in this documentation. Further rules on
+breaking changes and Bip versions may be introduced.</p>
+</div>
+<div class="section" id="change-of-version">
+<h2>Change of version<a class="headerlink" href="#change-of-version" title="Permalink to this headline">¶</a></h2>
+<p>This is a checklist of things to do for a change of version in Bip:</p>
+<ul class="simple">
+<li>change version in sphinx doc (<code class="docutils literal notranslate"><span class="pre">doc/conf.py</span></code>),</li>
+<li>change Bip Python version (<code class="docutils literal notranslate"><span class="pre">bip/__init__.py</span></code>),</li>
+<li>change last stable version in <code class="docutils literal notranslate"><span class="pre">README.rst</span></code>,</li>
+<li>check changelog is done and has the right version numbers,</li>
+<li>check all tests pass in py2 and py3,</li>
+<li>check the doc build correctly, build it and push it (for github.io page).</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Contributions</a><ul>
+<li><a class="reference internal" href="#pull-request">Pull Request</a></li>
+<li><a class="reference internal" href="#change-of-version">Change of version</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="archi.html"
+                        title="previous chapter">Bip Project architecture</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="changelog.html"
+                        title="next chapter">Changelog</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/general/contribution.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="changelog.html" title="Changelog"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="archi.html" title="Bip Project architecture"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

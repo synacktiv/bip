@@ -1,0 +1,1337 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Elements &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Instructions &amp; Operands" href="instr.html" />
+    <link rel="prev" title="Changelog" href="../general/changelog.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="instr.html" title="Instructions &amp; Operands"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../general/changelog.html" title="Changelog"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.base">
+<span id="elements"></span><span id="ref-base-elt"></span><h1>Elements<a class="headerlink" href="#module-bip.base" title="Permalink to this headline">¶</a></h1>
+<p>Basic elements in IDA are all refered by an ID. This can be the address of the
+element in the database or a particular ID. For allowing to access easily the
+correct element from its ID Bip defines a tree of classes with each leaf
+classes in charge of a particular element.</p>
+<p>Three abstract classes are defined in Bip:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> : is the parent class of all element in Bip, in
+particular it is in charge of making the interface with <a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> and
+<a class="reference internal" href="#bip.base.GetEltByName" title="bip.base.GetEltByName"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetEltByName()</span></code></a>.</li>
+<li><a class="reference internal" href="#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a> : is the parent class of all elements which can be
+referenced by xref in IDA. This include <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a>, <a class="reference internal" href="data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a>,
+<a class="reference internal" href="struct.html#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> and <a class="reference internal" href="struct.html#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a>.</li>
+<li><a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a> : is the parent class of all elements with an actual address
+as ID and provide a lot of common API for thoses elements, this is the
+parent class of <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> and <a class="reference internal" href="data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a>.</li>
+</ul>
+<p>For getting a correct element from an ID it is enough to call the
+<a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> and <a class="reference internal" href="#bip.base.GetEltByName" title="bip.base.GetEltByName"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetEltByName()</span></code></a> function. As those functions can
+return diferent types of objects it can be convenient to use <code class="docutils literal notranslate"><span class="pre">isinstance</span></code>
+for checking the return type of the object.</p>
+<div class="section" id="internals">
+<h2>Internals<a class="headerlink" href="#internals" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="recuperation-of-the-correct-element">
+<h3>Recuperation of the correct element<a class="headerlink" href="#recuperation-of-the-correct-element" title="Permalink to this headline">¶</a></h3>
+<p>For being able to return an object <a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a>
+(<a class="reference internal" href="#bip.base.GetEltByName" title="bip.base.GetEltByName"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetEltByName()</span></code></a> is simply a wrapper in top of <a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a>) must
+be able to tell which class should be used. This is done by recursivelly
+checking the child classes of <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>, each child classes should
+implement the class method <a class="reference internal" href="#bip.base.BipBaseElt._is_this_elt" title="bip.base.BipBaseElt._is_this_elt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipBaseElt._is_this_elt()</span></code></a> which take an ID
+in argument. If this method return True iteration will continue on child
+classes of this class, if it return False it will stop. When all child classes
+return False or a leaf as been reach an object of this element is created and
+returned.</p>
+<p>If two subclasses return True at one level of the recursion, one of them will
+be ignored.</p>
+<p>All classes which inherit from <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> are expected to take only
+their ID in argument for being able to be instantiated by <a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> .</p>
+</div>
+</div>
+<div class="section" id="element-functions-api">
+<h2>Element Functions API<a class="headerlink" href="#element-functions-api" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="bip.base.GetElt">
+<code class="descclassname">bip.base.</code><code class="descname">GetElt</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.GetElt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an object inherithed from <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> which correspond
+to the element at an id.</p>
+<p>Internally this function parcours subclasses of <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>
+and call the <a class="reference internal" href="#bip.base.BipBaseElt._is_this_elt" title="bip.base.BipBaseElt._is_this_elt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_is_this_elt()</span></code></a> and return the one which
+match.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">There is a problem if two functions of a sublcass level can
+return True on the same element.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> (<em>int</em>) – An address at which to get an element. If <code class="docutils literal notranslate"><span class="pre">None</span></code> the
+screen address is used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>RuntimeError</strong> – If the address correspond to the error value.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object (subclass of <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>) representing the
+element. If the address is not mapped a <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a> will be
+returned.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="bip.base.GetEltByName">
+<code class="descclassname">bip.base.</code><code class="descname">GetEltByName</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.GetEltByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as <a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> but using a name and not an address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) – The name of the element to get. If a “dummy” name
+(<code class="docutils literal notranslate"><span class="pre">byte_xxxx</span></code>, …) is provided the database is not consulted.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An object representing the element or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the name
+was not found.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Subclass of <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="bipbaseelt-api">
+<h2>BipBaseElt API<a class="headerlink" href="#bipbaseelt-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.base.BipBaseElt">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipBaseElt</code><span class="sig-paren">(</span><em>idelt</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipBaseElt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for representing an element in IDA which is identified by
+an id, this should be used as an abstract class and no object of this
+class should be instantiated.</p>
+<p>This is a really generic class which only support the constructor
+taking an id and the <a class="reference internal" href="#bip.base.BipBaseElt._is_this_elt" title="bip.base.BipBaseElt._is_this_elt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipBaseElt._is_this_elt()</span></code></a> for used in
+conjonction with <a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a>. Child classes should reimplement the
+<a class="reference internal" href="#bip.base.BipBaseElt._is_this_elt" title="bip.base.BipBaseElt._is_this_elt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipBaseElt._is_this_elt()</span></code></a> and call this constructor.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">make list of subclasses in this doc. Add to doc a descision
+tree for which classes should be return by the GetElt.</p>
+</div>
+<dl class="method">
+<dt id="bip.base.BipBaseElt.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>idelt</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipBaseElt.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Consctructor for a <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> object.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There is no reason to use this constructor, the
+<a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> or <a class="reference internal" href="#bip.base.GetEltByName" title="bip.base.GetEltByName"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetEltByName()</span></code></a> functions should be
+used.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>idelt</strong> (<em>int</em>) – The id for representing the IDA element. In most
+case this will be the address of the element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBaseElt._idelt">
+<code class="descname">_idelt</code><em class="property"> = None</em><a class="headerlink" href="#bip.base.BipBaseElt._idelt" title="Permalink to this definition">¶</a></dt>
+<dd><p>The id which represent the element in IDA, this will typically
+be an address.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipBaseElt._is_this_elt">
+<em class="property">classmethod </em><code class="descname">_is_this_elt</code><span class="sig-paren">(</span><em>idelt</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipBaseElt._is_this_elt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow the function <a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> to know if
+this the correct type for an address. Only subclasses of an
+element which return True will be tested by <a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a>,
+<a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> return always True except if <code class="docutils literal notranslate"><span class="pre">idelt</span></code> is not
+of the correct type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>idelt</strong> (<em>int</em>) – An id representing the element, typically an
+address.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if this is a valid class for constructing this
+element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipBaseElt.iter_heads">
+<em class="property">classmethod </em><code class="descname">iter_heads</code><span class="sig-paren">(</span><em>start=None</em>, <em>end=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipBaseElt.iter_heads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method allowing to iter on all the element <strong>defined</strong> in
+the IDB. This means elements which are not defined (considered to
+not <em>heads</em>) will not be returned by this function.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Internally this function iterate on all the <code class="docutils literal notranslate"><span class="pre">Heads</span></code> and
+create the object if the class which is used for it match
+the element. For example calling <code class="docutils literal notranslate"><span class="pre">BipData.iter_heads()</span></code> will
+return only the heads which are <a class="reference internal" href="data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a> object or
+their children.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function will work only on mapped object, it is not
+possible to use it for getting <a class="reference internal" href="struct.html#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> for example.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> – The address at which to start iterating. If this
+parameter is None (the default) the minimum mapped address
+will be used.</li>
+<li><strong>end</strong> – The address at which to stop iterating. If this
+parameter is None (the default) the maximum mapped address
+will be used.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A generator of object child of <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>
+allowing to iter on all the elt define in the idb.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipBaseElt.__eq__">
+<code class="descname">__eq__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipBaseElt.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare the id of 2 <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> and return <code class="docutils literal notranslate"><span class="pre">True</span></code> if
+they are equal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipBaseElt.__ne__">
+<code class="descname">__ne__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipBaseElt.__ne__" title="Permalink to this definition">¶</a></dt>
+<dd><p>x.__ne__(y) &lt;==&gt; x!=y</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipBaseElt.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#bip.base.BipBaseElt.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="biprefelt-api">
+<h2>BipRefElt API<a class="headerlink" href="#biprefelt-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.base.BipRefElt">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipRefElt</code><span class="sig-paren">(</span><em>idelt</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipRefElt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent element which can be reference through a xref.
+This include data, instruction and structures. The <a class="reference internal" href="#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a>
+class provide methods for accessing the references to and from the
+element represented by the object.</p>
+<dl class="attribute">
+<dt id="bip.base.BipRefElt.xFrom">
+<code class="descname">xFrom</code><a class="headerlink" href="#bip.base.BipRefElt.xFrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get all xrefs generated (from) by the
+element. This is the equivalent to <code class="docutils literal notranslate"><span class="pre">XrefsFrom</span></code> from idapython.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="xref.html#bip.base.BipXref" title="bip.base.BipXref"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipXref</span></code></a> with the <code class="docutils literal notranslate"><span class="pre">src</span></code> being this
+element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipRefElt.xTo">
+<code class="descname">xTo</code><a class="headerlink" href="#bip.base.BipRefElt.xTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get all xrefs pointing to (to) this
+element. This is the equivalent to <code class="docutils literal notranslate"><span class="pre">XrefsTo</span></code> from idapython.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="xref.html#bip.base.BipXref" title="bip.base.BipXref"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipXref</span></code></a> with the <code class="docutils literal notranslate"><span class="pre">dst</span></code> being this
+element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipRefElt.xEaFrom">
+<code class="descname">xEaFrom</code><a class="headerlink" href="#bip.base.BipRefElt.xEaFrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get all addresses referenced (by a xref) by
+(from) the element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of address.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipRefElt.xEaTo">
+<code class="descname">xEaTo</code><a class="headerlink" href="#bip.base.BipRefElt.xEaTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get all addresses which referenced this
+element (xref to).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of address.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipRefElt.xEltFrom">
+<code class="descname">xEltFrom</code><a class="headerlink" href="#bip.base.BipRefElt.xEltFrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get all elements referenced (by a xref)
+by (from) this element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> (or subclasses
+of <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipRefElt.xEltTo">
+<code class="descname">xEltTo</code><a class="headerlink" href="#bip.base.BipRefElt.xEltTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get all elements which referenced this
+element (xref to).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> (or subclasses
+of <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipRefElt.xCodeFrom">
+<code class="descname">xCodeFrom</code><a class="headerlink" href="#bip.base.BipRefElt.xCodeFrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return all instructions which are referenced by the
+element. This will take into account jmp, call, ordinary flow and
+“data” references.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> referenced by this element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipRefElt.xCodeTo">
+<code class="descname">xCodeTo</code><a class="headerlink" href="#bip.base.BipRefElt.xCodeTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return all instructions which referenced this
+element. This will take into account jmp, call, ordinary flow and
+“data” references.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> referenced by this element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="bipelt-api">
+<h2>BipElt API<a class="headerlink" href="#bipelt-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.base.BipElt">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipElt</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for representing an element in IDA which have an address.
+This is the basic element on top of which access to instruction and
+data is built.</p>
+<dl class="method">
+<dt id="bip.base.BipElt.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Consctructor for a <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a> object.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There is no reason to use this constructor, the
+<a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> function should be used.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> (<em>int</em>) – The address of the element in IDA. If <code class="docutils literal notranslate"><span class="pre">None</span></code> the
+screen address is taken.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>ValueError</strong> – If the address given in argument is a bad
+address (idc.BADADDR)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.ea">
+<code class="descname">ea</code><em class="property"> = None</em><a class="headerlink" href="#bip.base.BipElt.ea" title="Permalink to this definition">¶</a></dt>
+<dd><p>The address of the element in the IDA database</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipElt.__eq__">
+<code class="descname">__eq__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equality comparator with another <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipElt.__ne__">
+<code class="descname">__ne__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.__ne__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inequality comparator with another <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipElt.__lt__">
+<code class="descname">__lt__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.__lt__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lesser than comparator with another <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipElt.__le__">
+<code class="descname">__le__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.__le__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lesser or equal comparator with another <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipElt.__gt__">
+<code class="descname">__gt__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.__gt__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Greater than comparator with another <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipElt.__ge__">
+<code class="descname">__ge__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.__ge__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gretter or equal comparator with another <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>. Return
+<code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the argument is not a <a class="reference internal" href="#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipElt.__hash__">
+<code class="descname">__hash__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.__hash__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a unique hash for this ida element. The produce hash is
+dependant of the type of this object and of its address. This
+allow to create container using the hash
+of the object for matching an object of a defined type and with
+a particular address.</p>
+<p>Calculation made is: <code class="docutils literal notranslate"><span class="pre">hash(type(self))</span> <span class="pre">^</span> <span class="pre">self.ea</span></code>, in particular
+it means than child classes will not have the same hash as a
+parrent classes even if the compare works.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An integer corresponding to the hash for this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.flags">
+<code class="descname">flags</code><a class="headerlink" href="#bip.base.BipElt.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for getting the flags of the element. Those flags are the
+one from ida such as returned by <code class="docutils literal notranslate"><span class="pre">ida_bytes.get_full_flags</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The flags for the element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.size">
+<code class="descname">size</code><a class="headerlink" href="#bip.base.BipElt.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the size of the elt.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The size in bytes of the element.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.bytes">
+<code class="descname">bytes</code><a class="headerlink" href="#bip.base.BipElt.bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property returning the value of the bytes contain in the
+element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of the bytes forming the element.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(int)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.original_bytes">
+<code class="descname">original_bytes</code><a class="headerlink" href="#bip.base.BipElt.original_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property returning the value of the bytes contain in the
+element before their modification. This still use the size of
+the current element definition.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of the original bytes as integer forming the
+element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.name">
+<code class="descname">name</code><a class="headerlink" href="#bip.base.BipElt.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get the name of this element. An element
+do not always have a name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The name of an element or an empty string if no name.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.demangle_name">
+<code class="descname">demangle_name</code><a class="headerlink" href="#bip.base.BipElt.demangle_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the demangle name of the element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return str:</th><td class="field-body">The demangle name of the element or None if there is
+no demangle version of the name.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.is_dummy_name">
+<code class="descname">is_dummy_name</code><a class="headerlink" href="#bip.base.BipElt.is_dummy_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for checking if the current name of this element is a
+“dummy” name (a name set by default by IDA when it does not know
+how to call an element) with a special prefix. This function will
+not recognize the <code class="docutils literal notranslate"><span class="pre">aSTRING</span></code> naming,
+see <a class="reference internal" href="#bip.base.BipElt.is_auto_name" title="bip.base.BipElt.is_auto_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_auto_name()</span></code></a>, and <a class="reference internal" href="#bip.base.BipElt.is_ida_name" title="bip.base.BipElt.is_ida_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_ida_name()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the element has a dummy name, <code class="docutils literal notranslate"><span class="pre">False</span></code>
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.is_auto_name">
+<code class="descname">is_auto_name</code><a class="headerlink" href="#bip.base.BipElt.is_auto_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for checking if the current name of this element is an
+“auto-generated” name, those are the default name generated by
+IDA but without a special prefix
+(see <a class="reference internal" href="#bip.base.BipElt.is_dummy_name" title="bip.base.BipElt.is_dummy_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_dummy_name()</span></code></a>) such as the one for the
+string. See also <a class="reference internal" href="#bip.base.BipElt.is_ida_name" title="bip.base.BipElt.is_ida_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_ida_name()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the element has an auto-generated name,
+<code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.is_ida_name">
+<code class="descname">is_ida_name</code><a class="headerlink" href="#bip.base.BipElt.is_ida_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for checking if the current name is a default name as
+generated by IDA. This is an OR condition of
+<a class="reference internal" href="#bip.base.BipElt.is_auto_name" title="bip.base.BipElt.is_auto_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_auto_name()</span></code></a> and <a class="reference internal" href="#bip.base.BipElt.is_dummy_name" title="bip.base.BipElt.is_dummy_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_dummy_name()</span></code></a>.</p>
+<p>This is still not perfect and name put some names put by IDA will
+not be recognize by this function (for example the global for the
+CFG and probably others).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the element has a name provided by IDA,
+<code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.is_user_name">
+<code class="descname">is_user_name</code><a class="headerlink" href="#bip.base.BipElt.is_user_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for checking if the current name is a “user name”. In
+practice this check a flag that the API can avoid setting, so
+there is no garantee it is an actual user name.
+See <a class="reference internal" href="#bip.base.BipElt.is_ida_name" title="bip.base.BipElt.is_ida_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_ida_name()</span></code></a> for checking if a name was
+generated by IDA.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the name is marked as set by a user,
+<code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.color">
+<code class="descname">color</code><a class="headerlink" href="#bip.base.BipElt.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the color of the item.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The coloration of the element in IDA.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.comment">
+<code class="descname">comment</code><a class="headerlink" href="#bip.base.BipElt.comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the comment of the item.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The value of the comment or <code class="docutils literal notranslate"><span class="pre">None</span></code> if there is no
+comment.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.rcomment">
+<code class="descname">rcomment</code><a class="headerlink" href="#bip.base.BipElt.rcomment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the repeatable comment of the item.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The value of the comment or <code class="docutils literal notranslate"><span class="pre">None</span></code> if there is no
+repeatable comment.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.has_comment">
+<code class="descname">has_comment</code><a class="headerlink" href="#bip.base.BipElt.has_comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to check if the item as a comment (normal or
+repeatable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if the item as a comment, False otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.is_code">
+<code class="descname">is_code</code><a class="headerlink" href="#bip.base.BipElt.is_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this element is some code.
+Wrapper on <code class="docutils literal notranslate"><span class="pre">idc.is_code</span></code> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if current element is code, False otherwise.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.is_data">
+<code class="descname">is_data</code><a class="headerlink" href="#bip.base.BipElt.is_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this element is considered as data.
+Wrapper on <code class="docutils literal notranslate"><span class="pre">idc.is_data</span></code> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if current element is data, False otherwise.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.is_unknown">
+<code class="descname">is_unknown</code><a class="headerlink" href="#bip.base.BipElt.is_unknown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this element is considered as unknwon.
+Wrapper on <code class="docutils literal notranslate"><span class="pre">idc.is_unknown</span></code> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if current element is unknwon, False otherwise.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.is_head">
+<code class="descname">is_head</code><a class="headerlink" href="#bip.base.BipElt.is_head" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if the element is an <em>head</em> in IDA. An <em>head</em>
+element is the beggining of an element in IDA (such as the
+beginning of an instruction) and can be named.
+Wrapper on <code class="docutils literal notranslate"><span class="pre">idc.is_head</span></code> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if the current element is an head, False otherwise.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipElt.has_data">
+<code class="descname">has_data</code><a class="headerlink" href="#bip.base.BipElt.has_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which indicate if an element has a value. If an element
+has no value a default value of <code class="docutils literal notranslate"><span class="pre">0xFF</span></code> will be returned in
+general. This correspond to element in IDA which are marked with
+a <code class="docutils literal notranslate"><span class="pre">?</span></code> in value. Wrapper on <code class="docutils literal notranslate"><span class="pre">idc.has_value</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if the current element has a value, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipElt.goto">
+<code class="descname">goto</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.goto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which allow to move the screen to the position of this
+element. Wrapper on <code class="docutils literal notranslate"><span class="pre">ida_kernwin.jumpto</span></code> (old <code class="docutils literal notranslate"><span class="pre">idc.Jump</span></code>).</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipElt.iter_all">
+<em class="property">classmethod </em><code class="descname">iter_all</code><span class="sig-paren">(</span><em>start=None</em>, <em>end=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.iter_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method allowing to iter on all mapped elements of the IDB.</p>
+<p>This will return only the elements which are handle by the class
+or one of this subclasses. For example calling
+<code class="docutils literal notranslate"><span class="pre">BipData.iter_heads()</span></code> will return only the heads which are
+<a class="reference internal" href="data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a> object or children of that class. This use
+<a class="reference internal" href="#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> for determining the correct object to return.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> – The address at which to start iterating. If this
+parameter is None (the default) the minimum mapped address
+will be used.</li>
+<li><strong>end</strong> – The address at which to stop iterating. If this
+parameter is None (the default) the maximum mapped address
+will be used.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A generator of object child of <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>
+allowing to iter on all the elt in the idb.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.is_mapped">
+<em class="property">static </em><code class="descname">is_mapped</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.is_mapped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method which allow to know if an address is mapped or not.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> – The address to test for being mapped or not. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address will be used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if the address is mapped, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.next_data_addr">
+<em class="property">static </em><code class="descname">next_data_addr</code><span class="sig-paren">(</span><em>ea=None</em>, <em>down=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.next_data_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method which allow to find the address of the next data
+element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which to start the search. If <code class="docutils literal notranslate"><span class="pre">None</span></code>
+the screen address will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The address of the next data or None if the search did
+not find any match.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.next_data">
+<em class="property">static </em><code class="descname">next_data</code><span class="sig-paren">(</span><em>ea=None</em>, <em>down=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.next_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method which allow to find the next data element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which to start the search. If <code class="docutils literal notranslate"><span class="pre">None</span></code>
+the screen address will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An object which ibherit from <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if the search did not find any match.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.next_code_addr">
+<em class="property">static </em><code class="descname">next_code_addr</code><span class="sig-paren">(</span><em>ea=None</em>, <em>down=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.next_code_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method which allow to find the address of the next code
+element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which to start the search. If <code class="docutils literal notranslate"><span class="pre">None</span></code>
+the screen address will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The address of the next code or None if the search did
+not find any match.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.next_code">
+<em class="property">static </em><code class="descname">next_code</code><span class="sig-paren">(</span><em>ea=None</em>, <em>down=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.next_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method which allow to find the next code element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which to start the search. If <code class="docutils literal notranslate"><span class="pre">None</span></code>
+the screen address will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An object which ibherit from <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if the search did not find any match.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.next_unknown_addr">
+<em class="property">static </em><code class="descname">next_unknown_addr</code><span class="sig-paren">(</span><em>ea=None</em>, <em>down=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.next_unknown_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method which allow to find the address of the next unknown
+element. An unknown element is an element for which IDA does not
+know the type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which to start the search. If <code class="docutils literal notranslate"><span class="pre">None</span></code>
+the screen address will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The address of the next unknown element or <code class="docutils literal notranslate"><span class="pre">None</span></code> if
+the search did not find any match.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.next_unknown">
+<em class="property">static </em><code class="descname">next_unknown</code><span class="sig-paren">(</span><em>ea=None</em>, <em>down=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.next_unknown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method which allow to find the next unknown element.
+An unknown element is an element for which IDA does not know
+the type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which to start the search. If <code class="docutils literal notranslate"><span class="pre">None</span></code>
+the screen address will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An object which ibherit from <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if the search did not find any match.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.next_defined_addr">
+<em class="property">static </em><code class="descname">next_defined_addr</code><span class="sig-paren">(</span><em>ea=None</em>, <em>down=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.next_defined_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method which allow to find the address of the next defined
+element. An defined element is the opposite of unknown, meaning
+or a data with a known type or code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which to start the search. If <code class="docutils literal notranslate"><span class="pre">None</span></code>
+the screen address will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The address of the next defined element or None if the
+search did not find any match.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.next_defined">
+<em class="property">static </em><code class="descname">next_defined</code><span class="sig-paren">(</span><em>ea=None</em>, <em>down=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.next_defined" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method which allow to find the next defined element.
+An defined element is the opposite of unknown, meaning or a data
+with a known type or code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> – The address at which to start the search. If <code class="docutils literal notranslate"><span class="pre">None</span></code>
+the screen address will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An object which ibherit from <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if the search did not find any match.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.search_bytes_addr">
+<em class="property">static </em><code class="descname">search_bytes_addr</code><span class="sig-paren">(</span><em>byt</em>, <em>start_ea=None</em>, <em>end_ea=None</em>, <em>down=True</em>, <em>nxt=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.search_bytes_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for searching a sequence of bytes. This will search
+for the bytes which ever the data type is.</p>
+<p>This is a wrapper on the <code class="docutils literal notranslate"><span class="pre">ida_search.find_binary</span></code> (previously
+<code class="docutils literal notranslate"><span class="pre">FindBinary</span></code>) function from IDA with a radix of 16.</p>
+<p>The byte should be represented in hexadecimal seperated by space.
+A <code class="docutils literal notranslate"><span class="pre">?</span></code> can be put for replacing a byte, for example:
+<code class="docutils literal notranslate"><span class="pre">41</span> <span class="pre">8B</span> <span class="pre">44</span> <span class="pre">?</span> <span class="pre">20</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>byt</strong> – A string representing a sequence of byte.</li>
+<li><strong>start_ea</strong> – The address at which to start the search, if
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the current address will be used.</li>
+<li><strong>end_ea</strong> – The address at which to stop the search, if
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the maximum or minimum (depending of searching up or
+down) will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+<li><strong>nxt</strong> – If True (the default) the current element will not
+be included in the search.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The address at which the byte sequence is present or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if no element were found during the search.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.search_bytes">
+<em class="property">static </em><code class="descname">search_bytes</code><span class="sig-paren">(</span><em>byt</em>, <em>start_ea=None</em>, <em>end_ea=None</em>, <em>down=True</em>, <em>nxt=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.search_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for searching a sequence of bytes. This will search
+for the bytes which ever the data type is.</p>
+<p>This is a wrapper on the <code class="docutils literal notranslate"><span class="pre">ida_search.find_binary</span></code> (previously
+<code class="docutils literal notranslate"><span class="pre">FindBinary</span></code>) function from IDA with a radix of 16.</p>
+<p>The byte should be represented in hexadecimal seperated by space.
+A <code class="docutils literal notranslate"><span class="pre">?</span></code> can be put for replacing a byte, for example:
+<code class="docutils literal notranslate"><span class="pre">41</span> <span class="pre">8B</span> <span class="pre">44</span> <span class="pre">?</span> <span class="pre">20</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>byt</strong> – A string representing a sequence of byte.</li>
+<li><strong>start_ea</strong> – The address at which to start the search, if
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the current address will be used.</li>
+<li><strong>end_ea</strong> – The address at which to stop the search, if
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the maximum or minimum (depending of searching up or
+down) will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+<li><strong>nxt</strong> – If True (the default) the current element will not
+be included in the search.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An object which inherit from <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>
+representing the element at the address at which the byte
+sequence is present or <code class="docutils literal notranslate"><span class="pre">None</span></code> if no element were found
+during the search.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.search_str_addr">
+<em class="property">static </em><code class="descname">search_str_addr</code><span class="sig-paren">(</span><em>s</em>, <em>start_ea=None</em>, <em>end_ea=None</em>, <em>down=True</em>, <em>nxt=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.search_str_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for searching a string. In practice this perform
+a search_bytes on the binary by encoding correctly the string
+passed in argument and returning only reference to data elements.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is different from idapython <code class="docutils literal notranslate"><span class="pre">FindText</span></code> method as this
+will only search for bytes in the binary (and more precisely
+the data)! It should also be way faster.</p>
+</div>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">this should allow to handle encoding.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>s</strong> (<em>str</em>) – The C string for which to search. If the string
+is NULL terminated the NULL byte must be included.</li>
+<li><strong>start_ea</strong> – The address at which to start the search, if
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the current address will be used.</li>
+<li><strong>end_ea</strong> – The address at which to stop the search, if
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the maximum or minimum (depending of searching up or
+down) will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+<li><strong>nxt</strong> – If True (the default) the current element will not
+be included in the search.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The address at which the string was found.  It will
+always be data. If no matching element was found None will be
+return.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipElt.search_str">
+<em class="property">static </em><code class="descname">search_str</code><span class="sig-paren">(</span><em>s</em>, <em>start_ea=None</em>, <em>end_ea=None</em>, <em>down=True</em>, <em>nxt=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipElt.search_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for searching a string. In practice this perform
+a search_bytes on the binary by encoding correctly the string
+passed in argument and returning only reference to data elements.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is different from idapython <code class="docutils literal notranslate"><span class="pre">FindText</span></code> method as this
+will only search for bytes in the binary (and more precisely
+the data)! It should also be way faster.</p>
+</div>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">this should allow to handle encoding.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>s</strong> (<em>str</em>) – The C string for which to search. If the string
+is NULL terminated the NULL byte must be included.</li>
+<li><strong>start_ea</strong> – The address at which to start the search, if
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the current address will be used.</li>
+<li><strong>end_ea</strong> – The address at which to stop the search, if
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the maximum or minimum (depending of searching up or
+down) will be used.</li>
+<li><strong>down</strong> – If True (the default) search below the given
+address, if False search above.</li>
+<li><strong>nxt</strong> – If True (the default) the current element will not
+be included in the search.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An object which inherit from <a class="reference internal" href="#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>
+representing the element at the address at which the string
+was found. The element will always have <a class="reference internal" href="#bip.base.BipElt.is_data" title="bip.base.BipElt.is_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipElt.is_data()</span></code></a>
+as True. If no matching element was found None will be return.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Elements</a><ul>
+<li><a class="reference internal" href="#internals">Internals</a><ul>
+<li><a class="reference internal" href="#recuperation-of-the-correct-element">Recuperation of the correct element</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#element-functions-api">Element Functions API</a></li>
+<li><a class="reference internal" href="#bipbaseelt-api">BipBaseElt API</a></li>
+<li><a class="reference internal" href="#biprefelt-api">BipRefElt API</a></li>
+<li><a class="reference internal" href="#bipelt-api">BipElt API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../general/changelog.html"
+                        title="previous chapter">Changelog</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="instr.html"
+                        title="next chapter">Instructions &amp; Operands</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/base/elt.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="instr.html" title="Instructions &amp; Operands"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../general/changelog.html" title="Changelog"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

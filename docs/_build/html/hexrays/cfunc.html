@@ -1,0 +1,770 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Hexrays Functions &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Local variables" href="lvar.html" />
+    <link rel="prev" title="IDA interface" href="../base/bipida.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lvar.html" title="Local variables"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../base/bipida.html" title="IDA interface"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.hexrays">
+<span id="hexrays-functions"></span><h1>Hexrays Functions<a class="headerlink" href="#module-bip.hexrays" title="Permalink to this headline">¶</a></h1>
+<p>Hexrays function are implemented in Bip by the class <a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a>.
+They represent a C function as decompiled by hexrays and are the main
+interface for using the features from hexrays in C.</p>
+<p>There are two ways to get a <a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> object using the Bip
+API, the first one is by using the <a class="reference internal" href="../base/func.html#bip.base.BipFunction.hxcfunc" title="bip.base.BipFunction.hxcfunc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hxcfunc()</span></code></a>
+property method from a <a class="reference internal" href="../base/func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>, this property returns
+the equivalent <a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> for
+the <a class="reference internal" href="../base/func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>. The second way is to use the class method
+<a class="reference internal" href="#bip.hexrays.HxCFunc.from_addr" title="bip.hexrays.HxCFunc.from_addr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_addr()</span></code></a> which take an address in argument and try
+to create the corresponding <a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a>. Both of those
+methods may fail if Hexrays is not able to decompile the function or if the
+address given is not part of a function, in that case an exception
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BipDecompileError</span></code> is raised by Bip.</p>
+<p>The <a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> allows to recuperate the C string
+of the decompiled function (<a class="reference internal" href="#bip.hexrays.HxCFunc.cstr" title="bip.hexrays.HxCFunc.cstr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cstr()</span></code></a>), to get the
+“normal” <a class="reference internal" href="../base/func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> (<a class="reference internal" href="#bip.hexrays.HxCFunc.bfunc" title="bip.hexrays.HxCFunc.bfunc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">bfunc()</span></code></a>)
+and provide to two main features: local variables (lvar) and AST nodes.</p>
+<p>Local variables (lvar) are represented by <a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> objects
+and are accessible through several methods. The simplest way is to use the
+<a class="reference internal" href="#bip.hexrays.HxCFunc.lvars" title="bip.hexrays.HxCFunc.lvars"><code class="xref py py-meth docutils literal notranslate"><span class="pre">lvars()</span></code></a> property which return an array of the
+variable. As those variables also include the arguments of the functions the
+<a class="reference internal" href="#bip.hexrays.HxCFunc.args" title="bip.hexrays.HxCFunc.args"><code class="xref py py-meth docutils literal notranslate"><span class="pre">args()</span></code></a> property allows to get only the
+<a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a>  which are arguments.</p>
+<p>The AST nodes of the <a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> can be accessed in
+different ways. Bip provides <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> classes
+(<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> is the parent class for all nodes) which
+represents a node of the AST, those are already a second level of abstraction
+on top of the hexrays AST node. There are three main ways to access
+the <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> for a particular function:</p>
+<ul class="simple">
+<li>by accessing the <a class="reference internal" href="#bip.hexrays.HxCFunc.root_node" title="bip.hexrays.HxCFunc.root_node"><code class="xref py py-meth docutils literal notranslate"><span class="pre">root_node()</span></code></a> of the AST and then
+making the visit or the treatment as the user which;</li>
+<li>by using visitors already implemented: <a class="reference internal" href="#bip.hexrays.HxCFunc.visit_cnode" title="bip.hexrays.HxCFunc.visit_cnode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">visit_cnode()</span></code></a>
+or <a class="reference internal" href="#bip.hexrays.HxCFunc.visit_cnode_filterlist" title="bip.hexrays.HxCFunc.visit_cnode_filterlist"><code class="xref py py-meth docutils literal notranslate"><span class="pre">visit_cnode_filterlist()</span></code></a> and providing a
+callback, those visitors use a Deep-First Search (DFS) algorithm;</li>
+<li>by using helper methods <a class="reference internal" href="#bip.hexrays.HxCFunc.get_cnode_filter" title="bip.hexrays.HxCFunc.get_cnode_filter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_cnode_filter()</span></code></a> or
+<a class="reference internal" href="#bip.hexrays.HxCFunc.get_cnode_filter_type" title="bip.hexrays.HxCFunc.get_cnode_filter_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_cnode_filter_type()</span></code></a> which provide list of
+the resulting nodes, those helpers are based on the visitors.</li>
+</ul>
+<p>It is also possible to use the visitor on the first level of abstraction
+on top of the hexrays node, those methods start with the prefix
+<code class="docutils literal notranslate"><span class="pre">hx_visit_</span></code>.</p>
+<div class="section" id="hxcfunc-api">
+<h2>HxCFunc API<a class="headerlink" href="#hxcfunc-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCFunc">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCFunc</code><span class="sig-paren">(</span><em>cfunc</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python object for representing a C function as decompile by hexrays.
+This is an abstraction on top of the <code class="docutils literal notranslate"><span class="pre">ida_hexrays.cfuncptr_t</span></code>  and
+<code class="docutils literal notranslate"><span class="pre">cfunc_t</span></code> object.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Decompiling again the function in hexrays (meaning
+hitting F5 again) will create a new <code class="docutils literal notranslate"><span class="pre">cfunc_t</span></code> object. An
+<a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> python object (or the corresponding <code class="docutils literal notranslate"><span class="pre">cfunc_t</span></code>
+object from IDA) and the others associated objects (such as the 
+<a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> for example) will not be the same anymore. This
+can create problems when using the scripting and the interactive
+view at the same time. Basically you will want to regenerate this
+object for the function each time you make F5 again in the GUI,
+this can be done using the <a class="reference internal" href="#bip.hexrays.HxCFunc.from_addr" title="bip.hexrays.HxCFunc.from_addr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HxCFunc.from_addr()</span></code></a> class method.</p>
+</div>
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>cfunc</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for a <a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cfunc</strong> – A <code class="docutils literal notranslate"><span class="pre">cfunc_t</span></code> pointer from IDA object such as return
+by <code class="docutils literal notranslate"><span class="pre">ida_hexrays.decompile</span></code> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCFunc.ea">
+<code class="descname">ea</code><a class="headerlink" href="#bip.hexrays.HxCFunc.ea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the start address of this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The start address of this function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCFunc.cstr">
+<code class="descname">cstr</code><a class="headerlink" href="#bip.hexrays.HxCFunc.cstr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the C code corresponding to the
+decompilation of this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return str:</th><td class="field-body">The string corresponding to the decompilation of this
+function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCFunc.bfunc">
+<code class="descname">bfunc</code><a class="headerlink" href="#bip.hexrays.HxCFunc.bfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the <code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code> associated with
+this cfunc.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The <code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code> associated with this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.invalidate_cache">
+<code class="descname">invalidate_cache</code><span class="sig-paren">(</span><em>close_window=False</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.invalidate_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows to invalidate the cache for this hexray function. This will
+remove information associated with this function, forcing IDA to
+regenerate the view for the function next time it will be open.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This function may generate the same problem as decompiling
+again the function, this has not been tested. See
+<a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> warning for more information about this
+potential problem.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>close_window</strong> – If true the window(s) showing the
+disassembled function will be closed. False by default.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.add_cmt">
+<code class="descname">add_cmt</code><span class="sig-paren">(</span><em>ea</em>, <em>value</em>, <em>itp=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.add_cmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to add a comment in the hexrays interface view. 
+If a comment at the same position (ea and itp) exist it will be
+overwritten.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ea</strong> (<em>int</em>) – The address at which add the comment. All ea
+address in the function will not be valid, only the one used
+for items in the ctree seems to be.</li>
+<li><strong>value</strong> (<em>str</em>) – The comment value.</li>
+<li><strong>itp</strong> (<em>int</em>) – The position at which add the comment.
+See <code class="docutils literal notranslate"><span class="pre">item_tree_position</span></code> in IDA, by default (None) at the
+semi-colon</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.get_cmt">
+<code class="descname">get_cmt</code><span class="sig-paren">(</span><em>ea</em>, <em>itp=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.get_cmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to get a comment in the hexrays interface view.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ea</strong> (<em>int</em>) – The address at which is the comment.</li>
+<li><strong>itp</strong> (<em>int</em>) – The position at which the comment is.
+See <code class="docutils literal notranslate"><span class="pre">item_tree_position</span></code> in IDA, by default (None) at the
+semi-colon.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None if no comment at that position, the comment as
+a string if there is any</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.lvar_at">
+<code class="descname">lvar_at</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.lvar_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the local variable corresponding to an index.</p>
+<p>This equivalent to using <a class="reference internal" href="#bip.hexrays.HxCFunc.lvars" title="bip.hexrays.HxCFunc.lvars"><code class="xref py py-meth docutils literal notranslate"><span class="pre">lvars()</span></code></a> with access in an
+index but should be faster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCFunc.lvars">
+<code class="descname">lvars</code><a class="headerlink" href="#bip.hexrays.HxCFunc.lvars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> object representing the local
+variables of this function. This function will return the argument
+as well as the local variable of the function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.lvars_iter">
+<code class="descname">lvars_iter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.lvars_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an iterator of <a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> object representing the
+local variables of this function. This is similar to
+<a class="reference internal" href="#bip.hexrays.HxCFunc.lvars" title="bip.hexrays.HxCFunc.lvars"><code class="xref py py-meth docutils literal notranslate"><span class="pre">lvars()</span></code></a> but with an iterator instead of a list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An interator of <a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.lvar_by_name">
+<code class="descname">lvar_by_name</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.lvar_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a lvar with a particular name in this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) – The name of the lvar to search for.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> object or None if the lvar was
+not found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCFunc.args">
+<code class="descname">args</code><a class="headerlink" href="#bip.hexrays.HxCFunc.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> object representing the argument
+of this functions.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">test</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCFunc.root_node">
+<code class="descname">root_node</code><a class="headerlink" href="#bip.hexrays.HxCFunc.root_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> object which is the root
+element for
+this function. This <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> will allow to visit the AST of
+the function. In practice it should always be of
+class <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtBlock" title="bip.hexrays.CNodeStmtBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtBlock</span></code></a> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The root object for this function which inherit from
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.visit_cnode">
+<code class="descname">visit_cnode</code><span class="sig-paren">(</span><em>callback</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.visit_cnode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which allow to visit all <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> elements of this
+function starting from the root object. This is implemented using
+a DFS algorithm. This does not use the hexrays visitor. For more
+information about the implementation see
+<a class="reference internal" href="cnode.html#bip.hexrays.cnode_visitor.visit_dfs_cnode" title="bip.hexrays.cnode_visitor.visit_dfs_cnode"><code class="xref py py-func docutils literal notranslate"><span class="pre">visit_dfs_cnode()</span></code></a> (this method is just a
+wrapper on <a class="reference internal" href="cnode.html#bip.hexrays.CNode.visit_cnode" title="bip.hexrays.CNode.visit_cnode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">visit_cnode()</span></code></a>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> – A callable which will be called on all
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> in the function decompiled by hexrays. The call
+should take only one argument which correspond to the
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> currently visited. If this callback return
+False the visit is stoped, all other result is ignored.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.visit_cnode_filterlist">
+<code class="descname">visit_cnode_filterlist</code><span class="sig-paren">(</span><em>callback</em>, <em>filter_list</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.visit_cnode_filterlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which allow to visit <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> elements which are
+present in a list. This is implemented using
+a DFS algorithm. This does not use the hexrays visitor. For more
+information about the implementation see
+<a class="reference internal" href="cnode.html#bip.hexrays.cnode_visitor.visit_dfs_cnode_filterlist" title="bip.hexrays.cnode_visitor.visit_dfs_cnode_filterlist"><code class="xref py py-func docutils literal notranslate"><span class="pre">visit_dfs_cnode_filterlist()</span></code></a> (this method is just
+a wrapper on <a class="reference internal" href="cnode.html#bip.hexrays.CNode.visit_cnode_filterlist" title="bip.hexrays.CNode.visit_cnode_filterlist"><code class="xref py py-meth docutils literal notranslate"><span class="pre">visit_cnode_filterlist()</span></code></a>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> – A callable which will be called on all
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> in the function decompiled by hexrays. The call
+should take only one argument which correspond to the
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> currently visited. If this callback return
+False the visit is stoped, all other result is ignored.</li>
+<li><strong>filter_list</strong> – A list of class which inherit from <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>.
+The callback will be called only for the node from a class in this
+list.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.get_cnode_filter">
+<code class="descname">get_cnode_filter</code><span class="sig-paren">(</span><em>cb_filter</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.get_cnode_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which return a list of <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> for which a filter
+return true. Internally this use the <a class="reference internal" href="#bip.hexrays.HxCFunc.visit_cnode" title="bip.hexrays.HxCFunc.visit_cnode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">visit_cnode()</span></code></a>
+method which visit all nodes of the function, this is just a
+wrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cb_filter</strong> – A callable which take a <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> in
+parameter and return a boolean. This callback will be called
+on all node of the function and all node for which it returns
+true will be added in a list which will be returned by this
+function.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> which have match the filter.
+This list is order in which the node have been visited (see
+<a class="reference internal" href="#bip.hexrays.HxCFunc.visit_cnode" title="bip.hexrays.HxCFunc.visit_cnode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">visit_cnode()</span></code></a> for more information).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.get_cnode_filter_type">
+<code class="descname">get_cnode_filter_type</code><span class="sig-paren">(</span><em>type_filter</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.get_cnode_filter_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which return a list of <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> of a particular
+type(s). Internally this use the <a class="reference internal" href="#bip.hexrays.HxCFunc.visit_cnode" title="bip.hexrays.HxCFunc.visit_cnode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">visit_cnode()</span></code></a>
+method which visit all nodes of the function, this is just a
+wrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>type_filter</strong> – The type(s) of <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> to get. Only
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> matching the isinstance of this type will
+be returned. This can be a type, a class or a tuple (or list)
+of class and type.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> which have match the type.
+This list is order in which the node have been visited (see
+<a class="reference internal" href="#bip.hexrays.HxCFunc.visit_cnode" title="bip.hexrays.HxCFunc.visit_cnode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">visit_cnode()</span></code></a> for more information).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.get_cnode_label">
+<code class="descname">get_cnode_label</code><span class="sig-paren">(</span><em>label_num</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.get_cnode_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which return the <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> which represents the start
+of a specific label in the function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>label_num</strong> (<em>int</em>) – The label number for which to get the
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> which represent label location, or None
+if the label number was not found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCFunc.cnodes_with_label">
+<code class="descname">cnodes_with_label</code><a class="headerlink" href="#bip.hexrays.HxCFunc.cnodes_with_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> which represent the
+start of the labels in the function.</p>
+<p>It is necessary to visit all the AST for doing this, so it is
+costly.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> which have a label.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCFunc.hx_root_stmt">
+<code class="descname">hx_root_stmt</code><a class="headerlink" href="#bip.hexrays.HxCFunc.hx_root_stmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> object for the root
+element of this function. In practice this should always be a 
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmtBlock" title="bip.hexrays.HxCStmtBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmtBlock</span></code></a>.</p>
+<p>For the <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> equivalent, see <a class="reference internal" href="#bip.hexrays.HxCFunc.root_node" title="bip.hexrays.HxCFunc.root_node"><code class="xref py py-meth docutils literal notranslate"><span class="pre">root_node()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The root object for this function which inherit from
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.hx_visit_expr">
+<code class="descname">hx_visit_expr</code><span class="sig-paren">(</span><em>func_visit</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.hx_visit_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to use the hexrays visitor for visiting all expressions
+(<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>) of this function.</p>
+<p>Internally this function use the <code class="xref py py-class docutils literal notranslate"><span class="pre">_hx_visitor_expr</span></code>
+visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func_visit</strong> – A function which take as argument an
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> object. This function will be called on all
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> element which are part of this function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.hx_visit_list_expr">
+<code class="descname">hx_visit_list_expr</code><span class="sig-paren">(</span><em>expr_list</em>, <em>func_visit</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.hx_visit_list_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to use the hexrays visitor for visiting only expressions
+(<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>) which are part of a list.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># example which print all the HxCExprCall from the function</span>
+<span class="c1"># hxf is an object of this class HxCFunc.</span>
+<span class="k">def</span> <span class="nf">fu</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+<span class="n">hxf</span><span class="o">.</span><span class="n">visit_list_expr</span><span class="p">([</span><span class="n">HxCExprCall</span><span class="p">],</span> <span class="n">fu</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Internally this function use the <code class="xref py py-class docutils literal notranslate"><span class="pre">_hx_visitor_list_expr</span></code>
+visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>expr_list</strong> – A list of class which inherit from
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>, only expression in the list will be visited.</li>
+<li><strong>func_visit</strong> – A function which take as argument an
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> object. This function will be called on all
+element which are in the <code class="docutils literal notranslate"><span class="pre">expr_list</span></code> .</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.hx_visit_stmt">
+<code class="descname">hx_visit_stmt</code><span class="sig-paren">(</span><em>func_visit</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.hx_visit_stmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to use the hexrays visitor for visiting all statements
+(<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a>) of this function.</p>
+<p>Internally this function use the <code class="xref py py-class docutils literal notranslate"><span class="pre">_hx_visitor_stmt</span></code>
+visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func_visit</strong> – A function which take as argument an
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> object. This function will be called on all
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> element which are part of this function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.hx_visit_list_stmt">
+<code class="descname">hx_visit_list_stmt</code><span class="sig-paren">(</span><em>stmt_list</em>, <em>func_visit</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.hx_visit_list_stmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to use the hexrays visitor for visiting only statements
+(<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a>) which are part of a list.</p>
+<p>Internally this function use the <code class="xref py py-class docutils literal notranslate"><span class="pre">_hx_visitor_list_stmt</span></code>
+visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stmt_list</strong> – A list of class which inherit from
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a>, only statements in the list will be visited.</li>
+<li><strong>func_visit</strong> – A function which take as argument an
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> object. This function will be called on all
+element which are in the <code class="docutils literal notranslate"><span class="pre">stmt_list</span></code> .</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.hx_visit_all">
+<code class="descname">hx_visit_all</code><span class="sig-paren">(</span><em>func_visit</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.hx_visit_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to use the hexrays visitor for visiting all items
+(statements <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> and expression <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>) of
+this function.</p>
+<p>Internally this function use the <code class="xref py py-class docutils literal notranslate"><span class="pre">_hx_visitor_all</span></code>
+visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func_visit</strong> – A function which take as argument an object
+which inherit from <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a>. This function will be
+called on all those elements which are part of this function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.hx_visit_list_all">
+<code class="descname">hx_visit_list_all</code><span class="sig-paren">(</span><em>item_list</em>, <em>func_visit</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.hx_visit_list_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to use the hexrays visitor for visiting only statements
+(<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a>) which are part of a list.
+Allow to use the hexrays visitor for visiting only items
+(statements <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> and expression <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>)
+which are part of a list.</p>
+<p>Internally this function use the <code class="xref py py-class docutils literal notranslate"><span class="pre">_hx_visitor_list_all</span></code>
+visitor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>item_list</strong> – A list of class which inherit from
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a>, only items in the list will be visited.</li>
+<li><strong>func_visit</strong> – A function which take as argument an
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> object. This function will be called on all
+element which are in the <code class="docutils literal notranslate"><span class="pre">item_list</span></code> .</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxCFunc.hx_get_label">
+<code class="descname">hx_get_label</code><span class="sig-paren">(</span><em>label_num</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.hx_get_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to use the the hexrays API for finding the <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a>
+which is reference by a label.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>label_num</strong> (<em>int</em>) – The label number.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> object or None if the label was not
+found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.hexrays.HxCFunc.from_addr">
+<em class="property">classmethod </em><code class="descname">from_addr</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.from_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which return a <a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> object corresponding
+to the function at a particular address.</p>
+<p>This may raise a <code class="xref py py-class docutils literal notranslate"><span class="pre">BipDecompileError</span></code> if the
+decompilation failed or if the address provided is not in a
+function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> (<em>int</em>) – An address inside the function for which we want
+an <a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a>. If <code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address will be
+used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.hexrays.HxCFunc.invalidate_all_caches">
+<em class="property">static </em><code class="descname">invalidate_all_caches</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxCFunc.invalidate_all_caches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for invalidating cache of all hexrays decompiled
+functions. See <a class="reference internal" href="#bip.hexrays.HxCFunc.invalidate_cache" title="bip.hexrays.HxCFunc.invalidate_cache"><code class="xref py py-meth docutils literal notranslate"><span class="pre">invalidate_cache()</span></code></a> for invalidating
+the cache of a specific function.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This function may generate the same problem as decompiling
+again a function. See <a class="reference internal" href="#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> warning for more
+information about this potential problem.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Hexrays Functions</a><ul>
+<li><a class="reference internal" href="#hxcfunc-api">HxCFunc API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../base/bipida.html"
+                        title="previous chapter">IDA interface</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="lvar.html"
+                        title="next chapter">Local variables</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/hexrays/cfunc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lvar.html" title="Local variables"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../base/bipida.html" title="IDA interface"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

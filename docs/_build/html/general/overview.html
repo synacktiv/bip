@@ -1,0 +1,745 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Overview &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Bip Project architecture" href="archi.html" />
+    <link rel="prev" title="Installation steps" href="install.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="archi.html" title="Bip Project architecture"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation steps"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="overview">
+<span id="general-overview"></span><h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<p>This overview has a goal to show how the most usual operations can be done,
+it is far from being complete. All functions and objects in Bip are documented
+using doc string so just use <code class="docutils literal notranslate"><span class="pre">help(BipClass)</span></code> and <code class="docutils literal notranslate"><span class="pre">help(obj.bipmethod)</span></code> for
+getting the doc in your shell.</p>
+<div class="section" id="module-bip.base">
+<span id="base"></span><h2>Base<a class="headerlink" href="#module-bip.base" title="Permalink to this headline">¶</a></h2>
+<p>The module <code class="docutils literal notranslate"><span class="pre">bip.base</span></code> contains most of the <em>basic</em> features for interfacing
+with IDA. In practice this is mainly the disassembler part of IDA, this
+includes: manipulation of instruction, functions, basic blocks, operands,
+data, xrefs, structures, types, …</p>
+<div class="section" id="instructions-operands">
+<h3>Instructions / Operands<a class="headerlink" href="#instructions-operands" title="Permalink to this headline">¶</a></h3>
+<p>The classes <a class="reference internal" href="../base/instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> and <a class="reference internal" href="../base/instr.html#bip.base.BipOperand" title="bip.base.BipOperand"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipOperand</span></code></a>:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bip.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">BipInstr</span><span class="p">()</span> <span class="c1"># BipInstr is the base class for representing an instruction</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="c1"># by default the address on the screen is taken</span>
+<span class="go">BipInstr: 0x1800D324B (mov     rcx, r13)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i2</span> <span class="o">=</span> <span class="n">BipInstr</span><span class="p">(</span><span class="mh">0x01800D3242</span><span class="p">)</span> <span class="c1"># pass the address in argument</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i2</span>
+<span class="go">BipInstr: 0x1800D3242 (mov     r8d, 8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i2</span><span class="o">.</span><span class="n">next</span> <span class="c1"># access next instruction, preivous with i2.prev</span>
+<span class="go">BipInstr: 0x1800D3248 (mov     rdx, r14)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="n">i3</span> <span class="k">for</span> <span class="n">i3</span> <span class="ow">in</span> <span class="n">BipInstr</span><span class="o">.</span><span class="n">iter_all</span><span class="p">()]</span> <span class="c1"># l contain the list of all BipInstruction of the database, iter_all produce a generator object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">ea</span> <span class="c1"># access the address</span>
+<span class="go">6443315787</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">mnem</span> <span class="c1"># mnemonic representation</span>
+<span class="go">mov</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">ops</span> <span class="c1"># access to the operands</span>
+<span class="go">[&lt;bip.base.operand.BipOperand object at 0x0000022B0291DA90&gt;, &lt;bip.base.operand.BipOperand object at 0x0000022B0291DA58&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">str</span> <span class="c1"># string representation of an operand</span>
+<span class="go">rcx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">bytes</span> <span class="c1"># bytes in the instruction</span>
+<span class="go">[73L, 139L, 205L]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">size</span> <span class="c1"># number of bytes of this instruction</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;hello&quot;</span> <span class="c1"># set a comment, rcomment for the repeatable comments</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span>
+<span class="go">BipInstr: 0x1800D324B (mov     rcx, r13; hello)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">comment</span> <span class="c1"># get a comment</span>
+<span class="go">hello</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">func</span> <span class="c1"># access to the function</span>
+<span class="go">Func: RtlQueryProcessLockInformation (0x1800D2FF0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">block</span> <span class="c1"># access to basic block</span>
+<span class="go">BipBlock: 0x1800D3242 (from Func: RtlQueryProcessLockInformation (0x1800D2FF0))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="function-basic-block">
+<h3>Function / Basic block<a class="headerlink" href="#function-basic-block" title="Permalink to this headline">¶</a></h3>
+<p>The classes <a class="reference internal" href="../base/func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> and <a class="reference internal" href="../base/func.html#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a>:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bip.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">BipFunction</span><span class="p">()</span> <span class="c1"># Get the function, screen address used if not provided</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">Func: RtlQueryProcessLockInformation (0x1800D2FF0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span> <span class="o">=</span> <span class="n">BipFunction</span><span class="p">(</span><span class="mh">0x0018010E975</span><span class="p">)</span> <span class="c1"># provide an address, not necessary the first one</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span>
+<span class="go">Func: sub_18010E968 (0x18010E968)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">==</span> <span class="n">f2</span> <span class="c1"># compare two functions</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">==</span> <span class="n">BipFunction</span><span class="p">(</span><span class="mh">0x001800D3021</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">ea</span><span class="p">)</span> <span class="c1"># start address</span>
+<span class="go">0x1800d2ff0L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="c1"># end address</span>
+<span class="go">0x1800d3284L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="c1"># get and set the name</span>
+<span class="go">RtlQueryProcessLockInformation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span>
+<span class="go">test</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">size</span> <span class="c1"># number of bytes in the function</span>
+<span class="go">660</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">bytes</span> <span class="c1"># bytes of the function</span>
+<span class="go">[72L, ..., 255L]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">callees</span> <span class="c1"># list of function called by this function</span>
+<span class="go">[&lt;bip.base.func.BipFunction object at 0x0000022B0291DD30&gt;, ..., &lt;bip.base.func.BipFunction object at 0x0000022B045487F0&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">callers</span> <span class="c1"># list of function which call this function</span>
+<span class="go">[&lt;bip.base.func.BipFunction object at 0x0000022B04544048&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">instr</span> <span class="c1"># list of instructions in the function</span>
+<span class="go">[&lt;bip.base.instr.BipInstr object at 0x0000022B0291DB00&gt;, ..., &lt;bip.base.instr.BipInstr object at 0x0000022B0454D080&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;welcome to bip&quot;</span> <span class="c1"># comment of the function, rcomment for repeatables one</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">comment</span>
+<span class="go">welcome to bip</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">does_return</span> <span class="c1"># does this function return ?</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BipFunction</span><span class="o">.</span><span class="n">iter_all</span><span class="p">()</span> <span class="c1"># allow to iter on all functions define in the database</span>
+<span class="go">&lt;generator object iter_all at 0x0000022B029231F8&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nb_blocks</span> <span class="c1"># number of basic block</span>
+<span class="go">33</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">blocks</span> <span class="c1"># list of blocks</span>
+<span class="go">[&lt;bip.base.block.BipBlock object at 0x0000022B04544D68&gt;, ..., &lt;bip.base.block.BipBlock object at 0x0000022B04552240&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1"># access the basic block 5, could be done with BipBlock(addr)</span>
+<span class="go">BipBlock: 0x1800D306E (from Func: test (0x1800D2FF0))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">func</span> <span class="c1"># link back to the function</span>
+<span class="go">Func: test (0x1800D2FF0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">instr</span> <span class="c1"># list of instruction in the block</span>
+<span class="go">[&lt;bip.base.instr.BipInstr object at 0x0000022B04544710&gt;, ..., &lt;bip.base.instr.BipInstr object at 0x0000022B0291DB00&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">pred</span> <span class="c1"># predecessor blocks, blocks where control flow lead to this one</span>
+<span class="go">[&lt;bip.base.block.BipBlock object at 0x0000022B04544D68&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">succ</span> <span class="c1"># successor blocks</span>
+<span class="go">[&lt;bip.base.block.BipBlock object at 0x0000022B04544710&gt;, &lt;bip.base.block.BipBlock object at 0x0000022B04544438&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">is_ret</span> <span class="c1"># is this block containing a return</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data">
+<h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
+<p>The class <a class="reference internal" href="../base/data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a>:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bip.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">BipData</span><span class="p">(</span><span class="mh">0x000180110068</span><span class="p">)</span> <span class="c1"># .rdata:0000000180110068 bip_ex          dq offset unk_180110DE0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">BipData at 0x180110068 = 0x180110DE0 (size=8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">name</span> <span class="c1"># Name of the symbol if any</span>
+<span class="go">bip_ex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">is_word</span> <span class="c1"># is it a word</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">is_qword</span> <span class="c1"># is it a qword</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="c1"># value at that address, this take into account the basic type (byte, word, dword, qword) defined in IDA</span>
+<span class="go">0x180110de0L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">ea</span><span class="p">)</span> <span class="c1"># address</span>
+<span class="go">0x180110068L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;example&quot;</span> <span class="c1"># comment as before</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">comment</span>
+<span class="go">example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mh">0xAABBCCDD</span> <span class="c1"># change the value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="go">0xaabbccddL</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">bytes</span> <span class="c1"># get the bytes, as before</span>
+<span class="go">[221L, 204L, 187L, 170L, 0L, 0L, 0L, 0L]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">original_value</span><span class="p">)</span> <span class="c1"># get the original value before modification</span>
+<span class="go">0x180110de0L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">bytes</span> <span class="o">=</span> <span class="p">[</span><span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x33</span><span class="p">,</span> <span class="mh">0x44</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># patch the bytes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="c1"># get the value</span>
+<span class="go">0x44332211L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BipData</span><span class="o">.</span><span class="n">iter_heads</span><span class="p">()</span> <span class="c1"># iter on &quot;heads&quot; of the IDB, heads are defined data in the IDB</span>
+<span class="go">&lt;generator object iter_heads at 0x0000022B02923240&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">BipData</span><span class="o">.</span><span class="n">get_dword</span><span class="p">(</span><span class="mh">0x0180110078</span><span class="p">))</span> <span class="c1"># staticmethod for reading value at an address</span>
+<span class="go">0x60004L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BipData</span><span class="o">.</span><span class="n">set_byte</span><span class="p">(</span><span class="mh">0x0180110078</span><span class="p">,</span> <span class="mh">0xAA</span><span class="p">)</span> <span class="c1"># static method for modifying a value at an address</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">BipData</span><span class="o">.</span><span class="n">get_qword</span><span class="p">(</span><span class="mh">0x0180110078</span><span class="p">))</span>
+<span class="go">0x600aaL</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="element">
+<h3>Element<a class="headerlink" href="#element" title="Permalink to this headline">¶</a></h3>
+<p>In Bip most basic object inherit from the same classes: <a class="reference internal" href="../base/elt.html#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> which is
+the most basic one, <a class="reference internal" href="../base/elt.html#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a> which includes all the objects which can have
+xrefs (including structures (<a class="reference internal" href="../base/struct.html#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a>) and structure members
+(<a class="reference internal" href="../base/struct.html#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a>), see below), <a class="reference internal" href="../base/elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>
+which represent all elements which have an address in the IDA DataBase (idb),
+including <a class="reference internal" href="../base/data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a> and <a class="reference internal" href="../base/instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> (it is this class which
+implement the properties: <code class="docutils literal notranslate"><span class="pre">comment</span></code>,  <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">bytes</span></code>, …).</p>
+<p>It is possible to use the functions <a class="reference internal" href="../base/elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> and <a class="reference internal" href="../base/elt.html#bip.base.GetEltByName" title="bip.base.GetEltByName"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetEltByName()</span></code></a>
+for directly recuperating the good basic element from an address or a name
+representing a location in the binary.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bip.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GetElt</span><span class="p">()</span> <span class="c1"># get the element at current address, in that case return a BipData object</span>
+<span class="go">BipData at 0x180110068 = 0xAABBCCDD (size=8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GetElt</span><span class="p">(</span><span class="mh">0x00180110078</span><span class="p">)</span> <span class="c1"># get the element at the address 0x00180110078</span>
+<span class="go">BipData at 0x180110078 = 0xAA (size=1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GetElt</span><span class="p">(</span><span class="mh">0x1800D2FF0</span><span class="p">)</span> <span class="c1"># in that case it return an BipInstr object because this is code</span>
+<span class="go">BipInstr: 0x1800D2FF0 (mov     rax, rsp)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GetEltByName</span><span class="p">(</span><span class="s2">&quot;bip_ex&quot;</span><span class="p">)</span> <span class="c1"># Get using a name and not an address</span>
+<span class="go">BipData at 0x180110068 = 0xAABBCCDD (size=8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">GetElt</span><span class="p">(</span><span class="mh">0x1800D2FF0</span><span class="p">),</span> <span class="n">BipInstr</span><span class="p">)</span> <span class="c1"># test if that element is an instruction ?</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GetElt</span><span class="p">(</span><span class="mh">0x1800D2FF0</span><span class="p">)</span><span class="o">.</span><span class="n">is_code</span> <span class="c1"># are we on code ? same for is_data; do not work for struct</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">GetElt</span><span class="p">(</span><span class="mh">0x1800D2FF0</span><span class="p">),</span> <span class="n">BipData</span><span class="p">)</span> <span class="c1"># or data ?</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Some static functions are provided for searching elements in the database:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bip.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GetElt</span><span class="p">()</span>
+<span class="go">BipInstr: 0x1800D3248 (mov     rdx, r14)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BipElt</span><span class="o">.</span><span class="n">next_code</span><span class="p">()</span> <span class="c1"># find next code elt from current addres or addr passed as arg</span>
+<span class="go">BipInstr: 0x1800D324B (mov     rcx, r13)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BipElt</span><span class="o">.</span><span class="n">next_code</span><span class="p">(</span><span class="n">down</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="c1"># find prev code element</span>
+<span class="go">BipInstr: 0x1800D3242 (mov     r8d, 8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BipElt</span><span class="o">.</span><span class="n">next_data</span><span class="p">()</span> <span class="c1"># find next data elt from current address or addr passed as arg</span>
+<span class="go">BipData at 0x1800D3284 = 0xCC (size=1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BipElt</span><span class="o">.</span><span class="n">next_data</span><span class="p">(</span><span class="n">down</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="c1"># find previous data element</span>
+<span class="go">BipData at 0x1800D2FE1 = 0xCC (size=1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">BipElt</span><span class="o">.</span><span class="n">next_data_addr</span><span class="p">(</span><span class="n">down</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span> <span class="c1"># find address of the previous data element</span>
+<span class="go">0x1800d2fe1L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BipElt</span><span class="o">.</span><span class="n">next_unknown</span><span class="p">()</span> <span class="c1"># same for unknown, which are not typed element of IDA and are considered data by Bip</span>
+<span class="go">BipData at 0x180110000 = 0xE (size=1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BipElt</span><span class="o">.</span><span class="n">next_defined</span><span class="p">()</span> <span class="c1"># opposite of unknown: data or code</span>
+<span class="go">BipInstr: 0x1800D324B (mov     rcx, r13)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BipElt</span><span class="o">.</span><span class="n">search_bytes</span><span class="p">(</span><span class="s2">&quot;49 ? CD&quot;</span><span class="p">,</span> <span class="mh">0x1800D3248</span><span class="p">)</span> <span class="c1"># search for byte sequence (ignore the current position by default)</span>
+<span class="go">BipInstr: 0x1800D324B (mov     rcx, r13)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="xref">
+<h3>Xref<a class="headerlink" href="#xref" title="Permalink to this headline">¶</a></h3>
+<p>All elements which inherit from <a class="reference internal" href="../base/elt.html#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a> (<a class="reference internal" href="../base/instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a>,
+<a class="reference internal" href="../base/data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a>, <a class="reference internal" href="../base/struct.html#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a>, …) and some other (in
+particular <a class="reference internal" href="../base/func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>) possess methods which allow
+to access xrefs. They are represented by the <a class="reference internal" href="../base/xref.html#bip.base.BipXref" title="bip.base.BipXref"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipXref</span></code></a> objects which
+have a <code class="docutils literal notranslate"><span class="pre">src</span></code> (origin of the xref) and a <code class="docutils literal notranslate"><span class="pre">dst</span></code> (destination of the xref).</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bip.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">BipInstr</span><span class="p">(</span><span class="mh">0x01800D3063</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="c1"># example with instruction but works the same with BipData</span>
+<span class="go">BipInstr: 0x1800D3063 (cmp     r15, [rsp+98h+var_58])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xTo</span> <span class="c1"># List of xref which point on this instruction</span>
+<span class="go">[&lt;bip.base.xref.BipXref object at 0x0000022B04544438&gt;, &lt;bip.base.xref.BipXref object at 0x0000022B045447F0&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xTo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">src</span> <span class="c1"># previous instruction</span>
+<span class="go">BipInstr: 0x1800D305E (mov     [rsp+98h+var_78], rsi)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xTo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_ordinaryflow</span> <span class="c1"># is this an ordinary flow between to instruction (not jmp or call)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xTo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">src</span> <span class="c1"># jmp to instruction i at 0x1800D3063</span>
+<span class="go">BipInstr: 0x1800D3222 (jmp     loc_1800D3063)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xTo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_jmp</span> <span class="c1"># is this xref because of a jmp ?</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xEaTo</span> <span class="c1"># bypass the xref objects and get the address directly</span>
+<span class="go">[6443315294L, 6443315746L]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xEltTo</span> <span class="c1"># bypass the xref objects and get the elements directly, will list BipData if any</span>
+<span class="go">[&lt;bip.base.instr.BipInstr object at 0x0000022B045447F0&gt;, &lt;bip.base.instr.BipInstr object at 0x0000022B04544978&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xCodeTo</span> <span class="c1"># bypass the xref objects and get the instr directly, if a BipData was pointed at this address it will not be listed</span>
+<span class="go">[&lt;bip.base.instr.BipInstr object at 0x0000022B04544438&gt;, &lt;bip.base.instr.BipInstr object at 0x0000022B0291DD30&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xFrom</span> <span class="c1"># same but for comming from this instruction</span>
+<span class="go">[&lt;bip.base.xref.BipXref object at 0x0000022B04544D68&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xFrom</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;bip.base.xref.BipXref object at 0x0000022B04544438&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xFrom</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dst</span> <span class="c1"># next instruction</span>
+<span class="go">BipInstr: 0x1800D3068 (jz      loc_1800D3227)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xFrom</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">src</span> <span class="c1"># current instruction</span>
+<span class="go">BipInstr: 0x1800D3063 (cmp     r15, [rsp+98h+var_58])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">xFrom</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dst_ea</span><span class="p">)</span> <span class="c1"># address of the next instruction</span>
+<span class="go">0x1800D3068L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xFrom</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_codepath</span> <span class="c1"># this is a normal code path (include jmp and call)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">xFrom</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_call</span> <span class="c1"># is this because of a call ?</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">BipFunction</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">Func: RtlQueryProcessLockInformation (0x1800D2FF0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">xTo</span> <span class="c1"># works also for function, but only with To, not with the From</span>
+<span class="go">[&lt;bip.base.xref.BipXref object at 0x000001D95529EB00&gt;, &lt;bip.base.xref.BipXref object at 0x000001D95529EB70&gt;, &lt;bip.base.xref.BipXref object at 0x000001D95529EBE0&gt;, &lt;bip.base.xref.BipXref object at 0x000001D95529EC88&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">xEltTo</span> <span class="c1"># here we have 3 data reference to this function</span>
+<span class="go">[&lt;bip.base.instr.BipInstr object at 0x000001D95529EE48&gt;, &lt;bip.base.data.BipData object at 0x000001D95529EEF0&gt;, &lt;bip.base.data.BipData object at 0x000001D95529EF28&gt;, &lt;bip.base.data.BipData object at 0x000001D95529EF60&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">xCodeTo</span> <span class="c1"># but only one instruction</span>
+<span class="go">[&lt;bip.base.instr.BipInstr object at 0x000001D95529EC88&gt;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="struct">
+<h3>Struct<a class="headerlink" href="#struct" title="Permalink to this headline">¶</a></h3>
+<p>Manipulating struct (<a class="reference internal" href="../base/struct.html#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a>) and members (<a class="reference internal" href="../base/struct.html#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a>):</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bip.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span> <span class="o">=</span> <span class="n">BipStruct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EXCEPTION_RECORD&quot;</span><span class="p">)</span> <span class="c1"># Struct are access by using get and their name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span> <span class="c1"># BipStruct object</span>
+<span class="go">Struct: EXCEPTION_RECORD (size=0x98)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;struct comment&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="o">.</span><span class="n">comment</span>
+<span class="go">struct comment</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="o">.</span><span class="n">name</span>
+<span class="go">EXCEPTION_RECORD</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="o">.</span><span class="n">size</span>
+<span class="go">152</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="s2">&quot;ExceptionFlags&quot;</span><span class="p">]</span> <span class="c1"># access to the BStructMember by their name</span>
+<span class="go">Member: EXCEPTION_RECORD.ExceptionFlags (offset=0x4, size=0x4)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c1"># or by their offset, this is *not* the entry number 8!!!</span>
+<span class="go">Member: EXCEPTION_RECORD.ExceptionRecord (offset=0x8, size=0x8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># offset does not need to be the first one</span>
+<span class="go">Member: EXCEPTION_RECORD.ExceptionCode (offset=0x0, size=0x4)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="o">.</span><span class="n">members</span> <span class="c1"># list of members</span>
+<span class="go">[&lt;bip.base.struct.BStructMember object at 0x000001D95529EEF0&gt;, ..., &lt;bip.base.struct.BStructMember object at 0x000001D95536DF28&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+<span class="go">ExceptionCode</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fullname</span>
+<span class="go">EXCEPTION_RECORD.ExceptionCode</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">struct</span>
+<span class="go">Struct: EXCEPTION_RECORD (size=0x98)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;member comment&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">comment</span>
+<span class="go">member comment</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">xEltTo</span> <span class="c1"># BStructMember et BipStruct have xrefs</span>
+<span class="go">[&lt;bip.base.instr.BipInstr object at 0x000001D95536DD30&gt;, &lt;bip.base.instr.BipInstr object at 0x000001D95536D9E8&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">xEltTo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">BipInstr: 0x1800A0720 (mov     [rsp+538h+ExceptionRecord.ExceptionRecord], r10)</span>
+</pre></div>
+</div>
+<p>Creating struct, adding member and nested structure:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bip.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span> <span class="o">=</span> <span class="n">BipStruct</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;NewStruct&quot;</span><span class="p">)</span> <span class="c1"># create a new structure</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span>
+<span class="go">Struct: NewStruct (size=0x0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;NewField&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="c1"># add a new member named &quot;NewField&quot; of size 4</span>
+<span class="go">Member: NewStruct.NewField (offset=0x0, size=0x4)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;NewQword&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="go">Member: NewStruct.NewQword (offset=0x4, size=0x8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span>
+<span class="go">Struct: NewStruct (size=0xC)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;struct_nested&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">Member: NewStruct.struct_nested (offset=0xC, size=0x1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="s2">&quot;struct_nested&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">BipType</span><span class="o">.</span><span class="n">FromC</span><span class="p">(</span><span class="s2">&quot;EXCEPTION_RECORD&quot;</span><span class="p">)</span> <span class="c1"># changing the type of member struct_nested as struct EXCEPTION_RECORD</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="s2">&quot;struct_nested&quot;</span><span class="p">]</span>
+<span class="go">Member: NewStruct.struct_nested (offset=0xC, size=0x98)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="s2">&quot;struct_nested&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_nested</span> <span class="c1"># is this a nested structure ?</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">st</span><span class="p">[</span><span class="s2">&quot;struct_nested&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">nested_struct</span> <span class="c1"># getting the nested structure</span>
+<span class="go">Struct: EXCEPTION_RECORD (size=0x98)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="types">
+<h3>Types<a class="headerlink" href="#types" title="Permalink to this headline">¶</a></h3>
+<p>IDA use extensively types in hexrays but also in the base API for defining
+types of data, variables and so on. In Bip the different types inherit from
+the same class <a class="reference internal" href="../base/type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>. This class propose some basic methods common to all
+types and subclasses (class starting by <code class="xref py py-class docutils literal notranslate"><span class="pre">BType</span></code>) can define more specific
+ones.</p>
+<p>The types should be seen as a recursive structure: a <code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*</span></code> is a
+<a class="reference internal" href="../base/type.html#bip.base.BTypePtr" title="bip.base.BTypePtr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypePtr</span></code></a> containing a <a class="reference internal" href="../base/type.html#bip.base.BTypeVoid" title="bip.base.BTypeVoid"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeVoid</span></code></a> structure. For a list of the
+different types implemented in Bip see <a class="reference internal" href="../base/type.html#doc-bip-base-type"><span class="std std-ref">Type</span></a>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bip.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pv</span> <span class="o">=</span> <span class="n">BipType</span><span class="o">.</span><span class="n">FromC</span><span class="p">(</span><span class="s2">&quot;void *&quot;</span><span class="p">)</span> <span class="c1"># FromC is the easiest way to create a type</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pv</span>
+<span class="go">&lt;bip.base.biptype.BTypePtr object at 0x000001D95536DDD8&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pv</span><span class="o">.</span><span class="n">size</span> <span class="c1"># ptr on x64 is 8 bytes</span>
+<span class="go">8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pv</span><span class="o">.</span><span class="n">str</span> <span class="c1"># C string representation</span>
+<span class="go">void *</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pv</span><span class="o">.</span><span class="n">is_named</span> <span class="c1"># this type is not named</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pv</span><span class="o">.</span><span class="n">pointed</span> <span class="c1"># type below the pointer (recursive)</span>
+<span class="go">&lt;bip.base.biptype.BTypeVoid object at 0x000001D95536DF60&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pv</span><span class="o">.</span><span class="n">children</span> <span class="c1"># list of type pointed</span>
+<span class="go">[&lt;bip.base.biptype.BTypeVoid object at 0x000001D95536DEB8&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">BipData</span><span class="p">(</span><span class="mh">0x000180110068</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">type</span> <span class="c1"># access directly to the type at the address</span>
+<span class="go">&lt;bip.base.biptype.BTypePtr object at 0x000001D95536D9E8&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">str</span>
+<span class="go">void *</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span> <span class="o">=</span> <span class="n">BipType</span><span class="o">.</span><span class="n">FromC</span><span class="p">(</span><span class="s2">&quot;EXCEPTION_RECORD *&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">.</span><span class="n">pointed</span> <span class="c1"># type for struct EXCEPTION_RECORD</span>
+<span class="go">&lt;bip.base.biptype.BTypeStruct object at 0x000001D95536DD30&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">.</span><span class="n">pointed</span><span class="o">.</span><span class="n">is_named</span> <span class="c1"># this one is named</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">.</span><span class="n">pointed</span><span class="o">.</span><span class="n">name</span>
+<span class="go">EXCEPTION_RECORD</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span><span class="o">.</span><span class="n">set_at</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">ea</span><span class="p">)</span> <span class="c1"># set the type ps at address d.ea</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">str</span> <span class="c1"># the type has indeed change</span>
+<span class="go">EXCEPTION_RECORD *</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">pv</span> <span class="c1"># rolling it back</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">str</span>
+<span class="go">void *</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BipType</span><span class="o">.</span><span class="n">get_at</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">ea</span><span class="p">)</span> <span class="c1"># Possible to directly recuperating the type with get_at(address)</span>
+<span class="go">&lt;bip.base.biptype.BTypePtr object at 0x000001D95536DEB8&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="module-bip.hexrays">
+<span id="hexrays"></span><h2>Hexrays<a class="headerlink" href="#module-bip.hexrays" title="Permalink to this headline">¶</a></h2>
+<p>The module <code class="docutils literal notranslate"><span class="pre">bip.hexrays</span></code> contains the features link to the decompiler
+provided by IDA.</p>
+<div class="section" id="functions-local-variables">
+<h3>Functions / local variables<a class="headerlink" href="#functions-local-variables" title="Permalink to this headline">¶</a></h3>
+<p>Hexrays functions are represented by the <a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> objects and local
+variable by the <a class="reference internal" href="../hexrays/lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> objects:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">HxCFunc</span><span class="o">.</span><span class="n">from_addr</span><span class="p">()</span> <span class="c1"># HxCFunc represent a decompiled function</span>
+<span class="go">&lt;bip.hexrays.hx_cfunc.HxCFunc object at 0x00000278AE80C860&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hf</span> <span class="o">=</span> <span class="n">BipFunction</span><span class="p">()</span><span class="o">.</span><span class="n">hxfunc</span> <span class="c1"># accessible from a &quot;normal function&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">hf</span><span class="o">.</span><span class="n">ea</span><span class="p">)</span> <span class="c1"># address of the functions</span>
+<span class="go">0x1800d2ff0L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hf</span><span class="o">.</span><span class="n">args</span> <span class="c1"># list of the arguments as HxLvar objects</span>
+<span class="go">[&lt;bip.hexrays.hx_lvar.HxLvar object at 0x00000278AFDAACF8&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hf</span><span class="o">.</span><span class="n">lvars</span> <span class="c1"># list of all local variable (including args)</span>
+<span class="go">[&lt;bip.hexrays.hx_lvar.HxLvar object at 0x00000278AFDAAB70&gt;, ..., &lt;bip.hexrays.hx_lvar.HxLvar object at 0x00000278AFDAF4E0&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lv</span> <span class="o">=</span> <span class="n">hf</span><span class="o">.</span><span class="n">lvars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># getting the first one</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lv</span>
+<span class="go">LVAR(name=a1, size=8, type=&lt;bip.base.biptype.BTypeInt object at 0x00000278AFDAAFD0&gt;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lv</span><span class="o">.</span><span class="n">name</span> <span class="c1"># getting name of lvar</span>
+<span class="go">a1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lv</span><span class="o">.</span><span class="n">is_arg</span> <span class="c1"># is this variable an argument ?</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lv</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;thisisthefirstarg&quot;</span> <span class="c1"># changing name of the lvar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lv</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lv</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">BipType</span><span class="o">.</span><span class="n">FromC</span><span class="p">(</span><span class="s2">&quot;void *&quot;</span><span class="p">)</span> <span class="c1"># changing the type</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lv</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;new comment&quot;</span> <span class="c1"># adding a comment</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lv</span><span class="o">.</span><span class="n">size</span> <span class="c1"># getting the size</span>
+<span class="go">8</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cnode-visitors">
+<span id="general-overview-cnode-visit"></span><h3>CNode / Visitors<a class="headerlink" href="#cnode-visitors" title="Permalink to this headline">¶</a></h3>
+<p>Hexrays allows to manipulate the AST it produces, this is a particularly
+useful feature as it allows to make static analysis at a way higher level.
+Bip define <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> which represents a node of the AST, each type of node is
+represented by a subclass of <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>. All types of node have child nodes except
+<a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExprFinal" title="bip.hexrays.CNodeExprFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFinal</span></code></a> which are the leaf of the AST. Two <em>main</em> types of nodes
+exist <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a> (expressions) and <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a> (statements).
+Statements correspond to the C Statements: if, while, … , expressions are everything
+else. Statements can have children statements or expressions while expressions
+can only have expressions children.</p>
+<p>A list of all the different types of node and more details on what they do and
+how to write visitor is present in <a class="reference internal" href="../hexrays/cnode.html#doc-hexrays-cnode"><span class="std std-ref">CNode</span></a>.</p>
+<p>Directly accessing the nodes:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hf</span> <span class="o">=</span> <span class="n">HxCFunc</span><span class="o">.</span><span class="n">from_addr</span><span class="p">()</span> <span class="c1"># get the HxCFunc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rn</span> <span class="o">=</span> <span class="n">hf</span><span class="o">.</span><span class="n">root_node</span> <span class="c1"># accessing the root node of the function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rn</span> <span class="c1"># root node is always a CNodeStmtBlock</span>
+<span class="go">CNodeStmtBlock(ea=0x1800D3006, stmt_children=[&lt;bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278AFDAADD8&gt;, ..., &lt;bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16355F8&gt;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">rn</span><span class="o">.</span><span class="n">ea</span><span class="p">)</span> <span class="c1"># address of the root node, after the function prolog</span>
+<span class="go">0x1800d3006L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rn</span><span class="o">.</span><span class="n">has_parent</span> <span class="c1"># root node does not have parent</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rn</span><span class="o">.</span><span class="n">expr_children</span> <span class="c1"># this node does not have expression statements</span>
+<span class="go">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ste</span> <span class="o">=</span> <span class="n">rn</span><span class="o">.</span><span class="n">stmt_children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># getting the first statement children</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ste</span> <span class="c1"># CNodeStmtExpr contain one child expression</span>
+<span class="go">CNodeStmtExpr(ea=0x1800D3006, value=CNodeExprAsg(ea=0x1800D3006, ops=[&lt;bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8&gt;, &lt;bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1637080&gt;]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ste</span><span class="o">.</span><span class="n">parent</span> <span class="c1"># the parent is the root node</span>
+<span class="go">CNodeStmtBlock(ea=0x1800D3006, stmt_children=[&lt;bip.hexrays.cnode.CNodeStmtExpr object at 0x00000278B1637048&gt;, ..., &lt;bip.hexrays.cnode.CNodeStmtReturn object at 0x00000278B16376D8&gt;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">ste</span><span class="o">.</span><span class="n">value</span> <span class="c1"># getting the expression of the node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="c1"># Asg is an assignement</span>
+<span class="go">CNodeExprAsg(ea=0x1800D3006, ops=[&lt;bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8&gt;, &lt;bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1637080&gt;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">first_op</span> <span class="c1"># first operand of the assignement is a lvar, lvar are leaf</span>
+<span class="go">CNodeExprVar(ea=0xFFFFFFFFFFFFFFFF, value=1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">first_op</span><span class="o">.</span><span class="n">lvar</span> <span class="c1"># recuperate the lvar object</span>
+<span class="go">LVAR(name=v1, size=8, type=&lt;bip.base.biptype.BTypeInt object at 0x00000278B16390B8&gt;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">ops</span> <span class="c1"># list all operands of the expression</span>
+<span class="go">[&lt;bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8&gt;, &lt;bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1639080&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># getting the second operand, also a lvar</span>
+<span class="go">CNodeExprVar(ea=0xFFFFFFFFFFFFFFFF, value=0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">ops</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">closest_ea</span><span class="p">)</span> <span class="c1"># lvar have no position in the ASM, but possible to take the one of the parents</span>
+<span class="go">0x1800d3006L</span>
+</pre></div>
+</div>
+<p>The previous code show how to get value and manipulate quickly nodes. For
+making analysis it is easier to use visitors on the complete function.
+<a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc.visit_cnode" title="bip.hexrays.HxCFunc.visit_cnode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HxCFunc.visit_cnode()</span></code></a> allows to visit all the nodes in a function with a
+callback, <a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc.visit_cnode_filterlist" title="bip.hexrays.HxCFunc.visit_cnode_filterlist"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HxCFunc.visit_cnode_filterlist()</span></code></a> allow to visit only nodes of a
+certain type by passing a list of the node classes.</p>
+<p>This script is an example for visiting a function and recuperating the
+format string pass to a <code class="docutils literal notranslate"><span class="pre">printk</span></code> function. It locates the call to <code class="docutils literal notranslate"><span class="pre">printk</span></code>,
+recuperate the address of the first argument, get the string and add a comment
+in both hexrays and the assembly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bip</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for all call to printk, if possible recuperate the string and add</span>
+<span class="sd">    it in comments at the level of the call.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">is_call_to_printk</span><span class="p">(</span><span class="n">cn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the node object represent a call to the function ``printk``.</span>
+
+<span class="sd">        :param cn: A :class:`CNodeExprCall` object.</span>
+<span class="sd">        :return: True if it is a call to printk, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">cn</span><span class="o">.</span><span class="n">caller_func</span>
+    <span class="k">return</span> <span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;printk&quot;</span>
+
+<span class="k">def</span> <span class="nf">visit_call_printk</span><span class="p">(</span><span class="n">cn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Visitor for call node which will check if a node is a call to</span>
+<span class="sd">        ``printk`` and add the string in comment if possible.</span>
+
+<span class="sd">        :param cn: A :class:`CNodeExprCall` object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check if it calls to printk</span>
+    <span class="c1"># For more perf. we would want to use xref to printk and checks of</span>
+    <span class="c1">#   the address of the node</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_call_to_printk</span><span class="p">(</span><span class="n">cn</span><span class="p">):</span> <span class="c1"># not a call to printk: ignore</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="n">cn</span><span class="o">.</span><span class="n">number_args</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># not enough args</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Not enough args at 0x{:X}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cn</span><span class="o">.</span><span class="n">closest_ea</span><span class="p">))</span>
+        <span class="k">return</span>
+    <span class="n">cnr</span> <span class="o">=</span> <span class="n">cn</span><span class="o">.</span><span class="n">get_arg</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">ignore_cast</span> <span class="c1"># get the arg</span>
+    <span class="c1"># if we have a ref (&amp;global) we want the object under</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cnr</span><span class="p">,</span> <span class="n">CNodeExprRef</span><span class="p">):</span>
+        <span class="n">cnr</span> <span class="o">=</span> <span class="n">cnr</span><span class="o">.</span><span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ignore_cast</span>
+    <span class="c1"># if this is not a global object we ignore it</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cnr</span><span class="p">,</span> <span class="n">CNodeExprObj</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Not an object at 0x{:X}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cn</span><span class="o">.</span><span class="n">closest_ea</span><span class="p">))</span>
+        <span class="k">return</span>
+    <span class="n">ea</span> <span class="o">=</span> <span class="n">cnr</span><span class="o">.</span><span class="n">value</span> <span class="c1"># get the address of the object</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">BipData</span><span class="o">.</span><span class="n">get_cstring</span><span class="p">(</span><span class="n">ea</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="c1"># get the string</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Invalid string at 0x{:X}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cn</span><span class="o">.</span><span class="n">closest_ea</span><span class="p">))</span>
+        <span class="k">return</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="c1"># remove \n</span>
+    <span class="c1"># add comment both in hexrays and in asm view</span>
+    <span class="n">cn</span><span class="o">.</span><span class="n">hxcfunc</span><span class="o">.</span><span class="n">add_cmt</span><span class="p">(</span><span class="n">cn</span><span class="o">.</span><span class="n">closest_ea</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">GetElt</span><span class="p">(</span><span class="n">cn</span><span class="o">.</span><span class="n">closest_ea</span><span class="p">)</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">s</span>
+
+<span class="c1"># Final function which take the address of a function and comment the call</span>
+<span class="c1">#   to printk</span>
+<span class="k">def</span> <span class="nf">printk_handler</span><span class="p">(</span><span class="n">eafunc</span><span class="p">):</span>
+    <span class="n">hf</span> <span class="o">=</span> <span class="n">HxCFunc</span><span class="o">.</span><span class="n">from_addr</span><span class="p">(</span><span class="n">eafunc</span><span class="p">)</span> <span class="c1"># get the hexrays function</span>
+    <span class="n">hf</span><span class="o">.</span><span class="n">visit_cnode_filterlist</span><span class="p">(</span><span class="n">visit_call_printk</span><span class="p">,</span> <span class="p">[</span><span class="n">CNodeExprCall</span><span class="p">])</span> <span class="c1"># visit only the call nodes</span>
+</pre></div>
+</div>
+<p>While visitors are practice (and “fast”), Bip also exposes methods for directly
+recuperating the <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> objects as a list. The methods
+<a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc.get_cnode_filter" title="bip.hexrays.HxCFunc.get_cnode_filter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HxCFunc.get_cnode_filter()</span></code></a> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">HxCFunc.get_cnode_filter_list()</span></code>
+allow to avoid having a visitor function and make it easier to manipulate
+the hexrays API. It is also worth noting that all visitors functions provided
+by <a class="reference internal" href="../hexrays/cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> objects are also available directly in <a class="reference internal" href="../hexrays/cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>
+objects for visiting only a sub-tree of the full AST.</p>
+</div>
+</div>
+<div class="section" id="module-bip.gui">
+<span id="plugins"></span><h2>Plugins<a class="headerlink" href="#module-bip.gui" title="Permalink to this headline">¶</a></h2>
+<p>Plugins using Bip should all inherit from the class <a class="reference internal" href="../gui/plugin.html#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a>. Those
+plugins are different from the IDA plugin and are loaded and called by the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code>. Each plugin is identified by its class name and those
+should be unique. Bip can be used with standard plugin but most of the
+<code class="docutils literal notranslate"><span class="pre">bip.gui</span></code> implementation is linked to the use of <a class="reference internal" href="../gui/plugin.html#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a>. For
+more information about plugins and internals see <a class="reference internal" href="../gui/plugin.html#gui-plugins"><span class="std std-ref">Plugins</span></a>.</p>
+<p>Here is a simple plugin example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bip.gui</span> <span class="kn">import</span> <span class="o">*</span> <span class="c1"># BipPlugin is define in the bip.gui module</span>
+
+<span class="k">class</span> <span class="nc">ExPlugin</span><span class="p">(</span><span class="n">BipPlugin</span><span class="p">):</span>
+    <span class="c1"># inherit from BipPlugin, all plugin should be instantiated only once</span>
+    <span class="c1"># this should be done by the plugin manager, not &quot;by hand&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">to_load</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span> <span class="c1"># allow to test if the plugin apply, this MUST be a classmethod</span>
+        <span class="k">return</span> <span class="bp">True</span> <span class="c1"># always loading</span>
+
+    <span class="nd">@shortcut</span><span class="p">(</span><span class="s2">&quot;Ctrl-H&quot;</span><span class="p">)</span> <span class="c1"># add a shortcut as a decorator, will call the method below</span>
+    <span class="nd">@shortcut</span><span class="p">(</span><span class="s2">&quot;Ctrl-5&quot;</span><span class="p">)</span> <span class="c1"># add an other one</span>
+    <span class="nd">@menu</span><span class="p">(</span><span class="s2">&quot;Bip/MyPluginExample/&quot;</span><span class="p">,</span> <span class="s2">&quot;ExPlugin Action!&quot;</span><span class="p">)</span> <span class="c1"># add a menu entry named &quot;ExPlugin Action!&quot;, default is the method name</span>
+    <span class="k">def</span> <span class="nf">action_with_shortcut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="c1"># this is the ExPlugin object</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;In ExPlugin action !&quot;</span><span class="p">)</span><span class="c1"># code here</span>
+
+<span class="n">bpm</span> <span class="o">=</span> <span class="n">get_plugin_manager</span><span class="p">()</span> <span class="c1"># get the BipPluginManager object</span>
+<span class="n">bpm</span><span class="o">.</span><span class="n">addld_plugin</span><span class="p">(</span><span class="s2">&quot;ExPlugin&quot;</span><span class="p">,</span> <span class="n">ExPlugin</span><span class="p">)</span> <span class="c1"># ask the BipPluginManager to load the plugin</span>
+<span class="c1"># plugins in ``bipplugin`` folder will be loaded automatically and do not need those lines</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../gui/plugin.html#bip.gui.menu" title="bip.gui.menu"><code class="xref py py-func docutils literal notranslate"><span class="pre">menu()</span></code></a> decorator will automatically create the <code class="docutils literal notranslate"><span class="pre">MyPluginExample</span></code>
+menu entry in the <code class="docutils literal notranslate"><span class="pre">Bip</span></code> top level menu entry (which is created by the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code>), creating an entry in the <code class="docutils literal notranslate"><span class="pre">Edit/Plugins/</span></code>
+directory may not work because of how the entry of this submenu are created
+by IDA.</p>
+<p>A plugin can expose methods which another plugin wants to call or directly
+from the console. A plugin should not be directly instantiated, it is the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BipPluginManager</span></code> which is in charge of loading it. For recuperating a
+<a class="reference internal" href="../gui/plugin.html#bip.gui.BipPlugin" title="bip.gui.BipPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipPlugin</span></code></a> object it should be requested to the plugin manager:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bip.gui</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">bpm</span> <span class="o">=</span> <span class="n">get_plugin_manager</span><span class="p">()</span> <span class="c1"># recuperate the BipPluginManager object</span>
+<span class="n">bpm</span>
+<span class="c1"># &lt;bip.gui.pluginmanager.BipPluginManager object at 0x000001EFE42D68D0&gt;</span>
+<span class="n">tp</span> <span class="o">=</span> <span class="n">bpm</span><span class="p">[</span><span class="s2">&quot;TstPlugin&quot;</span><span class="p">]</span> <span class="c1"># recuperate the plugin object name TstPlugin</span>
+<span class="n">tp</span> <span class="c1"># can also be recuperated by passing directly the class</span>
+<span class="c1"># &lt;__plugins__tst_plg.TstPlugin object at 0x000001EFE42D69B0&gt;</span>
+<span class="n">tp</span><span class="o">.</span><span class="n">hello</span><span class="p">()</span> <span class="c1"># calling a method of TstPlugin</span>
+<span class="c1"># hello</span>
+</pre></div>
+</div>
+<p>For the previous example with <code class="docutils literal notranslate"><span class="pre">printk</span></code> we could write the following plugin:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PrintkComs</span><span class="p">(</span><span class="n">BipPlugin</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">printk_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eafunc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Comment all call to printk in a function with the format string</span>
+<span class="sd">            pass to the printk. Comments are added in both the hexrays and ASM</span>
+<span class="sd">            view. Works only if the first argument is a global.</span>
+
+<span class="sd">            :param eafunc: The addess of the function in which to add the</span>
+<span class="sd">                comment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">hf</span> <span class="o">=</span> <span class="n">HxCFunc</span><span class="o">.</span><span class="n">from_addr</span><span class="p">(</span><span class="n">eafunc</span><span class="p">)</span> <span class="c1"># get hexray view of the func</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Fail getting the decompile view for function at 0x{:X}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">eafunc</span><span class="p">))</span>
+            <span class="k">return</span>
+        <span class="n">hf</span><span class="o">.</span><span class="n">visit_cnode_filterlist</span><span class="p">(</span><span class="n">visit_call_printk</span><span class="p">,</span> <span class="p">[</span><span class="n">CNodeExprCall</span><span class="p">])</span> <span class="c1"># visit only on the call</span>
+
+    <span class="nd">@shortcut</span><span class="p">(</span><span class="s2">&quot;Ctrl-H&quot;</span><span class="p">)</span>
+    <span class="nd">@menu</span><span class="p">(</span><span class="s2">&quot;Bip/PrintkCom/&quot;</span><span class="p">,</span> <span class="s2">&quot;Comment printk in current function&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">printk_current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Add comment for the current function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">printk_handler</span><span class="p">(</span><span class="n">Here</span><span class="p">())</span>
+
+    <span class="nd">@menu</span><span class="p">(</span><span class="s2">&quot;Bip/PrintkCom/&quot;</span><span class="p">,</span> <span class="s2">&quot;Comment all printk&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">printk_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Add comment for the all the functions in the IDB.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get the function which call printk</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">BipFunction</span><span class="o">.</span><span class="n">get_by_name</span><span class="p">(</span><span class="s2">&quot;printk&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;No function named printk&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">fu</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">callers</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Renaming for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fu</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">printk_handler</span><span class="p">(</span><span class="n">fu</span><span class="o">.</span><span class="n">ea</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Overview</a><ul>
+<li><a class="reference internal" href="#module-bip.base">Base</a><ul>
+<li><a class="reference internal" href="#instructions-operands">Instructions / Operands</a></li>
+<li><a class="reference internal" href="#function-basic-block">Function / Basic block</a></li>
+<li><a class="reference internal" href="#data">Data</a></li>
+<li><a class="reference internal" href="#element">Element</a></li>
+<li><a class="reference internal" href="#xref">Xref</a></li>
+<li><a class="reference internal" href="#struct">Struct</a></li>
+<li><a class="reference internal" href="#types">Types</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bip.hexrays">Hexrays</a><ul>
+<li><a class="reference internal" href="#functions-local-variables">Functions / local variables</a></li>
+<li><a class="reference internal" href="#cnode-visitors">CNode / Visitors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bip.gui">Plugins</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">Installation steps</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="archi.html"
+                        title="next chapter">Bip Project architecture</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/general/overview.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="archi.html" title="Bip Project architecture"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation steps"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

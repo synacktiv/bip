@@ -1,0 +1,1454 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Ast Nodes &amp; Visitors &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="CNode" href="cnode.html" />
+    <link rel="prev" title="Local variables" href="lvar.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cnode.html" title="CNode"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lvar.html" title="Local variables"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.hexrays">
+<span id="ast-nodes-visitors"></span><span id="doc-hexrays-astnodes"></span><h1>Ast Nodes &amp; Visitors<a class="headerlink" href="#module-bip.hexrays" title="Permalink to this headline">¶</a></h1>
+<p>This page explain in more details how the AST nodes from hexrays works in
+Bip (<a class="reference internal" href="#node-representation-in-bip">Node representation in Bip</a>), including the description of all possible
+nodes of the AST (<a class="reference internal" href="#ast-node-types">AST Node types</a>) and some information about
+the <a class="reference internal" href="#visitors-in-bip">visitors in Bip</a>. It also contains the API for two top level classes
+(<a class="reference internal" href="#bip.hexrays.AbstractCItem" title="bip.hexrays.AbstractCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractCItem</span></code></a> and <a class="reference internal" href="#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a>) used
+internally.</p>
+<div class="section" id="node-representation-in-bip">
+<h2>Node representation in Bip<a class="headerlink" href="#node-representation-in-bip" title="Permalink to this headline">¶</a></h2>
+<p>AST nodes of a decompiled hexrays C function are represented in two different
+ways in Bip: using <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> or
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a>. In IDA all nodes are represented by the class
+<code class="docutils literal notranslate"><span class="pre">citem_t</span></code> with subclasses for different types of node, the Bip equivalent is
+the <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a>. However there is some limitations to what
+it is provided by this object, the principal one is the fact that
+a <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> do not provide a link to the function from which
+they are derived. This limitation can be quite problematic at time and so the
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> abstraction was created for keeping a single link to
+the parent function and to the parent node.</p>
+<p>In most cases, there is really few differences to use one or another of those
+representation but as <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> objects possess more
+functionnality there is few reasons not to use them.</p>
+<p>Both <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> classes are
+abstract and posess multiple subclasses which represents the actual nodes of
+the AST depending on their types. Both those classes have a lot in common and
+inherit from the same abstract class <a class="reference internal" href="#bip.hexrays.AbstractCItem" title="bip.hexrays.AbstractCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractCItem</span></code></a>. For
+determining the correct node to implement it is necessary to check its type
+from the <code class="docutils literal notranslate"><span class="pre">citem_t</span></code> object, this type internal to IDA are represented in Bip
+by <a class="reference internal" href="#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a>. For more information about which nodes
+represent what C element see <a class="reference internal" href="#ast-node-types">AST Node types</a>.</p>
+<p>As subclasses of <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>
+would have a lot in common and for avoiding code duplication the subclasses
+for the <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> are dynamically generated. This should
+have no impact for the user, but when looking at the code of Bip it is normal
+to not find anywhere the subclasses of <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>.  All nodes
+which inherit from <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> start with the <code class="docutils literal notranslate"><span class="pre">HxC</span></code> prefix
+while all class which inherit from <a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> start with the
+<code class="docutils literal notranslate"><span class="pre">CNode</span></code> prefix.</p>
+<p>For more information see <a class="reference internal" href="cnode.html#doc-hexrays-cnode-generation-internal"><span class="std std-ref">CNode generation and internals</span></a>.</p>
+</div>
+<div class="section" id="ast-node-types">
+<span id="doc-hexrays-astnodes-nodetype"></span><h2>AST Node types<a class="headerlink" href="#ast-node-types" title="Permalink to this headline">¶</a></h2>
+<p>AST nodes are split in two main categories: statements (<code class="docutils literal notranslate"><span class="pre">Stmt</span></code>) and
+expressions (<code class="docutils literal notranslate"><span class="pre">Expr</span></code>). Those two categories have basically the same meaning
+than in C: statements mainly include execution flow control (<code class="docutils literal notranslate"><span class="pre">if</span></code>, <code class="docutils literal notranslate"><span class="pre">for</span></code>,
+<code class="docutils literal notranslate"><span class="pre">block</span></code>, <code class="docutils literal notranslate"><span class="pre">goto</span></code>, <code class="docutils literal notranslate"><span class="pre">return</span></code>, …) while expressions are basically
+everything else from assignment, arithmetic operations to functions calls and
+cast.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All the class given there after are the one for the
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> implementation but it works exactly the same
+for the <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> implementation.</p>
+</div>
+<p>The AST is a tree representation of the decompiled code, each node of this
+tree will be either a statements (object which inherit
+from <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a>) or an expression (object which inherit
+from <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a>). A statement node can have children
+which are expression or statements, while an expression node may only have
+children which are expression. The <a class="reference internal" href="cfunc.html#bip.hexrays.HxCFunc.root_node" title="bip.hexrays.HxCFunc.root_node"><code class="xref py py-meth docutils literal notranslate"><span class="pre">root_node()</span></code></a> of
+a function should always be a <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtBlock" title="bip.hexrays.CNodeStmtBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtBlock</span></code></a> which
+itself should contain the different statements used in the rest of the
+function. For a concrete example of an AST
+see <a class="reference internal" href="../general/archi.html#general-archi-hexrays-example-ast"><span class="std std-ref">Example of AST</span></a>.</p>
+<p>Bip provides a class hierarchy for “classifying” the different kind of nodes.
+This class hierarchy is composed of numerous abstract classes which represent
+different “types” of nodes. At the top of the hierarchy is the
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a> class, followed just bello by the
+<a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a> which
+represent the statement and the expressions. Those are follow by other
+abastract classes which are detailed in <a class="reference internal" href="#abstract-node-types">abstract node types</a>, one of the
+interest of those abstract class is to be able to use <code class="docutils literal notranslate"><span class="pre">isinstance</span></code> when
+developing a visitor or recuperating nodes of a particular types for treating
+several nodes the same way (see <a class="reference internal" href="../general/archi.html#general-archi-common-patterns"><span class="std std-ref">Common code patterns</span></a>). The
+leaf of the class hierarchy are the concrete class which have a particular
+meaning in C, those node types are detailed in <a class="reference internal" href="#concrete-node-types">concrete node types</a>.</p>
+<div class="section" id="abstract-node-types">
+<h3>Abstract node types<a class="headerlink" href="#abstract-node-types" title="Permalink to this headline">¶</a></h3>
+<p>This table describes the abstract node type which represent the class
+hierarchy of the node.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="9%" />
+<col width="2%" />
+<col width="32%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Class name</th>
+<th class="head">Parent class name</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+<th class="head">Childrens</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a></td>
+<td>Stmt</td>
+<td>Base class for all concrete and abstract statement nodes.</td>
+<td>Depends, childrens can be statement or expressions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtFinal" title="bip.hexrays.CNodeStmtFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtFinal</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a></td>
+<td>Stmt</td>
+<td>All statement class which do not have other statements as childrens but have values.</td>
+<td>Depends, childrens can not be statement.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtLoop" title="bip.hexrays.CNodeStmtLoop"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtLoop</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a></td>
+<td>Stmt</td>
+<td>All statement representing a loop (for, while, dowhile).</td>
+<td>Depends, at least one expression <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtLoop.cond" title="bip.hexrays.CNodeStmtLoop.cond"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtLoop.cond()</span></code></a> for the loop condition and a statement <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtLoop.st_body" title="bip.hexrays.CNodeStmtLoop.st_body"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtLoop.st_body()</span></code></a> for the content of the loop.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a></td>
+<td>Expr</td>
+<td>Base class for all concrete and abstract expression nodes.</td>
+<td>Depends, childrens can not be statement.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFinal" title="bip.hexrays.CNodeExprFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFinal</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a></td>
+<td>Expr</td>
+<td>Expression which do not have any other node as children, but have values. Those nodes are always leaf of the AST.</td>
+<td>No childrens, <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFinal.value" title="bip.hexrays.CNodeExprFinal.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeExprFinal.value()</span></code></a> for getting the content of the expression.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a></td>
+<td>Expr</td>
+<td>Expression which posess two operands, this includes assignment, most logical and mathematical operations and things like comma.</td>
+<td>Two expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation.first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation.second_op()</span></code></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>Expr</td>
+<td>Expression which represent an assignment, this include simple assignment but also assignment with operations (such as <code class="docutils literal notranslate"><span class="pre">+=</span></code>).</td>
+<td>Two expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeExprAssignment.dst()</span></code></a> (equivalent to <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation.first_op()</span></code></a>) and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeExprAssignment.src()</span></code></a> (equivalent to <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation.second_op()</span></code></a>).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a></td>
+<td>Expr</td>
+<td>Expression for unary operation such as <code class="docutils literal notranslate"><span class="pre">++</span></code>, negation, pointer, cast and so on.</td>
+<td>One expression child <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation.operand()</span></code></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemAccess" title="bip.hexrays.CNodeExprMemAccess"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprMemAccess</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a></td>
+<td>Expr</td>
+<td>Expression which represent a memory access in an array or structure, this do not include simple pointers.</td>
+<td>One or two children: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemAccess.obj" title="bip.hexrays.CNodeExprMemAccess.obj"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeExprMemAccess.obj()</span></code></a> as an expression and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemAccess.off" title="bip.hexrays.CNodeExprMemAccess.off"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeExprMemAccess.off()</span></code></a> which can be an expression or an integer.</td>
+</tr>
+</tbody>
+</table>
+<p>Those classes are represented on the schematic of the hexrays architecture:</p>
+<div class="figure">
+<img alt="../_images/bip_hexrays_cnode.png" src="../_images/bip_hexrays_cnode.png" />
+</div>
+</div>
+<div class="section" id="concrete-node-types">
+<h3>Concrete node types<a class="headerlink" href="#concrete-node-types" title="Permalink to this headline">¶</a></h3>
+<p>This tables describe the concrete nodes with actual meaning in C. For more
+clarity this table has been separated between the statements and the
+expressions.</p>
+<div class="section" id="statements-concrete-node-types">
+<h4>Statements concrete node types<a class="headerlink" href="#statements-concrete-node-types" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="4%" />
+<col width="18%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Class name</th>
+<th class="head">Parent class name</th>
+<th class="head">Description</th>
+<th class="head">Childrens</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtEmpty" title="bip.hexrays.CNodeStmtEmpty"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtEmpty</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a></td>
+<td>Empty statement, should not be present in final AST but this happens.</td>
+<td>None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtExpr" title="bip.hexrays.CNodeStmtExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtExpr</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtFinal" title="bip.hexrays.CNodeStmtFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtFinal</span></code></a></td>
+<td>Statement containing an expression.</td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtExpr.value" title="bip.hexrays.CNodeStmtExpr.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtExpr.value()</span></code></a> contains an expression.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtGoto" title="bip.hexrays.CNodeStmtGoto"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtGoto</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtFinal" title="bip.hexrays.CNodeStmtFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtFinal</span></code></a></td>
+<td>Statement representing a <code class="docutils literal notranslate"><span class="pre">goto</span></code> in C, it contains a label number.</td>
+<td>No statement or expression, <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtGoto.value" title="bip.hexrays.CNodeStmtGoto.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtGoto.value()</span></code></a> return the label number.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtAsm" title="bip.hexrays.CNodeStmtAsm"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtAsm</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtFinal" title="bip.hexrays.CNodeStmtFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtFinal</span></code></a></td>
+<td>Statement containing an asm value (<code class="docutils literal notranslate"><span class="pre">__asm</span></code>), correspond to inline ASM in C.</td>
+<td>No statements or expression, <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtAsm.value" title="bip.hexrays.CNodeStmtAsm.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtAsm.value()</span></code></a> return the list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Instr</span></code> contain in the statement.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtReturn" title="bip.hexrays.CNodeStmtReturn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtReturn</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtFinal" title="bip.hexrays.CNodeStmtFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtFinal</span></code></a></td>
+<td>Statement representing a <code class="docutils literal notranslate"><span class="pre">return</span></code>.</td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtReturn.value" title="bip.hexrays.CNodeStmtReturn.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtReturn.value()</span></code></a> contain the expression the function return.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtIf" title="bip.hexrays.CNodeStmtIf"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtIf</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a></td>
+<td>Statement representing a <code class="docutils literal notranslate"><span class="pre">if</span></code>.</td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtIf.cond" title="bip.hexrays.CNodeStmtIf.cond"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtIf.cond()</span></code></a> is an expression representing the condition; <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtIf.st_then" title="bip.hexrays.CNodeStmtIf.st_then"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtIf.st_then()</span></code></a> is a statement representing the block taken if the condition is true; <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtIf.st_else" title="bip.hexrays.CNodeStmtIf.st_else"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtIf.st_else()</span></code></a> is a statement representing the block taken if the condition is false, if there is no <code class="docutils literal notranslate"><span class="pre">else</span></code> this will be <code class="docutils literal notranslate"><span class="pre">None</span></code> (test with <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtIf.has_else" title="bip.hexrays.CNodeStmtIf.has_else"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtIf.has_else()</span></code></a>): <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(cond)</span> <span class="pre">{</span> <span class="pre">st_then</span> <span class="pre">}</span> <span class="pre">else</span> <span class="pre">{</span> <span class="pre">st_else</span> <span class="pre">};</span></code>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtFor" title="bip.hexrays.CNodeStmtFor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtFor</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtLoop" title="bip.hexrays.CNodeStmtLoop"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtLoop</span></code></a></td>
+<td>Statement representing a <code class="docutils literal notranslate"><span class="pre">for</span></code>.</td>
+<td>Three expressions for the <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtFor.init" title="bip.hexrays.CNodeStmtFor.init"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtFor.init()</span></code></a>, <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtFor.cond" title="bip.hexrays.CNodeStmtFor.cond"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtFor.cond()</span></code></a>, <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtFor.step" title="bip.hexrays.CNodeStmtFor.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtFor.step()</span></code></a> (<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">(init;</span> <span class="pre">cond;</span> <span class="pre">step)</span></code>) and one statement for the content of the loop: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtFor.st_body" title="bip.hexrays.CNodeStmtFor.st_body"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtFor.st_body()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtWhile" title="bip.hexrays.CNodeStmtWhile"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtWhile</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtLoop" title="bip.hexrays.CNodeStmtLoop"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtLoop</span></code></a></td>
+<td>Statement representing a <code class="docutils literal notranslate"><span class="pre">while</span></code>.</td>
+<td>One expression for the <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtWhile.cond" title="bip.hexrays.CNodeStmtWhile.cond"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtWhile.cond()</span></code></a> and one statement for the <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtWhile.st_body" title="bip.hexrays.CNodeStmtWhile.st_body"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtWhile.st_body()</span></code></a> (<code class="docutils literal notranslate"><span class="pre">while</span> <span class="pre">(cond)</span> <span class="pre">{</span> <span class="pre">st_body</span> <span class="pre">};</span></code>).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtDoWhile" title="bip.hexrays.CNodeStmtDoWhile"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtDoWhile</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtLoop" title="bip.hexrays.CNodeStmtLoop"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtLoop</span></code></a></td>
+<td>Statement representing a <code class="docutils literal notranslate"><span class="pre">do</span> <span class="pre">...</span> <span class="pre">while</span></code> loop.</td>
+<td>One expression for the <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtWhile.cond" title="bip.hexrays.CNodeStmtWhile.cond"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtWhile.cond()</span></code></a> and one statement for the <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtWhile.st_body" title="bip.hexrays.CNodeStmtWhile.st_body"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtWhile.st_body()</span></code></a> (<code class="docutils literal notranslate"><span class="pre">do</span> <span class="pre">{</span> <span class="pre">st_body</span> <span class="pre">}</span> <span class="pre">while</span> <span class="pre">(cond);</span></code>).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtSwitch" title="bip.hexrays.CNodeStmtSwitch"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtSwitch</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a></td>
+<td>Statement representing a <code class="docutils literal notranslate"><span class="pre">switch</span></code> statement.</td>
+<td>One expression for the value tested (<a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtSwitch.expr" title="bip.hexrays.CNodeStmtSwitch.expr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtSwitch.expr()</span></code></a>) and one statement per cases in the switch. The number of statements is variable.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtContinue" title="bip.hexrays.CNodeStmtContinue"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtContinue</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a></td>
+<td>Statement representing a <code class="docutils literal notranslate"><span class="pre">continue</span></code>.</td>
+<td>None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtBreak" title="bip.hexrays.CNodeStmtBreak"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtBreak</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a></td>
+<td>Statement representing a <code class="docutils literal notranslate"><span class="pre">break</span></code>.</td>
+<td>None.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtBlock" title="bip.hexrays.CNodeStmtBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmtBlock</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmt" title="bip.hexrays.CNodeStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeStmt</span></code></a></td>
+<td>Statement representing a C block statement.</td>
+<td>Contains a list of statements <a class="reference internal" href="cnode.html#bip.hexrays.CNodeStmtBlock.elts" title="bip.hexrays.CNodeStmtBlock.elts"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CNodeStmtBlock.elts()</span></code></a> representing all the statements included in this block. This is used as the root node for all functions.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="expressions-concrete-node-types">
+<h4>Expressions concrete node types<a class="headerlink" href="#expressions-concrete-node-types" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="10%" />
+<col width="30%" />
+<col width="52%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Class name</th>
+<th class="head">Parent class name</th>
+<th class="head">Description</th>
+<th class="head">Childrens</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprEmpty" title="bip.hexrays.CNodeExprEmpty"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprEmpty</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a></td>
+<td>Empty node, should never be used but happens sometimes.</td>
+<td>None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprNum" title="bip.hexrays.CNodeExprNum"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprNum</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFinal" title="bip.hexrays.CNodeExprFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFinal</span></code></a></td>
+<td>An immediate number.</td>
+<td>None.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFNum" title="bip.hexrays.CNodeExprFNum"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFNum</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFinal" title="bip.hexrays.CNodeExprFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFinal</span></code></a></td>
+<td>A floating point number.</td>
+<td>None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprStr" title="bip.hexrays.CNodeExprStr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprStr</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFinal" title="bip.hexrays.CNodeExprFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFinal</span></code></a></td>
+<td>A string in the AST (constant str as integer, str referenced by their address use <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprObj" title="bip.hexrays.CNodeExprObj"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprObj</span></code></a>).</td>
+<td>None.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprObj" title="bip.hexrays.CNodeExprObj"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprObj</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFinal" title="bip.hexrays.CNodeExprFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFinal</span></code></a></td>
+<td>An object representing by its address, this include: globals, functions, strings, …</td>
+<td>None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprVar" title="bip.hexrays.CNodeExprVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprVar</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFinal" title="bip.hexrays.CNodeExprFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFinal</span></code></a></td>
+<td>An object representing a local variable (<a class="reference internal" href="lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a>).</td>
+<td>None.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprHelper" title="bip.hexrays.CNodeExprHelper"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprHelper</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFinal" title="bip.hexrays.CNodeExprFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFinal</span></code></a></td>
+<td>An “helper” function: not real functions but created by hexrays. In particular use for intrinsic.</td>
+<td>None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprInsn" title="bip.hexrays.CNodeExprInsn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprInsn</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFinal" title="bip.hexrays.CNodeExprFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFinal</span></code></a></td>
+<td>An expression which contains a statements. This should never happend and is <strong>not</strong> implemented.</td>
+<td>None.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprType" title="bip.hexrays.CNodeExprType"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprType</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFinal" title="bip.hexrays.CNodeExprFinal"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFinal</span></code></a></td>
+<td>An expression which contains a type. This is used for example with the <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprSizeof" title="bip.hexrays.CNodeExprSizeof"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprSizeof</span></code></a> node.</td>
+<td>None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprTernary" title="bip.hexrays.CNodeExprTernary"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprTernary</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a></td>
+<td>A C ternary operation.</td>
+<td>Three expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprTernary.cond" title="bip.hexrays.CNodeExprTernary.cond"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cond()</span></code></a>, <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprTernary.expr1" title="bip.hexrays.CNodeExprTernary.expr1"><code class="xref py py-meth docutils literal notranslate"><span class="pre">expr1()</span></code></a>, <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprTernary.expr2" title="bip.hexrays.CNodeExprTernary.expr2"><code class="xref py py-meth docutils literal notranslate"><span class="pre">expr2()</span></code></a>. C representation is <code class="docutils literal notranslate"><span class="pre">cond</span> <span class="pre">?</span> <span class="pre">expr1</span> <span class="pre">:</span> <span class="pre">expr2</span></code>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprCall" title="bip.hexrays.CNodeExprCall"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprCall</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExpr" title="bip.hexrays.CNodeExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExpr</span></code></a></td>
+<td>A call to a function, this include call to function pointer.</td>
+<td>One expression representing the caller (<a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprCall.caller" title="bip.hexrays.CNodeExprCall.caller"><code class="xref py py-meth docutils literal notranslate"><span class="pre">caller()</span></code></a>) and several expressions corresponding to the arguments (<a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprCall.args" title="bip.hexrays.CNodeExprCall.args"><code class="xref py py-meth docutils literal notranslate"><span class="pre">args()</span></code></a> as a list).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsg" title="bip.hexrays.CNodeExprAsg"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsg</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">=</span> <span class="pre">src</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgbor" title="bip.hexrays.CNodeExprAsgbor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgbor</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">|=</span> <span class="pre">src</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgxor" title="bip.hexrays.CNodeExprAsgxor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgxor</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">^=</span> <span class="pre">src</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgband" title="bip.hexrays.CNodeExprAsgband"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgband</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">&amp;=</span> <span class="pre">src</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgadd" title="bip.hexrays.CNodeExprAsgadd"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgadd</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">+=</span> <span class="pre">src</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgsub" title="bip.hexrays.CNodeExprAsgsub"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgsub</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">-=</span> <span class="pre">src</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgmul" title="bip.hexrays.CNodeExprAsgmul"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgmul</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">*=</span> <span class="pre">src</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgsshr" title="bip.hexrays.CNodeExprAsgsshr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgsshr</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">&gt;&gt;=</span> <span class="pre">src</span></code> (signed)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgushr" title="bip.hexrays.CNodeExprAsgushr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgushr</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">&gt;&gt;=</span> <span class="pre">src</span></code> (unsigned)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgshl" title="bip.hexrays.CNodeExprAsgshl"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgshl</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">&lt;&lt;=</span> <span class="pre">src</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgsdiv" title="bip.hexrays.CNodeExprAsgsdiv"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgsdiv</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">/=</span> <span class="pre">src</span></code> (signed)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgudiv" title="bip.hexrays.CNodeExprAsgudiv"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgudiv</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">/=</span> <span class="pre">src</span></code> (unsigned)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgsmod" title="bip.hexrays.CNodeExprAsgsmod"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgsmod</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">%=</span> <span class="pre">src</span></code> (signed)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAsgumod" title="bip.hexrays.CNodeExprAsgumod"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAsgumod</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment" title="bip.hexrays.CNodeExprAssignment"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAssignment</span></code></a></td>
+<td>C assignment operation: <code class="docutils literal notranslate"><span class="pre">dst</span> <span class="pre">%=</span> <span class="pre">src</span></code> (unsigned)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.dst" title="bip.hexrays.CNodeExprAssignment.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAssignment.src" title="bip.hexrays.CNodeExprAssignment.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprComma" title="bip.hexrays.CNodeExprComma"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprComma</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C comma operator with deux expressions: <code class="docutils literal notranslate"><span class="pre">first_op,</span> <span class="pre">second_op</span></code>. Often used in conditions.</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprLor" title="bip.hexrays.CNodeExprLor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprLor</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">||</span> <span class="pre">second_op</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprLand" title="bip.hexrays.CNodeExprLand"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprLand</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&amp;&amp;</span> <span class="pre">second_op</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprBor" title="bip.hexrays.CNodeExprBor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprBor</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">|</span> <span class="pre">second_op</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprXor" title="bip.hexrays.CNodeExprXor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprXor</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">^</span> <span class="pre">second_op</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprBand" title="bip.hexrays.CNodeExprBand"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprBand</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&amp;</span> <span class="pre">second_op</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprEq" title="bip.hexrays.CNodeExprEq"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprEq</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">==</span> <span class="pre">second_op</span></code> (int or float)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprNe" title="bip.hexrays.CNodeExprNe"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprNe</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">!=</span> <span class="pre">second_op</span></code> (int or float)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprSge" title="bip.hexrays.CNodeExprSge"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprSge</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&gt;=</span> <span class="pre">second_op</span></code> (signed or float)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUge" title="bip.hexrays.CNodeExprUge"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUge</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&gt;=</span> <span class="pre">second_op</span></code> (unsigned)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprSle" title="bip.hexrays.CNodeExprSle"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprSle</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&lt;=</span> <span class="pre">second_op</span></code> (signed or float)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUle" title="bip.hexrays.CNodeExprUle"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUle</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&lt;=</span> <span class="pre">second_op</span></code> (unsigned)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprSgt" title="bip.hexrays.CNodeExprSgt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprSgt</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&gt;</span> <span class="pre">second_op</span></code> (signed or float)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUgt" title="bip.hexrays.CNodeExprUgt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUgt</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&gt;</span> <span class="pre">second_op</span></code> (unsigned)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprSlt" title="bip.hexrays.CNodeExprSlt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprSlt</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&lt;</span> <span class="pre">second_op</span></code> (signed or float)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUlt" title="bip.hexrays.CNodeExprUlt"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUlt</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&lt;</span> <span class="pre">second_op</span></code> (unsigned)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprSshr" title="bip.hexrays.CNodeExprSshr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprSshr</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&gt;&gt;</span> <span class="pre">second_op</span></code> (signed)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUshr" title="bip.hexrays.CNodeExprUshr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUshr</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&gt;&gt;</span> <span class="pre">second_op</span></code> (unsigned)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprShl" title="bip.hexrays.CNodeExprShl"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprShl</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">&lt;&lt;</span> <span class="pre">second_op</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprAdd" title="bip.hexrays.CNodeExprAdd"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprAdd</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">+</span> <span class="pre">second_op</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprSub" title="bip.hexrays.CNodeExprSub"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprSub</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">-</span> <span class="pre">second_op</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMul" title="bip.hexrays.CNodeExprMul"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprMul</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">*</span> <span class="pre">second_op</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprSdiv" title="bip.hexrays.CNodeExprSdiv"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprSdiv</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">/</span> <span class="pre">second_op</span></code> (signed)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUdiv" title="bip.hexrays.CNodeExprUdiv"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUdiv</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">/</span> <span class="pre">second_op</span></code> (unsigned)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprSmod" title="bip.hexrays.CNodeExprSmod"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprSmod</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">%</span> <span class="pre">second_op</span></code> (signed)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUmod" title="bip.hexrays.CNodeExprUmod"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUmod</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">%</span> <span class="pre">second_op</span></code> (unsigned)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFadd" title="bip.hexrays.CNodeExprFadd"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFadd</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">+</span> <span class="pre">second_op</span></code> (float)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFsub" title="bip.hexrays.CNodeExprFsub"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFsub</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">-</span> <span class="pre">second_op</span></code> (float)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFmul" title="bip.hexrays.CNodeExprFmul"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFmul</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">*</span> <span class="pre">second_op</span></code> (float)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFdiv" title="bip.hexrays.CNodeExprFdiv"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFdiv</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation" title="bip.hexrays.CNodeExprDoubleOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprDoubleOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">first_op</span> <span class="pre">/</span> <span class="pre">second_op</span></code> (float)</td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.first_op" title="bip.hexrays.CNodeExprDoubleOperation.first_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first_op()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprDoubleOperation.second_op" title="bip.hexrays.CNodeExprDoubleOperation.second_op"><code class="xref py py-meth docutils literal notranslate"><span class="pre">second_op()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprPtr" title="bip.hexrays.CNodeExprPtr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprPtr</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>Dereferencing a pointer <code class="docutils literal notranslate"><span class="pre">*operand</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprFneg" title="bip.hexrays.CNodeExprFneg"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprFneg</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">-operand</span></code> (float)</td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprNeg" title="bip.hexrays.CNodeExprNeg"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprNeg</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">-operand</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprCast" title="bip.hexrays.CNodeExprCast"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprCast</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>Casting of an expression <code class="docutils literal notranslate"><span class="pre">(type)operand</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprLnot" title="bip.hexrays.CNodeExprLnot"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprLnot</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">!operand</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprBnot" title="bip.hexrays.CNodeExprBnot"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprBnot</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">~operand</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprRef" title="bip.hexrays.CNodeExprRef"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprRef</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>Get the reference of an expression <code class="docutils literal notranslate"><span class="pre">&amp;operand</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprPostinc" title="bip.hexrays.CNodeExprPostinc"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprPostinc</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">operand++</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprPostdec" title="bip.hexrays.CNodeExprPostdec"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprPostdec</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">operand--</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprPreinc" title="bip.hexrays.CNodeExprPreinc"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprPreinc</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">++operand</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprPredec" title="bip.hexrays.CNodeExprPredec"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprPredec</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>C operation for <code class="docutils literal notranslate"><span class="pre">--operand</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprSizeof" title="bip.hexrays.CNodeExprSizeof"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprSizeof</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation" title="bip.hexrays.CNodeExprUnaryOperation"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprUnaryOperation</span></code></a></td>
+<td>Sizeof of an expression <code class="docutils literal notranslate"><span class="pre">sizeof(operand)</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprUnaryOperation.operand" title="bip.hexrays.CNodeExprUnaryOperation.operand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">operand()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprIdx" title="bip.hexrays.CNodeExprIdx"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprIdx</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemAccess" title="bip.hexrays.CNodeExprMemAccess"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprMemAccess</span></code></a></td>
+<td>Access to an index into an array <code class="docutils literal notranslate"><span class="pre">obj[off]</span></code></td>
+<td>Two children expressions: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemAccess.obj" title="bip.hexrays.CNodeExprMemAccess.obj"><code class="xref py py-meth docutils literal notranslate"><span class="pre">obj()</span></code></a> and <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemAccess.off" title="bip.hexrays.CNodeExprMemAccess.off"><code class="xref py py-meth docutils literal notranslate"><span class="pre">off()</span></code></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemref" title="bip.hexrays.CNodeExprMemref"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprMemref</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemAccess" title="bip.hexrays.CNodeExprMemAccess"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprMemAccess</span></code></a></td>
+<td>Access to an element of a structure which is not a pointer <code class="docutils literal notranslate"><span class="pre">obj.off</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemAccess.obj" title="bip.hexrays.CNodeExprMemAccess.obj"><code class="xref py py-meth docutils literal notranslate"><span class="pre">obj()</span></code></a>. <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemref.off" title="bip.hexrays.CNodeExprMemref.off"><code class="xref py py-meth docutils literal notranslate"><span class="pre">off()</span></code></a> is a integer value.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemptr" title="bip.hexrays.CNodeExprMemptr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprMemptr</span></code></a></td>
+<td><a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemAccess" title="bip.hexrays.CNodeExprMemAccess"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNodeExprMemAccess</span></code></a></td>
+<td>Access to an element of a structure which is a pointer <code class="docutils literal notranslate"><span class="pre">obj-&gt;off</span></code></td>
+<td>One child expression: <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemAccess.obj" title="bip.hexrays.CNodeExprMemAccess.obj"><code class="xref py py-meth docutils literal notranslate"><span class="pre">obj()</span></code></a>. <a class="reference internal" href="cnode.html#bip.hexrays.CNodeExprMemref.off" title="bip.hexrays.CNodeExprMemref.off"><code class="xref py py-meth docutils literal notranslate"><span class="pre">off()</span></code></a> is a integer value.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="visitors-in-bip">
+<span id="doc-hexrays-astnodes-visitors"></span><h2>Visitors in Bip<a class="headerlink" href="#visitors-in-bip" title="Permalink to this headline">¶</a></h2>
+<p>Two types of visitors are implemented in Bip. One use the
+<code class="docutils literal notranslate"><span class="pre">ctree_visitor_t</span></code> provided by IDA and allow to iterate on subclasses of
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a>. The second one (and the one usually advise
+to use) is implemented directly in Bip and iterate on sublcasses of
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>. As a general rule, it should be expected to get
+improvement only on the Bip implementation of the visitors.</p>
+<p>The Bip implementation of the visitor use a Deep-First Search (DFS) algorithm
+with preorder-traversal (the current node is visited before the children), when
+a statement is visited all the children expression will be visited before the
+children statements. The functions actually implementing this visitor are
+documented in <a class="reference internal" href="cnode.html#doc-hexrays-cnode-visitor-api"><span class="std std-ref">Internal Hexrays Visitor API</span></a>. The main methods allowing
+to use this visitor are <a class="reference internal" href="cfunc.html#bip.hexrays.HxCFunc.visit_cnode" title="bip.hexrays.HxCFunc.visit_cnode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">visit_cnode()</span></code></a> and
+<a class="reference internal" href="cfunc.html#bip.hexrays.HxCFunc.visit_cnode_filterlist" title="bip.hexrays.HxCFunc.visit_cnode_filterlist"><code class="xref py py-meth docutils literal notranslate"><span class="pre">visit_cnode_filterlist()</span></code></a>.</p>
+<p>The IDA implementation can be access through the methods starting
+with <code class="docutils literal notranslate"><span class="pre">hx_visit_</span></code> methods of <a class="reference internal" href="cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a>. See
+<a class="reference internal" href="visit_hx.html#doc-hexrays-ida-visitor-internal"><span class="std std-ref">Internal Hexrays Visitor API</span></a> for more information on those.</p>
+</div>
+<div class="section" id="abstractcitem-api">
+<h2>AbstractCItem API<a class="headerlink" href="#abstractcitem-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.AbstractCItem">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">AbstractCItem</code><span class="sig-paren">(</span><em>citem</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.AbstractCItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class for common element between <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> and
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>.</p>
+<p>This class provide access to common implementation: address of the
+element, equality operator, testing for the label and testing for
+expression or statement.</p>
+<p>This class also define the
+<a class="reference internal" href="#bip.hexrays.AbstractCItem.is_handling_type" title="bip.hexrays.AbstractCItem.is_handling_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_handling_type()</span></code></a> method used for determining
+the correct object to create using the
+<a class="reference internal" href="#bip.hexrays.AbstractCItem.TYPE_HANDLE" title="bip.hexrays.AbstractCItem.TYPE_HANDLE"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TYPE_HANDLE</span></code></a> attribute. Finally, it also define
+the <a class="reference internal" href="#bip.hexrays.AbstractCItem._create_child" title="bip.hexrays.AbstractCItem._create_child"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_create_child()</span></code></a> abstract method used for being
+able to create child nodes.</p>
+<dl class="attribute">
+<dt id="bip.hexrays.AbstractCItem.TYPE_HANDLE">
+<code class="descname">TYPE_HANDLE</code><em class="property"> = -1</em><a class="headerlink" href="#bip.hexrays.AbstractCItem.TYPE_HANDLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class attribute indicating which type of item this class handles,
+this is used for determining if this is the good object to
+instantiate. All abstract class should have a value of -1 for this
+object, non-abstract class should have a value corresponding to the
+<a class="reference internal" href="#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> they handle.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.AbstractCItem.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>citem</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.AbstractCItem.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for the abstract class <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> . This should
+never be used directly.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>citem</strong> – a <code class="docutils literal notranslate"><span class="pre">citem_t</span></code> object, in practice this should always
+be a <code class="docutils literal notranslate"><span class="pre">cexpr_t</span></code> or a <code class="docutils literal notranslate"><span class="pre">cinsn_t</span></code> object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.AbstractCItem._citem">
+<code class="descname">_citem</code><em class="property"> = None</em><a class="headerlink" href="#bip.hexrays.AbstractCItem._citem" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">citem_t</span></code> object from ida, this is conserved at this level
+for providing a few functionnality compatible between different
+item types (such as <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> and <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a>) .</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.AbstractCItem.ea">
+<code class="descname">ea</code><a class="headerlink" href="#bip.hexrays.AbstractCItem.ea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the address corresponding to this item.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An integer corresponding to the address of the item. This
+may be <code class="docutils literal notranslate"><span class="pre">idc.BADADDR</span></code> if the item as no equivalent address.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.AbstractCItem.is_expr">
+<code class="descname">is_expr</code><a class="headerlink" href="#bip.hexrays.AbstractCItem.is_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return true if this item is a C Expression
+(<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>, <code class="docutils literal notranslate"><span class="pre">cexpr_t</span></code>).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.AbstractCItem.is_statement">
+<code class="descname">is_statement</code><a class="headerlink" href="#bip.hexrays.AbstractCItem.is_statement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return true if this item is a C Statement
+(<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a>, <code class="docutils literal notranslate"><span class="pre">cinsn_t</span></code>).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.AbstractCItem._ctype">
+<code class="descname">_ctype</code><a class="headerlink" href="#bip.hexrays.AbstractCItem._ctype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the <a class="reference internal" href="#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> (<code class="docutils literal notranslate"><span class="pre">ctype_t</span></code>) of this
+object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">One of the <a class="reference internal" href="#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> constant value.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.AbstractCItem.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.AbstractCItem.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a citem to a string.</p>
+<p>This is surcharge both by <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> and <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.AbstractCItem.has_label">
+<code class="descname">has_label</code><a class="headerlink" href="#bip.hexrays.AbstractCItem.has_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return True if the node has a label number.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.AbstractCItem.label_num">
+<code class="descname">label_num</code><a class="headerlink" href="#bip.hexrays.AbstractCItem.label_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the label number of the node. If this node
+has no label <code class="docutils literal notranslate"><span class="pre">-1</span></code> is return. <a class="reference internal" href="#bip.hexrays.AbstractCItem.has_label" title="bip.hexrays.AbstractCItem.has_label"><code class="xref py py-meth docutils literal notranslate"><span class="pre">has_label()</span></code></a>
+allows to check if the node has a label.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.AbstractCItem.__eq__">
+<code class="descname">__eq__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.AbstractCItem.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare to AST node. This is base on the compare implemented by
+hexrays and can return true for two different object including
+for comparing object which inherit from <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCItem" title="bip.hexrays.HxCItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCItem</span></code></a> and from
+<a class="reference internal" href="cnode.html#bip.hexrays.CNode" title="bip.hexrays.CNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">CNode</span></code></a>.</p>
+<p>This seems to not work if the function has been recompiled.</p>
+<dl class="docutils">
+<dt>Return <code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> if the element to compare does not</dt>
+<dd>inherit from AbstractCItem</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.AbstractCItem.__ne__">
+<code class="descname">__ne__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.AbstractCItem.__ne__" title="Permalink to this definition">¶</a></dt>
+<dd><p>x.__ne__(y) &lt;==&gt; x!=y</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.AbstractCItem._create_child">
+<code class="descname">_create_child</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.AbstractCItem._create_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method which allow to create child element for this
+object with the correct class. This should be implemented by child
+classes and will raise a <code class="xref py py-class docutils literal notranslate"><span class="pre">NotImplementedError</span></code> exception
+if not surcharge.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.hexrays.AbstractCItem.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>typ</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.AbstractCItem.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which return True if the function handle the type
+passed as argument.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>typ</strong> – One of the <a class="reference internal" href="#bip.hexrays.HxCType" title="bip.hexrays.HxCType"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCType</span></code></a> value.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.AbstractCItem.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#bip.hexrays.AbstractCItem.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="hxctype-enum">
+<h2>HxCtype Enum<a class="headerlink" href="#hxctype-enum" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxCType">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxCType</code><a class="headerlink" href="#bip.hexrays.HxCType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum and static methods for manipulating the C type defined by
+HexRays. This is a wrapper on top of the <code class="docutils literal notranslate"><span class="pre">ctype_t</span></code> enum: <code class="docutils literal notranslate"><span class="pre">cot_*</span></code>
+are for the expresion (<code class="docutils literal notranslate"><span class="pre">cexpr_t</span></code> in ida, <a class="reference internal" href="visit_hx.html#bip.hexrays.HxCExpr" title="bip.hexrays.HxCExpr"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCExpr</span></code></a> in bip )
+and <code class="docutils literal notranslate"><span class="pre">cit_*</span></code> are for the statement (<code class="docutils literal notranslate"><span class="pre">cinsn_t</span></code> in ida,
+<a class="reference internal" href="visit_hx.html#bip.hexrays.HxCStmt" title="bip.hexrays.HxCStmt"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCStmt</span></code></a> in bip). This also include some static function
+which are wrapper which manipulate those types.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">static function for manipulating the enum ?</p>
+</div>
+<p>Comment on the enum are from <code class="docutils literal notranslate"><span class="pre">hexrays.hpp</span></code> .</p>
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_COMMA">
+<code class="descname">COT_COMMA</code><em class="property"> = 1</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_COMMA" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x,</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASG">
+<code class="descname">COT_ASG</code><em class="property"> = 2</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASG" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGBOR">
+<code class="descname">COT_ASGBOR</code><em class="property"> = 3</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGBOR" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">|=</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGXOR">
+<code class="descname">COT_ASGXOR</code><em class="property"> = 4</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGXOR" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">^=</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGBAND">
+<code class="descname">COT_ASGBAND</code><em class="property"> = 5</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGBAND" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&amp;=</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGADD">
+<code class="descname">COT_ASGADD</code><em class="property"> = 6</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGADD" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+=</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGSUB">
+<code class="descname">COT_ASGSUB</code><em class="property"> = 7</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGSUB" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">-=</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGMUL">
+<code class="descname">COT_ASGMUL</code><em class="property"> = 8</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGMUL" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">*=</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGSSHR">
+<code class="descname">COT_ASGSSHR</code><em class="property"> = 9</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGSSHR" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&gt;&gt;=</span> <span class="pre">y</span></code> signed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGUSHR">
+<code class="descname">COT_ASGUSHR</code><em class="property"> = 10</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGUSHR" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&gt;&gt;=</span> <span class="pre">y</span></code> unsigned</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGSHL">
+<code class="descname">COT_ASGSHL</code><em class="property"> = 11</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGSHL" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&lt;&lt;=</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGSDIV">
+<code class="descname">COT_ASGSDIV</code><em class="property"> = 12</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGSDIV" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">/=</span> <span class="pre">y</span></code> signed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGUDIV">
+<code class="descname">COT_ASGUDIV</code><em class="property"> = 13</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGUDIV" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">/=</span> <span class="pre">y</span></code> unsigned</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGSMOD">
+<code class="descname">COT_ASGSMOD</code><em class="property"> = 14</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGSMOD" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">%=</span> <span class="pre">y</span></code> signed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ASGUMOD">
+<code class="descname">COT_ASGUMOD</code><em class="property"> = 15</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ASGUMOD" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">%=</span> <span class="pre">y</span></code> unsigned</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_TERN">
+<code class="descname">COT_TERN</code><em class="property"> = 16</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_TERN" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">?</span> <span class="pre">y</span> <span class="pre">:</span> <span class="pre">z</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_LOR">
+<code class="descname">COT_LOR</code><em class="property"> = 17</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_LOR" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">||</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_LAND">
+<code class="descname">COT_LAND</code><em class="property"> = 18</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_LAND" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&amp;&amp;</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_BOR">
+<code class="descname">COT_BOR</code><em class="property"> = 19</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_BOR" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">|</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_XOR">
+<code class="descname">COT_XOR</code><em class="property"> = 20</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_XOR" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">^</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_BAND">
+<code class="descname">COT_BAND</code><em class="property"> = 21</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_BAND" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&amp;</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_EQ">
+<code class="descname">COT_EQ</code><em class="property"> = 22</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_EQ" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">y</span></code> int or fpu (see EXFL_FPOP)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_NE">
+<code class="descname">COT_NE</code><em class="property"> = 23</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_NE" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">!=</span> <span class="pre">y</span></code> int or fpu (see EXFL_FPOP)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_SGE">
+<code class="descname">COT_SGE</code><em class="property"> = 24</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_SGE" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&gt;=</span> <span class="pre">y</span></code> signed or fpu (see EXFL_FPOP)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_UGE">
+<code class="descname">COT_UGE</code><em class="property"> = 25</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_UGE" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&gt;=</span> <span class="pre">y</span></code> unsigned</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_SLE">
+<code class="descname">COT_SLE</code><em class="property"> = 26</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_SLE" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&lt;=</span> <span class="pre">y</span></code> signed or fpu (see EXFL_FPOP)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ULE">
+<code class="descname">COT_ULE</code><em class="property"> = 27</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ULE" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&lt;=</span> <span class="pre">y</span></code> unsigned</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_SGT">
+<code class="descname">COT_SGT</code><em class="property"> = 28</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_SGT" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&gt;</span>&#160; <span class="pre">y</span></code> signed or fpu (see EXFL_FPOP)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_UGT">
+<code class="descname">COT_UGT</code><em class="property"> = 29</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_UGT" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&gt;</span>&#160; <span class="pre">y</span></code> unsigned</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_SLT">
+<code class="descname">COT_SLT</code><em class="property"> = 30</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_SLT" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&lt;</span>&#160; <span class="pre">y</span></code> signed or fpu (see EXFL_FPOP)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ULT">
+<code class="descname">COT_ULT</code><em class="property"> = 31</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ULT" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&lt;</span>&#160; <span class="pre">y</span></code> unsigned</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_SSHR">
+<code class="descname">COT_SSHR</code><em class="property"> = 32</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_SSHR" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&gt;&gt;</span> <span class="pre">y</span></code> signed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_USHR">
+<code class="descname">COT_USHR</code><em class="property"> = 33</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_USHR" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&gt;&gt;</span> <span class="pre">y</span></code> unsigned</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_SHL">
+<code class="descname">COT_SHL</code><em class="property"> = 34</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_SHL" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&lt;&lt;</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_ADD">
+<code class="descname">COT_ADD</code><em class="property"> = 35</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_ADD" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_SUB">
+<code class="descname">COT_SUB</code><em class="property"> = 36</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_SUB" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">-</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_MUL">
+<code class="descname">COT_MUL</code><em class="property"> = 37</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_MUL" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">y</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_SDIV">
+<code class="descname">COT_SDIV</code><em class="property"> = 38</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_SDIV" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">/</span> <span class="pre">y</span></code> signed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_UDIV">
+<code class="descname">COT_UDIV</code><em class="property"> = 39</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_UDIV" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">/</span> <span class="pre">y</span></code> unsigned</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_SMOD">
+<code class="descname">COT_SMOD</code><em class="property"> = 40</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_SMOD" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">%</span> <span class="pre">y</span></code> signed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_UMOD">
+<code class="descname">COT_UMOD</code><em class="property"> = 41</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_UMOD" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">%</span> <span class="pre">y</span></code> unsigned</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_FADD">
+<code class="descname">COT_FADD</code><em class="property"> = 42</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_FADD" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></code> fp</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_FSUB">
+<code class="descname">COT_FSUB</code><em class="property"> = 43</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_FSUB" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">-</span> <span class="pre">y</span></code> fp</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_FMUL">
+<code class="descname">COT_FMUL</code><em class="property"> = 44</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_FMUL" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">y</span></code> fp</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_FDIV">
+<code class="descname">COT_FDIV</code><em class="property"> = 45</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_FDIV" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">/</span> <span class="pre">y</span></code> fp</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_FNEG">
+<code class="descname">COT_FNEG</code><em class="property"> = 46</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_FNEG" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">-x</span></code> fp</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_NEG">
+<code class="descname">COT_NEG</code><em class="property"> = 47</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_NEG" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">-x</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_CAST">
+<code class="descname">COT_CAST</code><em class="property"> = 48</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_CAST" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">(type)x</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_LNOT">
+<code class="descname">COT_LNOT</code><em class="property"> = 49</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_LNOT" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">!x</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_BNOT">
+<code class="descname">COT_BNOT</code><em class="property"> = 50</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_BNOT" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">~x</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_PTR">
+<code class="descname">COT_PTR</code><em class="property"> = 51</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_PTR" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">*x</span></code>, access size in ‘ptrsize’</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_REF">
+<code class="descname">COT_REF</code><em class="property"> = 52</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_REF" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">&amp;x</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_POSTINC">
+<code class="descname">COT_POSTINC</code><em class="property"> = 53</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_POSTINC" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x++</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_POSTDEC">
+<code class="descname">COT_POSTDEC</code><em class="property"> = 54</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_POSTDEC" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x--</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_PREINC">
+<code class="descname">COT_PREINC</code><em class="property"> = 55</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_PREINC" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">++x</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_PREDEC">
+<code class="descname">COT_PREDEC</code><em class="property"> = 56</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_PREDEC" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">--x</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_CALL">
+<code class="descname">COT_CALL</code><em class="property"> = 57</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_CALL" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x(...)</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_IDX">
+<code class="descname">COT_IDX</code><em class="property"> = 58</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_IDX" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x[y]</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_MEMREF">
+<code class="descname">COT_MEMREF</code><em class="property"> = 59</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_MEMREF" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x.m</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_MEMPTR">
+<code class="descname">COT_MEMPTR</code><em class="property"> = 60</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_MEMPTR" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">x-&gt;m</span></code>, access size in ‘ptrsize’</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_NUM">
+<code class="descname">COT_NUM</code><em class="property"> = 61</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_NUM" title="Permalink to this definition">¶</a></dt>
+<dd><p>n</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_FNUM">
+<code class="descname">COT_FNUM</code><em class="property"> = 62</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_FNUM" title="Permalink to this definition">¶</a></dt>
+<dd><p>fpc</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_STR">
+<code class="descname">COT_STR</code><em class="property"> = 63</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_STR" title="Permalink to this definition">¶</a></dt>
+<dd><p>string constant</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_OBJ">
+<code class="descname">COT_OBJ</code><em class="property"> = 64</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_OBJ" title="Permalink to this definition">¶</a></dt>
+<dd><p>obj_ea</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_VAR">
+<code class="descname">COT_VAR</code><em class="property"> = 65</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_VAR" title="Permalink to this definition">¶</a></dt>
+<dd><p>v</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_INSN">
+<code class="descname">COT_INSN</code><em class="property"> = 66</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_INSN" title="Permalink to this definition">¶</a></dt>
+<dd><p>instruction in expression, internal representation only</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_SIZEOF">
+<code class="descname">COT_SIZEOF</code><em class="property"> = 67</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_SIZEOF" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">sizeof(x)</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_HELPER">
+<code class="descname">COT_HELPER</code><em class="property"> = 68</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_HELPER" title="Permalink to this definition">¶</a></dt>
+<dd><p>arbitrary name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_TYPE">
+<code class="descname">COT_TYPE</code><em class="property"> = 69</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd><p>arbitrary type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.COT_LAST">
+<code class="descname">COT_LAST</code><em class="property"> = 69</em><a class="headerlink" href="#bip.hexrays.HxCType.COT_LAST" title="Permalink to this definition">¶</a></dt>
+<dd><p>All before this are <code class="docutils literal notranslate"><span class="pre">cexpr_t</span></code> after are <code class="docutils literal notranslate"><span class="pre">cinsn_t</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_EMPTY">
+<code class="descname">CIT_EMPTY</code><em class="property"> = 70</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_EMPTY" title="Permalink to this definition">¶</a></dt>
+<dd><p>instruction types start here</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_BLOCK">
+<code class="descname">CIT_BLOCK</code><em class="property"> = 71</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_BLOCK" title="Permalink to this definition">¶</a></dt>
+<dd><p>block-statement: { … }</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_EXPR">
+<code class="descname">CIT_EXPR</code><em class="property"> = 72</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_EXPR" title="Permalink to this definition">¶</a></dt>
+<dd><p>expression-statement: expr;</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_IF">
+<code class="descname">CIT_IF</code><em class="property"> = 73</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_IF" title="Permalink to this definition">¶</a></dt>
+<dd><p>if-statement</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_FOR">
+<code class="descname">CIT_FOR</code><em class="property"> = 74</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_FOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>for-statement</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_WHILE">
+<code class="descname">CIT_WHILE</code><em class="property"> = 75</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_WHILE" title="Permalink to this definition">¶</a></dt>
+<dd><p>while-statement</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_DO">
+<code class="descname">CIT_DO</code><em class="property"> = 76</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_DO" title="Permalink to this definition">¶</a></dt>
+<dd><p>do-statement</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_SWITCH">
+<code class="descname">CIT_SWITCH</code><em class="property"> = 77</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_SWITCH" title="Permalink to this definition">¶</a></dt>
+<dd><p>switch-statement</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_BREAK">
+<code class="descname">CIT_BREAK</code><em class="property"> = 78</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_BREAK" title="Permalink to this definition">¶</a></dt>
+<dd><p>break-statement</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_CONTINUE">
+<code class="descname">CIT_CONTINUE</code><em class="property"> = 79</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_CONTINUE" title="Permalink to this definition">¶</a></dt>
+<dd><p>continue-statement</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_RETURN">
+<code class="descname">CIT_RETURN</code><em class="property"> = 80</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_RETURN" title="Permalink to this definition">¶</a></dt>
+<dd><p>return-statement</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_GOTO">
+<code class="descname">CIT_GOTO</code><em class="property"> = 81</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_GOTO" title="Permalink to this definition">¶</a></dt>
+<dd><p>goto-statement</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxCType.CIT_ASM">
+<code class="descname">CIT_ASM</code><em class="property"> = 82</em><a class="headerlink" href="#bip.hexrays.HxCType.CIT_ASM" title="Permalink to this definition">¶</a></dt>
+<dd><p>asm-statement</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Ast Nodes &amp; Visitors</a><ul>
+<li><a class="reference internal" href="#node-representation-in-bip">Node representation in Bip</a></li>
+<li><a class="reference internal" href="#ast-node-types">AST Node types</a><ul>
+<li><a class="reference internal" href="#abstract-node-types">Abstract node types</a></li>
+<li><a class="reference internal" href="#concrete-node-types">Concrete node types</a><ul>
+<li><a class="reference internal" href="#statements-concrete-node-types">Statements concrete node types</a></li>
+<li><a class="reference internal" href="#expressions-concrete-node-types">Expressions concrete node types</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#visitors-in-bip">Visitors in Bip</a></li>
+<li><a class="reference internal" href="#abstractcitem-api">AbstractCItem API</a></li>
+<li><a class="reference internal" href="#hxctype-enum">HxCtype Enum</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="lvar.html"
+                        title="previous chapter">Local variables</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cnode.html"
+                        title="next chapter">CNode</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/hexrays/astnodes.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cnode.html" title="CNode"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lvar.html" title="Local variables"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

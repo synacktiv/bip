@@ -1,0 +1,9 @@
+div.body {
+    min-width: 450px;
+    max-width: none;
+}
+
+div.bodywrapper {
+        margin-right: 20px;
+}
+

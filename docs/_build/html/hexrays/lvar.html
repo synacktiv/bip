@@ -1,0 +1,337 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Local variables &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Ast Nodes &amp; Visitors" href="astnodes.html" />
+    <link rel="prev" title="Hexrays Functions" href="cfunc.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="astnodes.html" title="Ast Nodes &amp; Visitors"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cfunc.html" title="Hexrays Functions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.hexrays">
+<span id="local-variables"></span><h1>Local variables<a class="headerlink" href="#module-bip.hexrays" title="Permalink to this headline">¶</a></h1>
+<p>Local variables (lvar) are implemented in Bip by the class
+<a class="reference internal" href="#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a>. They represent a local variable (including
+arguments) such as view by the decompiler.</p>
+<p>The main way to access the <a class="reference internal" href="#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> is through
+a <a class="reference internal" href="cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> object using, for example the
+<a class="reference internal" href="cfunc.html#bip.hexrays.HxCFunc.lvars" title="bip.hexrays.HxCFunc.lvars"><code class="xref py py-meth docutils literal notranslate"><span class="pre">lvars()</span></code></a> property.</p>
+<p>As of now there is no way to get the equivalent storage for a lvar.</p>
+<div class="section" id="hxlvar-api">
+<h2>HxLvar API<a class="headerlink" href="#hxlvar-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.hexrays.HxLvar">
+<em class="property">class </em><code class="descclassname">bip.hexrays.</code><code class="descname">HxLvar</code><span class="sig-paren">(</span><em>lvar</em>, <em>hxcfunc</em>, <em>persistent=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxLvar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python object for representing a local variable of hexrays.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">flags (not accessible publicly)</p>
+</div>
+<dl class="method">
+<dt id="bip.hexrays.HxLvar.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>lvar</em>, <em>hxcfunc</em>, <em>persistent=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxLvar.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for the <a class="reference internal" href="#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a> representing a local variable
+from hexrays.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>lvar</strong> – A <code class="docutils literal notranslate"><span class="pre">lvar_t</span></code> object from hexrays (those are swig
+proxy) which is the ida variable corresponding to this object.</li>
+<li><strong>hxcfunc</strong> – The <a class="reference internal" href="cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> object to which this local
+variable is attached.</li>
+<li><strong>persistent</strong> (<em>bool</em>) – Indicate if change to this object using
+the setter should be made persistent in the idb. True by
+default. See <a class="reference internal" href="#bip.hexrays.HxLvar.save" title="bip.hexrays.HxLvar.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code></a> for more information.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxLvar.name">
+<code class="descname">name</code><a class="headerlink" href="#bip.hexrays.HxLvar.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the name of this local variable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return str:</th><td class="field-body">The name of the variable</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxLvar.size">
+<code class="descname">size</code><a class="headerlink" href="#bip.hexrays.HxLvar.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the size of the current local variable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The number of bytes (<code class="docutils literal notranslate"><span class="pre">int</span></code>) corresponding to the size
+of this lvar.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxLvar.hxcfunc">
+<code class="descname">hxcfunc</code><a class="headerlink" href="#bip.hexrays.HxLvar.hxcfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the hexrays C function (<a class="reference internal" href="cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a>)
+object to which this local variable is attached.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="cfunc.html#bip.hexrays.HxCFunc" title="bip.hexrays.HxCFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxCFunc</span></code></a> object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxLvar.comment">
+<code class="descname">comment</code><a class="headerlink" href="#bip.hexrays.HxLvar.comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the comment of the lvar.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The value of the comment or an empty string if there is no
+comment.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxLvar.type">
+<code class="descname">type</code><a class="headerlink" href="#bip.hexrays.HxLvar.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the object, which inherit from
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code>, corresponding to the type of this local
+variable.</p>
+<p>Because of the handling of the type in IDA the object
+returned is a copy of the type of this local variable. For
+changing the type of this variable it is necessary to use the
+setter of this property. For more information about this problem
+see <code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code> and
+represent the type of this local variable.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.hexrays.HxLvar.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.hexrays.HxLvar.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which allow to save the change made to the local variable
+inside the idb. This is necessary because by default the change
+made to a lvar using the IDA interface only change the object in
+memory and not its content.</p>
+<p>This function is called by default by the setters of this object
+if the <code class="docutils literal notranslate"><span class="pre">_persistent</span></code> property is at True (the default). It
+should not be necessary to call this directly.</p>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">this should probably set the flags to ? flags are not
+directly accessible through the the lvar object from IDAPython
+rigth now…</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxLvar.is_arg">
+<code class="descname">is_arg</code><a class="headerlink" href="#bip.hexrays.HxLvar.is_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return true if this local variable is an argument
+of this function, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxLvar.is_reg">
+<code class="descname">is_reg</code><a class="headerlink" href="#bip.hexrays.HxLvar.is_reg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for checking if this local variable is located in a
+register.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxLvar.is_stk">
+<code class="descname">is_stk</code><a class="headerlink" href="#bip.hexrays.HxLvar.is_stk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for checking if this local variable is located on the
+stack.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxLvar.has_user_name">
+<code class="descname">has_user_name</code><a class="headerlink" href="#bip.hexrays.HxLvar.has_user_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return True if this variable has a user name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.hexrays.HxLvar.has_user_type">
+<code class="descname">has_user_type</code><a class="headerlink" href="#bip.hexrays.HxLvar.has_user_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return True if this variable has a user type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Local variables</a><ul>
+<li><a class="reference internal" href="#hxlvar-api">HxLvar API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cfunc.html"
+                        title="previous chapter">Hexrays Functions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="astnodes.html"
+                        title="next chapter">Ast Nodes &amp; Visitors</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/hexrays/lvar.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="astnodes.html" title="Ast Nodes &amp; Visitors"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cfunc.html" title="Hexrays Functions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

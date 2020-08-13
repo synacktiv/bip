@@ -1,0 +1,329 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Xref &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Structures" href="struct.html" />
+    <link rel="prev" title="Functions &amp; Basic blocks" href="func.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="struct.html" title="Structures"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="func.html" title="Functions &amp; Basic blocks"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.base">
+<span id="xref"></span><h1>Xref<a class="headerlink" href="#module-bip.base" title="Permalink to this headline">¶</a></h1>
+<p>XRef are a really important feature of IDA which allow to find the links
+between different objects. In Bip they are represented by the <a class="reference internal" href="#bip.base.BipXref" title="bip.base.BipXref"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipXref</span></code></a>
+objects. All objects which inherit from <a class="reference internal" href="elt.html#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a> (including those
+which inherit from <a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a>) posess an API for xref.</p>
+<p>An xref is an oriented link between two different element of the IDB. The
+object <em>creating</em> the xref can be access by using the <a class="reference internal" href="#bip.base.BipXref.src" title="bip.base.BipXref.src"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src()</span></code></a>
+property while the destination can be access using <a class="reference internal" href="#bip.base.BipXref.dst" title="bip.base.BipXref.dst"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst()</span></code></a>,
+both of those property return object which inherit from <a class="reference internal" href="elt.html#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a>;
+it is possible to get their ID using <a class="reference internal" href="#bip.base.BipXref.src_ea" title="bip.base.BipXref.src_ea"><code class="xref py py-meth docutils literal notranslate"><span class="pre">src_ea()</span></code></a> and
+<a class="reference internal" href="#bip.base.BipXref.dst_ea" title="bip.base.BipXref.dst_ea"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dst_ea()</span></code></a>.</p>
+<p>Some flags are available allowing to check the type of xref and most object
+allowing to access them provide properties allowing to access directly more
+specific objects.</p>
+<p>Here is a list of objects which can access xref through the interface
+provided by <a class="reference internal" href="elt.html#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a> :</p>
+<ul class="simple">
+<li><a class="reference internal" href="elt.html#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a></li>
+<li><a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a></li>
+<li><a class="reference internal" href="instr.html#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a></li>
+<li><a class="reference internal" href="data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a></li>
+<li><a class="reference internal" href="struct.html#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a></li>
+<li><a class="reference internal" href="struct.html#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a></li>
+</ul>
+<p>The <a class="reference internal" href="func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> also possess an interface with xrefs.</p>
+<div class="section" id="bipxref-api">
+<h2>BipXref API<a class="headerlink" href="#bipxref-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.base.BipXref">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipXref</code><span class="sig-paren">(</span><em>xref</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipXref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for representing an xref between two elements.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">classmethod allowing to create xref</p>
+</div>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">classmethod allowing to destroy xref</p>
+</div>
+<dl class="method">
+<dt id="bip.base.BipXref.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>xref</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipXref.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for an xref object. There is few reason to directly
+use this constructor, properties of <a class="reference internal" href="elt.html#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> and of
+<a class="reference internal" href="func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> should allow to directly get the xref.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xref</strong> (<code class="docutils literal notranslate"><span class="pre">idautils._xref</span></code> .) – The xref object used in IDA.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref._xref">
+<code class="descname">_xref</code><em class="property"> = None</em><a class="headerlink" href="#bip.base.BipXref._xref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal object representing the xref in IDA</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref._type">
+<code class="descname">_type</code><a class="headerlink" href="#bip.base.BipXref._type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the type of the xref with the mask applied.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.is_userdef">
+<code class="descname">is_userdef</code><a class="headerlink" href="#bip.base.BipXref.is_userdef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the xref was added by a user.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.src_ea">
+<code class="descname">src_ea</code><a class="headerlink" href="#bip.base.BipXref.src_ea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source address (or member id for xref on struct) of the XRef:
+the object which created it. This is equivalent to the <em>from</em> in
+the standard IDA api.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.src">
+<code class="descname">src</code><a class="headerlink" href="#bip.base.BipXref.src" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get an object representing the element at
+the source address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object representing the element at the source address.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Rtypes:</th><td class="field-body">An <a class="reference internal" href="elt.html#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> or one of its subclasses. See
+<a class="reference internal" href="elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.dst_ea">
+<code class="descname">dst_ea</code><a class="headerlink" href="#bip.base.BipXref.dst_ea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destination address (or member id for xref on struct) of the XRef.
+This is equivalent to the <em>to</em> in the standard IDA api.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.dst">
+<code class="descname">dst</code><a class="headerlink" href="#bip.base.BipXref.dst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get an object representing the element at
+the destination address or id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object representing the element at the destination
+address.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Rtypes:</th><td class="field-body">An <a class="reference internal" href="elt.html#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> or one of its subclasses. See
+<a class="reference internal" href="elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.is_codepath">
+<code class="descname">is_codepath</code><a class="headerlink" href="#bip.base.BipXref.is_codepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if the xref indicate a path for the control
+flow of the program. This can be because of a jmp, a call or simply
+a normal path.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.is_call">
+<code class="descname">is_call</code><a class="headerlink" href="#bip.base.BipXref.is_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this xref was generated by a call
+intruction: the source is the call instruction and the destination
+is the beginning of a function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.is_jmp">
+<code class="descname">is_jmp</code><a class="headerlink" href="#bip.base.BipXref.is_jmp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this xref was generated by a jmp
+instruction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.is_ordinaryflow">
+<code class="descname">is_ordinaryflow</code><a class="headerlink" href="#bip.base.BipXref.is_ordinaryflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this xref indicate an ordinary flow (not
+jump or call) between two instructions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.is_offset">
+<code class="descname">is_offset</code><a class="headerlink" href="#bip.base.BipXref.is_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>The xref is created by an offset, it can be a <code class="docutils literal notranslate"><span class="pre">lea</span></code> instruction
+or a reference on a address in an array.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.is_write_access">
+<code class="descname">is_write_access</code><a class="headerlink" href="#bip.base.BipXref.is_write_access" title="Permalink to this definition">¶</a></dt>
+<dd><p>The xref is created by a write access.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.is_read_access">
+<code class="descname">is_read_access</code><a class="headerlink" href="#bip.base.BipXref.is_read_access" title="Permalink to this definition">¶</a></dt>
+<dd><p>The xref is created by a read access.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.is_dst_code">
+<code class="descname">is_dst_code</code><a class="headerlink" href="#bip.base.BipXref.is_dst_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which indicate if the destination of the xref is code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True or False.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.is_src_code">
+<code class="descname">is_src_code</code><a class="headerlink" href="#bip.base.BipXref.is_src_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which indicate if the source of the xref is code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True or False.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipXref.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#bip.base.BipXref.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Xref</a><ul>
+<li><a class="reference internal" href="#bipxref-api">BipXref API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="func.html"
+                        title="previous chapter">Functions &amp; Basic blocks</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="struct.html"
+                        title="next chapter">Structures</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/base/xref.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="struct.html" title="Structures"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="func.html" title="Functions &amp; Basic blocks"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

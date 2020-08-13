@@ -1,0 +1,161 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>User selections &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Activities and Actions" href="activity.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="activity.html" title="Activities and Actions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.gui">
+<span id="user-selections"></span><span id="gui-user-select"></span><h1>User selections<a class="headerlink" href="#module-bip.gui" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#bip.gui.BipUserSelect" title="bip.gui.BipUserSelect"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipUserSelect</span></code></a> class is in charge of regrouping several methods
+allowing to interact with the user selections.</p>
+<p>As of now this class contains only static methods.</p>
+<div class="section" id="bipuserselect-api">
+<h2>BipUserSelect API<a class="headerlink" href="#bipuserselect-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.gui.BipUserSelect">
+<em class="property">class </em><code class="descclassname">bip.gui.</code><code class="descname">BipUserSelect</code><a class="headerlink" href="#bip.gui.BipUserSelect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for helping with interfacing with user selection.</p>
+<p>This class contains only static method for now.</p>
+<dl class="staticmethod">
+<dt id="bip.gui.BipUserSelect.get_curr_highlighted_str">
+<em class="property">static </em><code class="descname">get_curr_highlighted_str</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.gui.BipUserSelect.get_curr_highlighted_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the currently highlighted identifier or None if nothing is
+highlighted. This get it from the current view.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The string of the highlighted object or None if nothing
+is highlighted.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.gui.BipUserSelect.get_curr_highlighted_int">
+<em class="property">static </em><code class="descname">get_curr_highlighted_int</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.gui.BipUserSelect.get_curr_highlighted_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to get the value of the currently highlighted identifier (in
+the current view) if it is an integer. If it not possible to make
+it match a type  of integer (hex, oct or dec) or if nothing is
+highlighted the function return <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the value currently highlighted.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.gui.BipUserSelect.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#bip.gui.BipUserSelect.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">User selections</a><ul>
+<li><a class="reference internal" href="#bipuserselect-api">BipUserSelect API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="activity.html"
+                        title="previous chapter">Activities and Actions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/gui/userselect.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="activity.html" title="Activities and Actions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

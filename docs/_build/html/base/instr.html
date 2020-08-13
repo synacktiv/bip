@@ -1,0 +1,942 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Instructions &amp; Operands &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data" href="data.html" />
+    <link rel="prev" title="Elements" href="elt.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="data.html" title="Data"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="elt.html" title="Elements"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.base">
+<span id="instructions-operands"></span><h1>Instructions &amp; Operands<a class="headerlink" href="#module-bip.base" title="Permalink to this headline">¶</a></h1>
+<p>Instructions are represented by <a class="reference internal" href="#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> objects. They inherit from
+<a class="reference internal" href="elt.html#bip.base.BipElt" title="bip.base.BipElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipElt</span></code></a> and as such have access to xrefs and common methods for
+objects with an address. They are also link to their function
+(<a class="reference internal" href="#bip.base.BipInstr.func" title="bip.base.BipInstr.func"><code class="xref py py-meth docutils literal notranslate"><span class="pre">func()</span></code></a>) and basic block (<a class="reference internal" href="#bip.base.BipInstr.block" title="bip.base.BipInstr.block"><code class="xref py py-meth docutils literal notranslate"><span class="pre">block()</span></code></a>) if any. Finally
+an instruction can have <a class="reference internal" href="#bip.base.BipOperand" title="bip.base.BipOperand"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipOperand</span></code></a> which can be access using the
+<a class="reference internal" href="#bip.base.BipInstr.ops" title="bip.base.BipInstr.ops"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ops()</span></code></a> property.</p>
+<p>The <a class="reference internal" href="#bip.base.BipOperand" title="bip.base.BipOperand"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipOperand</span></code></a> class represent all types of operand. As this is not the
+common design for Bip this will probably be changed soon. For getting the
+type of an operand the <a class="reference internal" href="#bip.base.BipOperand.type" title="bip.base.BipOperand.type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">type()</span></code></a> property can be used and
+compare with the value of <a class="reference internal" href="#bip.base.BipOpType" title="bip.base.BipOpType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipOpType</span></code></a>. The <a class="reference internal" href="#bip.base.BipOperand.value" title="bip.base.BipOperand.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">value()</span></code></a> allow
+to recuperate the value of an operand, the meaning of this value is depending
+of its <a class="reference internal" href="#bip.base.BipOperand.type" title="bip.base.BipOperand.type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">type()</span></code></a> and can be architectures dependant. This is
+not implemented yet and so is still link to information provided by IDA.</p>
+<div class="section" id="bipinstr-api">
+<h2>BipInstr API<a class="headerlink" href="#bipinstr-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.base.BipInstr">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipInstr</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipInstr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing and manipulating a assembleur instruction in
+IDA.</p>
+<dl class="attribute">
+<dt id="bip.base.BipInstr.UA_MAXOP">
+<code class="descname">UA_MAXOP</code><em class="property"> = 8</em><a class="headerlink" href="#bip.base.BipInstr.UA_MAXOP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum number of operands for one instruction</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipInstr.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipInstr.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for an instruction in IDA.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> (<em>int</em>) – The address of the instruction in IDA. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code> the screen address is taken.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.str">
+<code class="descname">str</code><a class="headerlink" href="#bip.base.BipInstr.str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property returning a string representing the complete instruction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A representation of the complete instruction.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#bip.base.BipInstr.str" title="bip.base.BipInstr.str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.mnem">
+<code class="descname">mnem</code><a class="headerlink" href="#bip.base.BipInstr.mnem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get the mnemonic of the instruction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The mnemonic of the instruction</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#bip.base.BipInstr.str" title="bip.base.BipInstr.str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr._insn">
+<code class="descname">_insn</code><a class="headerlink" href="#bip.base.BipInstr._insn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return an <code class="docutils literal notranslate"><span class="pre">insn_t</span></code> representing the instruction
+as provided by IDA.</p>
+<p>There is no reason to use this except for interfacing directly
+with IDA functions.</p>
+<p>This is use internally by other functions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipInstr.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><em>) &lt;==&gt; str(x</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipInstr.__str__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.countOperand">
+<code class="descname">countOperand</code><a class="headerlink" href="#bip.base.BipInstr.countOperand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the number of operand for the instruction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipInstr.op">
+<code class="descname">op</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipInstr.op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method for recuperating an <a class="reference internal" href="#bip.base.BipOperand" title="bip.base.BipOperand"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipOperand</span></code></a> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) – The position of the operand.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>ValueError</strong> – If the position is not valid.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.ops">
+<code class="descname">ops</code><a class="headerlink" href="#bip.base.BipInstr.ops" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property returning a list of the operands of the instruction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipOperand" title="bip.base.BipOperand"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipOperand</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.has_prev_instr">
+<code class="descname">has_prev_instr</code><a class="headerlink" href="#bip.base.BipInstr.has_prev_instr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this instruction follow an other normal
+instruction (part of its flow). Wrapper on <code class="docutils literal notranslate"><span class="pre">idc.is_flow</span></code> .</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.is_call">
+<code class="descname">is_call</code><a class="headerlink" href="#bip.base.BipInstr.is_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this instruction is a call.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return bool:</th><td class="field-body">True if this instruction is a call, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.is_ret">
+<code class="descname">is_ret</code><a class="headerlink" href="#bip.base.BipInstr.is_ret" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this instruction is a ret.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return bool:</th><td class="field-body">True if this instruction is a ret, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.is_indirect_jmp">
+<code class="descname">is_indirect_jmp</code><a class="headerlink" href="#bip.base.BipInstr.is_indirect_jmp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this instruction is an indirect jump (such
+as on a register or from the value of memory).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return bool:</th><td class="field-body">True if this instruction is a indirect jmp, False
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.is_end_block">
+<code class="descname">is_end_block</code><a class="headerlink" href="#bip.base.BipInstr.is_end_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this instruction is the end of a basic block.
+This property will return False if the instruction is a call which
+does not end a block such as display by IDA, see
+<a class="reference internal" href="#bip.base.BipInstr.is_end_block_call" title="bip.base.BipInstr.is_end_block_call"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_end_block_call()</span></code></a> for returning True on call.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return bool:</th><td class="field-body">True if this instruction is the last one for a
+block.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.is_end_block_call">
+<code class="descname">is_end_block_call</code><a class="headerlink" href="#bip.base.BipInstr.is_end_block_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property indicating if this instruction is the end of a basic
+block. This property will return True if the instruction is a
+call, see <a class="reference internal" href="#bip.base.BipInstr.is_end_block" title="bip.base.BipInstr.is_end_block"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_end_block()</span></code></a> for returning False on call which
+are not at the end of a block.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return bool:</th><td class="field-body">True if this instruction is the last one for a
+block, including the case when it is a call.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.is_in_func">
+<code class="descname">is_in_func</code><a class="headerlink" href="#bip.base.BipInstr.is_in_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return True if this instruction is inside a
+function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.prev">
+<code class="descname">prev</code><a class="headerlink" href="#bip.base.BipInstr.prev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property returning the instruction which preceed in the normal
+flow of execution the current instruction (no handle of jmp,
+call, …). It is possible for an instruction to not have a
+previous instruction typically at the start of a function but in
+other cases too. This can be tested with
+<a class="reference internal" href="#bip.base.BipInstr.has_prev_instr" title="bip.base.BipInstr.has_prev_instr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">has_prev_instr()</span></code></a> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The previous instruction if any.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.next">
+<code class="descname">next</code><a class="headerlink" href="#bip.base.BipInstr.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>The instruction following the current one. It is important to
+notice it will not always be the next instruction in the control
+flow.</p>
+<p>If the next element is not an instruction (for example at the end
+of a function followed by data) <code class="docutils literal notranslate"><span class="pre">None</span></code> will be returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The next <a class="reference internal" href="#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> or None in case of error.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipInstr._is_this_elt">
+<em class="property">classmethod </em><code class="descname">_is_this_elt</code><span class="sig-paren">(</span><em>ea</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipInstr._is_this_elt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow the function <a class="reference internal" href="elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> to know if
+this the correct type for an address. Only subclasses of an
+element which return True will be tested by <a class="reference internal" href="elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a>,
+<a class="reference internal" href="elt.html#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> return always True except if <code class="docutils literal notranslate"><span class="pre">idelt</span></code> is not
+of the correct type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>idelt</strong> (<em>int</em>) – An id representing the element, typically an
+address.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if this is a valid class for constructing this
+element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.block">
+<code class="descname">block</code><a class="headerlink" href="#bip.base.BipInstr.block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the <a class="reference internal" href="func.html#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> in which this instruction is
+included.</p>
+<p>This instruction will raise an exception if the instruction is
+not included an IDA basic block. See <a class="reference internal" href="func.html#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> for more
+information.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <a class="reference internal" href="func.html#bip.base.BipBlock" title="bip.base.BipBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBlock</span></code></a> object containing this instruction.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.func">
+<code class="descname">func</code><a class="headerlink" href="#bip.base.BipInstr.func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the <a class="reference internal" href="func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> in which this instruction is
+included.</p>
+<p>This will raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if the instruction is not in a
+defined function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <a class="reference internal" href="func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a> object containing this
+instruction.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.xOrdinaryCfNext">
+<code class="descname">xOrdinaryCfNext</code><a class="headerlink" href="#bip.base.BipInstr.xOrdinaryCfNext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property returning the next instruction in the control flow. This
+may return None in several case such as <code class="docutils literal notranslate"><span class="pre">ret</span></code> or a
+non-conditional <code class="docutils literal notranslate"><span class="pre">jmp</span></code> .</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This can be simply handle because of things like a
+switch/jmp table.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> for the next instruction in the control
+flow or <code class="docutils literal notranslate"><span class="pre">None</span></code> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.xCfNext">
+<code class="descname">xCfNext</code><a class="headerlink" href="#bip.base.BipInstr.xCfNext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property allowing access to instructions which can follow in the
+control flow. This will take call, jmp and ordinary flow into
+account.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> for the next possible
+intructions.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipInstr.xCfPrev">
+<code class="descname">xCfPrev</code><a class="headerlink" href="#bip.base.BipInstr.xCfPrev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property allowing access to instructions which can lead to the
+current instructions. This will take call, jmp and ordinary flow
+into account.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipInstr.make">
+<em class="property">classmethod </em><code class="descname">make</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipInstr.make" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method for defining an instruction. If auto-analysis is
+enable in IDA this may define also the following instructions.
+If the instruction is already define, this instruction just
+returns it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> – The address at which to define the instruction, if None
+the current screen address is used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The <a class="reference internal" href="#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> for this address.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>RuntimeError</strong> – If it was not possible to define the address
+as code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="bipoperand-api">
+<h2>BipOperand API<a class="headerlink" href="#bipoperand-api" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This API will probably change in the near future.</p>
+</div>
+<dl class="class">
+<dt id="bip.base.BipOperand">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipOperand</code><span class="sig-paren">(</span><em>ins</em>, <em>num</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipOperand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class representing an operand of an instruction. This class
+should be used through <a class="reference internal" href="#bip.base.BipInstr" title="bip.base.BipInstr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipInstr</span></code></a> .</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">make test property depending of type</p>
+</div>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">make subclass by type of operand ?</p>
+</div>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">support .reg and other stuff like that</p>
+</div>
+<div class="admonition-todo admonition" id="index-3">
+<p class="first admonition-title">Todo</p>
+<p class="last">hex((i.Op2.specval &gt;&gt; 0x10) &amp; 0xFF) give the segment</p>
+</div>
+<div class="admonition-todo admonition" id="index-4">
+<p class="first admonition-title">Todo</p>
+<p class="last">make pretty printing function if possible</p>
+</div>
+<dl class="attribute">
+<dt id="bip.base.BipOperand.instr">
+<code class="descname">instr</code><em class="property"> = None</em><a class="headerlink" href="#bip.base.BipOperand.instr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instruction containing the operand</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.opnum">
+<code class="descname">opnum</code><em class="property"> = None</em><a class="headerlink" href="#bip.base.BipOperand.opnum" title="Permalink to this definition">¶</a></dt>
+<dd><p>The position of the operand in the instruction</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.ea">
+<code class="descname">ea</code><a class="headerlink" href="#bip.base.BipOperand.ea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property allowing to get the address of the instruction
+containing this operand.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The address of the instruction.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int or long</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.str">
+<code class="descname">str</code><a class="headerlink" href="#bip.base.BipOperand.str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property allowing to get the representation of the operand as a
+string.
+Wrapper on <code class="docutils literal notranslate"><span class="pre">idc.GetOpnd</span></code> (old) or <code class="docutils literal notranslate"><span class="pre">idc.print_operand</span></code> (new) .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The representation of the operand.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#bip.base.BipOperand.str" title="bip.base.BipOperand.str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.type">
+<code class="descname">type</code><a class="headerlink" href="#bip.base.BipOperand.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property allowing to get the type of the operand. This type
+correspond to the <a class="reference internal" href="#bip.base.BipOpType" title="bip.base.BipOpType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipOpType</span></code></a> value .
+Wrapper on <code class="docutils literal notranslate"><span class="pre">idc.GetOpType</span></code> (old) or <code class="docutils literal notranslate"><span class="pre">idc.get_operand_type</span></code>
+(new).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The type of the operand as defined in <a class="reference internal" href="#bip.base.BipOpType" title="bip.base.BipOpType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipOpType</span></code></a> .</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.dtype">
+<code class="descname">dtype</code><a class="headerlink" href="#bip.base.BipOperand.dtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get the type of the operand value. Those
+can be access through the <a class="reference internal" href="#bip.base.BipDestOpType" title="bip.base.BipDestOpType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipDestOpType</span></code></a> enum.
+This is is equivalent to accessing the <code class="docutils literal notranslate"><span class="pre">op_t.dtype</span></code> from IDA.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return int:</th><td class="field-body">The type of the destination of the operand as defined
+in <a class="reference internal" href="#bip.base.BipDestOpType" title="bip.base.BipDestOpType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipDestOpType</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.type_info">
+<code class="descname">type_info</code><a class="headerlink" href="#bip.base.BipOperand.type_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which allow to get the information on the type of the
+operand if defined. This will return an object which inherit from
+<a class="reference internal" href="type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> if defined or <code class="docutils literal notranslate"><span class="pre">None</span></code> if not.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">By default this does not seems to be defined by IDA.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> object defined for this operand or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if it was not defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.value">
+<code class="descname">value</code><a class="headerlink" href="#bip.base.BipOperand.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property allowing to get the value of an operand. Depending of the
+type of the operand this value can means different things.
+For an immediate the value return as a mask apply for getting only
+the number of bytes of the asm value and not the signed extended
+returned by IDA.</p>
+<div class="admonition-todo admonition" id="index-5">
+<p class="first admonition-title">Todo</p>
+<p class="last">Look at idc.get_operand_value, somethings may need
+change here.</p>
+</div>
+<div class="admonition-todo admonition" id="index-6">
+<p class="first admonition-title">Todo</p>
+<p class="last">Support the dtype for other things than immediate (such as
+float).</p>
+</div>
+<div class="admonition-todo admonition" id="index-7">
+<p class="first admonition-title">Todo</p>
+<p class="last">Support all of the dtype for immediate</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The value of the operand.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.is_void">
+<code class="descname">is_void</code><a class="headerlink" href="#bip.base.BipOperand.is_void" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if this object represent the fact that there is no operand.
+(<code class="docutils literal notranslate"><span class="pre">BipOpType.VOID</span></code>)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.is_reg">
+<code class="descname">is_reg</code><a class="headerlink" href="#bip.base.BipOperand.is_reg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the operand represent a register. (<code class="docutils literal notranslate"><span class="pre">BipOpType.REG</span></code>)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.is_memref">
+<code class="descname">is_memref</code><a class="headerlink" href="#bip.base.BipOperand.is_memref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the operand is a memory reference (one of MEM, PHRASE or
+DISPL in BipOpType)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.is_imm">
+<code class="descname">is_imm</code><a class="headerlink" href="#bip.base.BipOperand.is_imm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the operand is an immediate value which is <strong>not</strong> an
+address (BipOpType.IMM).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.is_addr">
+<code class="descname">is_addr</code><a class="headerlink" href="#bip.base.BipOperand.is_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the operand represent an address, far or near.
+(one of FAR or NEAR in BipOpType).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOperand.is_proc_specific">
+<code class="descname">is_proc_specific</code><a class="headerlink" href="#bip.base.BipOperand.is_proc_specific" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if this operand is processor specific.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipOperand.set_offset">
+<code class="descname">set_offset</code><span class="sig-paren">(</span><em>base=0</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipOperand.set_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set this operand as being an offset.</p>
+<div class="admonition-todo admonition" id="index-8">
+<p class="first admonition-title">Todo</p>
+<p class="last">this should be a setter on a property ?</p>
+</div>
+<div class="admonition-todo admonition" id="index-9">
+<p class="first admonition-title">Todo</p>
+<p class="last">doc base arg</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BipOpType">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipOpType</code><a class="headerlink" href="#bip.base.BipOpType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static class allowing to get the type of the operands as define in the
+<code class="docutils literal notranslate"><span class="pre">ua.hpp</span></code> file from hexrays. This is equivalent to the <code class="docutils literal notranslate"><span class="pre">idc.o_*</span></code>
+values.</p>
+<dl class="attribute">
+<dt id="bip.base.BipOpType.VOID">
+<code class="descname">VOID</code><em class="property"> = 0</em><a class="headerlink" href="#bip.base.BipOpType.VOID" title="Permalink to this definition">¶</a></dt>
+<dd><p>No Operand.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.REG">
+<code class="descname">REG</code><em class="property"> = 1</em><a class="headerlink" href="#bip.base.BipOpType.REG" title="Permalink to this definition">¶</a></dt>
+<dd><p>General Register (al,ax,es,ds…).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.MEM">
+<code class="descname">MEM</code><em class="property"> = 2</em><a class="headerlink" href="#bip.base.BipOpType.MEM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Direct Memory Reference  (DATA).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.PHRASE">
+<code class="descname">PHRASE</code><em class="property"> = 3</em><a class="headerlink" href="#bip.base.BipOpType.PHRASE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Memory Ref [Base Reg + Index Reg].</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.DISPL">
+<code class="descname">DISPL</code><em class="property"> = 4</em><a class="headerlink" href="#bip.base.BipOpType.DISPL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Memory Reg [Base Reg + Index Reg + Displacement].</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.IMM">
+<code class="descname">IMM</code><em class="property"> = 5</em><a class="headerlink" href="#bip.base.BipOpType.IMM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Immediate Value.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.FAR">
+<code class="descname">FAR</code><em class="property"> = 6</em><a class="headerlink" href="#bip.base.BipOpType.FAR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Immediate Far Address  (CODE).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.NEAR">
+<code class="descname">NEAR</code><em class="property"> = 7</em><a class="headerlink" href="#bip.base.BipOpType.NEAR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Immediate Near Address (CODE).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.IDPSPEC0">
+<code class="descname">IDPSPEC0</code><em class="property"> = 8</em><a class="headerlink" href="#bip.base.BipOpType.IDPSPEC0" title="Permalink to this definition">¶</a></dt>
+<dd><p>processor specific type.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.IDPSPEC1">
+<code class="descname">IDPSPEC1</code><em class="property"> = 9</em><a class="headerlink" href="#bip.base.BipOpType.IDPSPEC1" title="Permalink to this definition">¶</a></dt>
+<dd><p>processor specific type.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.IDPSPEC2">
+<code class="descname">IDPSPEC2</code><em class="property"> = 10</em><a class="headerlink" href="#bip.base.BipOpType.IDPSPEC2" title="Permalink to this definition">¶</a></dt>
+<dd><p>processor specific type.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.IDPSPEC3">
+<code class="descname">IDPSPEC3</code><em class="property"> = 11</em><a class="headerlink" href="#bip.base.BipOpType.IDPSPEC3" title="Permalink to this definition">¶</a></dt>
+<dd><p>processor specific type.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.IDPSPEC4">
+<code class="descname">IDPSPEC4</code><em class="property"> = 12</em><a class="headerlink" href="#bip.base.BipOpType.IDPSPEC4" title="Permalink to this definition">¶</a></dt>
+<dd><p>processor specific type.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipOpType.IDPSPEC5">
+<code class="descname">IDPSPEC5</code><em class="property"> = 13</em><a class="headerlink" href="#bip.base.BipOpType.IDPSPEC5" title="Permalink to this definition">¶</a></dt>
+<dd><p>processor specific type.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BipDestOpType">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipDestOpType</code><a class="headerlink" href="#bip.base.BipDestOpType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static class representing an enum of the <code class="docutils literal notranslate"><span class="pre">dt_*</span></code> macro from IDA
+indicating the type of the operand value.</p>
+<p>Defined in <code class="docutils literal notranslate"><span class="pre">ua.hpp</span></code> in IDA.</p>
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_BYTE">
+<code class="descname">DT_BYTE</code><em class="property"> = 0</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_BYTE" title="Permalink to this definition">¶</a></dt>
+<dd><p>8 bit</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_WORD">
+<code class="descname">DT_WORD</code><em class="property"> = 1</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_WORD" title="Permalink to this definition">¶</a></dt>
+<dd><p>16 bit</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_DWORD">
+<code class="descname">DT_DWORD</code><em class="property"> = 2</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_DWORD" title="Permalink to this definition">¶</a></dt>
+<dd><p>32 bit</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_FLOAT">
+<code class="descname">DT_FLOAT</code><em class="property"> = 3</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_FLOAT" title="Permalink to this definition">¶</a></dt>
+<dd><p>4 byte</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_DOUBLE">
+<code class="descname">DT_DOUBLE</code><em class="property"> = 4</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_DOUBLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>8 byte</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_TBYTE">
+<code class="descname">DT_TBYTE</code><em class="property"> = 5</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_TBYTE" title="Permalink to this definition">¶</a></dt>
+<dd><p>variable size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_PACKREAL">
+<code class="descname">DT_PACKREAL</code><em class="property"> = 6</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_PACKREAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>packed real format for mc68040</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_QWORD">
+<code class="descname">DT_QWORD</code><em class="property"> = 7</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_QWORD" title="Permalink to this definition">¶</a></dt>
+<dd><p>64 bit</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_BYTE16">
+<code class="descname">DT_BYTE16</code><em class="property"> = 8</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_BYTE16" title="Permalink to this definition">¶</a></dt>
+<dd><p>128 bit</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_CODE">
+<code class="descname">DT_CODE</code><em class="property"> = 9</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_CODE" title="Permalink to this definition">¶</a></dt>
+<dd><p>ptr to code (not used?)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_VOID">
+<code class="descname">DT_VOID</code><em class="property"> = 10</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_VOID" title="Permalink to this definition">¶</a></dt>
+<dd><p>none</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_FWORD">
+<code class="descname">DT_FWORD</code><em class="property"> = 11</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_FWORD" title="Permalink to this definition">¶</a></dt>
+<dd><p>48 bit</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_BITFILD">
+<code class="descname">DT_BITFILD</code><em class="property"> = 12</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_BITFILD" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit field (mc680x0)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_STRING">
+<code class="descname">DT_STRING</code><em class="property"> = 13</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_STRING" title="Permalink to this definition">¶</a></dt>
+<dd><p>pointer to asciiz string</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_UNICODE">
+<code class="descname">DT_UNICODE</code><em class="property"> = 14</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_UNICODE" title="Permalink to this definition">¶</a></dt>
+<dd><p>pointer to unicode string</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_LDBL">
+<code class="descname">DT_LDBL</code><em class="property"> = 15</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_LDBL" title="Permalink to this definition">¶</a></dt>
+<dd><p>long double (which may be different from tbyte)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_BYTE32">
+<code class="descname">DT_BYTE32</code><em class="property"> = 16</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_BYTE32" title="Permalink to this definition">¶</a></dt>
+<dd><p>256 bit</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipDestOpType.DT_BYTE64">
+<code class="descname">DT_BYTE64</code><em class="property"> = 17</em><a class="headerlink" href="#bip.base.BipDestOpType.DT_BYTE64" title="Permalink to this definition">¶</a></dt>
+<dd><p>512 bit</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Instructions &amp; Operands</a><ul>
+<li><a class="reference internal" href="#bipinstr-api">BipInstr API</a></li>
+<li><a class="reference internal" href="#bipoperand-api">BipOperand API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="elt.html"
+                        title="previous chapter">Elements</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="data.html"
+                        title="next chapter">Data</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/base/instr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="data.html" title="Data"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="elt.html" title="Elements"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

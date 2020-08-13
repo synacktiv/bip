@@ -1,0 +1,1504 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Type &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="IDB representation" href="bipidb.html" />
+    <link rel="prev" title="Enum" href="enum.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="bipidb.html" title="IDB representation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enum.html" title="Enum"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.base">
+<span id="type"></span><span id="doc-bip-base-type"></span><h1>Type<a class="headerlink" href="#module-bip.base" title="Permalink to this headline">¶</a></h1>
+<p>Types are used every where in IDA: data (<a class="reference internal" href="data.html#bip.base.BipData" title="bip.base.BipData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipData</span></code></a>),
+functions (<a class="reference internal" href="func.html#bip.base.BipFunction" title="bip.base.BipFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipFunction</span></code></a>), local variable
+(<a class="reference internal" href="../hexrays/lvar.html#bip.hexrays.HxLvar" title="bip.hexrays.HxLvar"><code class="xref py py-class docutils literal notranslate"><span class="pre">HxLvar</span></code></a>) … In Bip all types are reprensented as
+an object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>. <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> objects can
+be recursive: a pointer will be represented by the <a class="reference internal" href="#bip.base.BTypePtr" title="bip.base.BTypePtr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypePtr</span></code></a> which
+will contain a reference on the pointed type, a <a class="reference internal" href="#bip.base.BTypeFunc" title="bip.base.BTypeFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeFunc</span></code></a> in the
+case of a function pointer for example. All subclasses of <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>
+start with the prefix <code class="docutils literal notranslate"><span class="pre">BType*</span></code>.</p>
+<p>For creating a new <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> the easiest way is to use the
+<a class="reference internal" href="#bip.base.BipType.from_c" title="bip.base.BipType.from_c"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipType.from_c()</span></code></a> static method: it will create an object which inherit
+from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> of the correct class from a string representing the C
+declaration of the type.</p>
+<p>When recuperating a type from IDA (<code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>) Bip will try to determine the
+correct object much the same way it is done for the <a class="reference internal" href="elt.html#bip.base.BipBaseElt" title="bip.base.BipBaseElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipBaseElt</span></code></a> when
+using <a class="reference internal" href="elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a>. This is made using the static method
+<a class="reference internal" href="#bip.base.BipType.from_tinfo" title="bip.base.BipType.from_tinfo"><code class="xref py py-func docutils literal notranslate"><span class="pre">BipType.from_tinfo()</span></code></a> and the class method for determining the correct
+class is <a class="reference internal" href="#bip.base.BipType.is_handling_type" title="bip.base.BipType.is_handling_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipType.is_handling_type()</span></code></a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p><strong>Modifying types</strong></p>
+<p class="last">Modifying types can have unexpected side effects. In particular the object
+recuperated through the API (Bip or IDAPython) may not be the one
+currently used. For avoiding those problems types are copied before
+setting them in most case by the Bip API. However recuperating a type
+while it is changed by another script or the IDA GUI will still make
+manipulation invalid.</p>
+</div>
+<p>Here is a quick descriptions of the different types implemented in Bip:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Type name</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="#bip.base.BTypeEmpty" title="bip.base.BTypeEmpty"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeEmpty</span></code></a></td>
+<td>An empty type, should never happen but…</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bip.base.BTypePartial" title="bip.base.BTypePartial"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypePartial</span></code></a></td>
+<td>A type where the size is known but without any other information.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bip.base.BTypeVoid" title="bip.base.BTypeVoid"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeVoid</span></code></a></td>
+<td>The <code class="docutils literal notranslate"><span class="pre">void</span></code> type (not <code class="docutils literal notranslate"><span class="pre">void*</span></code> just <code class="docutils literal notranslate"><span class="pre">void</span></code>).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bip.base.BTypeInt" title="bip.base.BTypeInt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeInt</span></code></a></td>
+<td>An <code class="docutils literal notranslate"><span class="pre">int</span></code>, can have different size, be signed or unsigned.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bip.base.BTypeBool" title="bip.base.BTypeBool"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeBool</span></code></a></td>
+<td>A boolean, can have different size.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bip.base.BTypeFloat" title="bip.base.BTypeFloat"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeFloat</span></code></a></td>
+<td>A float or double.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bip.base.BTypePtr" title="bip.base.BTypePtr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypePtr</span></code></a></td>
+<td>A pointer, recursive type, <a class="reference internal" href="#bip.base.BTypePtr.pointed" title="bip.base.BTypePtr.pointed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pointed()</span></code></a> for getting the subtype.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bip.base.BTypeArray" title="bip.base.BTypeArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeArray</span></code></a></td>
+<td>An array, recursive type (<a class="reference internal" href="#bip.base.BTypeArray.elt_type" title="bip.base.BTypeArray.elt_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BTypeArray.elt_type()</span></code></a>), have a number of element.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bip.base.BTypeFunc" title="bip.base.BTypeFunc"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeFunc</span></code></a></td>
+<td>A function, recursive type for arguments and return value. Also access to the arguments name and their numbers.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bip.base.BTypeStruct" title="bip.base.BTypeStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeStruct</span></code></a></td>
+<td>A structure, rescursive type for the members. This is different from <a class="reference internal" href="struct.html#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#bip.base.BTypeUnion" title="bip.base.BTypeUnion"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeUnion</span></code></a></td>
+<td>A union, rescursive type for the members.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#bip.base.BTypeEnum" title="bip.base.BTypeEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeEnum</span></code></a></td>
+<td>An enum, bugged before IDA 7.3, implementation is not finished.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="biptype-api">
+<h2>BipType API<a class="headerlink" href="#biptype-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.base.BipType">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipType</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class for representing a <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> object from ida in bip.
+All basic types are subclasses of this one, the class name start with
+the prefix <code class="docutils literal notranslate"><span class="pre">BType</span></code>, see <a class="reference internal" href="#doc-bip-base-type"><span class="std std-ref">Type</span></a> for more
+information.</p>
+<p>The objects which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> can contain other
+<em>children</em> <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> objects. For example a pointer
+(<a class="reference internal" href="#bip.base.BTypePtr" title="bip.base.BTypePtr"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypePtr</span></code></a>) will contain one child object corresponding to the
+pointed type. The <a class="reference internal" href="#bip.base.BipType.children" title="bip.base.BipType.children"><code class="xref py py-meth docutils literal notranslate"><span class="pre">children()</span></code></a> property allow to get a list of the
+child object.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">allow creation of types</p>
+</div>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p>General todo for types:</p>
+<ul class="last simple">
+<li>SSE</li>
+<li>const</li>
+</ul>
+</div>
+<dl class="method">
+<dt id="bip.base.BipType.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base constructor for the child classes of <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>. This
+constructor is used for interfacing with IDA and initializing. A
+bip user should probably used the <a class="reference internal" href="#bip.base.BipType.from_tinfo" title="bip.base.BipType.from_tinfo"><code class="xref py py-func docutils literal notranslate"><span class="pre">BipType.from_tinfo()</span></code></a>
+function which will directly create the object of the correct
+class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – The <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> representing the type in IDA.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipType._tinfo">
+<code class="descname">_tinfo</code><em class="property"> = None</em><a class="headerlink" href="#bip.base.BipType._tinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal object which correspond to the <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> object
+equivalent to this object in IDA.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipType.size">
+<code class="descname">size</code><a class="headerlink" href="#bip.base.BipType.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the number of bytes in this type.</p>
+<p>In case the number of bytes is unknown None is returned.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipType.str">
+<code class="descname">str</code><a class="headerlink" href="#bip.base.BipType.str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the C String equivalent to the type of this
+object. It will take into account the child type. This
+should never be empty (except for unknown ? TODO test).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A string which represent the type as in C.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipType.is_named">
+<code class="descname">is_named</code><a class="headerlink" href="#bip.base.BipType.is_named" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if this type has a name. This can be because of a
+typedef, a structure declaration, … The name can be recuperated
+with the <a class="reference internal" href="#bip.base.BipType.name" title="bip.base.BipType.name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipType.name()</span></code></a> property.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipType.name">
+<code class="descname">name</code><a class="headerlink" href="#bip.base.BipType.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the name of this type if it has one. A type
+can a name because of a typedef, a structure, … If it does not
+have one this property will return an empty string. The presence
+of a named can be tested using the <a class="reference internal" href="#bip.base.BipType.is_named" title="bip.base.BipType.is_named"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipType.is_named()</span></code></a>
+property.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A string corresponding to the name of this type. Empty
+if this type does not have a name.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipType.__eq__">
+<code class="descname">__eq__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare two BipType. This is only based on the compare of the IDA
+underlying object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipType.__ne__">
+<code class="descname">__ne__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.__ne__" title="Permalink to this definition">¶</a></dt>
+<dd><p>x.__ne__(y) &lt;==&gt; x!=y</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipType.set_at">
+<code class="descname">set_at</code><span class="sig-paren">(</span><em>ea</em>, <em>flags=1</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.set_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which try to set the type of the current object at a
+given position, in particular this will work for global data and
+function. If an error occur when trying to set the type a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code> will be raised.</p>
+<p>This create a copy of the <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> in this object.</p>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">delete flags and make something better here.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ea</strong> (<em>int</em>) – The address at which set the type.</li>
+<li><strong>flags</strong> (<em>int</em>) – This are the <code class="docutils literal notranslate"><span class="pre">TINFO_*</span></code> flags from ida_typeinf,
+by default <code class="docutils literal notranslate"><span class="pre">TINFO_DEFINITE</span></code> .</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipType.is_set_at">
+<em class="property">static </em><code class="descname">is_set_at</code><span class="sig-paren">(</span><em>ea</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.is_set_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allow to test if a type is defined at a particular
+address. This function will return False if a type is not set but
+ida may be able to guess it. This means that this function may
+return False while <a class="reference internal" href="#bip.base.BipType.get_at" title="bip.base.BipType.get_at"><code class="xref py py-func docutils literal notranslate"><span class="pre">BipType.get_at()</span></code></a> return a type, if this
+function return True <a class="reference internal" href="#bip.base.BipType.get_at" title="bip.base.BipType.get_at"><code class="xref py py-func docutils literal notranslate"><span class="pre">BipType.get_at()</span></code></a> should always return
+a type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> – The address at which to make the test.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if a type is defined at the address given in
+argument, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipType.get_at">
+<em class="property">static </em><code class="descname">get_at</code><span class="sig-paren">(</span><em>ea=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.get_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which will create an object which inherit from
+<a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> representing the type at the current address.
+This function will <strong>not</strong> set the type at the address given and
+it may not be set if it was guess by ida.</p>
+<p>Internally this function will first try to get the type at the
+address, if no type are defined it will try to guess it. If ida
+is not able to guess it it will return <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<div class="admonition-todo admonition" id="index-3">
+<p class="first admonition-title">Todo</p>
+<p class="last">make something better when no type are set ?</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>Implementation</strong></p>
+<p class="last">Ida allow to guess the type but this “guess” ignore the fact
+that this may have been set. It seems necessary to use
+ida_nalt.get_tinfo for recuperating the type set, it will fail
+if no type has been set. If no type were set the guess_tinfo
+is then used, it will typically fail if the data is undefined,
+in this case None will be return. This may change in the
+future as by default a tinfo_t <code class="docutils literal notranslate"><span class="pre">empty</span></code> is true (but not the
+tinfo_t.is_unknown).</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> – The address at which to get the type. If <code class="docutils literal notranslate"><span class="pre">None</span></code>
+the screen address will be used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>
+representing the type at the address given in argument.
+<code class="docutils literal notranslate"><span class="pre">None</span></code> will be return if no type is define and ida was not
+able to guess it .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipType.del_at">
+<em class="property">static </em><code class="descname">del_at</code><span class="sig-paren">(</span><em>ea</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.del_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which delete the type set at a particular address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ea</strong> – The address at which to delete the type. If <code class="docutils literal notranslate"><span class="pre">None</span></code>
+the screen address will be used.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipType.children">
+<code class="descname">children</code><a class="headerlink" href="#bip.base.BipType.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of children types. All elements of this
+list will be object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of object inheriting from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>
+which are “child” of this type.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipType.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipType.from_tinfo">
+<em class="property">static </em><code class="descname">from_tinfo</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.from_tinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which convert a <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> object from ida to one of the
+child object of <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> . This should be used for
+converting the type from IDA into their correct object for bip.
+This function is used as an interface with the IDA object.</p>
+<p>If no <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> child object supports the <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> a
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> exception will be raised. Internally this use
+the <a class="reference internal" href="#bip.base.BipType._get_class_bip_type" title="bip.base.BipType._get_class_bip_type"><code class="xref py py-func docutils literal notranslate"><span class="pre">_get_class_bip_type()</span></code></a> function.</p>
+<p>This create a <strong>copy</strong> of the underlying <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> object, this
+allow to avoid problems if when using the IdaPython API or the GUI
+from IDA the type is change. This is a problem because it means
+bip should dynamically change the class of the object and even if
+possible this will create an error prone API. Instead types are
+handle by copy instead of by reference, and interface with other
+bip object take this into account. For creating an object of the
+correct class without a copy the <a class="reference internal" href="#bip.base.BipType.from_tinfo_no_copy" title="bip.base.BipType.from_tinfo_no_copy"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_tinfo_no_copy()</span></code></a>
+can be used by is subject to the above problems.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> from ida.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The equivalent object to the <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> for bip. This
+will be an object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipType.from_tinfo_no_copy">
+<em class="property">static </em><code class="descname">from_tinfo_no_copy</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.from_tinfo_no_copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which convert a <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> object from ida to one of the
+child object of <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> .</p>
+<p>If no <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> child object supports the <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> a
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> exception will be raised. Internally this use
+the <a class="reference internal" href="#bip.base.BipType._get_class_bip_type" title="bip.base.BipType._get_class_bip_type"><code class="xref py py-func docutils literal notranslate"><span class="pre">_get_class_bip_type()</span></code></a> function.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This function does <strong>not</strong> create a copy of the underlying
+<code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> object which can create several problems when
+using the GUI or the IdaPython/IDC API. For creating a copy
+of the object use the <a class="reference internal" href="#bip.base.BipType.from_tinfo" title="bip.base.BipType.from_tinfo"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_tinfo()</span></code></a> instead.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> from ida.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The equivalent object to the <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> for bip. This
+will be an object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipType.from_c">
+<em class="property">static </em><code class="descname">from_c</code><span class="sig-paren">(</span><em>cstr</em>, <em>flags=1025</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.from_c" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which convert a C string declaration into a object which
+inherit from a <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> . If there is no <code class="docutils literal notranslate"><span class="pre">;</span></code> at the end
+of the string provided, one will be added automatically.</p>
+<p>This is made for parsing <strong>one</strong> declaration and can create
+problem if several declarations are in the string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cstr</strong> (<em>str</em>) – A string representing a declaration in C.</li>
+<li><strong>flags</strong> (<em>int</em>) – <code class="docutils literal notranslate"><span class="pre">PT_*</span></code> flags from IDA (see typeinf.hpp).
+The default is <code class="docutils literal notranslate"><span class="pre">0x401</span></code> (<code class="docutils literal notranslate"><span class="pre">PT_RAWARGS</span> <span class="pre">|</span> <span class="pre">PT_SIL</span></code>) should be
+enough in most case.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> equivalent
+to the C declaration.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>RuntimeError</strong> – if the function was not able to create the type.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipType.import_c_header">
+<em class="property">static </em><code class="descname">import_c_header</code><span class="sig-paren">(</span><em>path</em>, <em>pack=0</em>, <em>raw_args=True</em>, <em>silent=False</em>, <em>autoimport=True</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType.import_c_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import a C header file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>str</em>) – The path to the C header file to import.</li>
+<li><strong>pack</strong> (<em>int</em>) – The packing for the structure in the header. 0
+means default (from compiler/configuration), other values are
+power of 2 up to 16. No verification is made on that value.</li>
+<li><strong>raw_args</strong> (<em>bool</em>) – Should leave the name of the argument
+unchanged: do not remove the _ in the name. True by default.</li>
+<li><strong>silent</strong> (<em>bool</em>) – Should silently fails on error and mask
+warnings.</li>
+<li><strong>autoimport</strong> (<em>bool</em>) – If True (the default), this function will
+import all new types in the IDB (“Structures”, “Enums”, …
+Views), instead of only keeping them in the type
+library (til, the “Local Types” view).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The number of error which occur during parsing.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipType._get_class_bip_type">
+<em class="property">static </em><code class="descname">_get_class_bip_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType._get_class_bip_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal function which allow to recuperate the correct child
+class of <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> corresponding to  <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> object
+from ida. This is used internally for converting the type from IDA
+into their correct object for bip.
+This function is used as an interface with the IDA object.</p>
+<p>If no <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> child object supports the <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> a
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> exception will be raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> from ida.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The bip class which should be used as equivalent for
+the <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> provided as argument. This
+will be an object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> .</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipType._get_tinfo_copy">
+<code class="descname">_get_tinfo_copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipType._get_tinfo_copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the ida type (<code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>) represented by this
+object. This is an internal function which is used as an helper
+for setting the types of an element from a <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A copy of the <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> represented by this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipType.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#bip.base.BipType.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypeEmpty">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypeEmpty</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeEmpty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for a type with no
+information (empty or unknown). This
+is really used by IDA including in structures and so on.</p>
+<dl class="classmethod">
+<dt id="bip.base.BTypeEmpty.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeEmpty.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypePartial">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypePartial</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypePartial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for a partial type: when
+only the size is known but no other information is available.</p>
+<dl class="classmethod">
+<dt id="bip.base.BTypePartial.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypePartial.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypeVoid">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypeVoid</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeVoid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for a void.</p>
+<dl class="classmethod">
+<dt id="bip.base.BTypeVoid.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeVoid.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypeInt">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypeInt</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for an integer, it can be
+signed or unsigned and may have different <a class="reference internal" href="#bip.base.BipType.size" title="bip.base.BipType.size"><code class="xref py py-meth docutils literal notranslate"><span class="pre">size()</span></code></a>.</p>
+<dl class="attribute">
+<dt id="bip.base.BTypeInt.is_signed">
+<code class="descname">is_signed</code><a class="headerlink" href="#bip.base.BTypeInt.is_signed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return True if the integer is signed and false if
+it is unsigned.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeInt.is_unsigned">
+<code class="descname">is_unsigned</code><a class="headerlink" href="#bip.base.BTypeInt.is_unsigned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return True if the integer is unsigned and false if
+it is signed.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BTypeInt.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeInt.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypeBool">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypeBool</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeBool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for a boolean (<code class="docutils literal notranslate"><span class="pre">bool</span></code>).
+All boolean do not have the same <a class="reference internal" href="#bip.base.BipType.size" title="bip.base.BipType.size"><code class="xref py py-meth docutils literal notranslate"><span class="pre">size()</span></code></a> .</p>
+<dl class="classmethod">
+<dt id="bip.base.BTypeBool.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeBool.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypeFloat">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypeFloat</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeFloat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for a float or a double.</p>
+<dl class="attribute">
+<dt id="bip.base.BTypeFloat.is_double">
+<code class="descname">is_double</code><a class="headerlink" href="#bip.base.BTypeFloat.is_double" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return true if this type represent a double
+(by opposition to a float).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeFloat.is_float">
+<code class="descname">is_float</code><a class="headerlink" href="#bip.base.BTypeFloat.is_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return true if this type represent a float
+(by opposition to a double).</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BTypeFloat.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeFloat.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypePtr">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypePtr</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypePtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for a pointer. This is a
+recursive type, it is possible to have the pointed type with the
+property <a class="reference internal" href="#bip.base.BTypePtr.pointed" title="bip.base.BTypePtr.pointed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pointed()</span></code></a> .</p>
+<dl class="attribute">
+<dt id="bip.base.BTypePtr.pointed">
+<code class="descname">pointed</code><a class="headerlink" href="#bip.base.BTypePtr.pointed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the type pointed by this type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from
+<a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> class.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypePtr.is_pvoid">
+<code class="descname">is_pvoid</code><a class="headerlink" href="#bip.base.BTypePtr.is_pvoid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return true if this type is a pointer on void
+(<code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*</span></code>).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypePtr.is_pfunc">
+<code class="descname">is_pfunc</code><a class="headerlink" href="#bip.base.BTypePtr.is_pfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return true if this type is a pointer on a
+function.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BTypePtr.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypePtr.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypeArray">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypeArray</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for an array (a <em>static</em>
+array: <code class="docutils literal notranslate"><span class="pre">int[8]</span></code> for example). This is a
+recursive type, it is poissible to have the type of the elements with
+the property <a class="reference internal" href="#bip.base.BTypeArray.elt_type" title="bip.base.BTypeArray.elt_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">elt_type()</span></code></a> .</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The array (and in particular the <code class="docutils literal notranslate"><span class="pre">array_type_data_t</span></code> from IDA)
+have a <code class="docutils literal notranslate"><span class="pre">base</span></code> property. Not really sure what that is, when or
+how it is used. It is possible to access it using
+<a class="reference internal" href="#bip.base.BTypeArray._array_info" title="bip.base.BTypeArray._array_info"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_array_info()</span></code></a> then accessing the property
+<code class="docutils literal notranslate"><span class="pre">base</span></code> if needed.</p>
+</div>
+<dl class="attribute">
+<dt id="bip.base.BTypeArray._array_info">
+<code class="descname">_array_info</code><a class="headerlink" href="#bip.base.BTypeArray._array_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return <code class="docutils literal notranslate"><span class="pre">array_type_data_t</span></code> object from ida
+associated with this object. This is only for interfacing with
+IDA and should probably not be used directly from bip.</p>
+<p>This is used by the other method/property of
+<a class="reference internal" href="#bip.base.BTypeArray" title="bip.base.BTypeArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeArray</span></code></a> .</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeArray.elt_type">
+<code class="descname">elt_type</code><a class="headerlink" href="#bip.base.BTypeArray.elt_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which returns the type of the elements in the type array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from
+<a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> class.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeArray.nb_elts">
+<code class="descname">nb_elts</code><a class="headerlink" href="#bip.base.BTypeArray.nb_elts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which returns the number of elements in the type array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An int.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BTypeArray.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeArray.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypeFunc">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypeFunc</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for a function. This is a
+recursive type, it is poissible to have the type of the return value
+using the <a class="reference internal" href="#bip.base.BTypeFunc.return_type" title="bip.base.BTypeFunc.return_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">return_type()</span></code></a> property and the type of the
+arguments using the method <a class="reference internal" href="#bip.base.BTypeFunc.get_arg_type" title="bip.base.BTypeFunc.get_arg_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_arg_type()</span></code></a> or the
+property <a class="reference internal" href="#bip.base.BTypeFunc.args_type" title="bip.base.BTypeFunc.args_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">args_type()</span></code></a>.</p>
+<p>Other methods are available allowing to access the name of the
+arguments (<a class="reference internal" href="#bip.base.BTypeFunc.get_arg_name" title="bip.base.BTypeFunc.get_arg_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_arg_name()</span></code></a>).</p>
+<div class="admonition-todo admonition" id="index-4">
+<p class="first admonition-title">Todo</p>
+<p class="last">everything about arguments (ida_typeinf.funcarg_t):
+* location
+* cmt
+* flags
+* compare</p>
+</div>
+<div class="admonition-todo admonition" id="index-5">
+<p class="first admonition-title">Todo</p>
+<p class="last">calling convention</p>
+</div>
+<div class="admonition-todo admonition" id="index-6">
+<p class="first admonition-title">Todo</p>
+<p class="last">everything in func_type_data_t</p>
+</div>
+<div class="admonition-todo admonition" id="index-7">
+<p class="first admonition-title">Todo</p>
+<p class="last">spoiled registers</p>
+</div>
+<div class="admonition-todo admonition" id="index-8">
+<p class="first admonition-title">Todo</p>
+<p class="last">stack link (once stack is implemented)</p>
+</div>
+<div class="admonition-todo admonition" id="index-9">
+<p class="first admonition-title">Todo</p>
+<p class="last">does function return ?</p>
+</div>
+<div class="admonition-todo admonition" id="index-10">
+<p class="first admonition-title">Todo</p>
+<p class="last">flags for function type</p>
+</div>
+<div class="admonition-todo admonition" id="index-11">
+<p class="first admonition-title">Todo</p>
+<p class="last">return location</p>
+</div>
+<div class="admonition-todo admonition" id="index-12">
+<p class="first admonition-title">Todo</p>
+<p class="last">setter for arg (name, type, cmt, …)</p>
+</div>
+<div class="admonition-todo admonition" id="index-13">
+<p class="first admonition-title">Todo</p>
+<p class="last">setter for return value (type)</p>
+</div>
+<div class="admonition-todo admonition" id="index-14">
+<p class="first admonition-title">Todo</p>
+<p class="last">the handling of the arguments may have to be change</p>
+</div>
+<div class="admonition-todo admonition" id="index-15">
+<p class="first admonition-title">Todo</p>
+<p class="last">helper for if the function return void (and maybe other: a
+ptr and so on)</p>
+</div>
+<dl class="attribute">
+<dt id="bip.base.BTypeFunc._ida_func_type_data">
+<code class="descname">_ida_func_type_data</code><a class="headerlink" href="#bip.base.BTypeFunc._ida_func_type_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal property which allow to get the <code class="docutils literal notranslate"><span class="pre">func_type_data_t</span></code> for
+this type function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the <code class="docutils literal notranslate"><span class="pre">ida_typeinf.func_type_data_t</span></code> for this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BTypeFunc.get_arg_name">
+<code class="descname">get_arg_name</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeFunc.get_arg_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of an argument.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pos</strong> (<em>int</em>) – The position of the argument (start at 0).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The name of the argument at <code class="docutils literal notranslate"><span class="pre">pos</span></code> for this function
+type. If the argument does not have a name the empty string
+will be returned.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BTypeFunc.get_arg_type">
+<code class="descname">get_arg_type</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeFunc.get_arg_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> object corresponding to the type of an
+argument.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> class.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeFunc.nb_args">
+<code class="descname">nb_args</code><a class="headerlink" href="#bip.base.BTypeFunc.nb_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the number of arguments that this function
+type posess.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An int.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeFunc.args_type">
+<code class="descname">args_type</code><a class="headerlink" href="#bip.base.BTypeFunc.args_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> object for
+the argument of this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of objects which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>
+class.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeFunc.return_type">
+<code class="descname">return_type</code><a class="headerlink" href="#bip.base.BTypeFunc.return_type" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Property which return the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> object corresponding</dt>
+<dd>to the type of the return of this function.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> class.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeFunc.children">
+<code class="descname">children</code><a class="headerlink" href="#bip.base.BTypeFunc.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of children types. All elements of this
+list will be object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>.</p>
+<p>First element is the return type followed by the argument types.
+The length of this property is variable depending of the function
+type but will always be equal to <code class="docutils literal notranslate"><span class="pre">nb_args</span> <span class="pre">+</span> <span class="pre">1</span></code> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of object inheriting from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>
+which are “child” of this type.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BTypeFunc.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeFunc.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypeStruct">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypeStruct</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeStruct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for a structure. This is a
+recursive type, each member of the struct posess its own types.</p>
+<p>It is possible to get the name of the member using the
+<a class="reference internal" href="#bip.base.BTypeStruct.get_member_name" title="bip.base.BTypeStruct.get_member_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_member_name()</span></code></a> method, it is also possible to get the type
+using the <a class="reference internal" href="#bip.base.BTypeStruct.get_member_type" title="bip.base.BTypeStruct.get_member_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_member_type()</span></code></a> method or the <a class="reference internal" href="#bip.base.BTypeStruct.members_type" title="bip.base.BTypeStruct.members_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">members_type()</span></code></a>
+property (which return a list), the <a class="reference internal" href="#bip.base.BTypeStruct.members_info" title="bip.base.BTypeStruct.members_info"><code class="xref py py-meth docutils literal notranslate"><span class="pre">members_info()</span></code></a> return a
+dictionary with the name of the members as key and their type as
+value.</p>
+<div class="admonition-todo admonition" id="index-16">
+<p class="first admonition-title">Todo</p>
+<p class="last">link to struct in bip</p>
+</div>
+<div class="admonition-todo admonition" id="index-17">
+<p class="first admonition-title">Todo</p>
+<p class="last">anonymous udt ?</p>
+</div>
+<div class="admonition-todo admonition" id="index-18">
+<p class="first admonition-title">Todo</p>
+<p class="last">everything in ida_typeinf.udt_type_data_t</p>
+</div>
+<div class="admonition-todo admonition" id="index-19">
+<p class="first admonition-title">Todo</p>
+<p class="last">everything in udt_member_t for the members. Change the
+handling of the members ?</p>
+</div>
+<div class="admonition-todo admonition" id="index-20">
+<p class="first admonition-title">Todo</p>
+<p class="last">allow to get the offset of a member from its name and/or
+index.</p>
+</div>
+<dl class="attribute">
+<dt id="bip.base.BTypeStruct._ida_udt_type_data">
+<code class="descname">_ida_udt_type_data</code><a class="headerlink" href="#bip.base.BTypeStruct._ida_udt_type_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal property which allow to get the <code class="docutils literal notranslate"><span class="pre">udt_type_data_t</span></code> for
+this type structure.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Carefull to this! The information contain in this
+object (such as the types) do not reference
+the <code class="docutils literal notranslate"><span class="pre">udt_type_data_t</span></code> object. Meaning that as soon as the
+<code class="docutils literal notranslate"><span class="pre">udt_type_data_t</span></code> object is delete by python, all the
+subobject will be deleted. All of those should be copied
+before the python object is destroyed or we may trigger
+use-after-free. For problematic of swig and memory management
+see <a class="reference external" href="http://www.swig.org/Doc1.3/Python.html#Python_nn30">http://www.swig.org/Doc1.3/Python.html#Python_nn30</a>.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the <code class="docutils literal notranslate"><span class="pre">ida_typeinf.udt_type_data_t</span></code> for this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BTypeStruct.get_member_name">
+<code class="descname">get_member_name</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeStruct.get_member_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of a member.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) – The number corresponding to the member. This is
+not the offset of the member but its index in the struct, this
+index start at 0 up to the <a class="reference internal" href="#bip.base.BTypeStruct.nb_members" title="bip.base.BTypeStruct.nb_members"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nb_members()</span></code></a>
+minus one.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The name of the <code class="docutils literal notranslate"><span class="pre">num</span></code> member for this struct type.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BTypeStruct.get_member_type">
+<code class="descname">get_member_type</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeStruct.get_member_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> object corresponding to the type of a
+member.</p>
+<div class="admonition-todo admonition" id="index-21">
+<p class="first admonition-title">Todo</p>
+<p class="last">handle the recuperation of a member by name ?</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) – The number corresponding to the member. This is
+not the offset of the member but its index in the struct, this
+index start at 0 up to the <a class="reference internal" href="#bip.base.BTypeStruct.nb_members" title="bip.base.BTypeStruct.nb_members"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nb_members()</span></code></a>
+minus one.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> class.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeStruct.nb_members">
+<code class="descname">nb_members</code><a class="headerlink" href="#bip.base.BTypeStruct.nb_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the number of members present in the type
+structure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">an int.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeStruct.members_type">
+<code class="descname">members_type</code><a class="headerlink" href="#bip.base.BTypeStruct.members_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> object for
+the members of this struct.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of objects which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>
+class.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeStruct.members_info">
+<code class="descname">members_info</code><a class="headerlink" href="#bip.base.BTypeStruct.members_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a dict providing information about the
+members of this struct. The keys of the dict correspond to their
+name (str) and the values to their type (<a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeStruct.children">
+<code class="descname">children</code><a class="headerlink" href="#bip.base.BTypeStruct.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of children types. All elements of this
+list will be object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>.</p>
+<p>This contain the type of the members and is equivalent to
+<a class="reference internal" href="#bip.base.BTypeStruct.members_type" title="bip.base.BTypeStruct.members_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">members_type()</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of object inheriting from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>
+which are “child” of this type.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BTypeStruct.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeStruct.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypeUnion">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypeUnion</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeUnion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for an union, this is a
+recursive type which can have several members.</p>
+<div class="admonition-todo admonition" id="index-22">
+<p class="first admonition-title">Todo</p>
+<p class="last">at the exception of the doc this is duplicate code for most
+of the methods with <a class="reference internal" href="#bip.base.BTypeStruct" title="bip.base.BTypeStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTypeStruct</span></code></a>, this should be fix. The
+simplest way would be to create a common parent class.</p>
+</div>
+<dl class="attribute">
+<dt id="bip.base.BTypeUnion._ida_udt_type_data">
+<code class="descname">_ida_udt_type_data</code><a class="headerlink" href="#bip.base.BTypeUnion._ida_udt_type_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal property which allow to get the <code class="docutils literal notranslate"><span class="pre">udt_type_data_t</span></code> for
+this union.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Carefull to this! The information contain in this
+object (such as the types) do not reference
+the <code class="docutils literal notranslate"><span class="pre">udt_type_data_t</span></code> object. Meaning that as soon as the
+<code class="docutils literal notranslate"><span class="pre">udt_type_data_t</span></code> object is delete by python, all the
+subobject will be deleted. All of those should be copied
+before the python object is destroyed or we may trigger
+use-after-free. For problematic of swig and memory management
+see <a class="reference external" href="http://www.swig.org/Doc1.3/Python.html#Python_nn30">http://www.swig.org/Doc1.3/Python.html#Python_nn30</a>.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the <code class="docutils literal notranslate"><span class="pre">ida_typeinf.udt_type_data_t</span></code> for this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BTypeUnion.get_member_name">
+<code class="descname">get_member_name</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeUnion.get_member_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of a member.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) – The number corresponding to the member. This is
+its index in the enum, this index start at 0 up to
+the <a class="reference internal" href="#bip.base.BTypeStruct.nb_members" title="bip.base.BTypeStruct.nb_members"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nb_members()</span></code></a> minus one.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The name of the <code class="docutils literal notranslate"><span class="pre">num</span></code> member for this struct type.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BTypeUnion.get_member_type">
+<code class="descname">get_member_type</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeUnion.get_member_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> object corresponding to the type of a
+member.</p>
+<div class="admonition-todo admonition" id="index-23">
+<p class="first admonition-title">Todo</p>
+<p class="last">handle the recuperation of a member by name ?</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) – The number corresponding to the member. This is
+the index in the enum, this index start at 0 up to the
+<a class="reference internal" href="#bip.base.BTypeStruct.nb_members" title="bip.base.BTypeStruct.nb_members"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nb_members()</span></code></a> minus one.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> class.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeUnion.nb_members">
+<code class="descname">nb_members</code><a class="headerlink" href="#bip.base.BTypeUnion.nb_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the number of members present in the enum.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">an int.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeUnion.members_type">
+<code class="descname">members_type</code><a class="headerlink" href="#bip.base.BTypeUnion.members_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> object for
+the members of this enum.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of objects which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>
+class.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeUnion.members_info">
+<code class="descname">members_info</code><a class="headerlink" href="#bip.base.BTypeUnion.members_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a dict providing information about the
+members of this enum. The keys of the dict correspond to their
+name (str) and the values to their type (<a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BTypeUnion.children">
+<code class="descname">children</code><a class="headerlink" href="#bip.base.BTypeUnion.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of children types. All elements of this
+list will be object which inherit from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>.</p>
+<p>This contain the type of the members and is equivalent to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">members_type()</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of object inheriting from <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>
+which are “child” of this type.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BTypeUnion.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeUnion.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="bip.base.BTypeEnum">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BTypeEnum</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeEnum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which represent the <a class="reference internal" href="#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> for an enum.</p>
+<div class="admonition-todo admonition" id="index-24">
+<p class="first admonition-title">Todo</p>
+<p class="last">IDA BUG: its not possible to get the info about the enum
+members because the <code class="docutils literal notranslate"><span class="pre">enum_type_data_t</span></code> type which should be a
+vector on enum_member_t has apparently not been implemented in the
+IdaPython API.</p>
+</div>
+<dl class="attribute">
+<dt id="bip.base.BTypeEnum._ida_enum_type_data">
+<code class="descname">_ida_enum_type_data</code><a class="headerlink" href="#bip.base.BTypeEnum._ida_enum_type_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal property which allow to get the <code class="docutils literal notranslate"><span class="pre">enum_type_data_t</span></code> for
+this enum.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the <code class="docutils literal notranslate"><span class="pre">ida_typeinf.enum_type_data_t</span></code> for this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BTypeEnum.is_handling_type">
+<em class="property">classmethod </em><code class="descname">is_handling_type</code><span class="sig-paren">(</span><em>tinfo</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BTypeEnum.is_handling_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method which allow to test if this class support a
+particular type info (IDA <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code>). Return True if the
+function handle the type, false otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tinfo</strong> – A <code class="docutils literal notranslate"><span class="pre">tinfo_t</span></code> swig object from idapython.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A boolean.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Type</a><ul>
+<li><a class="reference internal" href="#biptype-api">BipType API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="enum.html"
+                        title="previous chapter">Enum</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="bipidb.html"
+                        title="next chapter">IDB representation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/base/type.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="bipidb.html" title="IDB representation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enum.html" title="Enum"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

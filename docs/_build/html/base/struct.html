@@ -1,0 +1,861 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Structures &#8212; Bip 0.3beta documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/fixclassic.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Enum" href="enum.html" />
+    <link rel="prev" title="Xref" href="xref.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enum.html" title="Enum"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="xref.html" title="Xref"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-bip.base">
+<span id="structures"></span><h1>Structures<a class="headerlink" href="#module-bip.base" title="Permalink to this headline">¶</a></h1>
+<p>This part describe the structures (<a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a>) and structure members
+(<a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a>). This two objects inherit from <a class="reference internal" href="elt.html#bip.base.BipRefElt" title="bip.base.BipRefElt"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipRefElt</span></code></a>
+which make them able to be referenced by xref and possible to recuperate using
+the <a class="reference internal" href="elt.html#bip.base.GetElt" title="bip.base.GetElt"><code class="xref py py-func docutils literal notranslate"><span class="pre">GetElt()</span></code></a> function.</p>
+<p>Those classes represent
+the element view in the <code class="docutils literal notranslate"><span class="pre">Struct</span></code> tab. of IDA and are different from the
+<a class="reference internal" href="type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> which is used for referencing the type of some elements in
+IDA, however they are obviously linked.</p>
+<p>Except xrefs the most common way to get a structure is using the
+<a class="reference internal" href="#bip.base.BipStruct.get" title="bip.base.BipStruct.get"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get()</span></code></a> class method which expect its name. For creating one
+the <a class="reference internal" href="#bip.base.BipStruct.create" title="bip.base.BipStruct.create"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create()</span></code></a> class method is available. Once a struct has
+been recuperated it is possible to access the members as a dict by using
+their name or their offset (this is not a list and so it is the offset of
+the member which is expected not its index).</p>
+<div class="section" id="bipstruct-api">
+<h2>BipStruct API<a class="headerlink" href="#bipstruct-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.base.BipStruct">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BipStruct</code><span class="sig-paren">(</span><em>st</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing and manipulating a structure in IDA.
+Static functions <a class="reference internal" href="#bip.base.BipStruct.create" title="bip.base.BipStruct.create"><code class="xref py py-func docutils literal notranslate"><span class="pre">create()</span></code></a> and <a class="reference internal" href="#bip.base.BipStruct.get" title="bip.base.BipStruct.get"><code class="xref py py-func docutils literal notranslate"><span class="pre">get()</span></code></a> allow
+to easilly get an instance of those object.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">get/set alignement</p>
+</div>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">support deletion of members</p>
+</div>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">allow to iterate on all structure and other stuff like that</p>
+</div>
+<div class="admonition-todo admonition" id="index-3">
+<p class="first admonition-title">Todo</p>
+<p class="last">test</p>
+</div>
+<dl class="method">
+<dt id="bip.base.BipStruct.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>st</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for a <a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> object. There is few reason
+to directly use this constructor, see functions
+<a class="reference internal" href="#bip.base.BipStruct.get" title="bip.base.BipStruct.get"><code class="xref py py-func docutils literal notranslate"><span class="pre">get()</span></code></a> or <a class="reference internal" href="#bip.base.BipStruct.create" title="bip.base.BipStruct.create"><code class="xref py py-func docutils literal notranslate"><span class="pre">create()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>st</strong> – A structure <code class="docutils literal notranslate"><span class="pre">struc_t</span></code> from IDA such as return
+by <code class="docutils literal notranslate"><span class="pre">get_struc</span></code> or an sid (int) representing a structure.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>ValueError</strong> – If an integer is provided and is not a valid
+sid, or if an incorrect type is provided as <code class="docutils literal notranslate"><span class="pre">st</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>st</em><span class="sig-paren">)</span></dt>
+<dd><p>Constructor for a <a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> object. There is few reason
+to directly use this constructor, see functions
+<a class="reference internal" href="#bip.base.BipStruct.get" title="bip.base.BipStruct.get"><code class="xref py py-func docutils literal notranslate"><span class="pre">get()</span></code></a> or <a class="reference internal" href="#bip.base.BipStruct.create" title="bip.base.BipStruct.create"><code class="xref py py-func docutils literal notranslate"><span class="pre">create()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>st</strong> – A structure <code class="docutils literal notranslate"><span class="pre">struc_t</span></code> from IDA such as return
+by <code class="docutils literal notranslate"><span class="pre">get_struc</span></code> or an sid (int) representing a structure.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>ValueError</strong> – If an integer is provided and is not a valid
+sid, or if an incorrect type is provided as <code class="docutils literal notranslate"><span class="pre">st</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipStruct._struct">
+<code class="descname">_struct</code><em class="property"> = None</em><a class="headerlink" href="#bip.base.BipStruct._struct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal <code class="docutils literal notranslate"><span class="pre">struct_t</span></code> object from IDA.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipStruct._sid">
+<code class="descname">_sid</code><a class="headerlink" href="#bip.base.BipStruct._sid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the sid for this <a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> object. The
+sid is the struct id number (<code class="docutils literal notranslate"><span class="pre">tid_t</span></code>) from IDA and there is no
+reason it should be used except for interfacing with the standard
+API from IDA.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An int corresponding to the sid.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipStruct._is_this_elt">
+<em class="property">classmethod </em><code class="descname">_is_this_elt</code><span class="sig-paren">(</span><em>idelt</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct._is_this_elt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if <code class="docutils literal notranslate"><span class="pre">idelt</span></code> correspond to a sid.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipStruct.name">
+<code class="descname">name</code><a class="headerlink" href="#bip.base.BipStruct.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the name (as a string) of this structure.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipStruct.size">
+<code class="descname">size</code><a class="headerlink" href="#bip.base.BipStruct.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property returning the size of the structure as an integer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipStruct.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><em>) &lt;==&gt; str(x</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.__str__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipStruct.comment">
+<code class="descname">comment</code><a class="headerlink" href="#bip.base.BipStruct.comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the comment associated with a structure.
+For repeatable comment see <a class="reference internal" href="#bip.base.BipStruct.rcomment" title="bip.base.BipStruct.rcomment"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rcomment()</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipStruct.rcomment">
+<code class="descname">rcomment</code><a class="headerlink" href="#bip.base.BipStruct.rcomment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the repeatable comment associated with this
+<a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipStruct.is_hidden">
+<code class="descname">is_hidden</code><a class="headerlink" href="#bip.base.BipStruct.is_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for knowing if a struct is fully shown in the gui.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if the structure is “collapsed”, False if it is
+shown.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipStruct.nb_members">
+<code class="descname">nb_members</code><a class="headerlink" href="#bip.base.BipStruct.nb_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the number of members in this
+<a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipStruct.members">
+<code class="descname">members</code><a class="headerlink" href="#bip.base.BipStruct.members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return a list of <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> objects
+representing the members of this structure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">A list of <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BipStruct.members_iter">
+<code class="descname">members_iter</code><a class="headerlink" href="#bip.base.BipStruct.members_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property returning an iterable of
+<a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> representing the different
+members of this struct. This is similar to <a class="reference internal" href="#bip.base.BipStruct.members" title="bip.base.BipStruct.members"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BipStruct.members()</span></code></a>.</p>
+<div class="admonition-todo admonition" id="index-4">
+<p class="first admonition-title">Todo</p>
+<p class="last">maybe delete this ? I am worried because of the
+get_member property which may create problem if the number of
+members change during the iteration.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Iterable of <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipStruct.member_at">
+<code class="descname">member_at</code><span class="sig-paren">(</span><em>off</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.member_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which return the member of this <a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> at the
+offset provided in argument. This will return the correct member
+even if the offset is not aligned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>off</strong> (<em>int</em>) – The offset of the member to get.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>IndexError</strong> – If the member was not found (offset bigger than
+the struct).</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object corresponding to the
+member.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipStruct.member_by_name">
+<code class="descname">member_by_name</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.member_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which return the member of this <a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> from its
+name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) – The name of the member to get.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>KeyError</strong> – If the member was not found.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object corresponding to the
+member.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipStruct.__getitem__">
+<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getitem method which allow access to the members of the struct.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key</strong> – If key is a string it will search the member by name,
+if it is a integer it will search the member by offset.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><strong>ValueError</strong> – If the member was not found.</li>
+<li><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">key</span></code> is not an integer or a string.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object corresponding to the
+member.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipStruct.__iter__">
+<code class="descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iter method for accessing the members as a list. This is
+equivalent to <a class="reference internal" href="#bip.base.BipStruct.members_iter" title="bip.base.BipStruct.members_iter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">members_iter()</span></code></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">By default python will try to use the __getitem__ method
+which is not what we want because the __getitem__ method takes
+offset.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An iterator on the <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object of this
+struct.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipStruct.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>name</em>, <em>size</em>, <em>comment=None</em>, <em>offset=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new member to the structure (at the end by default).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) – The name of the field to add. If None or an empty
+string the default name used by IDA will be used (<code class="docutils literal notranslate"><span class="pre">field_</span></code>).</li>
+<li><strong>size</strong> (<em>int</em>) – The size of the field to add in bytes,
+can be 1, 2, 4 or 8.</li>
+<li><strong>comment</strong> (<em>str</em>) – Optional parameter which allow to add a
+comment associated with the new member.</li>
+<li><strong>offset</strong> (<em>int</em>) – The offset at which to add the new member, by
+default (None) it will be added at the end.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><strong>TypeError</strong> – If one argument is not of the correct type or
+with the correct value.</li>
+<li><strong>ValueError</strong> – If an error occur when adding the member.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object corresponding to the
+member added.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipStruct.add_varsize">
+<code class="descname">add_varsize</code><span class="sig-paren">(</span><em>name</em>, <em>comment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.add_varsize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a variable size new member at the end of the structure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) – The name of the field to add.</li>
+<li><strong>comment</strong> (<em>str</em>) – Optional parameter which allow to add a
+comment associated with the new member.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong> – If an error occur when adding the member.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object corresponding to the
+member added.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BipStruct.fill">
+<code class="descname">fill</code><span class="sig-paren">(</span><em>size</em>, <em>prefix='field_'</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.fill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add new members to the structure until it reach
+<code class="docutils literal notranslate"><span class="pre">size</span></code> . Thie function add field the size of a pointer
+at the end of the structure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>size</strong> (<em>int</em>) – The size in bytes wanted for the structure.</li>
+<li><strong>prefix</strong> (<em>str</em>) – Prefix for the name of the structure member.
+Default is <code class="docutils literal notranslate"><span class="pre">field_</span></code> .</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipStruct.get">
+<em class="property">classmethod </em><code class="descname">get</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method allowing to get a <a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> object from the
+name of an existing structure.</p>
+<div class="admonition-todo admonition" id="index-5">
+<p class="first admonition-title">Todo</p>
+<p class="last">support providing a sid directly instead of a name ?</p>
+</div>
+<div class="admonition-todo admonition" id="index-6">
+<p class="first admonition-title">Todo</p>
+<p class="last">support typedef on struct</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) – The name of the structure to get.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>ValueError</strong> – if the structure <code class="docutils literal notranslate"><span class="pre">name</span></code> does not exist.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> object corresponding to the structure
+identified by the name provided.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BipStruct.create">
+<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method allowing to create a new empty struct.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> (<em>str</em>) – The name of the structure to create.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><strong>ValueError</strong> – If the structure <code class="docutils literal notranslate"><span class="pre">name</span></code> already exist.</li>
+<li><strong>BipError</strong> – If it was not possible to create the structure.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">A <code class="xref py py-class docutils literal notranslate"><span class="pre">Struct</span></code> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BipStruct.delete">
+<em class="property">static </em><code class="descname">delete</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BipStruct.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method allowing to delete a struct by its name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> (<em>str</em>) – The name of the structure to delete.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ValueError</strong> – If the structure <code class="docutils literal notranslate"><span class="pre">name</span></code> does not exist.</li>
+<li><strong>RuntimeError</strong> – If it was not possible to delete the
+strucutre.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="bstructmember-api">
+<h2>BStructMember API<a class="headerlink" href="#bstructmember-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bip.base.BStructMember">
+<em class="property">class </em><code class="descclassname">bip.base.</code><code class="descname">BStructMember</code><span class="sig-paren">(</span><em>member</em>, <em>istruct=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BStructMember" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for representing and manipulating a member of an
+<a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> structure.</p>
+<div class="admonition-todo admonition" id="index-7">
+<p class="first admonition-title">Todo</p>
+<p class="last">flags</p>
+</div>
+<div class="admonition-todo admonition" id="index-8">
+<p class="first admonition-title">Todo</p>
+<p class="last">implement comparaison with other members (mid) and test for
+presence in a struct.</p>
+</div>
+<dl class="method">
+<dt id="bip.base.BStructMember.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>member</em>, <em>istruct=None</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BStructMember.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for a <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object. There is no
+reason this constructor should be used.</p>
+<p>There is few reason to use directly this constructor except for
+interfacing directly with IDA.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>member</strong> – A <code class="docutils literal notranslate"><span class="pre">member_t</span></code> object from ida corresponding to
+this member or a member id (int, long) corresponding to this
+member.</li>
+<li><strong>istruct</strong> – A <a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> object corresponding to
+the structure from which member this member is part of. If it
+is <code class="docutils literal notranslate"><span class="pre">None</span></code> the structure will found dynamically.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – If the parameter is incorrect.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>member</em>, <em>istruct=None</em><span class="sig-paren">)</span></dt>
+<dd><p>Constructor for a <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object. There is no
+reason this constructor should be used.</p>
+<p>There is few reason to use directly this constructor except for
+interfacing directly with IDA.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>member</strong> – A <code class="docutils literal notranslate"><span class="pre">member_t</span></code> object from ida corresponding to
+this member or a member id (int, long) corresponding to this
+member.</li>
+<li><strong>istruct</strong> – A <a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> object corresponding to
+the structure from which member this member is part of. If it
+is <code class="docutils literal notranslate"><span class="pre">None</span></code> the structure will found dynamically.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – If the parameter is incorrect.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember._member">
+<code class="descname">_member</code><em class="property"> = None</em><a class="headerlink" href="#bip.base.BStructMember._member" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">member_t</span></code> object from ida corresponding to this member.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.struct">
+<code class="descname">struct</code><em class="property"> = None</em><a class="headerlink" href="#bip.base.BStructMember.struct" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> parent of this member.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BStructMember._is_this_elt">
+<em class="property">classmethod </em><code class="descname">_is_this_elt</code><span class="sig-paren">(</span><em>idelt</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BStructMember._is_this_elt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if <code class="docutils literal notranslate"><span class="pre">idelt</span></code> correspond to a mid.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember._mid">
+<code class="descname">_mid</code><a class="headerlink" href="#bip.base.BStructMember._mid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the member id corresponding to this object.
+This is used internally by IDA and there should be few reason to
+use this except for interfacing with IDA native interface.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.name">
+<code class="descname">name</code><a class="headerlink" href="#bip.base.BStructMember.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the name of this member.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.fullname">
+<code class="descname">fullname</code><a class="headerlink" href="#bip.base.BStructMember.fullname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the full name of this member. The fullname
+correspond to the struct name follow by the name of this member
+seperated by a point: <code class="docutils literal notranslate"><span class="pre">STRUCT.MEMBER</span></code> .</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.size">
+<code class="descname">size</code><a class="headerlink" href="#bip.base.BStructMember.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the size of this member as an integer.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.offset">
+<code class="descname">offset</code><a class="headerlink" href="#bip.base.BStructMember.offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property providing access to the start offset of this member in
+the structure as an integer.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.end_offset">
+<code class="descname">end_offset</code><a class="headerlink" href="#bip.base.BStructMember.end_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return the end offset of this member as an integer.
+This should be equivalent to use <code class="docutils literal notranslate"><span class="pre">offset</span> <span class="pre">+</span> <span class="pre">size</span></code> .</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BStructMember.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><em>) &lt;==&gt; str(x</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BStructMember.__str__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.comment">
+<code class="descname">comment</code><a class="headerlink" href="#bip.base.BStructMember.comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the comment associated with this member as a string.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.rcomment">
+<code class="descname">rcomment</code><a class="headerlink" href="#bip.base.BStructMember.rcomment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the repeatable comment associated with this member as a
+string.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.has_type">
+<code class="descname">has_type</code><a class="headerlink" href="#bip.base.BStructMember.has_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return True if this member as a type defined (which
+can be recuperated through <a class="reference internal" href="#bip.base.BStructMember.type" title="bip.base.BStructMember.type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BStructMember.type()</span></code></a>) False if
+no type is defined for this member.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BStructMember.del_type">
+<code class="descname">del_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BStructMember.del_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which allow to delete the type for this member.</p>
+<div class="admonition-todo admonition" id="index-9">
+<p class="first admonition-title">Todo</p>
+<p class="last">handle failure</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="bip.base.BStructMember.set_type">
+<code class="descname">set_type</code><span class="sig-paren">(</span><em>new_type</em>, <em>userspecified=True</em>, <em>may_destroy=False</em>, <em>compatible=False</em>, <em>funcarg=False</em>, <em>bytil=False</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BStructMember.set_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which allow to change the type of this member.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>new_type</strong> – An object which inherit from <a class="reference internal" href="type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a>
+which represent the new type for this member.</li>
+<li><strong>userspecified</strong> (<em>bool</em>) – Is this type specified by the user,
+True by default.</li>
+<li><strong>may_destroy</strong> (<em>bool</em>) – Is the setting of this type can destroy
+other members of the struct, default is False.</li>
+<li><strong>compatible</strong> (<em>bool</em>) – The new type should be compatible with
+the previous one. Default is False.</li>
+<li><strong>funcarg</strong> (<em>bool</em>) – Is the member used as argument of a function,
+in particular this forbid the setting of array. Default is
+False.</li>
+<li><strong>bytil</strong> (<em>bool</em>) – The new type was created by the type subsystem.
+Default False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>RuntimeError</strong> – If setting the type failed.</li>
+<li><strong>TypeError</strong> – If the argument is not an <a class="reference internal" href="type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> object.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.type">
+<code class="descname">type</code><a class="headerlink" href="#bip.base.BStructMember.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property which return an object which inherit from
+<a class="reference internal" href="type.html#bip.base.BipType" title="bip.base.BipType"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipType</span></code></a> and represent the type of this member.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>RuntimeError</strong> – If it was not possible to get the type of
+this member, this may happen in particular if
+<a class="reference internal" href="#bip.base.BStructMember.has_type" title="bip.base.BStructMember.has_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">has_type()</span></code></a> returned false.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.is_nested">
+<code class="descname">is_nested</code><a class="headerlink" href="#bip.base.BStructMember.is_nested" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if this member represent a nested struct included
+inside the current one. The structure can be recuperated using
+<a class="reference internal" href="#bip.base.BStructMember.nested_struct" title="bip.base.BStructMember.nested_struct"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nested_struct()</span></code></a> .</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bip.base.BStructMember.nested_struct">
+<code class="descname">nested_struct</code><a class="headerlink" href="#bip.base.BStructMember.nested_struct" title="Permalink to this definition">¶</a></dt>
+<dd><p>If this member represent a nested structure this property allows
+to get the <a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> corresponding to the nested struct.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>RuntimeError</strong> – If this member does not have a nested struct.
+This can be tested using <a class="reference internal" href="#bip.base.BStructMember.is_nested" title="bip.base.BStructMember.is_nested"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_nested()</span></code></a>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An <a class="reference internal" href="#bip.base.BipStruct" title="bip.base.BipStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">BipStruct</span></code></a> object corresponding to the nested
+struct.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="bip.base.BStructMember._is_member_id">
+<em class="property">static </em><code class="descname">_is_member_id</code><span class="sig-paren">(</span><em>mid</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BStructMember._is_member_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow to check if an id (address) from IDA represent a member id.
+This is a wrapper on <code class="docutils literal notranslate"><span class="pre">ida_struct.is_member_id</span></code> and there should
+not be any reason to use this method except for interfacing with
+the IDAPython interface.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mid</strong> (<em>int</em>) – The id to check for being a member id.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">mid</span></code> is a member id which can be used for
+getting a <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="bip.base.BStructMember._from_member_id">
+<em class="property">classmethod </em><code class="descname">_from_member_id</code><span class="sig-paren">(</span><em>mid</em><span class="sig-paren">)</span><a class="headerlink" href="#bip.base.BStructMember._from_member_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method for getting a <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object from an
+id which  represent a member in IDA. There should be no reason to
+use this method except for interfacing with the IDAPython
+interface.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mid</strong> (<em>int</em>) – The member id to convert to a
+<a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>ValueError</strong> – If the argument <code class="docutils literal notranslate"><span class="pre">mid</span></code> is not a valid member
+id. This can be check using the static method
+<a class="reference internal" href="#bip.base.BStructMember._is_member_id" title="bip.base.BStructMember._is_member_id"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_is_member_id()</span></code></a> .</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#bip.base.BStructMember" title="bip.base.BStructMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">BStructMember</span></code></a> object corresponding to the
+member with id <code class="docutils literal notranslate"><span class="pre">mid</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Structures</a><ul>
+<li><a class="reference internal" href="#bipstruct-api">BipStruct API</a></li>
+<li><a class="reference internal" href="#bstructmember-api">BStructMember API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="xref.html"
+                        title="previous chapter">Xref</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="enum.html"
+                        title="next chapter">Enum</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/base/struct.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enum.html" title="Enum"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="xref.html" title="Xref"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bip 0.3beta documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
