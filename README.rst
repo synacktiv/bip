@@ -5,7 +5,7 @@ Bip is a project which aimed to simplify the usage of python for interacting
 with IDA. Its main goals are to facilitate the usage of python in the
 interactive console of IDA and for writing plugins. In a more general way
 the goal is to automate the recurrent task done through the python API.
-Bip is also developxped for providing a more oriented object, a "python-like"
+Bip is also developed for providing a more oriented object, a "python-like"
 API and a *real* documentation.
 
 This code is not complete, and a lot of features are still missing. Development
