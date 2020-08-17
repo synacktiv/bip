@@ -13,12 +13,12 @@ on Windows and Linux, for making a default install:
 
     python install.py
 
-This installer do not insall any plugins by default, but simply the core of
+This installer does not install any plugins by default, but simply the core of
 Bip. By default the destination folder is the one use by IDA locally
 (``%APPDATA%\Hex-Rays\IDA Pro\`` for Windows and ``$HOME/.idapro`` for Linux
 and MacOSX).
 
-It is possible to use an optional `--dest` argument for installing in a
+It is possible to use an optional `--dest` argument to install in a
 particular folder:
 
 .. code-block:: none

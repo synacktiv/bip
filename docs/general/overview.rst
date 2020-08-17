@@ -5,8 +5,8 @@ Overview
 
 This overview has a goal to show how the most usual operations can be done,
 it is far from being complete. All functions and objects in Bip are documented
-using doc string so just use ``help(BipClass)`` and ``help(obj.bipmethod)`` for
-getting the doc in your shell.
+using doc string so just use ``help(BipClass)`` and ``help(obj.bipmethod)`` to
+get the doc in your shell.
 
 Base
 ====
@@ -15,7 +15,7 @@ Base
 
 The module ``bip.base`` contains most of the *basic* features for interfacing
 with IDA. In practice this is mainly the disassembler part of IDA, this
-includes: manipulation of instruction, functions, basic blocks, operands,
+includes: manipulation of instructions, functions, basic blocks, operands,
 data, xrefs, structures, types, ...
 
 Instructions / Operands
@@ -32,9 +32,9 @@ The classes :class:`~bip.base.BipInstr` and :class:`~bip.base.BipOperand`:
     >>> i2 = BipInstr(0x01800D3242) # pass the address in argument
     >>> i2
     BipInstr: 0x1800D3242 (mov     r8d, 8)
-    >>> i2.next # access next instruction, preivous with i2.prev
+    >>> i2.next # access next instruction, previous with i2.prev
     BipInstr: 0x1800D3248 (mov     rdx, r14)
-    >>> l = [i3 for i3 in BipInstr.iter_all()] # l contain the list of all BipInstruction of the database, iter_all produce a generator object
+    >>> l = [i3 for i3 in BipInstr.iter_all()] # l contains the list of all BipInstruction of the database, iter_all produces a generator object
     >>> i.ea # access the address
     6443315787
     >>> i.mnem # mnemonic representation
@@ -88,20 +88,20 @@ The classes :class:`~bip.base.BipFunction` and :class:`~bip.base.BipBlock`:
     660
     >>> f.bytes # bytes of the function
     [72L, ..., 255L]
-    >>> f.callees # list of function called by this function
+    >>> f.callees # list of functions called by this function
     [<bip.base.func.BipFunction object at 0x0000022B0291DD30>, ..., <bip.base.func.BipFunction object at 0x0000022B045487F0>]
-    >>> f.callers # list of function which call this function
+    >>> f.callers # list of functions which call this function
     [<bip.base.func.BipFunction object at 0x0000022B04544048>]
     >>> f.instr # list of instructions in the function
     [<bip.base.instr.BipInstr object at 0x0000022B0291DB00>, ..., <bip.base.instr.BipInstr object at 0x0000022B0454D080>]
-    >>> f.comment = "welcome to bip" # comment of the function, rcomment for repeatables one
+    >>> f.comment = "welcome to bip" # comment of the function, rcomment for repeatable ones
     >>> f.comment
     welcome to bip
     >>> f.does_return # does this function return ?
     True
-    >>> BipFunction.iter_all() # allow to iter on all functions define in the database
+    >>> BipFunction.iter_all() # allows to iter on all functions defined in the database
     <generator object iter_all at 0x0000022B029231F8>
-    >>> f.nb_blocks # number of basic block
+    >>> f.nb_blocks # number of basic blocks
     33
     >>> f.blocks # list of blocks
     [<bip.base.block.BipBlock object at 0x0000022B04544D68>, ..., <bip.base.block.BipBlock object at 0x0000022B04552240>]
@@ -109,7 +109,7 @@ The classes :class:`~bip.base.BipFunction` and :class:`~bip.base.BipBlock`:
     BipBlock: 0x1800D306E (from Func: test (0x1800D2FF0))
     >>> f.blocks[5].func # link back to the function
     Func: test (0x1800D2FF0)
-    >>> f.blocks[5].instr # list of instruction in the block
+    >>> f.blocks[5].instr # list of instructions in the block
     [<bip.base.instr.BipInstr object at 0x0000022B04544710>, ..., <bip.base.instr.BipInstr object at 0x0000022B0291DB00>]
     >>> f.blocks[5].pred # predecessor blocks, blocks where control flow lead to this one
     [<bip.base.block.BipBlock object at 0x0000022B04544D68>]
@@ -164,26 +164,26 @@ The class :class:`~bip.base.BipData`:
 Element
 -------
 
-In Bip most basic object inherit from the same classes: :class:`BipBaseElt` which is
+In Bip most basic objects inherit from the same classes: :class:`BipBaseElt` which is
 the most basic one, :class:`BipRefElt` which includes all the objects which can have
 xrefs (including structures (:class:`BipStruct`) and structure members
 (:class:`BStructMember`), see below), :class:`BipElt`
-which represent all elements which have an address in the IDA DataBase (idb),
+which represents all elements which have an address in the IDA DataBase (idb),
 including :class:`BipData` and :class:`BipInstr` (it is this class which
-implement the properties: ``comment``,  ``name``, ``bytes``, ...).
+implements the properties: ``comment``,  ``name``, ``bytes``, ...).
 
 It is possible to use the functions :func:`GetElt` and :func:`GetEltByName`
-for directly recuperating the good basic element from an address or a name
+to get the right basic element from an address or a name
 representing a location in the binary.
 
 .. code-block:: pycon
 
     >>> from bip.base import *
-    >>> GetElt() # get the element at current address, in that case return a BipData object
+    >>> GetElt() # get the element at current address, in this case return a BipData object
     BipData at 0x180110068 = 0xAABBCCDD (size=8)
     >>> GetElt(0x00180110078) # get the element at the address 0x00180110078
     BipData at 0x180110078 = 0xAA (size=1)
-    >>> GetElt(0x1800D2FF0) # in that case it return an BipInstr object because this is code
+    >>> GetElt(0x1800D2FF0) # in this case it returns an BipInstr object because this is code
     BipInstr: 0x1800D2FF0 (mov     rax, rsp)
     >>> GetEltByName("bip_ex") # Get using a name and not an address
     BipData at 0x180110068 = 0xAABBCCDD (size=8)
@@ -194,7 +194,7 @@ representing a location in the binary.
     >>> isinstance(GetElt(0x1800D2FF0), BipData) # or data ?
     False
 
-Some static functions are provided for searching elements in the database:
+Some static functions are provided to search elements in the database:
 
 .. code-block:: pycon
 
@@ -223,7 +223,7 @@ Xref
 
 All elements which inherit from :class:`BipRefElt` (:class:`BipInstr`,
 :class:`BipData`, :class:`BipStruct`, ...) and some other (in
-particular :class:`BipFunction`) possess methods which allow
+particular :class:`BipFunction`) contain methods which allow
 to access xrefs. They are represented by the :class:`BipXref` objects which
 have a ``src`` (origin of the xref) and a ``dst`` (destination of the xref).
 
@@ -249,7 +249,7 @@ have a ``src`` (origin of the xref) and a ``dst`` (destination of the xref).
     [<bip.base.instr.BipInstr object at 0x0000022B045447F0>, <bip.base.instr.BipInstr object at 0x0000022B04544978>]
     >>> i.xCodeTo # bypass the xref objects and get the instr directly, if a BipData was pointed at this address it will not be listed
     [<bip.base.instr.BipInstr object at 0x0000022B04544438>, <bip.base.instr.BipInstr object at 0x0000022B0291DD30>]
-    >>> i.xFrom # same but for comming from this instruction
+    >>> i.xFrom # same but for coming from this instruction
     [<bip.base.xref.BipXref object at 0x0000022B04544D68>]
     >>> i.xFrom[0]
     <bip.base.xref.BipXref object at 0x0000022B04544438>
@@ -266,9 +266,9 @@ have a ``src`` (origin of the xref) and a ``dst`` (destination of the xref).
     >>> f = BipFunction()
     >>> f
     Func: RtlQueryProcessLockInformation (0x1800D2FF0)
-    >>> f.xTo # works also for function, but only with To, not with the From
+    >>> f.xTo # works also for functions, but only with To, not with the From
     [<bip.base.xref.BipXref object at 0x000001D95529EB00>, <bip.base.xref.BipXref object at 0x000001D95529EB70>, <bip.base.xref.BipXref object at 0x000001D95529EBE0>, <bip.base.xref.BipXref object at 0x000001D95529EC88>]
-    >>> f.xEltTo # here we have 3 data reference to this function
+    >>> f.xEltTo # here we have 3 data references to this function
     [<bip.base.instr.BipInstr object at 0x000001D95529EE48>, <bip.base.data.BipData object at 0x000001D95529EEF0>, <bip.base.data.BipData object at 0x000001D95529EF28>, <bip.base.data.BipData object at 0x000001D95529EF60>]
     >>> f.xCodeTo # but only one instruction
     [<bip.base.instr.BipInstr object at 0x000001D95529EC88>]
@@ -281,7 +281,7 @@ Manipulating struct (:class:`BipStruct`) and members (:class:`BStructMember`):
 .. code-block:: pycon
 
     >>> from bip.base import *
-    >>> st = BipStruct.get("EXCEPTION_RECORD") # Struct are access by using get and their name
+    >>> st = BipStruct.get("EXCEPTION_RECORD") # Structs are accessed by using get and their name
     >>> st # BipStruct object
     Struct: EXCEPTION_RECORD (size=0x98)
     >>> st.comment = "struct comment"
@@ -315,7 +315,7 @@ Manipulating struct (:class:`BipStruct`) and members (:class:`BStructMember`):
     >>> st[8].xEltTo[0]
     BipInstr: 0x1800A0720 (mov     [rsp+538h+ExceptionRecord.ExceptionRecord], r10)
 
-Creating struct, adding member and nested structure:
+Creating struct, adding members and nested structure:
 
 .. code-block:: pycon
 
@@ -331,7 +331,7 @@ Creating struct, adding member and nested structure:
     Struct: NewStruct (size=0xC)
     >>> st.add("struct_nested", 1)
     Member: NewStruct.struct_nested (offset=0xC, size=0x1)
-    >>> st["struct_nested"].type = BipType.FromC("EXCEPTION_RECORD") # changing the type of member struct_nested as struct EXCEPTION_RECORD
+    >>> st["struct_nested"].type = BipType.FromC("EXCEPTION_RECORD") # changing the type of member struct_nested to struct EXCEPTION_RECORD
     >>> st["struct_nested"]
     Member: NewStruct.struct_nested (offset=0xC, size=0x98)
     >>> st["struct_nested"].is_nested # is this a nested structure ?
@@ -342,9 +342,9 @@ Creating struct, adding member and nested structure:
 Types
 -----
 
-IDA use extensively types in hexrays but also in the base API for defining
+IDA uses extensively types in hexrays but also in the base API for defining
 types of data, variables and so on. In Bip the different types inherit from
-the same class :class:`BipType`. This class propose some basic methods common to all
+the same class :class:`BipType`. This class offers some basic methods common to all
 types and subclasses (class starting by :class:`BType`) can define more specific
 ones.
 
@@ -381,12 +381,12 @@ different types implemented in Bip see :ref:`doc-bip-base-type`.
     >>> ps.pointed.name
     EXCEPTION_RECORD
     >>> ps.set_at(d.ea) # set the type ps at address d.ea
-    >>> d.type.str # the type has indeed change
+    >>> d.type.str # the type has indeed changed
     EXCEPTION_RECORD *
     >>> d.type = pv # rolling it back
     >>> d.type.str
     void *
-    >>> BipType.get_at(d.ea) # Possible to directly recuperating the type with get_at(address)
+    >>> BipType.get_at(d.ea) # Possible to directly get the type with get_at(address)
     <bip.base.biptype.BTypePtr object at 0x000001D95536DEB8>
 
 Hexrays
@@ -394,7 +394,7 @@ Hexrays
 
 .. module:: bip.hexrays
 
-The module ``bip.hexrays`` contains the features link to the decompiler
+The module ``bip.hexrays`` contains the features linked to the decompiler
 provided by IDA.
 
 Functions / local variables
@@ -405,14 +405,14 @@ variable by the :class:`HxLvar` objects:
 
 .. code-block:: pycon
 
-    >>> HxCFunc.from_addr() # HxCFunc represent a decompiled function
+    >>> HxCFunc.from_addr() # HxCFunc represents a decompiled function
     <bip.hexrays.hx_cfunc.HxCFunc object at 0x00000278AE80C860>
     >>> hf = BipFunction().hxfunc # accessible from a "normal function"
-    >>> hex(hf.ea) # address of the functions
+    >>> hex(hf.ea) # address of the function
     0x1800d2ff0L
     >>> hf.args # list of the arguments as HxLvar objects
     [<bip.hexrays.hx_lvar.HxLvar object at 0x00000278AFDAACF8>]
-    >>> hf.lvars # list of all local variable (including args)
+    >>> hf.lvars # list of all local variables (including args)
     [<bip.hexrays.hx_lvar.HxLvar object at 0x00000278AFDAAB70>, ..., <bip.hexrays.hx_lvar.HxLvar object at 0x00000278AFDAF4E0>]
     >>> lv = hf.lvars[0] # getting the first one
     >>> lv
@@ -441,10 +441,10 @@ represented by a subclass of :class:`CNode`. All types of node have child nodes 
 exist :class:`CNodeExpr` (expressions) and :class:`CNodeStmt` (statements).
 Statements correspond to the C Statements: if, while, ... , expressions are everything
 else. Statements can have children statements or expressions while expressions
-can only have expressions children.
+can only have expression children.
 
-A list of all the different types of node and more details on what they do and
-how to write visitor is present in :ref:`doc-hexrays-cnode`.
+A list of all the different types of nodes and more details on what they do and
+how to write a visitor is available in :ref:`doc-hexrays-cnode`.
 
 Directly accessing the nodes:
 
@@ -470,7 +470,7 @@ Directly accessing the nodes:
     CNodeExprAsg(ea=0x1800D3006, ops=[<bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8>, <bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1637080>])
     >>> a.first_op # first operand of the assignement is a lvar, lvar are leaf
     CNodeExprVar(ea=0xFFFFFFFFFFFFFFFF, value=1)
-    >>> a.first_op.lvar # recuperate the lvar object
+    >>> a.first_op.lvar # get the lvar object
     LVAR(name=v1, size=8, type=<bip.base.biptype.BTypeInt object at 0x00000278B16390B8>)
     >>> a.ops # list all operands of the expression
     [<bip.hexrays.cnode.CNodeExprVar object at 0x00000278AFDAADD8>, <bip.hexrays.cnode.CNodeExprVar object at 0x00000278B1639080>]
@@ -479,15 +479,15 @@ Directly accessing the nodes:
     >>> hex(a.ops[1].closest_ea) # lvar have no position in the ASM, but possible to take the one of the parents
     0x1800d3006L
 
-The previous code show how to get value and manipulate quickly nodes. For
-making analysis it is easier to use visitors on the complete function.
+The previous code show how to get a value and manipulate nodes quickly. To
+do an analysis it is easier to use visitors on the complete function.
 :meth:`HxCFunc.visit_cnode` allows to visit all the nodes in a function with a
-callback, :meth:`HxCFunc.visit_cnode_filterlist` allow to visit only nodes of a
+callback, :meth:`HxCFunc.visit_cnode_filterlist` allows to visit only nodes of a
 certain type by passing a list of the node classes.
 
-This script is an example for visiting a function and recuperating the
-format string pass to a ``printk`` function. It locates the call to ``printk``,
-recuperate the address of the first argument, get the string and add a comment
+This script is an example to visit a function and get the
+format string passed to a ``printk`` function. It locates the call to ``printk``,
+gets the address of the first argument, gets the string and adds a comment
 in both hexrays and the assembly:
 
 .. code-block:: python
@@ -495,7 +495,7 @@ in both hexrays and the assembly:
     from bip import *
 
     """
-        Search for all call to printk, if possible recuperate the string and add
+        Search for all call to printk, if possible gets the string and adds
         it in comments at the level of the call.
     """
 
@@ -546,19 +546,19 @@ in both hexrays and the assembly:
         cn.hxcfunc.add_cmt(cn.closest_ea, s)
         GetElt(cn.closest_ea).comment = s
 
-    # Final function which take the address of a function and comment the call
+    # Final function which takes the address of a function and comments the call
     #   to printk
     def printk_handler(eafunc):
         hf = HxCFunc.from_addr(eafunc) # get the hexrays function
         hf.visit_cnode_filterlist(visit_call_printk, [CNodeExprCall]) # visit only the call nodes
 
-While visitors are practice (and "fast"), Bip also exposes methods for directly
-recuperating the :class:`CNode` objects as a list. The methods
+While visitors are convenient (and "fast"), Bip also exposes methods to directly
+get the :class:`CNode` objects as a list. The methods
 :meth:`HxCFunc.get_cnode_filter` and :meth:`HxCFunc.get_cnode_filter_list`
 allow to avoid having a visitor function and make it easier to manipulate
 the hexrays API. It is also worth noting that all visitors functions provided
 by :class:`HxCFunc` objects are also available directly in :class:`CNode`
-objects for visiting only a sub-tree of the full AST.
+objects to visit only a sub-tree of the full AST.
 
 Plugins
 =======
@@ -566,7 +566,7 @@ Plugins
 .. module:: bip.gui
 
 Plugins using Bip should all inherit from the class :class:`BipPlugin`. Those
-plugins are different from the IDA plugin and are loaded and called by the
+plugins are different from the IDA plugins and are loaded and called by the
 :class:`BipPluginManager`. Each plugin is identified by its class name and those
 should be unique. Bip can be used with standard plugin but most of the
 ``bip.gui`` implementation is linked to the use of :class:`BipPlugin`. For
@@ -576,7 +576,7 @@ Here is a simple plugin example:
 
 .. code-block:: python
 
-    from bip.gui import * # BipPlugin is define in the bip.gui module
+    from bip.gui import * # BipPlugin is defined in the bip.gui module
 
     class ExPlugin(BipPlugin):
         # inherit from BipPlugin, all plugin should be instantiated only once
@@ -606,16 +606,16 @@ by IDA.
 
 A plugin can expose methods which another plugin wants to call or directly
 from the console. A plugin should not be directly instantiated, it is the
-:class:`BipPluginManager` which is in charge of loading it. For recuperating a
-:class:`BipPlugin` object it should be requested to the plugin manager:
+:class:`BipPluginManager` which is in charge of loading it. To get a
+:class:`BipPlugin` object, it should be requested to the plugin manager:
 
 .. code-block:: python
 
     from bip.gui import *
-    bpm = get_plugin_manager() # recuperate the BipPluginManager object
+    bpm = get_plugin_manager() # get the BipPluginManager object
     bpm
     # <bip.gui.pluginmanager.BipPluginManager object at 0x000001EFE42D68D0>
-    tp = bpm["TstPlugin"] # recuperate the plugin object name TstPlugin
+    tp = bpm["TstPlugin"] # get the plugin object name TstPlugin
     tp # can also be recuperated by passing directly the class
     # <__plugins__tst_plg.TstPlugin object at 0x000001EFE42D69B0>
     tp.hello() # calling a method of TstPlugin
