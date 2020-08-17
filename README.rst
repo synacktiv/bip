@@ -703,6 +703,7 @@ Similar projects
 ================
 
 * `sark <https://sark.readthedocs.io/en/latest/>`_: "an object-oriented scripting layer written on top of IDAPython".
+* `ida-minsc <https://github.com/arizvisa/ida-minsc>`_: "a plugin for IDA Pro that assists a user with scripting the IDAPython plugin that is bundled with the disassembler".
 * `FIDL <https://github.com/fireeye/FIDL>`_: "FLARE IDA Decompiler Library"
 
 Thanks
