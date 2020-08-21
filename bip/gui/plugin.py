@@ -14,7 +14,7 @@ class BipPlugin(object):
         The following code can be used for loading a new plugin:
 
         .. code-block:: python
-            
+
             class MyPlugin(BipPlugin): # define a new class for the plugin
                 pass # implementation
 
@@ -68,7 +68,7 @@ class BipPlugin(object):
             Internal methods which look for the object which inherit from
             :class:`BipActivity` and add them to the ``_activities``
             dictionary.
-            
+
             This functions iter on all items in the object ``__dict__`` and
             the associated class for finding the :class:`BipActivity`.
         """
@@ -105,6 +105,18 @@ class BipPlugin(object):
         for name, action in self._activities.items():
             action.register()
 
+    def _unregister_activities(self):
+        """
+            Internal method which will parcour all the :class:`BipActivity`
+            object which are associated with this plugin and unregister all of
+            them.
+
+            This method is not made for being called directly and should be
+            call by the :meth:`BipPlugin.unload` function.
+        """
+        for name, actions in self._activities.items():
+            actions.unregister()
+
     ############################## LOADING  ################################
 
     @classmethod
@@ -128,8 +140,8 @@ class BipPlugin(object):
         """
             Method which will be called by the :class:`BipPluginManager` when
             the plugin must be loaded.
-            
-            This method can be surcharge by a Plugin for allowing to take
+
+            This method can be surcharge by a plugin for allowing to take
             actions at the moment where it will be loaded.
 
             .. note:: This method is in charge of calling
@@ -139,6 +151,21 @@ class BipPlugin(object):
         """
         self._register_activities()
 
+    def unload(self):
+        """
+            Method which will be called by the :class:`BipPluginManager` when
+            the plugin must be unloaded.
+
+            This method can be surcharge by a plugin for allowing to take
+            actions at the moment where it will be unloaded (such as cleaning
+            stuff).
+
+            .. note:: This method is in charge of calling
+                :meth:`~BipPlugin._unregister_activities` which allow to
+                disable the :class:`BipActivity` link to this plugin.
+                A plugin should ensure to call this method using ``super``.
+        """
+        self._unregister_activities()
 
 def shortcut(shortcut_str):
     """
@@ -154,10 +181,10 @@ def shortcut(shortcut_str):
         .. code-block:: python
 
             class MyPlugin(BipPlugin):
-                
+
                 def my_method(self): # a method inside the plugin
                     print("Hello from MyPlugin.my_method")
-                
+
                 @shortcut("Ctrl-H")
                 def my_shortcut(self):
                     # self is the MyPlugin object
@@ -227,7 +254,7 @@ def menu(menu_path, menu_entry=None):
 
         # get the original method
         of = bac.get_original_method()
-        
+
         if menu_entry is not None:
             lbl = menu_entry
         else:
