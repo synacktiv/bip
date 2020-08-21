@@ -243,8 +243,9 @@ class BipPluginManager(idaapi.plugin_t):
                 if the :meth:`BipPlugin.unload` method throw an exception
             :return: True if the plugin was unloaded, False if the plugin
                 was not found.
-            :raise RuntimeError: if the :meth:`BipPlugin.unload` method of
-                the plugin raise a runtime error.
+            :raise: if the :meth:`BipPlugin.unload` method of the plugin
+                raise an error, this exception will be raised, except if the
+                parameter force is set as True.
         """
         if isinstance(name, type): # a class was given in parameter
             name = name.__name__
@@ -252,13 +253,37 @@ class BipPluginManager(idaapi.plugin_t):
         if name in self._loaded:
             found = True
             p = self._loaded[name]
-            p.unload()
+            try:
+                p.unload()
+            except Exception:
+                if not forced:
+                    raise
             del self._loaded[name]
             del p
         if name in self._plugins:
             found = True
             del self._plugins[name]
         return found
+
+    def reload_plugin(self, cls, name=None):
+        """
+            Unload, delete then load again a plugin with a new class.
+
+            .. note:: This method is for reloading a new class with the same
+                name as an old plugin. If the goal is to change the name of
+                the plugin, it is expected to call :meth:`unload_plugin` and
+                then :meth:`addld_plugin`.
+
+            :param cls: The new class (subclass of :class:`BipPlugin`) to load as a plugin.
+            :param name: The name for the plugin to reload, if None (the
+                default) the name of the class will be used.
+            :raise: This can raise several exceptions, see :meth:`unload_plugin`
+                and :meth:`addld_plugin`
+        """
+        if name is None:
+            name = cls.__name__
+        self.unload_plugin(name)
+        self.addld_plugin(name, cls)
 
     def __getitem__(self, key):
         """

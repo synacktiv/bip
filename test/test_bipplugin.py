@@ -44,6 +44,7 @@ class Plugin4Test2(BipPlugin):
     def mytest_both(self):
         self.bothcounter += 1
 
+_for_tst3 = 0
 class Plugin4Test3(BipPlugin):
     def __init__(self):
         super(Plugin4Test3, self).__init__()
@@ -53,10 +54,14 @@ class Plugin4Test3(BipPlugin):
     def load(self):
         super(Plugin4Test3, self).load()
         self.test4load = 1
+        global _for_tst3
+        _for_tst3 += 1
 
     def unload(self):
         super(Plugin4Test3, self).unload()
         self.test4load = 2
+        global _for_tst3
+        _for_tst3 += 2
 
     @menu("Edit/Plugins/")
     def activity_check(self):
@@ -196,24 +201,40 @@ def test_bipplugin02():
 
 def test_bipplugin03():
     # Load and unload
+    global _for_tst3
     bpm = get_plugin_manager()
+    assert _for_tst3 == 0
     bpm.addld_plugin("Plugin4Test3", Plugin4Test3)
+    assert _for_tst3 == 1
     tp = bpm.get_plugin(Plugin4Test3)
+    assert isinstance(tp, Plugin4Test3)
     assert tp.test4load == 1
     assert tp._activities["activity_check"]._activities[0].is_register == True
     assert "Plugin4Test3" in bpm._plugins
     assert "Plugin4Test3" in bpm._loaded
     assert bpm.unload_plugin("Plugin4Test3") == True
     assert bpm.unload_plugin("Plugin4Test3") == False
+    assert _for_tst3 == 3
     assert "Plugin4Test3" not in bpm._plugins
     assert "Plugin4Test3" not in bpm._loaded
     assert tp.test4load == 2
     assert tp._activities["activity_check"]._activities[0].is_register == False
     tp.load()
+    assert _for_tst3 == 4
     assert tp.test4load == 1
     assert tp._activities["activity_check"]._activities[0].is_register == True
     tp.unload()
+    assert _for_tst3 == 6
     assert tp.test4load == 2
     assert tp._activities["activity_check"]._activities[0].is_register == False
+    bpm.addld_plugin("Plugin4Test3", Plugin4Test3)
+    assert _for_tst3 == 7
+    bpm.reload_plugin(Plugin4Test3)
+    assert _for_tst3 == 10
+    tp = bpm.get_plugin(Plugin4Test3)
+    assert isinstance(tp, Plugin4Test3)
+    assert bpm.unload_plugin(Plugin4Test3) == True
+    assert _for_tst3 == 12
+
 
 
