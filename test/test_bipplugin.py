@@ -201,11 +201,19 @@ def test_bipplugin03():
     tp = bpm.get_plugin(Plugin4Test3)
     assert tp.test4load == 1
     assert tp._activities["activity_check"]._activities[0].is_register == True
-    tp.unload()
+    assert "Plugin4Test3" in bpm._plugins
+    assert "Plugin4Test3" in bpm._loaded
+    assert bpm.unload_plugin("Plugin4Test3") == True
+    assert bpm.unload_plugin("Plugin4Test3") == False
+    assert "Plugin4Test3" not in bpm._plugins
+    assert "Plugin4Test3" not in bpm._loaded
     assert tp.test4load == 2
     assert tp._activities["activity_check"]._activities[0].is_register == False
     tp.load()
     assert tp.test4load == 1
     assert tp._activities["activity_check"]._activities[0].is_register == True
+    tp.unload()
+    assert tp.test4load == 2
+    assert tp._activities["activity_check"]._activities[0].is_register == False
 
 
