@@ -223,10 +223,13 @@ def test_bipplugin03():
     assert _for_tst3 == 4
     assert tp.test4load == 1
     assert tp._activities["activity_check"]._activities[0].is_register == True
+    assert len(tp._activities["activity_check"]._activities[0]._all_menu_path) == 1
+    assert tp._activities["activity_check"]._activities[0]._all_menu_path[0] == "Edit/Plugins/"
     tp.unload()
     assert _for_tst3 == 6
     assert tp.test4load == 2
     assert tp._activities["activity_check"]._activities[0].is_register == False
+    assert len(tp._activities["activity_check"]._activities[0]._all_menu_path) == 0
     bpm.addld_plugin("Plugin4Test3", Plugin4Test3)
     assert _for_tst3 == 7
     bpm.reload_plugin(Plugin4Test3)
