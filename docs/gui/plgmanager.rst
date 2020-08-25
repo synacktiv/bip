@@ -35,8 +35,17 @@ level of the module for avoiding instantiating a second object which will
 trigger bugs, use :func:`get_plugin_manager` for getting the singleton object.
 
 The :class:`~bip.gui.pluginmanager.BipPluginManager` is also in charge of
-loading automatically 
+loading automatically the plugins located in the ``bipplugin`` folder where
+Bip is installed.
 
+The :meth:`~bip.gui.pluginmanager.BipPluginManager.unload_plugin`,
+:meth:`~bip.gui.pluginmanager.BipPluginManager.reload_plugin`,
+:meth:`~bip.gui.pluginmanager.BipPluginManager.unload_all` and
+:meth:`~bip.gui.pluginmanager.BipPluginManager.reload_all` allow to manage the
+:class:`BipPlugin` which have been loaded. In particular the
+:meth:`~bip.gui.pluginmanager.BipPluginManager.reload_plugin` method is
+practical when developping plugins for making test, for more information see
+TODO
 
 BipPluginManager API
 ====================
