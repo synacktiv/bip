@@ -331,7 +331,7 @@ Creating struct, adding members and nested structure:
     Struct: NewStruct (size=0xC)
     >>> st.add("struct_nested", 1)
     Member: NewStruct.struct_nested (offset=0xC, size=0x1)
-    >>> st["struct_nested"].type = BipType.FromC("EXCEPTION_RECORD") # changing the type of member struct_nested to struct EXCEPTION_RECORD
+    >>> st["struct_nested"].type = BipType.from_c("EXCEPTION_RECORD") # changing the type of member struct_nested to struct EXCEPTION_RECORD
     >>> st["struct_nested"]
     Member: NewStruct.struct_nested (offset=0xC, size=0x98)
     >>> st["struct_nested"].is_nested # is this a nested structure ?
@@ -355,7 +355,7 @@ different types implemented in Bip see :ref:`doc-bip-base-type`.
 .. code-block:: pycon
 
     >>> from bip.base import *
-    >>> pv = BipType.FromC("void *") # FromC is the easiest way to create a type
+    >>> pv = BipType.from_c("void *") # from_c is the easiest way to create a type
     >>> pv
     <bip.base.biptype.BTypePtr object at 0x000001D95536DDD8>
     >>> pv.size # ptr on x64 is 8 bytes
@@ -373,7 +373,7 @@ different types implemented in Bip see :ref:`doc-bip-base-type`.
     <bip.base.biptype.BTypePtr object at 0x000001D95536D9E8>
     >>> d.type.str
     void *
-    >>> ps = BipType.FromC("EXCEPTION_RECORD *")
+    >>> ps = BipType.from_c("EXCEPTION_RECORD *")
     >>> ps.pointed # type for struct EXCEPTION_RECORD
     <bip.base.biptype.BTypeStruct object at 0x000001D95536DD30>
     >>> ps.pointed.is_named # this one is named
@@ -423,7 +423,7 @@ variable by the :class:`HxLvar` objects:
     True
     >>> lv.name = "thisisthefirstarg" # changing name of the lvar
     >>> lv
-    >>> lv.type = BipType.FromC("void *") # changing the type
+    >>> lv.type = BipType.from_c("void *") # changing the type
     >>> lv.comment = "new comment" # adding a comment
     >>> lv.size # getting the size
     8
