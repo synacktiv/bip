@@ -4,6 +4,24 @@ Changelog
 This page has the goal to record breaking change in the API between versions.
 New features may be listed but probably not always.
 
+Change from v1.0 to Current
+===========================
+
+New features:
+
+* added methods 
+  :meth:`~bip.gui.pluginmanager.BipPluginManager.reload_plugin`,
+  :meth:`~bip.gui.pluginmanager.BipPluginManager.reload_all`,
+  :meth:`~bip.gui.pluginmanager.BipPluginManager.unload_plugin` and
+  :meth:`~bip.gui.pluginmanager.BipPluginManager.unload_all` in the
+  :class:`~bip.gui.pluginmanager.BipPluginManager` for managing
+  :class:`~bip.gui.BipPlugin`.
+* added method :meth:`~bip.gui.BipAction.detach_from_menu`.
+
+Bug Fix:
+
+* Correctly detach :class:`~bip.gui.BipAction` from menu when calling
+  :meth:`~bip.gui.BipAction.unregister`.
 
 Change from v0.3 to v1.0
 ========================
