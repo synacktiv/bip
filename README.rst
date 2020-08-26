@@ -698,6 +698,15 @@ For the previous example with ``printk`` we could write the following plugin:
                 print("Renaming for {}".format(fu))
                 self.printk_handler(fu.ea)
 
+When testing a ``BipPlugin``, it will often be necessary to reload
+the plugin several times. The easiest way to do that will
+be to use the ``BipPluginManager.reload_plugin``
+method from the ``BipPluginManager`` and to reload
+the file containing the ``BipPlugin`` using the ``Script File...``
+(``Alt+F7``) IDA option. If you want to reload the ``PrintkComs`` plugin,
+re-import the script with ``Alt+F7`` and call the following code:
+``get_plugin_manager().reload_plugin(PrintkComs)``.
+
 
 Similar projects
 ================

@@ -20,7 +20,7 @@ class BipPluginManager(idaapi.plugin_t):
         This class also create the ``Bip`` directory as a top level menu
         entry. It is expected that plugins should add their menu actions in
         this directory (using the :func:`menu` decorator).
-        
+
         This object should not be instantiated by the user but should already
         be created when IDA load the plugin. This is a *real* IDAPython plugin
         as understood by IDA.
@@ -33,7 +33,7 @@ class BipPluginManager(idaapi.plugin_t):
     help = "The BipPluginManager is in charge of loading, unloading and in a general way manage BipPlugin objects. See bip documentation for more information."
     wanted_hotkey = "Ctrl-0"
 
-    #: List of module names from which to load the :class:`BipPlugin`, 
+    #: List of module names from which to load the :class:`BipPlugin`,
     #: by default this contains, only the ``bipplugin`` module, but other
     #: can be added by users.
     _modbipplug = ["bipplugin"]
@@ -79,7 +79,7 @@ class BipPluginManager(idaapi.plugin_t):
         """
             Use the :meth:`BipPluginLoader.get_plg_from_files_in_module` for
             locating all :class:`BipPlugin` in a module and load them.
-            
+
             .. note::
 
                 This functions allows to load all plugins define in a
@@ -98,7 +98,7 @@ class BipPluginManager(idaapi.plugin_t):
         """
             Load all plugins which have not already been loaded up to this
             point.
-            
+
             This method is called automatically when the
             :meth:`~BipPluginManager.init` function is called by IDA.
 
@@ -187,7 +187,7 @@ class BipPluginManager(idaapi.plugin_t):
 
     def addld_plugin(self, name, cls, forced=False, ifneeded=False):
         """
-            Add a plugin and try to load it. If the :class`BipPluginManager`
+            Add a plugin and try to load it. If the :class:`BipPluginManager`
             has not already been loaded the plugin will try to be loaded at
             that time (see :meth:`load_one` for details on what loading means
             for a plugin).
@@ -213,7 +213,7 @@ class BipPluginManager(idaapi.plugin_t):
         """
             Get a plugin instance from its name. The plugin must be loaded
             for this method to work.
-            
+
             :param name: A string representing the :class:`BipPlugin` name
                 or a subclass of :class:`BipPlugin`.
             :return: An object (instance) which inherit from
@@ -224,6 +224,110 @@ class BipPluginManager(idaapi.plugin_t):
         if name in self._loaded:
             return self._loaded[name]
         return None
+
+    def unload_plugin(self, name, force=False):
+        """
+            Unload and delete a plugin from its name. If the plugin has been
+            loaded it will be unloaded (calling :meth:`BipPlugin.unload`)
+            first.
+
+            .. note:: This will remove all reference to the plugin class and
+                object from the :class:`BipPluginManager`. However, it will
+                (can) not remove any previously fetch reference to the plugin
+                object.
+
+            :param name: A string representing the :class:`BipPlugin` name
+                or a subclass of :class:`BipPlugin`.
+            :param force: If true (default False) the plugin will be remove
+                from the reference of the :class:`BipPluginManager` even
+                if the :meth:`BipPlugin.unload` method throw an exception
+            :return: True if the plugin was unloaded, False if the plugin
+                was not found.
+            :raise: if the :meth:`BipPlugin.unload` method of the plugin
+                raise an error, this exception will be raised, except if the
+                parameter force is set as True.
+        """
+        if isinstance(name, type): # a class was given in parameter
+            name = name.__name__
+        found = False
+        if name in self._loaded:
+            found = True
+            p = self._loaded[name]
+            try:
+                p.unload()
+            except Exception:
+                if not forced:
+                    raise
+            del self._loaded[name]
+            del p
+        if name in self._plugins:
+            found = True
+            del self._plugins[name]
+        return found
+
+    def unload_all(self, force=False):
+        """
+            Unload and delete all plugins. If a plugin has been loaded it
+            will be unloaded (calling :meth:`BipPlugin.unload`) first. This
+            is a wrapper on :meth:`~BipPluginManager.unload_plugin` which will
+            be called for all plugins.
+
+            .. note:: This will remove all reference to the plugins classes and
+                objects from the :class:`BipPluginManager`. However, it will
+                (can) not remove any previously fetch reference to the plugin
+                object.
+
+            :param force: See :meth:`~BipPluginManager.unload_plugin`.
+            :raise: if a :meth:`BipPlugin.unload` method of one of the plugin
+                raise an error, this exception will be raised, except if the
+                parameter force is set as True.
+        """
+        plgs = dict(self._plugins)
+        for name in plgs:
+            self.unload_plugin(name, force=force)
+
+    def reload_plugin(self, cls, name=None, force_unload=False):
+        """
+            Unload, delete then load again a plugin with a new class.
+
+            .. note:: This method is for reloading a new class with the same
+                name as an old plugin. If the goal is to change the name of
+                the plugin, it is expected to call :meth:`unload_plugin` and
+                then :meth:`addld_plugin`.
+
+            :param cls: The new class (subclass of :class:`BipPlugin`) to load
+                as a plugin.
+            :param name: The name for the plugin to reload, if None (the
+                default) the name of the class will be used.
+            :param force_unload: If true (default False) the plugin will be
+                remove from the reference of the :class:`BipPluginManager`
+                even if the :meth:`BipPlugin.unload` method throw an
+                exception. That exception will in that caise not be raise,
+                see :meth:`~BipPluginManager.unload_plugin`.
+            :raise: This can raise several exceptions, see :meth:`unload_plugin`
+                and :meth:`addld_plugin`
+        """
+        if name is None:
+            name = cls.__name__
+        self.unload_plugin(name, force=force_unload)
+        self.addld_plugin(name, cls)
+
+    def reload_all(self, force_unload=False):
+        """
+            Reload all plugins from bip. This will first unload, delete then
+            load all plugins, in particular this means :class:`BipPlugin` for
+            which the method :meth:`~BipPlugin.to_load` has change may be
+            loaded after a call to this method.
+
+            :param force_unload: If true (default False) this function will
+                continue to remove and reload plugins even if one of the
+                :meth:`BipPlugin.unload` method throw an exception. See
+                :meth:`~BipPluginManager.unload_plugin`.
+        """
+        plgs = dict(self._plugins)
+        for name, cls in plgs.items():
+            self.unload_plugin(name, force=force_unload)
+            self.addld_plugin(name, cls)
 
     def __getitem__(self, key):
         """
@@ -249,7 +353,7 @@ class BipPluginManager(idaapi.plugin_t):
         # TODO: this should allow to see and manage plugins
         #   IDA action, mapped on Ctrl-0
         pass
-    
+
     def term(self):
         pass
 

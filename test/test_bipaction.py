@@ -52,6 +52,12 @@ def test_bipaction02():
     ta.register()
     assert ta.is_register == True
     assert ta.attach_to_menu("Edit/Plugins/") == True
+    assert len(ta._all_menu_path) == 1
+    assert ta._all_menu_path[0] == "Edit/Plugins/"
+    with pytest.raises(RuntimeError): ta.detach_from_menu("do/not/exist")
+    ta.detach_from_menu("do/not/exist", force=True) # should not do anything
+    ta.detach_from_menu("Edit/Plugins/")
+    assert len(ta._all_menu_path) == 0
     ta2 = BipAction("testm1", handler=lambda *args: 3, path_menu="Edit/Plugins/")
     ta2.register()
     assert ta2.is_register == True

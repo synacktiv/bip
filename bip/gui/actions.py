@@ -43,7 +43,7 @@ class BipAction(BipActivity):
                 the action. This should be a string representing the path
                 (ex: ``Edit/Plugins/``)
             :param tooltip: Optional tooltip for the action.
-            :param icon: Option icon for the action. 
+            :param icon: Option icon for the action.
         """
         # Param
         self._name = name
@@ -65,6 +65,9 @@ class BipAction(BipActivity):
 
         # Internals
         self._ida_action_handler = None #: Internal idaapi.action_handler_t object
+        #: Internal list where the action has been register, this is used for
+        #:  unloading correctly the action
+        self._all_menu_path = []
 
         # Externals
         self.is_register = False #: Boolean attribute which indicate if the action is registerd
@@ -77,7 +80,7 @@ class BipAction(BipActivity):
 
     def _activate(self, action_handler, ctx):
         """
-            Intenal function which is used for 
+            Intenal function which is used for
             the idaapi.action_handler_t.activate function.
 
             This only call the :meth:`handler` method.
@@ -90,7 +93,7 @@ class BipAction(BipActivity):
         """
             Intenal function which is used for the
             idaapi.action_handler_t.update function.
-            
+
             This is always ``AST_ENABLE_ALWAYS``.
 
             .. todo:: This should be rewritten for allowing more advance control
@@ -105,7 +108,7 @@ class BipAction(BipActivity):
 
             Will set it in :attr:`BipAction._ida_action_handler` attribute and
             return it.
-            
+
             .. todo:: Should check if already created ?
         """
         # create object with needed method
@@ -175,7 +178,30 @@ class BipAction(BipActivity):
             :return: ``True`` if the action succeded, ``False`` otherwise.
         """
         # by default, add menu item after the specified path (can also be SETMENU_INS)
-        return ida_kernwin.attach_action_to_menu(path, self._name, flags)
+        res = ida_kernwin.attach_action_to_menu(path, self._name, flags)
+        if res:
+            self._all_menu_path.append(path)
+        return res
+
+    def detach_from_menu(self, path, force=False):
+        """
+            Detach this :class:`BipAction` from a menu. By default this will
+            check if the path given was indeed register with
+            :meth:`~BipAction.attach_to_menu` (or :meth:`~BipAction.register`),
+            if the ``force`` parameter is set to ``True`` no check will
+            be made.
+
+            :param path: The path from which to detach.
+            :param force: If true (default False), no check is performed for
+                if this :class:`BipAction` was indeed attach to this menu.
+            :raise RuntimeError: If the path was never register a RuntimeError
+                will be raised.
+        """
+        if not force and path not in self._all_menu_path:
+            raise RuntimeError("Trying to detach from a menu where it was never added")
+        if path in self._all_menu_path:
+            self._all_menu_path.remove(path)
+        ida_kernwin.detach_action_from_menu(path, self._name)
 
     def unregister(self):
         """
@@ -185,6 +211,9 @@ class BipAction(BipActivity):
         """
         if not self.is_register:
             return # nothing to do
+        l = list(self._all_menu_path) # copy because entries will be removed
+        for p in l:
+            self.detach_from_menu(p)
         ida_kernwin.unregister_action(self._name)
         self.is_register = False
 

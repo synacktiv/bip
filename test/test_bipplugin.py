@@ -44,6 +44,29 @@ class Plugin4Test2(BipPlugin):
     def mytest_both(self):
         self.bothcounter += 1
 
+_for_tst3 = 0
+class Plugin4Test3(BipPlugin):
+    def __init__(self):
+        super(Plugin4Test3, self).__init__()
+        self.test4load = 0
+        self.activ = 0
+
+    def load(self):
+        super(Plugin4Test3, self).load()
+        self.test4load = 1
+        global _for_tst3
+        _for_tst3 += 1
+
+    def unload(self):
+        super(Plugin4Test3, self).unload()
+        self.test4load = 2
+        global _for_tst3
+        _for_tst3 += 2
+
+    @menu("Edit/Plugins/")
+    def activity_check(self):
+        self.activ = 1
+
 ### BipPluginLoader ###
 
 def test_bippluginloader00():
@@ -55,7 +78,7 @@ def test_bippluginloader00():
     assert d["Plugin4Test"] == Plugin4Test
     assert d["Plugin4Test2"] == Plugin4Test2
     assert "BipPlugin" not in d
-    assert len(d) == 2
+    assert len(d) == 3
 
 def test_bippluginloader01():
     # get_plg_from_files_in_module
@@ -175,5 +198,46 @@ def test_bipplugin02():
     assert tp.mytest_menu._activities[0].is_register == False
     assert tp.mytest_both._activities[0].is_register == False
     assert tp.mytest_both._activities[1].is_register == False
+
+def test_bipplugin03():
+    # Load and unload
+    global _for_tst3
+    bpm = get_plugin_manager()
+    assert _for_tst3 == 0
+    bpm.addld_plugin("Plugin4Test3", Plugin4Test3)
+    assert _for_tst3 == 1
+    tp = bpm.get_plugin(Plugin4Test3)
+    assert isinstance(tp, Plugin4Test3)
+    assert tp.test4load == 1
+    assert tp._activities["activity_check"]._activities[0].is_register == True
+    assert "Plugin4Test3" in bpm._plugins
+    assert "Plugin4Test3" in bpm._loaded
+    assert bpm.unload_plugin("Plugin4Test3") == True
+    assert bpm.unload_plugin("Plugin4Test3") == False
+    assert _for_tst3 == 3
+    assert "Plugin4Test3" not in bpm._plugins
+    assert "Plugin4Test3" not in bpm._loaded
+    assert tp.test4load == 2
+    assert tp._activities["activity_check"]._activities[0].is_register == False
+    tp.load()
+    assert _for_tst3 == 4
+    assert tp.test4load == 1
+    assert tp._activities["activity_check"]._activities[0].is_register == True
+    assert len(tp._activities["activity_check"]._activities[0]._all_menu_path) == 1
+    assert tp._activities["activity_check"]._activities[0]._all_menu_path[0] == "Edit/Plugins/"
+    tp.unload()
+    assert _for_tst3 == 6
+    assert tp.test4load == 2
+    assert tp._activities["activity_check"]._activities[0].is_register == False
+    assert len(tp._activities["activity_check"]._activities[0]._all_menu_path) == 0
+    bpm.addld_plugin("Plugin4Test3", Plugin4Test3)
+    assert _for_tst3 == 7
+    bpm.reload_plugin(Plugin4Test3)
+    assert _for_tst3 == 10
+    tp = bpm.get_plugin(Plugin4Test3)
+    assert isinstance(tp, Plugin4Test3)
+    assert bpm.unload_plugin(Plugin4Test3) == True
+    assert _for_tst3 == 12
+
 
 
