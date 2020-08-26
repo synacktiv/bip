@@ -708,6 +708,24 @@ class BipElt(BipRefElt):
         return r
 
     @staticmethod
+    def prev_data_addr(ea=None):
+        """
+            Static method which allow to find the address of the previous data
+            element. Similar to :meth:`next_data_addr` with ``down=False``.
+
+            :param ea: The address at which to start the search. If ``None``
+                the screen address will be used.
+            :return: The address of the next data or None if the search did
+                not find any match.
+        """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
+        r = ida_search.find_data(ea, ida_search.SEARCH_UP)
+        if r == idc.BADADDR: # no data found
+            return None
+        return r
+
+    @staticmethod
     def next_data(ea=None, down=True):
         """
             Static method which allow to find the next data element.
@@ -716,10 +734,27 @@ class BipElt(BipRefElt):
                 the screen address will be used.
             :param down: If True (the default) search below the given
                 address, if False search above.
-            :return: An object which ibherit from :class:`BipBaseElt` or
+            :return: An object which inherit from :class:`BipBaseElt` or
                 ``None`` if the search did not find any match.
         """
         r = BipElt.next_data_addr(ea=ea, down=down)
+        if r is None:
+            return r
+        else:
+            return GetElt(r)
+
+    @staticmethod
+    def prev_data(ea=None):
+        """
+            Static method which allow to find the previous data element.
+            Similar to :meth:`next_data` with ``down=False``.
+
+            :param ea: The address at which to start the search. If ``None``
+                the screen address will be used.
+            :return: An object which inherit from :class:`BipBaseElt` or
+                ``None`` if the search did not find any match.
+        """
+        r = BipElt.prev_data_addr(ea=ea)
         if r is None:
             return r
         else:
@@ -750,6 +785,24 @@ class BipElt(BipRefElt):
         return r
 
     @staticmethod
+    def prev_code_addr(ea=None):
+        """
+            Static method which allow to find the address of the previous code
+            element. Similar to :meth:`next_code_addr` with ``down=False``.
+
+            :param ea: The address at which to start the search. If ``None``
+                the screen address will be used.
+            :return: The address of the previous code or None if the search did
+                not find any match.
+        """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
+        r = ida_search.find_code(ea, ida_search.SEARCH_UP)
+        if r == idc.BADADDR: # no result found
+            return None
+        return r
+
+    @staticmethod
     def next_code(ea=None, down=True):
         """
             Static method which allow to find the next code element.
@@ -758,10 +811,27 @@ class BipElt(BipRefElt):
                 the screen address will be used.
             :param down: If True (the default) search below the given
                 address, if False search above.
-            :return: An object which ibherit from :class:`BipBaseElt` or
+            :return: An object which inherit from :class:`BipBaseElt` or
                 ``None`` if the search did not find any match.
         """
         r = BipElt.next_code_addr(ea=ea, down=down)
+        if r is None:
+            return r
+        else:
+            return GetElt(r)
+
+    @staticmethod
+    def prev_code(ea=None):
+        """
+            Static method which allow to find the previous code element.
+            Similar to :meth:`next_code` with ``down=False``.
+
+            :param ea: The address at which to start the search. If ``None``
+                the screen address will be used.
+            :return: An object which inherit from :class:`BipBaseElt` or
+                ``None`` if the search did not find any match.
+        """
+        r = BipElt.prev_code_addr(ea=ea)
         if r is None:
             return r
         else:
@@ -793,6 +863,26 @@ class BipElt(BipRefElt):
         return r
 
     @staticmethod
+    def prev_unknown_addr(ea=None):
+        """
+            Static method which allow to find the address of the previous unknown
+            element. An unknown element is an element for which IDA does not
+            know the type.
+            Similar to :meth:`next_unkwown_addr` with ``down=False``.
+
+            :param ea: The address at which to start the search. If ``None``
+                the screen address will be used.
+            :return: The address of the previous unknown element or ``None`` if
+                the search did not find any match.
+        """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
+        r = ida_search.find_unknown(ea, ida_search.SEARCH_UP)
+        if r == idc.BADADDR: # no result found
+            return None
+        return r
+
+    @staticmethod
     def next_unknown(ea=None, down=True):
         """
             Static method which allow to find the next unknown element.
@@ -803,10 +893,29 @@ class BipElt(BipRefElt):
                 the screen address will be used.
             :param down: If True (the default) search below the given
                 address, if False search above.
-            :return: An object which ibherit from :class:`BipBaseElt` or
+            :return: An object which inherit from :class:`BipBaseElt` or
                 ``None`` if the search did not find any match.
         """
         r = BipElt.next_unknown_addr(ea=ea, down=down)
+        if r is None:
+            return r
+        else:
+            return GetElt(r)
+
+    @staticmethod
+    def prev_unknown(ea=None):
+        """
+            Static method which allow to find the previous unknown element.
+            An unknown element is an element for which IDA does not know
+            the type.
+            Similar to :meth:`next_unknown` with ``down=False``.
+
+            :param ea: The address at which to start the search. If ``None``
+                the screen address will be used.
+            :return: An object which inherit from :class:`BipBaseElt` or
+                ``None`` if the search did not find any match.
+        """
+        r = BipElt.prev_unknown_addr(ea=ea)
         if r is None:
             return r
         else:
@@ -838,6 +947,26 @@ class BipElt(BipRefElt):
         return r
 
     @staticmethod
+    def prev_defined_addr(ea=None):
+        """
+            Static method which allow to find the address of the previous defined
+            element. An defined element is the opposite of unknown, meaning
+            or a data with a known type or code.
+            Similar to :meth:`next_defined_addr` with ``down=False``.
+
+            :param ea: The address at which to start the search. If ``None``
+                the screen address will be used.
+            :return: The address of the previous defined element or None if
+                the search did not find any match.
+        """
+        if ea is None:
+            ea = ida_kernwin.get_screen_ea()
+        r = ida_search.find_defined(ea, ida_search.SEARCH_UP)
+        if r == idc.BADADDR: # no result found
+            return None
+        return r
+
+    @staticmethod
     def next_defined(ea=None, down=True):
         """
             Static method which allow to find the next defined element.
@@ -848,10 +977,29 @@ class BipElt(BipRefElt):
                 the screen address will be used.
             :param down: If True (the default) search below the given
                 address, if False search above.
-            :return: An object which ibherit from :class:`BipBaseElt` or
+            :return: An object which inherit from :class:`BipBaseElt` or
                 ``None`` if the search did not find any match.
         """
         r = BipElt.next_defined_addr(ea=ea, down=down)
+        if r is None:
+            return r
+        else:
+            return GetElt(r)
+
+    @staticmethod
+    def prev_defined(ea=None):
+        """
+            Static method which allow to find the previous defined element.
+            An defined element is the opposite of unknown, meaning or a data
+            with a known type or code.
+            Similar to :meth:`next_defined` with ``down=False``.
+
+            :param ea: The address at which to start the search. If ``None``
+                the screen address will be used.
+            :return: An object which inherit from :class:`BipBaseElt` or
+                ``None`` if the search did not find any match.
+        """
+        r = BipElt.prev_defined_addr(ea=ea)
         if r is None:
             return r
         else:
