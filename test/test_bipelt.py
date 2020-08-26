@@ -135,30 +135,41 @@ def test_bipelt05():
     # next_data
     assert BipElt.next_data_addr(ea=0x1800d324b, down=True) == 0x1800d3284
     assert BipElt.next_data_addr(ea=0x1800d324b, down=False) == 0x1800d2fe1
+    assert BipElt.prev_data_addr(ea=0x1800d324b) == 0x1800d2fe1
     assert BipElt.next_data(ea=0x1800d324b, down=True).ea == 0x1800d3284
     assert BipElt.next_data(ea=0x1800d324b, down=False).ea == 0x1800d2fe1
+    assert BipElt.prev_data(ea=0x1800d324b).ea == 0x1800d2fe1
     # next code
     assert BipElt.next_code_addr(ea=0x1800d324b, down=True) == 0x1800d324e
     assert BipElt.next_code_addr(ea=0x1800d324b, down=False) == 0x1800d3248
+    assert BipElt.prev_code_addr(ea=0x1800d324b) == 0x1800d3248
     assert BipElt.next_code(ea=0x1800d324b, down=True).ea == 0x1800d324e
     assert BipElt.next_code(ea=0x1800d324b, down=False).ea == 0x1800d3248
+    assert BipElt.prev_code(ea=0x1800d324b).ea == 0x1800d3248
     assert isinstance(BipElt.next_code(ea=0x1800d324b, down=True), BipInstr)
     assert isinstance(BipElt.next_code(ea=0x1800d324b, down=False), BipInstr)
+    assert isinstance(BipElt.prev_code(ea=0x1800d324b), BipInstr)
     # next unknown
     assert BipElt.next_unknown_addr(ea=0x1800d324b, down=True) == 0x180110000
     assert BipElt.next_unknown_addr(ea=0x1800d324b, down=False) is None
+    assert BipElt.prev_unknown_addr(ea=0x1800d324b) is None
     assert BipElt.next_unknown_addr(ea=0x180110000, down=True) == 0x180110001
     assert BipElt.next_unknown_addr(ea=0x180110001, down=False) == 0x180110000
+    assert BipElt.prev_unknown_addr(ea=0x180110001) == 0x180110000
     assert BipElt.next_unknown(ea=0x180110000, down=True).ea == 0x180110001
     assert BipElt.next_unknown(ea=0x180110001, down=False).ea == 0x180110000
+    assert BipElt.prev_unknown(ea=0x180110001).ea == 0x180110000
     assert isinstance(BipElt.next_unknown(ea=0x180110000, down=True), BipData)
     assert isinstance(BipElt.next_unknown(ea=0x180110001, down=False), BipData)
+    assert isinstance(BipElt.prev_unknown(ea=0x180110001), BipData)
     # next defined
     assert BipElt.next_defined_addr(ea=0x1800d324b, down=True) == 0x1800d324e
     assert BipElt.next_defined_addr(ea=0x1800d324b, down=False) == 0x1800d3248
+    assert BipElt.prev_defined_addr(ea=0x1800d324b) == 0x1800d3248
     assert BipElt.next_defined_addr(ea=0x180110000, down=True) == 0x180110008
     assert BipElt.next_defined(ea=0x1800d324b, down=True).ea == 0x1800d324e
     assert BipElt.next_defined(ea=0x1800d324b, down=False).ea == 0x1800d3248
+    assert BipElt.prev_defined(ea=0x1800d324b).ea == 0x1800d3248
     assert BipElt.next_defined(ea=0x180110000, down=True).ea == 0x180110008
 
 def test_bipelt06():

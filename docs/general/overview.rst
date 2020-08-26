@@ -203,13 +203,13 @@ Some static functions are provided to search elements in the database:
     BipInstr: 0x1800D3248 (mov     rdx, r14)
     >>> BipElt.next_code() # find next code elt from current addres or addr passed as arg
     BipInstr: 0x1800D324B (mov     rcx, r13)
-    >>> BipElt.next_code(down=False) # find prev code element
+    >>> BipElt.prev_code() # find prev code element
     BipInstr: 0x1800D3242 (mov     r8d, 8)
     >>> BipElt.next_data() # find next data elt from current address or addr passed as arg
     BipData at 0x1800D3284 = 0xCC (size=1)
-    >>> BipElt.next_data(down=False) # find previous data element
+    >>> BipElt.prev_data() # find previous data element
     BipData at 0x1800D2FE1 = 0xCC (size=1)
-    >>> hex(BipElt.next_data_addr(down=False)) # find address of the previous data element
+    >>> hex(BipElt.prev_data_addr()) # find address of the previous data element
     0x1800d2fe1L
     >>> BipElt.next_unknown() # same for unknown, which are not typed element of IDA and are considered data by Bip
     BipData at 0x180110000 = 0xE (size=1)
