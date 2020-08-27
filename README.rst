@@ -118,6 +118,7 @@ The classes ``bip.base.BipFunction`` and ``bip.base.BipBlock``:
     0x1800d2ff0L
     >>> hex(f.end) # end address
     0x1800d3284L
+    >>> f = BipFunction.get_by_name("RtlQueryProcessLockInformation") # fetch the function from its name
     >>> f.name # get and set the name
     RtlQueryProcessLockInformation
     >>> f.name = "test"
