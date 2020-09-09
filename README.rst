@@ -589,7 +589,7 @@ in both hexrays and the assembly:
 
 While visitors are convenient (and "fast"), Bip also exposes methods to directly
 get the ``CNode`` objects as a list. The methods
-``HxCFunc.get_cnode_filter`` and ``HxCFunc.get_cnode_filter_list``
+``HxCFunc.get_cnode_filter`` and ``HxCFunc.get_cnode_filter_type``
 allow to avoid having a visitor function and make it easier to manipulate
 the hexrays API. It is also worth noting that all visitors functions provided
 by ``HxCFunc`` objects are also available directly in ``CNode``
