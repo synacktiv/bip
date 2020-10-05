@@ -17,11 +17,19 @@ New features:
   :class:`~bip.gui.pluginmanager.BipPluginManager` for managing
   :class:`~bip.gui.BipPlugin`.
 * added method :meth:`~bip.gui.BipAction.detach_from_menu`.
+* added property :meth:`~bip.base.BipFunction.type` for interfacing with
+  :class:`~bip.base.BipType`.
 
 Bug Fix:
 
 * Correctly detach :class:`~bip.gui.BipAction` from menu when calling
   :meth:`~bip.gui.BipAction.unregister`.
+
+Deprecated (will be removed on next major version) object & functions:
+
+* Properties :meth:`bip.base.BipFunction.str_type` and
+  :meth:`bip.base.BipFunction.guess_strtype`,
+  should used :meth:`bip.base.BipFunction.type` instead.
 
 Change from v0.3 to v1.0
 ========================

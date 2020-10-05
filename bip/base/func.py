@@ -17,6 +17,7 @@ import bip.base.instr
 import bip.base.block
 import bip.base.xref
 from .biperror import BipError
+from .biptype import BipType
 
 hexrays = None
 
@@ -803,13 +804,46 @@ class BipFunction(object):
         """
         tif = ida_typeinf.tinfo_t()
         if not idaapi.get_type(self.ea, tif, idaapi.GUESSED_FUNC):
-            raise BipError("Unable to get the type for the function {}".format(str(self)))
+            raise BipError("Unable to get the type for {}".format(str(self)))
+        return tif
+
+    @property
+    def type(self):
+        """
+            Property which allow to get or set the :class:`BipType` for this
+            function.
+
+            :return: The :class:`BipType` for this function.
+        """
+        return BipType.from_tinfo(self._ida_tinfo)
+
+    @type.setter
+    def type(self, value):
+        """
+            Setter for the type of the function.
+
+            :param value: An object which inherit from :class:`BipType` or
+                a string (which will be converted using
+                :class:`BipType.from_c`).
+            :raise RuntimeError: If setting the type failed.
+            :raise TypeError: If the argument is not a string or a
+                :class:`BipType` object.
+        """
+        if isinstance(value, (str, unicode)):
+            value = BipType.from_c(value)
+        if not isinstance(value, BipType):
+            raise TypeError("BipFunction.type setter expect a BipType or a string")
+        tif = value._get_tinfo_copy()
+        if not idaapi.set_type(self.ea, tif, idaapi.GUESSED_NONE):
+            raise BipError("Unable to set the type {} for {}".format(tif, str(self)))
         return tif
 
     @property
     def str_type(self):
         """
             Property which return the type (prototype) of the function.
+
+            .. warning:: deprecated, use :meth:`~BipFunction.type` instead.
 
             :return str: String representing the type of the function.
         """
@@ -819,6 +853,8 @@ class BipFunction(object):
     def str_type(self, value):
         """
             Setter which allow to change the type (prototype) of the function.
+
+            .. warning:: deprecated, use :meth:`~BipFunction.type` instead.
         """
         idc.SetType(self.ea, value)
 
@@ -827,6 +863,8 @@ class BipFunction(object):
         """
             Property which allow to return the prototype of the function
             guessed by IDA.
+
+            .. warning:: deprecated, use :meth:`~BipFunction.type` instead.
 
             :return str: The guess prototype of the function.
         """
