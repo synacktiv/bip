@@ -69,9 +69,9 @@ def test_bipfunc01():
 
 def test_bipfunc02():
     # hexray interface
-    assert BipFunction(0x01800D2FF0).can_decompile == True
-    assert isinstance(BipFunction(0x01800D2FF0).hxcfunc, HxCFunc)
-    assert BipFunction(0x01800D2FF0).hxcfunc.bfunc == BipFunction(0x01800D2FF0)
+    assert BipFunction(0x018010DFC4).can_decompile == True
+    assert isinstance(BipFunction(0x018010DFC4).hxcfunc, HxCFunc)
+    assert BipFunction(0x018010DFC4).hxcfunc.bfunc == BipFunction(0x018010DFC4)
     # TODO: test for decompilation failure
 
 def test_bipfunc03():
@@ -183,13 +183,23 @@ def test_bipfunc06():
 
 def test_bipfunc07():
     # type
+    assert isinstance(BipFunction(0x1800D2FF0)._ida_tinfo, ida_typeinf.tinfo_t)
+    assert isinstance(BipFunction(0x1800D2FF0).type, BTypeFunc)
+    assert BipFunction(0x1800D2FF0).type.str == '__int64 __fastcall()'
+    BipFunction(0x1800D2FF0).type = "void *a(int)"
+    assert BipFunction(0x1800D2FF0).type.str == 'void *__stdcall(int)'
+    BipFunction(0x1800D2FF0).type = BipType.from_c("void *a(int, int)")
+    assert BipFunction(0x1800D2FF0).type.str == 'void *__stdcall(int, int)'
+    BipFunction(0x1800D2FF0).type = "__int64 __fastcall a()"
+    assert BipFunction(0x1800D2FF0).type.str == '__int64 __fastcall()'
+
+    # will be deprecated
     assert BipFunction(0x1800D2FF0).str_type is None
     assert BipFunction(0x1800D2FF0).guess_strtype == '__int64 __fastcall()'
     BipFunction(0x1800D2FF0).str_type = "void *func(int a)"
     assert BipFunction(0x1800D2FF0).str_type == 'void *__stdcall(int a)'
     BipFunction(0x1800D2FF0).str_type = ""
     assert BipFunction(0x1800D2FF0).str_type is None
-    assert isinstance(BipFunction(0x1800D2FF0)._ida_tinfo, ida_typeinf.tinfo_t)
 
 def test_bipfunc08():
     # xref, (j)callers and callees
