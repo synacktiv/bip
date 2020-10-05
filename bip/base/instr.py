@@ -291,7 +291,7 @@ class BipInstr(BipElt):
                 table.
 
             :return: A list of :class:`BipElt` for the next possible
-                intructions.
+                instructions.
         """
         return [x.dst for x in self.xFrom if x.is_codepath] 
 
