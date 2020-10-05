@@ -286,7 +286,11 @@ class BipInstr(BipElt):
             control flow. This will take call, jmp and ordinary flow into
             account.
 
-            :return: A list of :class:`BipInstr` for the next possible
+            .. note:: In some case this may return :class:`BipData` and not
+                :class:`BipInstr`, this will typically be the case for a jmp
+                table.
+
+            :return: A list of :class:`BipElt` for the next possible
                 intructions.
         """
         return [x.dst for x in self.xFrom if x.is_codepath] 
