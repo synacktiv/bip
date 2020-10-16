@@ -834,8 +834,8 @@ class BipFunction(object):
         if not isinstance(value, BipType):
             raise TypeError("BipFunction.type setter expect a BipType or a string")
         tif = value._get_tinfo_copy()
-        if not idaapi.set_type(self.ea, tif, idaapi.GUESSED_NONE):
-            raise BipError("Unable to set the type {} for {}".format(tif, str(self)))
+        if not idaapi.set_type(self.ea, tif, idaapi.GUESSED_NONE, True): # force here
+            raise BipError("Unable to set the type {} for {} (even with forced)".format(tif, str(self)))
         return tif
 
     @property
