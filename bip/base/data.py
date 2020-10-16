@@ -510,7 +510,7 @@ class BipData(BipElt):
             ea = ida_kernwin.get_screen_ea()
         return idc.get_strlit_contents(ea, length=size)
 
-    @statimethod
+    @staticmethod
     def get_c16string(ea=None, size=-1):
         """
             Static method for getting a C16 string (UTF16) from an address.
