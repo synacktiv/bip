@@ -280,6 +280,18 @@ class BipInstr(BipElt):
         return xs[0]
 
     @property
+    def xNonOrdinaryCfNext(self):
+        """
+            Property returning the next instructions in the control flow which
+            are not the following ones. This allows easy access to
+            :class:`BipInstr` for jump and call.
+
+            :return: A list of :class:`BipInstr` for the next instruction in
+                the code path which are not the ordinary control flow.
+        """
+        return [x.dst for x in self.xFrom if x.is_codepath and not x.is_ordinaryflow] 
+
+    @property
     def xCfNext(self):
         """
             Property allowing access to instructions which can follow in the
