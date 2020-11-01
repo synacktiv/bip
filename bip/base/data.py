@@ -517,13 +517,13 @@ class BipData(BipElt):
 
             :param ea: The address of the string. If
                 ``None`` the screen address is used.
-            :param size: The size of the string. If ``-1`` (default), until a
-                ``\0`` is found.
+            :param size: The size in number of bytes of the string. If ``-1``
+                (default), until a ``\0\0`` is found.
             :return: Bytes representing the string
         """
         if ea is None:
             ea = ida_kernwin.get_screen_ea()
-        idc.get_strlit_contents(ea, length=size, strtype=STRTYPE_C_16)
+        return idc.get_strlit_contents(ea, length=size, strtype=idc.STRTYPE_C_16)
 
     @staticmethod
     def get_ptr(ea=None):

@@ -157,6 +157,9 @@ def test_bipdata02():
     assert BipData.get_cstring(0x0180129090) == b'LdrpLoadResourceFromAlternativeModule'
     assert BipData.get_cstring(0x0180129090, size=4) == b'Ldrp'
     assert BipData.get_cstring(0x01801568C5) is None
+    assert BipData.get_c16string(0x0180113EC8) == b'\\AppContainerNamedObjects'
+    assert BipData.get_c16string(0x0180113EC8, size=8) == b'\\App'
+    assert BipData.get_c16string(0x0180113F44) is None
     assert BipData.get_bytes(0x01800D3242, 6) == b'A\xb8\x08\x00\x00\x00'
     BipData.set_bytes(0x01800D3242, "123")
     assert BipData.get_bytes(0x01800D3242, 6) == b'123\x00\x00\x00'
