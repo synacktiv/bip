@@ -104,10 +104,14 @@ def test_bipinstr06():
     assert [x.ea for x in BipInstr(0x01800D325A).xCfNext] == [0x01800D325E]
     assert [x.ea for x in BipInstr(0x01800D325A).xCfPrev] == [0x01800D3253, 0x01800D3028]
     assert BipInstr(0x01800D3028).xOrdinaryCfNext is None
+    assert [x.ea for x in BipInstr(0x01800D3028).xNonOrdinaryCfNext] == [0x01800D325A]
     assert [x.ea for x in BipInstr(0x01800D3028).xCfNext] == [0x01800D325A]
     assert [x.ea for x in BipInstr(0x01800D3028).xCfPrev] == [0x01800D3023]
     assert [x.ea for x in BipInstr(0x01800D324E).xCfNext] == [0x01800D3253, 0x01800D35E8]
     assert [x.ea for x in BipInstr(0x01800D323A).xCfNext] == [0x01800D323C, 0x01800D3242]
+    assert [x.ea for x in BipInstr(0x01800D323A).xNonOrdinaryCfNext] == [0x01800D3242]
+    assert BipInstr(0x01800D323A).xOrdinaryCfNext.ea == 0x01800D323C
+    assert [x.ea for x in BipInstr(0x01800D322E).xNonOrdinaryCfNext] == [0x0180009DC0]
 
 def test_bipinstr07():
     # cmp and hash
