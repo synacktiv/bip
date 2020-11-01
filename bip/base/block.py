@@ -220,6 +220,29 @@ class BipBlock(object):
         for b in self._bb.preds():
             yield BipBlock(b)
 
+    @property
+    def callees(self):
+        """
+            Property which return a list of :class:`BipFunction` which are
+            called by this block.
+
+            Internally this function will iterate on all instruction for
+            getting the call xref.
+
+            :return: A list of :class:`BipFunction` which are called from this
+                block.
+        """
+        l = []
+        for i in self.instr_iter:
+            for x in i.xFrom:
+                if x.is_call:
+                    try:
+                        f = bip.base.func.BipFunction(x.dst_ea)
+                    except ValueError:
+                        continue
+                    l.append(f)
+        return l
+
     ############################### FUNCTION ###############################
 
     @property

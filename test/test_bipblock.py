@@ -53,6 +53,11 @@ def test_bipblock02():
     for bb in b.pred_iter:
         assert ss[i].ea == bb.ea
         i += 1
+    assert len(BipBlock(0x01800999F0).callees) == 2
+    assert isinstance(BipBlock(0x01800999F0).callees[0], BipFunction)
+    assert (BipBlock(0x01800999F0).callees[0].name == "ZwRaiseException"
+        and BipBlock(0x01800999F0).callees[1].name == "RtlRaiseStatus")
+    assert BipBlock(0x01800068C0).callees == []
 
 def test_bipblock03():
     # func, instr, items, bytes
