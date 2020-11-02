@@ -36,7 +36,6 @@ class BipBlock(object):
             function. Change to the flowgraph can be not directly repercuted
             on this object.
 
-        .. todo:: equality and inclusion operator
         .. todo:: more functions for testing type (abstraction on .type
             property), property function starting with ``is_``
     """
@@ -108,6 +107,75 @@ class BipBlock(object):
             :return int: The ID of this basic block.
         """
         return self._bb.id
+
+    ############################### CMP FUNCTIONS #############################
+
+    def __eq__(self, other):
+        """
+            Equality for compare with another :class:`BipBlock`. Return
+            ``NotImplemented`` if the arg is not a :class:`BipBlock`.
+
+            Compare the starting address (:meth:`BipBlock.ea`).
+        """
+        if not isinstance(other, BipBlock):
+            return NotImplemented
+        return self.ea == other.ea
+
+    def __ne__(self, other):
+        """
+            Inequality for compare with another :class:`BipBlock`. Return
+            ``NotImplemented`` if the arg is not a :class:`BipBlock`.
+
+            Compare the starting address (:meth:`BipBlock.ea`).
+        """
+        if not isinstance(other, BipBlock):
+            return NotImplemented
+        return self.ea != other.ea
+
+    def __lt__(self, other):
+        if not isinstance(other, BipBlock):
+            return NotImplemented
+        return self.ea < other.ea
+
+    def __le__(self, other):
+        if not isinstance(other, BipBlock):
+            return NotImplemented
+        return self.ea <= other.ea
+
+    def __gt__(self, other):
+        if not isinstance(other, BipBlock):
+            return NotImplemented
+        return self.ea > other.ea
+
+    def __ge__(self, other):
+        if not isinstance(other, BipBlock):
+            return NotImplemented
+        return self.ea >= other.ea
+
+    def __hash__(self):
+        """
+            Compute a hash for this :class:`BipBlock`. Calculation is same as
+            for :meth:`BipFunction.__hash__`: ``hash(type(self)) ^ self.ea``.
+        """
+        return hash(type(self)) ^ self.ea
+
+    def __contains__(self, value):
+        """
+            Allow to check if an element is included inside this block.
+
+            Accepts the arguments: class:`BipElt` or an int representing the
+            address. If arguments is not one of those it will raise a
+            ``TypeError``.
+
+            The check is performed using the address.
+        """
+        if isinstance(value, bip.base.bipelt.BipElt):
+            ea = value.ea
+        elif isinstance(value, (int, long)):
+            ea = value
+        else:
+            raise TypeError("Unknown type comparaison for {} with BipBlock.".format(value))
+        return ea >= self.ea and ea < self.end
 
     ############################ TYPE & INFO #############################
 

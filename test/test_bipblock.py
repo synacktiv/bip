@@ -86,7 +86,35 @@ def test_bipblock04():
     assert BipBlock(0x0180099990).color == 0xffffffff
     with pytest.raises(TypeError): BipBlock(0x0180099990).color = "abcd"
 
-
+def test_bipblock05():
+    # cmp, hash and contains
+    assert BipBlock(0x01800D3242) == BipBlock(0x01800D3248)
+    assert (BipBlock(0x01800D3242) == BipBlock(0x01800D325A)) == False
+    assert BipBlock(0x01800D3242) != BipBlock(0x01800D325A)
+    assert (BipBlock(0x01800D3242) != BipBlock(0x01800D3242)) == False
+    assert len(set([BipBlock(0x01800D3242), BipBlock(0x01800D3242)])) == 0x1
+    assert len(set([BipBlock(0x01800D3242), BipBlock(0x01800D325A)])) == 0x2
+    assert len(set([BipBlock(0x01800D3242), BipFunction(0x01800D325A)])) == 0x2
+    assert len(set([BipBlock(0x01800D3242), BipFunction(0x01800D3242)])) == 0x2
+    assert 0x01800D3242 in BipBlock(0x01800D3242)
+    assert 0x01800D324B in BipBlock(0x01800D3242)
+    assert 0x01800D3252 in BipBlock(0x01800D3242)
+    assert (0x01800D3253 in BipBlock(0x01800D3242)) == False
+    assert (0x01800D325A in BipBlock(0x01800D3242)) == False
+    assert 0x01800D325A not in BipBlock(0x01800D3242)
+    assert (0x01800D3252 not in BipBlock(0x01800D3242)) == False
+    assert BipInstr(0x01800D325A) not in BipBlock(0x01800D3242)
+    assert (BipInstr(0x01800D3253) in BipBlock(0x01800D3242)) == False
+    assert BipInstr(0x01800D324E) in BipBlock(0x01800D3242)
+    with pytest.raises(TypeError): "test" in BipBlock(0x01800D3242)
+    assert BipBlock(0x01800D3242) > BipBlock(0x01800D323A) 
+    assert BipBlock(0x01800D3242) >= BipBlock(0x01800D323A) 
+    assert BipBlock(0x01800D3242) >= BipBlock(0x01800D3242) 
+    assert not (BipBlock(0x01800D3242) > BipBlock(0x01800D3242)) 
+    assert BipBlock(0x01800D3242) < BipBlock(0x01800D3253) 
+    assert BipBlock(0x01800D3242) <= BipBlock(0x01800D3253) 
+    assert BipBlock(0x01800D3242) <= BipBlock(0x01800D3242) 
+    assert not (BipBlock(0x01800D3242) < BipBlock(0x01800D3242)) 
 
 
 
