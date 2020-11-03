@@ -279,6 +279,22 @@ class BipOperand(object):
                 return self._value
         return self._value
 
+    @property
+    def reg(self):
+        """
+            Property allowing to get the register id number for this operand.
+
+            For register operand this is the same as :meth:`~BipOperand.value`,
+            for "phrase" and "displ" it is the register used.
+
+            :return: The id (int) for the register use by this operand or None
+                if no register is used.
+        """
+        if self.is_reg:
+            return self.value
+        elif self.type == BipOpType.PHRASE or self.type == BipOpType.DISPL:
+            return self._op_t.phrase
+        return None
 
     ######################## TEST TYPE ##########################
 
