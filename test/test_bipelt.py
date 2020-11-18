@@ -199,19 +199,26 @@ def test_bipelt06():
 
 def test_bipelt07():
     # bipelt xref (just basic test, not the actual test for the BipXref obj)
-    # this basiccally is the test for the BipRefElt
+    # this basically is the test for the BipRefElt
     assert len(BipElt(0x01800D3242).xFrom) == 1
     assert BipElt(0x01800D3242).xFrom[0].src == BipElt(0x01800D3242)
     assert BipElt(0x01800D3242).xFrom[0].dst == BipElt(0x01800D3248)
     assert BipElt(0x01800D3242).xEaFrom == [0x1800d3248]
     assert BipElt(0x01800D3242).xEltFrom == [BipElt(0x01800D3248)]
     assert BipElt(0x01800D3242).xCodeFrom == [BipInstr(0x1800D3248)]
+    assert BipElt(0x01800D3242).xFuncFrom == [BipFunction(0x1800D2FF0)]
+    assert BipElt(0x01800D324E).xFuncFrom == [BipFunction(0x1800D2FF0), BipFunction(0x1800D35E8)]
+    assert BipElt(0x01800D323A).xFuncFrom == [BipFunction(0x1800D2FF0)]
+    assert BipElt(0x018015D238).xFuncFrom == []
     assert len(BipElt(0x01800D3242).xTo) == 1
     assert BipElt(0x01800D3242).xTo[0].src == BipElt(0x01800D323A)
     assert BipElt(0x01800D3242).xTo[0].dst == BipElt(0x01800D3242)
     assert BipElt(0x01800D3242).xEaTo == [0x1800d323A]
     assert BipElt(0x01800D3242).xEltTo == [BipElt(0x01800D323A)]
     assert BipElt(0x01800D3242).xCodeTo == [BipInstr(0x1800D323A)]
+    assert BipElt(0x01800D3242).xFuncTo == [BipFunction(0x1800D2FF0)]
+    assert BipElt(0x01800D324E).xFuncTo == [BipFunction(0x1800D2FF0)]
+    assert BipElt(0x018015D238).xFuncTo == [BipFunction(0x180042174)]
 
 def test_bipelt08():
     # test BipElt.iter_heads
