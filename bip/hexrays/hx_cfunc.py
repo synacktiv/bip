@@ -519,6 +519,24 @@ class HxCFunc(object):
             raise bbase.BipDecompileError("Decompilation failed for {}: address was probably not in a function ?".format(ea))
         return cls(idaobj)
 
+    @classmethod
+    def iter_all(cls):
+        """
+            Class method allowing to iter on all the :class:`HxCFunc` define in
+            the IDB.
+
+            :return: A generator of :class:`HxCFunc` allowing to iter on
+                all the functions define in the idb.
+        """
+        for f in bbase.BipFunction.iter_all():
+            try:
+                yield cls.from_addr(f.ea)
+            except bbase.BipDecompileError:
+                continue
+
+    ################################## STATIC METHOD ##########################
+
+
     @staticmethod
     def invalidate_all_caches():
         """
@@ -533,9 +551,6 @@ class HxCFunc(object):
                 information about this potential problem.
         """
         ida_hexrays.clear_cached_cfuncs()
-
-
-    ################################## STATIC METHOD ##########################
 
     @staticmethod
     def get(val):

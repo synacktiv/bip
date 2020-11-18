@@ -27,6 +27,9 @@ def test_biphxcfunc00():
     hxf.invalidate_cache() # just check it exist and do not raise an exception
     hxf = HxCFunc.from_addr(0x01800D2FF0)
     HxCFunc.invalidate_all_caches() # same as before
+    hxf2 = next(HxCFunc.iter_all())
+    assert isinstance(hxf2, HxCFunc)
+    assert hxf2.ea == 0x180001010
 
 def test_biphxcfunc01():
     # cmp
