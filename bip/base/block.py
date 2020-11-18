@@ -434,5 +434,49 @@ class BipBlock(object):
         ida_graph.clr_node_info(self.func.ea, self._id, ida_graph.NIF_BG_COLOR)
         ida_kernwin.refresh_idaview_anyway()
 
+    ############################## STATIC METHODS ############################
+
+    @staticmethod
+    def get(val):
+        """
+            Static method allowing to get a :class:`BipBlock` from different
+            elements. This method is for helping to get a block quickly from
+            different types without having to check for different
+            possibilities.
+
+            This handle getting a :class:`BipBlock` from:
+
+            * a :class:`BipBlock`: return the parameter
+            * an int/long: represent the address of the block
+            * a string: the label of an element inside the block
+            * a :class:`BipInstr`: return the block associated with it
+
+            :param val: the element from which to get the block.
+            :return: A :class:`BipBlock` or None in case of error.
+        """
+        try:
+            if isinstance(val, BipBlock):
+                return val
+            elif isinstance(val, (int, long)):
+                return BipBlock(val)
+            elif isinstance(val, bip.base.instr.BipInstr):
+                return val.block
+            elif isinstance(val, str):
+                elt = bip.base.bipelt.GetEltByName(val)
+                if isinstance(elt, bip.base.instr.BipInstr):
+                    return elt.block
+            return None
+        except Exception:
+            return None
+
+
+
+
+
+
+
+
+
+
 
 

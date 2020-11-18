@@ -116,7 +116,15 @@ def test_bipblock05():
     assert BipBlock(0x01800D3242) <= BipBlock(0x01800D3242) 
     assert not (BipBlock(0x01800D3242) < BipBlock(0x01800D3242)) 
 
-
+def test_bipblock06():
+    # static methods
+    assert BipBlock.get(BipBlock(0x01800D3242)) == BipBlock(0x01800D3242)
+    assert BipBlock.get(0x01800D3242) == BipBlock(0x01800D3242)
+    assert BipBlock.get(BipInstr(0x01800D3242)) == BipBlock(0x01800D3242)
+    assert BipBlock.get("loc_1800D3242") == BipBlock(0x01800D3242)
+    assert BipBlock.get([]) is None
+    assert BipBlock.get("DoNotExist") is None
+    assert BipBlock.get(0x018012D400) is None
 
 
 

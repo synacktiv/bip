@@ -535,3 +535,40 @@ class HxCFunc(object):
         ida_hexrays.clear_cached_cfuncs()
 
 
+    ################################## STATIC METHOD ##########################
+
+    @staticmethod
+    def get(val):
+        """
+            Static method allowing to get a :class:`HxCFunc` from different
+            elements. This method is for helping to get a function quickly from
+            different types without having to check for different
+            possibilities.
+
+            This handle getting a :class:`HxCFunc` from:
+
+            * a :class:`HxCFunc`: return the parameter
+            * a :class:`BipFunction`: return the hexray function associated with it
+            * an int/long: represent the address of the function
+            * a string: the name of the function
+            * a :class:`BipInstr`: return the function associated with it
+
+            :param val: the element from which to get the function.
+            :return: A :class:`HxCFunc` or None in case of error.
+        """
+        try:
+            if isinstance(val, HxCFunc):
+                return val
+            elif isinstance(val, (int, long)):
+                return HxCFunc.from_addr(val)
+            elif isinstance(val, bbase.BipFunction):
+                return val.hxcfunc
+            elif isinstance(val, str):
+                return bbase.BipFunction.get_by_name(val).hxcfunc
+            elif isinstance(val, bbase.BipInstr):
+                return val.func.hxcfunc
+            return None
+        except Exception:
+            return None
+
+

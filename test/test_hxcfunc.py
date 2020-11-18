@@ -1,5 +1,5 @@
 from bip.hexrays import *
-from bip.base import BipDecompileError, BipFunction
+from bip.base import BipDecompileError, BipFunction, BipInstr
 
 import idc
 
@@ -11,7 +11,7 @@ import pytest
 """
 
 def test_biphxcfunc00():
-    # hxcfunc base, other and class/static methods
+    # hxcfunc base, other and class methods
     hxf = HxCFunc.from_addr(0x01800D2FF0)
     assert isinstance(hxf, HxCFunc)
     assert hxf.ea == 0x01800D2FF0
@@ -78,5 +78,16 @@ def test_biphxcfunc04():
     assert hxf.root_node.hxcfunc == hxf
     assert hxf.hx_root_stmt is not None
     assert isinstance(hxf.hx_root_stmt, HxCStmtBlock)
+
+def test_biphxcfunc05():
+    # static methods
+    assert HxCFunc.get(HxCFunc.from_addr(0x01800D2FF0)).ea == 0x01800D2FF0
+    assert HxCFunc.get(0x01800D2FF0).ea == 0x01800D2FF0
+    assert HxCFunc.get("RtlQueryProcessLockInformation").ea == 0x01800D2FF0
+    assert HxCFunc.get(BipFunction(0x01800D2FF0)).ea == 0x01800D2FF0
+    assert HxCFunc.get(BipInstr(0x01800D2FF0)).ea == 0x01800D2FF0
+
+
+
 
 

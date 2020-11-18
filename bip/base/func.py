@@ -1106,6 +1106,50 @@ class BipFunction(object):
     ########################## STATIC METHOD ############################
 
     @staticmethod
+    def get(val):
+        """
+            Static method allowing to get a :class:`BipFunction` from different
+            elements. This method is for helping to get a function quickly from
+            different types without having to check for different
+            possibilities.
+
+            This handle getting a :class:`BipFunction` from:
+
+            * a :class:`BipFunction`: return the parameter
+            * an int/long: represent the address of the function
+            * a string: the name of the function
+            * a :class:`BipInstr`: return the function associated with it
+            * a :class:`BipBlock`: return the function associated with it
+            * a :class:`HxCFunc`: return the function associated with it.
+
+            :param val: the element from which to get the function.
+            :return: A :class:`BipFunction` or None in case of error.
+        """
+        global hexrays
+        if hexrays is None:
+            try:
+                import bip.hexrays as hexrays
+            except ImportError:
+                hexrays = None
+        try:
+            if isinstance(val, BipFunction):
+                return val
+            elif isinstance(val, (int, long)):
+                return BipFunction(val)
+            elif isinstance(val, str):
+                return BipFunction.get_by_name(val)
+            elif isinstance(val, bip.base.instr.BipInstr):
+                return val.func
+            elif isinstance(val, bip.base.block.BipBlock):
+                return val.func
+            elif hexrays is not None and isinstance(val, hexrays.HxCFunc):
+                return val.bfunc
+            else:
+                return None
+        except Exception:
+            return None
+
+    @staticmethod
     def count():
         """
             Return the number of functions which are present in the idb.
