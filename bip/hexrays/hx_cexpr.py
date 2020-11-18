@@ -1,7 +1,7 @@
 import ida_hexrays
 
 from .hx_citem import HxCType, HxCItem, HxCExpr
-from bip.base import biptype
+from bip.base import biptype, func, data, bipelt
 
 from . import cnode
 
@@ -156,6 +156,32 @@ class HxCExprObj(HxCExprFinal):
             :return int: the address of the object.
         """
         return self._cexpr.obj_ea
+
+    @property
+    def value_as_func(self):
+        """
+            Return the :class:`BipFunction` pointed by this object. If the
+            address do not point on a valid :class:`BipFunction` an exception
+            will be raised.
+        """
+        return func.BipFunction(self.value)
+
+    @property
+    def value_as_cstring(self):
+        """
+            Return a C string pointed by this object. No verification is made
+            that the object point on a valid string.
+        """
+        return data.BipData.get_cstring(self.value)
+
+    @property
+    def value_as_elt(self):
+        """
+            Return a :class:`BipElt` object corresponding to the object
+            pointed by this object. This is equivalent to doing
+            ``GetElt(obj.value)``.
+        """
+        return bipelt.GetElt(self.value)
 
 @cnode.buildCNode
 class HxCExprVar(HxCExprFinal):
