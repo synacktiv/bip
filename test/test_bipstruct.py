@@ -17,10 +17,14 @@ def test_bipstruct00():
     assert isinstance(st, BipStruct)
     with pytest.raises(ValueError): BipStruct.get("DoNotExist")
     with pytest.raises(ValueError): BipStruct.create("_UNWIND_HISTORY_TABLE")
+    assert isinstance(next(BipStruct.iter_all()), BipStruct)
+    assert next(BipStruct.iter_all()).name == "GUID"
+    assert len([s for s in BipStruct.iter_all()]) == 0x15
     st = BipStruct.create("newStruct")
     assert isinstance(st, BipStruct)
     st = BipStruct.get("newStruct")
     assert isinstance(st, BipStruct)
+    assert len([s for s in BipStruct.iter_all()]) == 0x16
     BipStruct.delete("newStruct")
     with pytest.raises(ValueError): BipStruct.get("newStruct")
     with pytest.raises(ValueError): BipStruct.delete("newStruct")
