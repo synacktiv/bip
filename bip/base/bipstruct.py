@@ -396,6 +396,19 @@ class BipStruct(BipRefElt):
             raise BipError("Impossible to create structure with name={}".format(name))
         return cls(ida_struct.get_struc(sid))
 
+    @classmethod
+    def iter_all(cls):
+        """
+            Class method allowing to iter on all the struct define in the IDB.
+
+            :return: A generator of :class:`BipStruct`.
+        """
+        for i in range(ida_struct.get_first_struc_idx(), ida_struct.get_struc_qty()):
+            sid = ida_struct.get_struc_by_idx(i)
+            if sid == idc.BADADDR:
+                continue # error
+            yield cls(ida_struct.get_struc(sid))
+
     @staticmethod
     def delete(name):
         """

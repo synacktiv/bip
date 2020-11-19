@@ -281,6 +281,22 @@ def test_biptype0F():
     with pytest.raises(ValueError): BipStruct.get("testd") # not automatically import, so this should fail
     assert isinstance(BipStruct.get("teste"), BipStruct)
 
+def test_biptype10():
+    # get_named_type
+    ty = BipType.from_c("int");
+    assert ty.str == 'int'
+    assert ty.get_str_named(name="i", comment = "com2") == 'int i /* com2 */'
+    ty = BipType.from_c("int [8]");
+    assert ty.str == 'int[8]'
+    assert ty.get_str_named() == 'int[8]'
+    assert ty.get_str_named(name="test") == 'int test[8]'
+    assert ty.get_str_named(name="test", comment="123") == 'int test[8] /* 123 */'
+    assert ty.get_str_named(comment="123") == 'int[8] /* 123 */'
+    ty = BipType.from_c("void (*f)(int a, void *b)");
+    assert ty.str == 'void (__stdcall *)(int a, void *b)'
+    assert ty.get_str_named() == 'void (__stdcall *)(int a, void *b)'
+    assert ty.get_str_named(name="f") == 'void (__stdcall *f)(int a, void *b)'
+    assert ty.get_str_named(name="f", comment = "com") == 'void (__stdcall *f)(int a, void *b) /* com */'
 
 
 

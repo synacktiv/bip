@@ -243,6 +243,14 @@ def test_bipfunc09():
 
 def test_bibfunc0A():
     # static method
+    assert (BipFunction.get(BipFunction(0x180001010)) ==  BipFunction(0x180001010))
+    assert (BipFunction.get(0x180001010) ==  BipFunction(0x180001010))
+    assert (BipFunction.get("RtlFindClearBits") ==  BipFunction(0x180001010))
+    assert (BipFunction.get(BipInstr(0x180001010)) ==  BipFunction(0x180001010))
+    assert (BipFunction.get(BipBlock(0x180001010)) ==  BipFunction(0x180001010))
+    assert (BipFunction.get(BipFunction(0x180001010).hxcfunc) ==  BipFunction(0x180001010))
+    assert (BipFunction.get([]) is None)
+    assert (BipFunction.get("DoNotExist") is None)
     assert BipFunction.count() == 0xecd
 
 

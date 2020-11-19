@@ -210,6 +210,45 @@ class BipRefElt(BipBaseElt):
         """
         return [x.src for x in self.xTo if ('is_code' in dir(x.src) and x.src.is_code)]
 
+    @property
+    def xFuncFrom(self):
+        """
+            Property which return all functions which are referenced by the
+            element. This is similar to :meth:`xCodeFrom` but return a list of
+            :class:`BipFunction` instead of :class:`BipInstr`.
+
+            Each function in the list is unique, if the function could not
+            be found from the :class:`BipInstr` it is ignored.
+
+            :return: A list of :class:`BipFunction` referenced by this element.
+        """
+        l = []
+        for i in self.xCodeFrom:
+            try:
+                l.append(i.func)
+            except Exception:
+                continue
+        return list(set(l))
+
+    @property
+    def xFuncTo(self):
+        """
+            Property which return all functions which referenced this
+            element. This is similar to :meth:`xCodeTo` but return a list of
+            :class:`BipFunction` instead of :class:`BipInstr`.
+
+            Each function in the list is unique, if the function could not
+            be found from the :class:`BipInstr` it is ignored.
+
+            :return: A list of :class:`BipFunction` referenced by this element.
+        """
+        l = []
+        for i in self.xCodeTo:
+            try:
+                l.append(i.func)
+            except Exception:
+                continue
+        return list(set(l))
 
 class BipElt(BipRefElt):
     """

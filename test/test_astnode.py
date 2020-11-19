@@ -155,4 +155,16 @@ def test_bipcnodevisitor00():
     hxf = HxCFunc.from_addr(0x018009BF50)
     hxf.visit_cnode(genst_all)
 
+def test_hxcexprobj00():
+    # Specific test for methods implemented in HxCExprObj/CNodeExprObj
+    f = HxCFunc.from_addr(0x01800D2FF0).get_cnode_filter_type(CNodeExprCall)[0].caller.value_as_func
+    assert isinstance(f, BipFunction)
+    assert f.name == "RtlCommitDebugInfo_0"
+    e = HxCFunc.from_addr(0x01800D2FF0).get_cnode_filter_type(CNodeExprCall)[1].get_arg(0).operand.value_as_elt
+    assert isinstance(e, BipElt) and isinstance(e, BipData)
+    assert e.ea == 0x018015D228
+    s = HxCFunc.from_addr(0x0180053BA0).get_cnode_filter_type(CNodeExprCall)[0].get_arg(1).value_as_cstring
+    assert s == 'SE_InitializeEngine'
+
+
 

@@ -519,6 +519,24 @@ class HxCFunc(object):
             raise bbase.BipDecompileError("Decompilation failed for {}: address was probably not in a function ?".format(ea))
         return cls(idaobj)
 
+    @classmethod
+    def iter_all(cls):
+        """
+            Class method allowing to iter on all the :class:`HxCFunc` define in
+            the IDB.
+
+            :return: A generator of :class:`HxCFunc` allowing to iter on
+                all the functions define in the idb.
+        """
+        for f in bbase.BipFunction.iter_all():
+            try:
+                yield cls.from_addr(f.ea)
+            except bbase.BipDecompileError:
+                continue
+
+    ################################## STATIC METHOD ##########################
+
+
     @staticmethod
     def invalidate_all_caches():
         """
@@ -533,5 +551,39 @@ class HxCFunc(object):
                 information about this potential problem.
         """
         ida_hexrays.clear_cached_cfuncs()
+
+    @staticmethod
+    def get(val):
+        """
+            Static method allowing to get a :class:`HxCFunc` from different
+            elements. This method is for helping to get a function quickly from
+            different types without having to check for different
+            possibilities.
+
+            This handle getting a :class:`HxCFunc` from:
+
+            * a :class:`HxCFunc`: return the parameter
+            * a :class:`BipFunction`: return the hexray function associated with it
+            * an int/long: represent the address of the function
+            * a string: the name of the function
+            * a :class:`BipInstr`: return the function associated with it
+
+            :param val: the element from which to get the function.
+            :return: A :class:`HxCFunc` or None in case of error.
+        """
+        try:
+            if isinstance(val, HxCFunc):
+                return val
+            elif isinstance(val, (int, long)):
+                return HxCFunc.from_addr(val)
+            elif isinstance(val, bbase.BipFunction):
+                return val.hxcfunc
+            elif isinstance(val, str):
+                return bbase.BipFunction.get_by_name(val).hxcfunc
+            elif isinstance(val, bbase.BipInstr):
+                return val.func.hxcfunc
+            return None
+        except Exception:
+            return None
 
 

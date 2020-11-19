@@ -84,6 +84,26 @@ class BipType(object):
         """
         return self._tinfo.dstr()
 
+    def get_str_named(self, name=None, comment=None):
+        """
+            Get a string representing the type with a name and a comment.
+
+            :param name: The name to use for the type, if no name is provided
+                (default) it will tried to use the name of the type if any or
+                will just use an empty string.
+            :param comment: The comment (str) for the type. If not set
+                (default) no comment is added.
+        """
+        if comment is None:
+            comment = ""
+        if name is None:
+            if self.is_named:
+                name = self.name
+            else:
+                name = ""
+        return ida_typeinf.print_tinfo("", 1, 1, ida_typeinf.PRTYPE_1LINE,
+            self._tinfo, name, comment)
+
     @property
     def is_named(self):
         """

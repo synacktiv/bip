@@ -30,6 +30,13 @@ def test_bipoperand00():
     assert GetElt(0x01800D3094).op(1).value == 0xc0000017
 
 def test_bipoperand01():
+    # test .reg
+    assert GetElt(0x01800D3242).op(0).reg == 8
+    assert GetElt(0x01800D3242).op(1).reg is None
+    assert GetElt(0x01800D323C).op(0).reg == 0xD
+    assert GetElt(0x01800D31E9).op(0).reg == 0xE
+
+def test_bipoperand02():
     # test type
     assert GetElt(0x01800D314C).op(0).is_void == False # reg
     assert GetElt(0x01800D314C).op(0).is_reg == True
