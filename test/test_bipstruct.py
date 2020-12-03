@@ -197,3 +197,18 @@ def test_bstructmember03():
     assert BStructMember._is_member_id(0x1800D3242) == False
     
 
+def test_bstructmember04():
+    st = BipStruct.create("newStruct")
+    assert st.size == 0
+    st.fill(0x10)
+    assert st.size == 0x10
+    assert st[0].size == 8
+    st[0].size = 4
+    assert st[0].size == 4
+    with pytest.raises(IndexError): st[4]
+    st.add(None, 4, offset=4)
+    assert st[4].size == 4
+    with pytest.raises(ValueError): st[0].size = 9
+    with pytest.raises(RuntimeError): st[0].size = 8
+    with pytest.raises(RuntimeError): st[0].size = 0
+    BipStruct.delete("newStruct")

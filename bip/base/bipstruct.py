@@ -527,6 +527,28 @@ class BStructMember(BipRefElt):
         """
         return ida_struct.get_member_size(self._member)
 
+    @size.setter
+    def size(self, value):
+        """
+            Setter for the size of a member.
+
+            :param value: The size to set in bytes (1, 2, 4 or 8), if 0 is set,
+                this will set the member as being of variable size.
+            :raise RuntimeError: If it was not possible to set the size for the
+                member. This typically occurs when another member is define
+                after it, or if setting a variable size not at the end of a
+                structure.
+            :raise ValueError: If the value parameter is not correct.
+        """
+        if value not in (0, 1, 2, 4, 8):
+            raise ValueError("Size to set for BStructMember.size is not valid")
+        flags = idc.FF_DATA
+        d= {8:idc.FF_QWORD, 4:idc.FF_DWORD, 2:idc.FF_WORD, 1:idc.FF_BYTE, 0:0}
+        flags |= d[value]
+        if not ida_struct.set_member_type(self.struct._struct, self.offset, flags, None, value):
+            raise RuntimeError("Unable to set size for member {}".format(self.fullname))
+
+
     @property
     def offset(self):
         """
