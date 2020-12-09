@@ -6,7 +6,8 @@ import ida_typeinf
 from bip.py3compat.py3compat import *
 
 from .bipidb import BipIdb
-from .biptype import BipType
+#from .biptype import BipType
+import bip.base.biptype
 from .bipelt import BipRefElt
 from .biperror import BipError
 
@@ -397,6 +398,16 @@ class BipStruct(BipRefElt):
         return cls(ida_struct.get_struc(sid))
 
     @classmethod
+    def exist(cls, name):
+        """
+            Class method for checking if a struct with a name exist. Return
+            True if it does, False otherwise.
+
+            :param str name: The name of the structure to test.
+        """
+        return ida_struct.get_struc_id(name) != idc.BADADDR
+
+    @classmethod
     def iter_all(cls):
         """
             Class method allowing to iter on all the struct define in the IDB.
@@ -622,7 +633,7 @@ class BStructMember(BipRefElt):
     def type(self):
         """
             Property which return an object which inherit from
-            :class:`BipType` and represent the type of this member.
+            :class:`~bip.base.biptype.BipType` and represent the type of this member.
 
             :raise RuntimeError: If it was not possible to get the type of
                 this member, this may happen in particular if
@@ -631,7 +642,7 @@ class BStructMember(BipRefElt):
         ti = ida_typeinf.tinfo_t()
         if not ida_struct.get_member_tinfo(ti, self._member):
             raise RuntimeError("Could not get the type for {}".format(self))
-        return BipType.from_tinfo(ti)
+        return bip.base.biptype.BipType.from_tinfo(ti)
 
     def del_type(self):
         """
@@ -646,7 +657,7 @@ class BStructMember(BipRefElt):
         """
             Method which allow to change the type of this member.
 
-            :param new_type: An object which inherit from :class:`BipType`
+            :param new_type: An object which inherit from :class:`~bip.base.biptype.BipType`
                 which represent the new type for this member.
             :param bool userspecified: Is this type specified by the user,
                 True by default.
@@ -660,9 +671,9 @@ class BStructMember(BipRefElt):
             :param bool bytil: The new type was created by the type subsystem.
                 Default False.
             :raise RuntimeError: If setting the type failed.
-            :raise TypeError: If the argument is not an :class:`BipType` object.
+            :raise TypeError: If the argument is not an :class:`~bip.base.biptype.BipType` object.
         """
-        if not isinstance(new_type, BipType):
+        if not isinstance(new_type, bip.base.biptype.BipType):
             raise TypeError("BStructMember.set_type setter expect an object which inherit from BipType")
         # compute the flags, from SET_MEMTI_* in struct.hpp
         flags = 0
@@ -692,20 +703,20 @@ class BStructMember(BipRefElt):
             .. note::
 
                 This will create a copy of the type for avoiding problem with
-                the IDA interface. See :class:`BipType` for more information.
+                the IDA interface. See :class:`~bip.base.biptype.BipType` for more information.
 
-            :param value: An object which inherit from :class:`BipType` which
+            :param value: An object which inherit from :class:`~bip.base.biptype.BipType` which
                 represent the new type for this member or a string
                 representing a declaration in C.
             :raise RuntimeError: If setting the type failed.
             :raise TypeError: If the argument is not None, a string or a
-                :class:`BipType` object.
+                :class:`~bip.base.biptype.BipType` object.
         """
         if value is None:
             self.del_type()
             return
         if isinstance(value, (str, unicode)):
-            value = BipType.from_c(value)
+            value = bip.base.biptype.BipType.from_c(value)
         self.set_type(value)
 
     @property
