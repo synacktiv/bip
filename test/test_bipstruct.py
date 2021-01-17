@@ -25,7 +25,14 @@ def test_bipstruct00():
     st = BipStruct.get("newStruct")
     assert isinstance(st, BipStruct)
     assert len([s for s in BipStruct.iter_all()]) == 0x16
+    assert len(BipStruct.get_by_prefix("UNWIND_")) == 3
+    assert len(BipStruct.get_by_regex(".*UNWIND")) == 4
+    assert len(BipStruct.get_by_regex("^_UNWIND")) == 1
+    assert len(BipStruct.get_by_regex(".*TABLE$")) == 2
+    assert len(BipStruct.get_by_prefix("new")) == 1
+    assert BipStruct.get_by_prefix("new")[0].name == "newStruct"
     BipStruct.delete("newStruct")
+    assert len(BipStruct.get_by_prefix("new")) == 0
     with pytest.raises(ValueError): BipStruct.get("newStruct")
     with pytest.raises(ValueError): BipStruct.delete("newStruct")
 
