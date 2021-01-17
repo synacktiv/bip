@@ -299,5 +299,12 @@ def test_biptype10():
     assert ty.get_str_named(name="f", comment = "com") == 'void (__stdcall *f)(int a, void *b) /* com */'
 
 
+def test_biptype11():
+    # test link to struct and final_name
+    assert BipType.from_c("_UNWIND_HISTORY_TABLE").struct == BipStruct.get("_UNWIND_HISTORY_TABLE")
+    assert BipType.from_c("EXCEPTION_RECORD").name == "EXCEPTION_RECORD"
+    assert BipType.from_c("EXCEPTION_RECORD").final_name == "_EXCEPTION_RECORD"
+    assert BipType.from_c("EXCEPTION_RECORD").struct == BipStruct.get("EXCEPTION_RECORD")
+
 
 

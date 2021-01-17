@@ -31,7 +31,9 @@ def test_bipstruct00():
     assert len(BipStruct.get_by_regex(".*TABLE$")) == 2
     assert len(BipStruct.get_by_prefix("new")) == 1
     assert BipStruct.get_by_prefix("new")[0].name == "newStruct"
+    assert BipStruct.exist("newStruct")
     BipStruct.delete("newStruct")
+    assert BipStruct.exist("newStruct") == False
     assert len(BipStruct.get_by_prefix("new")) == 0
     with pytest.raises(ValueError): BipStruct.get("newStruct")
     with pytest.raises(ValueError): BipStruct.delete("newStruct")
