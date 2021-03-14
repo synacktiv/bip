@@ -573,9 +573,10 @@ in both hexrays and the assembly:
             s = BipData.get_cstring(ea + 2) # get the string
         except Exception:
             pass
-        if s is None or s == "":
+        if s is None or len(s) == 0:
             print("Invalid string at 0x{:X}".format(cn.closest_ea))
             return
+        s = str(s) # python2/python3 compat
         s = s.strip() # remove \n
         # add comment both in hexrays and in asm view
         cn.hxcfunc.add_cmt(cn.closest_ea, s)
