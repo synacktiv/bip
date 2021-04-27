@@ -722,7 +722,7 @@ class BStructMember(BipRefElt):
         if bytil:
             flags |= 0x08
         if not ida_struct.set_member_tinfo(self.struct._struct, self._member, 0, new_type._get_tinfo_copy(), flags):
-            raise RuntimeError("Unable to set type {} for this {}".format(value, self))
+            raise RuntimeError("Unable to set type {} for this {}".format(new_type.str, self))
 
     @type.setter
     def type(self, value):
