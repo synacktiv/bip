@@ -5,6 +5,8 @@ import ida_bytes
 import ida_name
 import ida_search
 
+import re
+
 from bip.py3compat.py3compat import *
 
 import bip.base.xref
@@ -706,6 +708,44 @@ class BipElt(BipRefElt):
             if cls._is_this_elt(ea):
                 yield elt
             ea += sz
+
+    @classmethod
+    def iter_by_regex(cls, regex):
+        """
+            Class method allowing to get all :class:`BipElt` matching a regex.
+
+            Internally this iterate on all elts (using ``iter_all``) and use
+            the ``re.match`` function (it compiles the regex first) and return
+            only the elements which match the regex (did not return None) and
+            have the correct type.
+
+            :param str regex: The regex used for finding the function.
+            :return: An iterator (yield) of :class:`BipElt` where their names
+                match the regex.
+        """
+        rc = re.compile(regex)
+        for e in cls.iter_all():
+            if rc.match(e.name) is not None:
+                yield e
+
+    @classmethod
+    def get_by_regex(cls, regex):
+        """
+            Class method allowing to get all :class:`BipElt` matching a regex.
+
+            Internally this iterate on all elts and use the ``re.match``
+            function (it compiles the regex first) and return only the elements
+            which match the regex (did not return None) and have the correct
+            type.
+
+            .. note:: This is similar to iter_by_regex, except return a list
+                instead of an iterator.
+
+            :param str regex: The regex used for finding the function.
+            :return: A list of :class:`BipElt` where their names match
+                the regex.
+        """
+        return [e for e in cls.iter_by_regex(regex)]
 
     #################### STATIC METHOD ######################
 
