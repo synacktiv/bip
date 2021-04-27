@@ -210,6 +210,9 @@ class AbstractCItem(object):
 
             This seems to not work if the function has been recompiled.
 
+            .. warning:: This may return True even if the nodes are not at the
+                same address and do not have the same parent
+
             Return ``NotImplemented`` if the element to compare does not
                 inherit from AbstractCItem
         """

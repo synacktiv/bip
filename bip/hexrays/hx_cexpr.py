@@ -1008,6 +1008,9 @@ class HxCExprCall(HxCExpr):
             Property which return true if this function is a decompiler helper
             function.
 
+            .. todo:: fix this does not work in all case, search for the one
+                where the caller is a CNodeExprHelper (HIDWORD for exemple)
+
             :return: A bool indicating if this is a helper function (true) or
                 a "real" call.
         """
