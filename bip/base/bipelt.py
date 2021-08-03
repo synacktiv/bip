@@ -719,7 +719,7 @@ class BipElt(BipRefElt):
             only the elements which match the regex (did not return None) and
             have the correct type.
 
-            :param str regex: The regex used for finding the function.
+            :param str regex: The regex used for finding the elements.
             :return: An iterator (yield) of :class:`BipElt` where their names
                 match the regex.
         """
@@ -741,11 +741,47 @@ class BipElt(BipRefElt):
             .. note:: This is similar to iter_by_regex, except return a list
                 instead of an iterator.
 
-            :param str regex: The regex used for finding the function.
+            :param str regex: The regex used for finding the elements.
             :return: A list of :class:`BipElt` where their names match
                 the regex.
         """
         return [e for e in cls.iter_by_regex(regex)]
+
+    @classmethod
+    def iter_by_prefix(cls, prefix):
+        """
+            Class method allowing to get all :class:`BipElt` starting with
+            a prefix.
+
+            Internally this iterate on all elts (using ``iter_all``) and if
+            they have a name check that they start with the prefix. Do not
+            expect any performance from this function.
+
+            :param str prefix: The prefix used for finding the elts.
+            :return: An iterator (yield) of :class:`BipElt` where their names
+                match the prefix.
+        """
+        for e in cls.iter_all():
+            if e.name is not None and e.name != "" and e.name.startswith(prefix):
+                yield e
+
+    @classmethod
+    def get_by_prefix(cls, prefix):
+        """
+            Class method allowing to get all :class:`BipElt` matching a prefix.
+
+            This will iterate on all elts and check their name. Do not
+            expect any performance from this function.
+
+            .. note:: This is similar to iter_by_prefix, except return a list
+                instead of an iterator.
+
+            :param str prefix: The prefix used for finding the function.
+            :return: A list of :class:`BipElt` where their names match
+                the prefix.
+        """
+        return [e for e in cls.iter_by_prefix(prefix)]
+
 
     #################### STATIC METHOD ######################
 
