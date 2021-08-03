@@ -207,7 +207,8 @@ def test_bipelt07():
     assert BipElt(0x01800D3242).xEltFrom == [BipElt(0x01800D3248)]
     assert BipElt(0x01800D3242).xCodeFrom == [BipInstr(0x1800D3248)]
     assert BipElt(0x01800D3242).xFuncFrom == [BipFunction(0x1800D2FF0)]
-    assert BipElt(0x01800D324E).xFuncFrom == [BipFunction(0x1800D2FF0), BipFunction(0x1800D35E8)]
+    assert ((BipElt(0x01800D324E).xFuncFrom == [BipFunction(0x1800D2FF0), BipFunction(0x1800D35E8)])
+        or (BipElt(0x01800D324E).xFuncFrom == [BipFunction(0x1800D35E8), BipFunction(0x1800D2FF0)]))
     assert BipElt(0x01800D323A).xFuncFrom == [BipFunction(0x1800D2FF0)]
     assert BipElt(0x018015D238).xFuncFrom == []
     assert len(BipElt(0x01800D3242).xTo) == 1
@@ -306,5 +307,62 @@ def test_bipelt09():
     elt = next(gen)
     assert elt.__class__ == BipInstr
     assert elt.ea == 0x180001012
+
+def test_bipelt0A():
+    # test for iter_by_regex, get_by_regex, iter_by_prefix, get_by_prefix
+    lp = BipElt.get_by_prefix("jpt_")
+    assert isinstance(lp, list)
+    assert len(lp) == 7
+    i = BipElt.iter_by_prefix("jpt_")
+    c = 0
+    for elt in i:
+        assert elt == lp[c]
+        assert elt.name[:4] == "jpt_"
+        assert elt.__class__ == BipData
+        c += 1
+    lp = BipElt.get_by_prefix("def_")
+    assert isinstance(lp, list)
+    assert len(lp) == 7
+    i = BipElt.iter_by_prefix("def_")
+    c = 0
+    for elt in i:
+        assert elt == lp[c]
+        assert elt.__class__ == BipInstr
+        assert elt.name[:4] == "def_"
+        c += 1
+    lp = BipElt.get_by_prefix("RtlNt")
+    assert len(lp) == 4
+    assert lp[0].__class__ == BipInstr
+    assert lp[-1].__class__ == BipData
+    lp = BipInstr.get_by_prefix("RtlNt")
+    assert len(lp) == 3
+    for i in lp:
+        assert i.__class__ == BipInstr
+    lp = BipData.get_by_prefix("RtlNt")
+    assert len(lp) == 1
+    assert lp[0].__class__ == BipData
+    lp = BipElt.get_by_regex(".*rame$")
+    assert isinstance(lp, list)
+    assert len(lp) == 6
+    i = BipElt.iter_by_regex(".*rame$")
+    c = 0
+    for elt in i:
+        assert elt == lp[c]
+        assert elt.__class__ in (BipData, BipInstr)
+        assert elt.name[-4:] == "rame"
+        c += 1
+    lp = BipInstr.get_by_regex(".*rame$")
+    assert len(lp) == 3
+    for elt in lp:
+        assert elt.__class__ == BipInstr
+        assert elt.name[-4:] == "rame"
+    lp = BipData.get_by_regex(".*rame$")
+    assert len(lp) == 3
+    for elt in lp:
+        assert elt.__class__ == BipData
+        assert elt.name[-4:] == "rame"
+
+
+
 
 
