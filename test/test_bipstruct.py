@@ -187,6 +187,7 @@ def test_bstructmember02():
     m.del_type()
     assert m.has_type == False
     with pytest.raises(RuntimeError): m.type
+    with pytest.raises(RuntimeError): m.type = "void __fastcall f()"
     m.type = "DWORD"
     assert m.has_type == True
     assert m.type.str == 'DWORD'
