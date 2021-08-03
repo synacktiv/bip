@@ -1,6 +1,8 @@
 import ida_hexrays
 import ida_kernwin
 
+from bip.py3compat.py3compat import *
+
 from .hx_lvar import HxLvar
 from .hx_visitor import _hx_visitor_expr, _hx_visitor_list_expr, _hx_visitor_stmt, _hx_visitor_list_stmt, _hx_visitor_all, _hx_visitor_list_all
 from .cnode import CNode
