@@ -25,7 +25,16 @@ def test_bipstruct00():
     st = BipStruct.get("newStruct")
     assert isinstance(st, BipStruct)
     assert len([s for s in BipStruct.iter_all()]) == 0x16
+    assert len(BipStruct.get_by_prefix("UNWIND_")) == 3
+    assert len(BipStruct.get_by_regex(".*UNWIND")) == 4
+    assert len(BipStruct.get_by_regex("^_UNWIND")) == 1
+    assert len(BipStruct.get_by_regex(".*TABLE$")) == 2
+    assert len(BipStruct.get_by_prefix("new")) == 1
+    assert BipStruct.get_by_prefix("new")[0].name == "newStruct"
+    assert BipStruct.exist("newStruct")
     BipStruct.delete("newStruct")
+    assert BipStruct.exist("newStruct") == False
+    assert len(BipStruct.get_by_prefix("new")) == 0
     with pytest.raises(ValueError): BipStruct.get("newStruct")
     with pytest.raises(ValueError): BipStruct.delete("newStruct")
 
@@ -178,6 +187,7 @@ def test_bstructmember02():
     m.del_type()
     assert m.has_type == False
     with pytest.raises(RuntimeError): m.type
+    with pytest.raises(RuntimeError): m.type = "void __fastcall f()"
     m.type = "DWORD"
     assert m.has_type == True
     assert m.type.str == 'DWORD'
@@ -197,3 +207,18 @@ def test_bstructmember03():
     assert BStructMember._is_member_id(0x1800D3242) == False
     
 
+def test_bstructmember04():
+    st = BipStruct.create("newStruct")
+    assert st.size == 0
+    st.fill(0x10)
+    assert st.size == 0x10
+    assert st[0].size == 8
+    st[0].size = 4
+    assert st[0].size == 4
+    with pytest.raises(IndexError): st[4]
+    st.add(None, 4, offset=4)
+    assert st[4].size == 4
+    with pytest.raises(ValueError): st[0].size = 9
+    with pytest.raises(RuntimeError): st[0].size = 8
+    with pytest.raises(RuntimeError): st[0].size = 0
+    BipStruct.delete("newStruct")

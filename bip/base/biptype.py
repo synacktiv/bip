@@ -21,6 +21,8 @@ import ida_nalt
 import ida_kernwin
 import idc
 
+import bip.base.bipstruct
+
 class BipType(object):
     """
         Abstract class for representing a ``tinfo_t`` object from ida in bip.
@@ -127,6 +129,15 @@ class BipType(object):
         """
 
         return self._tinfo.get_type_name()
+
+    @property
+    def final_name(self):
+        """
+            Property which return the final name of this type if it as one.
+            This is similar to :func:`BipType.name` except it will follow the
+            typedef chain and return the last element of the chain.
+        """
+        return self._tinfo.get_final_type_name()
 
     ############################ COMPARE ################################
 
@@ -803,6 +814,31 @@ class BTypeStruct(BipType):
         if not self._tinfo.get_udt_details(utd):
             raise BipError("Unable to get struct details for struct {}".format(self.name))
         return utd
+
+    @property
+    def struct(self):
+        """
+            Getter for recuperating the :class:`BipStruct` associated with this
+            type.
+
+            This recuperate the struct from the name, it will first try to use
+            the current name for getting the :class:`BipStruct` and if not
+            sucessful it will then try to use the final name.
+
+            .. todo:: Better way than this ? using til and ordinal maybe ?
+
+            :return: The :class:`BipStruct` associated with this type or None
+                if it was not possible to get it.
+        """
+        try:
+            return bip.base.bipstruct.BipStruct.get(self.name)
+        except ValueError:
+            pass
+        try:
+            return bip.base.bipstruct.BipStruct.get(self.final_name)
+        except ValueError:
+            pass
+        return None
 
     def get_member_name(self, num):
         """

@@ -164,7 +164,7 @@ def test_hxcexprobj00():
     assert isinstance(e, BipElt) and isinstance(e, BipData)
     assert e.ea == 0x018015D228
     s = HxCFunc.from_addr(0x0180053BA0).get_cnode_filter_type(CNodeExprCall)[0].get_arg(1).value_as_cstring
-    assert s == 'SE_InitializeEngine'
+    assert s == b'SE_InitializeEngine'
 
 
 

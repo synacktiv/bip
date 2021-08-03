@@ -986,6 +986,15 @@ class BipFunction(object):
         return l
 
 
+    ######################## GUI ############################
+
+    def goto(self):
+        """
+            Method which allow to move the screen to the position of this
+            function. Wrapper on ``ida_kernwin.jumpto`` (old ``idc.Jump``).
+        """
+        ida_kernwin.jumpto(self.ea)
+
 
     ########################## CLASS METHOD ############################
 
