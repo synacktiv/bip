@@ -34,6 +34,8 @@ def visit_dfs_cnode(cnode, callback):
         :param callback: A callable taking one argument which will be called
             on all the :class:`CNode` visited with the :class:`CNode` as
             argument. If it returns False the visitor stops.
+        :return: True if the visit got to the end, False if it was stopped
+            by the ``callback``.
     """
     # implem using a stack for avoiding recursivity problems
     # this is a tree so no need to check if we have already treated a node.
@@ -41,7 +43,7 @@ def visit_dfs_cnode(cnode, callback):
     while len(stack) != 0:
         elt = stack.pop() # get the next element
         if callback(elt) == False: # call the callback before visiting the next
-            return # if ret False: stop
+            return False # if ret False: stop
         if isinstance(elt, bip.hexrays.cnode.CNodeExpr):
             # if we have an expr just append all the child, we append them
             #   in reverse order.
@@ -56,6 +58,7 @@ def visit_dfs_cnode(cnode, callback):
         else:
             # this should never happen
             raise RuntimeError("Unknown type for visiting: {}".format(elt))
+    return True
 
 def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
     """
@@ -80,10 +83,12 @@ def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
         :param filter_list: A list or tuple of class or a class which inherit
             from :class:`CNode`. The callback will be called only for the node
             from a class in this list. If it returns False the visitor stops.
+        :return: True if the visit got to the end, False if it was stopped
+            by the ``callback``.
     """
     if isinstance(filter_list, (list, tuple)) and len(filter_list) == 0:
         # we don't visit anything
-        return
+        return True
     # check if we need to visit the child of the expression
     vist_expr = False
     if isinstance(filter_list, (list, tuple)):
@@ -102,7 +107,7 @@ def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
                 and isinstance(elt, filter_list))):
             # check if we want the call
             if callback(elt) == False: # call the callback before visiting the next
-                return
+                return False
         if isinstance(elt, bip.hexrays.cnode.CNodeExpr):
             if vist_expr:
                 ch = list(elt.ops)
@@ -119,5 +124,6 @@ def visit_dfs_cnode_filterlist(cnode, callback, filter_list):
         else:
             # this should never happen
             raise RuntimeError("Unknown type for visiting: {}".format(elt))
+    return True
 
 

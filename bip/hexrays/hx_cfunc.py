@@ -228,8 +228,10 @@ class HxCFunc(object):
                 should take only one argument which correspond to the
                 :class:`CNode` currently visited. If this callback return
                 False the visit is stoped, all other result is ignored.
+            :return: True if the visit got to the end, False otherwise (
+                interupted by the ``callback``).
         """
-        self.root_node.visit_cnode(callback)
+        return self.root_node.visit_cnode(callback)
 
     def visit_cnode_filterlist(self, callback, filter_list):
         """
@@ -248,8 +250,10 @@ class HxCFunc(object):
             :param filter_list: A list of class which inherit from :class:`CNode`.
                 The callback will be called only for the node from a class in this
                 list.
+            :return: True if the visit got to the end, False otherwise (
+                interupted by the ``callback``).
         """
-        self.root_node.visit_cnode_filterlist(callback, filter_list)
+        return self.root_node.visit_cnode_filterlist(callback, filter_list)
 
     def get_cnode_filter(self, cb_filter):
         """

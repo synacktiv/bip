@@ -129,13 +129,13 @@ def test_bipcnodevisitor00():
     #   of the CNode functions this is considered enough. Internally those
     #   use the functions in cnode_visitor.py
     hxf = HxCFunc.from_addr(0x01800D2FF0)
-    hxf.visit_cnode(genst_all)
+    assert hxf.visit_cnode(genst_all)
     def _intern_testfilter(cn):
         assert isinstance(cn, (CNodeExprCall, CNodeStmtExpr)) 
         genst_all(cn)
-    hxf.visit_cnode_filterlist(_intern_testfilter, [CNodeExprCall, CNodeStmtExpr])
+    assert hxf.visit_cnode_filterlist(_intern_testfilter, [CNodeExprCall, CNodeStmtExpr])
     hxf = HxCFunc.from_addr(0x0180002524)
-    hxf.visit_cnode(genst_all)
+    assert hxf.visit_cnode(genst_all)
     ln = hxf.get_cnode_filter_type([CNodeStmtReturn])
     for cnr in ln:
         cn = cnr.value
@@ -153,7 +153,26 @@ def test_bipcnodevisitor00():
     assert len(ln) == 1
     assert isinstance(ln[0], CNodeExprHelper)
     hxf = HxCFunc.from_addr(0x018009BF50)
-    hxf.visit_cnode(genst_all)
+    assert hxf.visit_cnode(genst_all)
+
+def test_bipcnodevisitor01():
+    # test for interrupting the visitor cnodes
+    hxf = HxCFunc.from_addr(0x01800D2FF0)
+    def _interupt_stmt(cn):
+        if isinstance(cn, CNodeStmt):
+            return False
+    d = {}; d["counter"] = 0
+    def _interupt_expr_cnt(cn):
+        #nonlocal counter # only py3
+        if isinstance(cn, CNodeStmt):
+            d["counter"] += 1
+        else:
+            return False
+    assert not hxf.visit_cnode(_interupt_stmt)
+    assert d["counter"] == 0
+    assert not hxf.visit_cnode(_interupt_expr_cnt)
+    assert d["counter"] != 0
+    d["counter"] = 0
 
 def test_hxcexprobj00():
     # Specific test for methods implemented in HxCExprObj/CNodeExprObj
