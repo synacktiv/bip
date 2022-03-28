@@ -444,7 +444,7 @@ variable by the ``HxLvar`` objects:
 
     >>> HxCFunc.from_addr() # HxCFunc represents a decompiled function
     <bip.hexrays.hx_cfunc.HxCFunc object at 0x00000278AE80C860>
-    >>> hf = BipFunction().hxfunc # accessible from a "normal function"
+    >>> hf = BipFunction().hxcfunc # accessible from a "normal function"
     >>> hex(hf.ea) # address of the function
     0x1800d2ff0L
     >>> hf.args # list of the arguments as HxLvar objects
